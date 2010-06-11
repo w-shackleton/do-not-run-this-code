@@ -24,4 +24,6 @@ menu_in_files = droidpad.desktop.in
 menu_DATA = $(menu_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 
-EXTRA_DIST = $(dpdata_DATA) $(pixmaps_DATA) $(menu_DATA)
+EXTRA_DIST = $(dpdata_DATA) $(pixmaps_DATA) droidpad.desktop.in
+
+DISTCLEANFILES = droidpad.desktop

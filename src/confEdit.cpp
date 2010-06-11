@@ -23,6 +23,8 @@
 
 #include <giomm/fileinputstream.h>
 
+#include <glib/gstdio.h>
+
 #include "statfuncs.hpp"
 
 ConfEdit::ConfEdit(Glib::ustring dataDir)
@@ -100,7 +102,9 @@ ConfEdit::~ConfEdit()
 			gbuffer += "\n";
 	}
 	strcpy(buffer, gbuffer.c_str());
-	dpConf->open_readwrite(Glib::RefPtr<Gio::Cancellable>())->get_output_stream()->write(buffer, BUFFER_SIZE);
+	FILE *file = g_fopen(Glib::ustring(dpConf->get_path()).c_str(), "w");
+	fputs(buffer, file);
+	fclose(file);
 }
 
 Glib::ustring ConfEdit::getVal(Glib::ustring name, Glib::ustring defVal)

@@ -209,7 +209,8 @@ pixmaps_DATA = droidpad.xpm
 menudir = $(datadir)/applications
 menu_in_files = droidpad.desktop.in
 menu_DATA = $(menu_in_files:.desktop.in=.desktop)
-EXTRA_DIST = $(dpdata_DATA) $(pixmaps_DATA) $(menu_DATA)
+EXTRA_DIST = $(dpdata_DATA) $(pixmaps_DATA) droidpad.desktop.in
+DISTCLEANFILES = droidpad.desktop
 all: all-am
 
 .SUFFIXES:
@@ -368,6 +369,7 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
