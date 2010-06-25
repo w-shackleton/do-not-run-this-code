@@ -1,0 +1,87 @@
+[table-of-content]
+<h1>Getting Started</h1>
+<h2>Installing</h2>
+Download the installer from the <a title="DroidPad" href="http://digitalsquid.co.uk/droidpad/" target="_self">main DroidPad page</a>, then once it is downloaded, launch it.
+
+<a href="http://digitalsquid.co.uk/files/2009/09/Setup_-_DroidPad-2009.09.25-16.40.42.png"><img class="size-medium wp-image-183 alignnone" title="Setup_-_DroidPad-2009.09.25-16.40.42" src="http://digitalsquid.co.uk/files/2009/09/Setup_-_DroidPad-2009.09.25-16.40.42-300x233.png" alt="Setup_-_DroidPad-2009.09.25-16.40.42" width="300" height="233" /></a>
+
+The install is quite easy, just accept all default settings.
+
+<a href="http://digitalsquid.co.uk/files/2009/09/Setup_-_DroidPad-2009.09.25-16.41.16.png"><img class="alignnone size-medium wp-image-184" title="Setup_-_DroidPad-2009.09.25-16.41.16" src="http://digitalsquid.co.uk/files/2009/09/Setup_-_DroidPad-2009.09.25-16.41.16-300x233.png" alt="Setup_-_DroidPad-2009.09.25-16.41.16" width="180" height="140" /></a>
+
+<a href="http://digitalsquid.co.uk/files/2009/09/Setup_-_DroidPad-2009.09.25-16.41.21.png"><img class="alignnone size-medium wp-image-185" title="Setup_-_DroidPad-2009.09.25-16.41.21" src="http://digitalsquid.co.uk/files/2009/09/Setup_-_DroidPad-2009.09.25-16.41.21-300x233.png" alt="Setup_-_DroidPad-2009.09.25-16.41.21" width="180" height="140" /></a>
+
+<a href="http://digitalsquid.co.uk/files/2009/09/Setup_-_DroidPad-2009.09.25-16.41.24.png"><img class="alignnone size-medium wp-image-186" title="Setup_-_DroidPad-2009.09.25-16.41.24" src="http://digitalsquid.co.uk/files/2009/09/Setup_-_DroidPad-2009.09.25-16.41.24-300x233.png" alt="Setup_-_DroidPad-2009.09.25-16.41.24" width="180" height="140" /></a>
+
+<strong>Up to here:</strong>
+
+<a href="http://digitalsquid.co.uk/files/2009/09/Setup_-_DroidPad-2009.09.25-16.41.29.png"><img class="alignnone size-medium wp-image-187" title="Setup_-_DroidPad-2009.09.25-16.41.29" src="http://digitalsquid.co.uk/files/2009/09/Setup_-_DroidPad-2009.09.25-16.41.29-300x233.png" alt="Setup_-_DroidPad-2009.09.25-16.41.29" width="300" height="233" /></a>
+
+Click 'Install' to install and set up DroidPad.
+
+<a href="http://digitalsquid.co.uk/files/2009/09/Setup_-_DroidPad-2009.09.25-16.42.03.png"><img class="alignnone size-medium wp-image-189" title="Setup_-_DroidPad-2009.09.25-16.42.03" src="http://digitalsquid.co.uk/files/2009/09/Setup_-_DroidPad-2009.09.25-16.42.03-300x233.png" alt="Setup_-_DroidPad-2009.09.25-16.42.03" width="240" height="186" /></a>
+
+Once the install has finished, it will launch the setup program.
+<h2>Configuring</h2>
+<h3>PPJoy Install</h3>
+<strong>READ</strong> THESE INSTRUCTIONS! Otherwise you may set it up incorrectly.
+
+This can be run again from the start menu.
+
+<a href="http://digitalsquid.co.uk/files/2009/09/DroidPad_Setup-2009.09.25-16.44.10.png"><img class="alignnone size-full wp-image-168" title="DroidPad_Setup-2009.09.25-16.44.10" src="http://digitalsquid.co.uk/files/2009/09/DroidPad_Setup-2009.09.25-16.44.10-256x200-custom.png" alt="DroidPad_Setup-2009.09.25-16.44.10" width="256" height="200" /></a>
+
+Click <strong>Next</strong>
+
+<strong><a href="http://digitalsquid.co.uk/files/2009/09/DroidPad_Setup-2009.09.25-16.44.20.png"><img class="alignnone size-full wp-image-169" title="DroidPad_Setup-2009.09.25-16.44.20" src="http://digitalsquid.co.uk/files/2009/09/DroidPad_Setup-2009.09.25-16.44.20.png" alt="DroidPad_Setup-2009.09.25-16.44.20" width="256" height="200" /></a></strong>
+
+Now click <strong>Website</strong> to go to the website of PPJoy, the Joystick driver.
+
+You can click <strong>Skip</strong> if you don't want to install the driver, or if you already have it installed. (Note: the driver may not work on 64-bit systems)
+
+Once on the website, click 'Download PPJoy', then let the file download.
+
+<strong>Extract the ZIP file</strong>, then run 'setup'. Let the installer complete fully.
+
+<a href="http://digitalsquid.co.uk/files/2009/09/DroidPad_Setup-2009.09.25-16.45.24.png"><img class="alignnone size-full wp-image-170" title="DroidPad_Setup-2009.09.25-16.45.24" src="http://digitalsquid.co.uk/files/2009/09/DroidPad_Setup-2009.09.25-16.45.24.png" alt="DroidPad_Setup-2009.09.25-16.45.24" width="256" height="200" /></a>
+
+Once PPJoy has installed, click <strong>Check</strong>. The program then will check to see if PPJoy installed properly.
+
+If it didn't work, try reinstalling it. To skip the installation, click <strong>skip</strong>.
+<h3>PPJoy Configuration</h3>
+The next step is to configure PPJoy.
+
+Click <strong>Configure</strong>, then in the window that appears, click <strong>Add</strong>. (Note: if there is already a virtual joystick there, then skip this)
+
+Then, under the 'Parallel port' section, select 'virtual joysticks'
+
+<a href="http://digitalsquid.co.uk/files/2009/09/Joystick1.png"><img class="alignnone size-full wp-image-203" title="Joystick1" src="http://digitalsquid.co.uk/files/2009/09/Joystick1.png" alt="Joystick1" width="271" height="221" /></a>
+
+Then note the 'Controller number' in the other drop down box. Make sure that you note this number down.
+
+Then click 'Add', and you should see a new joystick in the list.
+
+When the 'Found new Hardware Wizard' appears, select default settings, and let it install normally.
+
+<a href="http://digitalsquid.co.uk/files/2009/09/Found_New_Hardware_Wizard-2009.09.17-16.55.21.png"><img class="alignnone size-medium wp-image-206" title="Found_New_Hardware_Wizard-2009.09.17-16.55.21" src="http://digitalsquid.co.uk/files/2009/09/Found_New_Hardware_Wizard-2009.09.17-16.55.21-240x186-custom.png" alt="Found_New_Hardware_Wizard-2009.09.17-16.55.21" width="240" height="186" /></a> <a href="http://digitalsquid.co.uk/files/2009/09/Found_New_Hardware_Wizard-2009.09.17-16.54.18.png"><img class="alignnone size-medium wp-image-205" title="Found_New_Hardware_Wizard-2009.09.17-16.54.18" src="http://digitalsquid.co.uk/files/2009/09/Found_New_Hardware_Wizard-2009.09.17-16.54.18-300x233.png" alt="Found_New_Hardware_Wizard-2009.09.17-16.54.18" width="240" height="186" /></a>
+
+This process may be different for different versions of Windows.
+
+<a href="http://digitalsquid.co.uk/files/2009/09/Found_New_Hardware_Wizard-2009.09.17-16.55.24.png"><img class="alignnone size-medium wp-image-204" title="Found_New_Hardware_Wizard-2009.09.17-16.55.24" src="http://digitalsquid.co.uk/files/2009/09/Found_New_Hardware_Wizard-2009.09.17-16.55.24-300x233.png" alt="Found_New_Hardware_Wizard-2009.09.17-16.55.24" width="240" height="186" /></a>
+
+Once this has finished, click 'done' on the PPJoy configuration window, and click <strong>Next</strong>.
+
+<a href="http://digitalsquid.co.uk/files/2009/09/DroidPad_Setup-2009.09.25-16.46.20.png"><img class="alignnone size-full wp-image-172" title="DroidPad_Setup-2009.09.25-16.46.20" src="http://digitalsquid.co.uk/files/2009/09/DroidPad_Setup-2009.09.25-16.46.20.png" alt="DroidPad_Setup-2009.09.25-16.46.20" width="256" height="360" /></a>
+
+Now, type in the number of the controller that you noted down earlier, and click <strong>Check</strong>.
+
+<a href="http://digitalsquid.co.uk/files/2009/09/DroidPad_Setup-2009.09.25-16.46.29.png"><img class="alignnone size-full wp-image-173" title="DroidPad_Setup-2009.09.25-16.46.29" src="http://digitalsquid.co.uk/files/2009/09/DroidPad_Setup-2009.09.25-16.46.29.png" alt="DroidPad_Setup-2009.09.25-16.46.29" width="256" height="200" /></a>
+
+It will then tell you if this controller is valid. If it isn't configured properly, or you need to check, click <strong>Check Conf</strong>.
+
+Otherwise, click <strong>Next</strong>.
+<h3>USB Install</h3>
+The next part is installing the USB drivers. This step can also be <strong>skipped</strong>, but USB mode is faster &amp; more reliable than using DroidPad over Wifi.
+
+<a href="http://digitalsquid.co.uk/files/2009/09/DroidPad_Setup-2009.09.25-18.22.04.png"><img class="alignnone size-full wp-image-209" title="DroidPad_Setup-2009.09.25-18.22.04" src="http://digitalsquid.co.uk/files/2009/09/DroidPad_Setup-2009.09.25-18.22.04.png" alt="DroidPad_Setup-2009.09.25-18.22.04" width="256" height="200" /></a>
+
+[/table-of-content]

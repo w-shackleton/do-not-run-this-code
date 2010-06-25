@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <StartArguments>
+    </StartArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <StartArguments>
+    </StartArguments>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PublishUrlHistory>C:\Documents and Settings\William\Desktop\droidpad\|ftp://digitalsquid.co.uk/public_html/downloads/droidpad/versions/|http://localhost/DroidPad/</PublishUrlHistory>
+    <InstallUrlHistory>http://digitalsquid.co.uk/downloads/droidpad/</InstallUrlHistory>
+    <SupportUrlHistory>http://digitalsquid.co.uk/droidpad/</SupportUrlHistory>
+    <UpdateUrlHistory>
+    </UpdateUrlHistory>
+    <BootstrapperUrlHistory>
+    </BootstrapperUrlHistory>
+    <FallbackCulture>en-US</FallbackCulture>
+    <VerifyUploadedFiles>true</VerifyUploadedFiles>
+    <DebugSecurityZoneURL>http://digitalsquid.co.uk/droidpad/</DebugSecurityZoneURL>
+    <ProjectView>ProjectFiles</ProjectView>
+    <ErrorReportUrlHistory />
+  </PropertyGroup>
+</Project>
