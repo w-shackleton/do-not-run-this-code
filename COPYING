@@ -13,6 +13,10 @@ these files:
  * files/usb_driver
    - © Android Open Source Project
    - For license, see files/usb_driver/COPYING
+ * files/adb.exe
+ * files/AdbWinApi.dll
+ * files/AdbWinUsbApi.dll
+   - © Android Open Source Project
 
 The GNU GPL is printed below
 **********************************************************************
