@@ -324,142 +324,142 @@
   <ItemGroup>
     <PublishFile Include="files\androidHead200x113.png">
       <Visible>False</Visible>
-      <PublishState>Exclude</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="files\cc.png">
       <Visible>False</Visible>
-      <PublishState>Exclude</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="files\icon60x60.png">
       <Visible>False</Visible>
-      <PublishState>Exclude</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="files\iconred.ico">
       <Visible>False</Visible>
-      <PublishState>Exclude</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="files\PPConf1.PNG">
       <Visible>False</Visible>
-      <PublishState>Exclude</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="files\PPConf2.PNG">
       <Visible>False</Visible>
-      <PublishState>Exclude</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="files\usb_driver\amd64\WdfCoInstaller01007.dll">
       <Visible>False</Visible>
-      <PublishState>DataFile</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>DataFile</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="files\usb_driver\amd64\WinUSBCoInstaller.dll">
       <Visible>False</Visible>
-      <PublishState>DataFile</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>DataFile</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="files\usb_driver\amd64\WUDFUpdate_01007.dll">
       <Visible>False</Visible>
-      <PublishState>DataFile</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>DataFile</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="files\usb_driver\android_winusb.inf">
       <Visible>False</Visible>
-      <PublishState>DataFile</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>DataFile</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="files\usb_driver\i386\WdfCoInstaller01007.dll">
       <Visible>False</Visible>
-      <PublishState>DataFile</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>DataFile</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="files\usb_driver\i386\WinUSBCoInstaller.dll">
       <Visible>False</Visible>
-      <PublishState>DataFile</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>DataFile</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="files\usb_driver\i386\WUDFUpdate_01007.dll">
       <Visible>False</Visible>
-      <PublishState>DataFile</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>DataFile</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="icon.ico">
       <Visible>False</Visible>
-      <PublishState>DataFile</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>DataFile</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
   </ItemGroup>
