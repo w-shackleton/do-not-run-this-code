@@ -8,7 +8,7 @@
 
 AppId={{046B525C-FEC6-42A2-A637-53CC2F58100E}
 AppName=DroidPad
-AppVerName=DroidPad 1.1 RC
+AppVerName=DroidPad 1.1
 AppPublisher=Digitalsquid
 AppPublisherURL=http://digitalsquid.co.uk/droidpad/
 AppSupportURL=http://digitalsquid.co.uk/droidpad/

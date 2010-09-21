@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.EditLayout = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.statusUInst = new System.Windows.Forms.CheckBox();
             this.statusPConf = new System.Windows.Forms.CheckBox();
@@ -60,6 +61,7 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chooseDeviceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editButtonMappingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.websiteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -89,6 +91,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.EditLayout);
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.buttonsLabel);
@@ -111,6 +114,16 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(339, 136);
             this.panel1.TabIndex = 0;
+            // 
+            // EditLayout
+            // 
+            this.EditLayout.Location = new System.Drawing.Point(71, 57);
+            this.EditLayout.Name = "EditLayout";
+            this.EditLayout.Size = new System.Drawing.Size(119, 22);
+            this.EditLayout.TabIndex = 32;
+            this.EditLayout.Text = "Edit button mappings";
+            this.EditLayout.UseVisualStyleBackColor = true;
+            this.EditLayout.Click += new System.EventHandler(this.EditLayout_Click);
             // 
             // groupBox1
             // 
@@ -339,7 +352,8 @@
             this.stopToolStripMenuItem,
             this.toolStripSeparator1,
             this.settingsToolStripMenuItem,
-            this.chooseDeviceToolStripMenuItem});
+            this.chooseDeviceToolStripMenuItem,
+            this.editButtonMappingsToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -347,35 +361,42 @@
             // startToolStripMenuItem
             // 
             this.startToolStripMenuItem.Name = "startToolStripMenuItem";
-            this.startToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.startToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.startToolStripMenuItem.Text = "Start";
             this.startToolStripMenuItem.Click += new System.EventHandler(this.StartProg_Click);
             // 
             // stopToolStripMenuItem
             // 
             this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
-            this.stopToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.stopToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.stopToolStripMenuItem.Text = "Stop";
             this.stopToolStripMenuItem.Click += new System.EventHandler(this.Stopit_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(153, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(183, 6);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsButton_Click);
             // 
             // chooseDeviceToolStripMenuItem
             // 
             this.chooseDeviceToolStripMenuItem.Name = "chooseDeviceToolStripMenuItem";
-            this.chooseDeviceToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.chooseDeviceToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.chooseDeviceToolStripMenuItem.Text = "Choose Device";
             this.chooseDeviceToolStripMenuItem.Click += new System.EventHandler(this.chooseDeviceToolStripMenuItem_Click);
+            // 
+            // editButtonMappingsToolStripMenuItem
+            // 
+            this.editButtonMappingsToolStripMenuItem.Name = "editButtonMappingsToolStripMenuItem";
+            this.editButtonMappingsToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.editButtonMappingsToolStripMenuItem.Text = "Edit button mappings";
+            this.editButtonMappingsToolStripMenuItem.Click += new System.EventHandler(this.EditLayout_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -489,6 +510,8 @@
         private System.Windows.Forms.ToolStripMenuItem chooseDeviceToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem checkForUpdatesToolStripMenuItem;
+        private System.Windows.Forms.Button EditLayout;
+        private System.Windows.Forms.ToolStripMenuItem editButtonMappingsToolStripMenuItem;
 
     }
 }

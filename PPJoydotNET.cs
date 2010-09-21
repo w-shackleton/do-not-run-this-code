@@ -23,6 +23,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.ComponentModel;
+using DroidPad;
 
 namespace PPJoy_dotNET
 {
@@ -169,11 +170,16 @@ namespace PPJoy_dotNET
             loop(Update, ref sfh);
             //uDebug("Finished");
         }
+
+        private int[] aPre = new int[2]; //analog
+        private bool[] dPre = new bool[2]; //digital
+
+        private int[] a = new int[8]; //analog mapped
+        private bool[] d = new bool[16]; //digital mapped
+
         private void loop(int Update, ref SafeFileHandle sfh)
         {
             int ctl = (int)csHandle.CTL_CODE(0x22, 0, 0, 0); //34 is the code of FILE_DEVICE_UNKNOWN;
-            int[] a = new int[2]; //analog
-            bool[] d = new bool[2]; //digital
             byte[] sd; //send data
             while (true)
             {
@@ -189,9 +195,10 @@ namespace PPJoy_dotNET
                 {
                     if (updated)
                     {
-                        a = Analog;
-                        d = Digital;
+                        aPre = Analog;
+                        dPre = Digital;
                         updated = false;
+                        mapButtons();
                     }
                 }
                 uDebug("Data recieved");
@@ -262,6 +269,57 @@ namespace PPJoy_dotNET
             if (workerDebugValue)
             {
                 debugWindow.Invoke(new UpdateDel(debugWindow.updateText), new object[] { s });
+            }
+        }
+
+        private void mapButtons()
+        {
+            int i;
+            for (i = 0; i < a.Length; i++)
+                a[i] = 16384; // Reset Values to 0
+            for (i = 0; i < d.Length; i++)
+                d[i] = false; // Reset Values to 0
+
+            i = 0;
+
+            foreach (int analoguePre in aPre)
+            {
+                ButtonMap.MapData data = new ButtonMap.MapData(i++, analoguePre);
+                if (data.analogue)
+                {
+                    if (data.num >= 0)
+                        a[data.num] = data.data;
+                }
+                else
+                {
+                    if (data.d1 >= 0)
+                        d[data.d1] = data.dd1;
+                    if (data.twoDigital)
+                    {
+                        if (data.d2 >= 0)
+                            d[data.d2] = data.dd2;
+                    }
+                }
+            }
+            i = 0;
+            foreach (bool digitalPre in dPre)
+            {
+                ButtonMap.MapData data = new ButtonMap.MapData(i++, digitalPre);
+                if (data.analogue)
+                {
+                    if (data.num >= 0)
+                        a[data.num] = data.data;
+                }
+                else
+                {
+                    if (data.d1 >= 0)
+                        d[data.d1] = data.dd1;
+                    if (data.twoDigital)
+                    {
+                        if (data.d2 >= 0)
+                            d[data.d2] = data.dd2;
+                    }
+                }
             }
         }
         #endregion

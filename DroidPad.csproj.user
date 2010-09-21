@@ -19,7 +19,7 @@
     <FallbackCulture>en-US</FallbackCulture>
     <VerifyUploadedFiles>true</VerifyUploadedFiles>
     <DebugSecurityZoneURL>http://digitalsquid.co.uk/droidpad/</DebugSecurityZoneURL>
-    <ProjectView>ProjectFiles</ProjectView>
+    <ProjectView>ShowAllFiles</ProjectView>
     <ErrorReportUrlHistory />
   </PropertyGroup>
 </Project>

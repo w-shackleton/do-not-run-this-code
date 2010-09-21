@@ -58,6 +58,7 @@ namespace DroidPad
     
         public Form1()
         {
+            ButtonMap.Initialise();
             InitializeComponent();
             label1.Text = "";
             buttonsLabel.Text = "";
@@ -453,6 +454,11 @@ namespace DroidPad
             {
                 labelX.Text = "Err1: Error checking for updates";
             }
+        }
+
+        private void EditLayout_Click(object sender, EventArgs e)
+        {
+            new ButtonMap().ShowDialog();
         }
     }
 }
