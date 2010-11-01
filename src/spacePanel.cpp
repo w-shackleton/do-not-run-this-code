@@ -31,7 +31,7 @@ void SpacePanel::redraw(bool repaint)
 
 	cr->set_source_rgba(1.0, 0.0, 0.0, 0.7);
 	cr->move_to(100, 100);
-	cr->line_to(200, 300);
+	cr->line_to(250, 300);
 	cr->stroke();
 }
 
