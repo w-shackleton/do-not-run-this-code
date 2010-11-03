@@ -1,5 +1,6 @@
 #include "spacePanel.hpp"
 
+#include "objects/planet.hpp"
 BEGIN_EVENT_TABLE(SpacePanel, CairoPanel)
 	EVT_LEFT_DOWN(SpacePanel::mouseDown)
 	EVT_MOTION(SpacePanel::mouseMoved)
@@ -15,6 +16,7 @@ SpacePanel::SpacePanel(wxWindow *parent) :
 	CairoPanel(parent),
 	mousePrevPos(wxEVT_MOTION)
 {
+	objs.push_back(&Objects::Planet(10, 10, 60));
 }
 
 void SpacePanel::redraw(bool repaint)

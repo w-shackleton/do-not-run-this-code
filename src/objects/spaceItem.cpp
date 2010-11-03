@@ -1,5 +1,7 @@
 #include "spaceItem.hpp"
 
+using namespace Objects;
+
 SpaceItem::SpaceItem(double sx, double sy) :
 	x(sx),
 	y(sy)

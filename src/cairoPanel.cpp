@@ -1,5 +1,6 @@
 #include <cairoPanel.hpp>
 
+using namespace std;
 
 #include <wx/brush.h>
 

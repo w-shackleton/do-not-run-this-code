@@ -1,6 +1,7 @@
 noinst_LIBRARIES = libobjects.a
 
 libobjects_a_SOURCES = \
+		planet.cpp	planet.hpp	\
 		spherical.cpp	spherical.hpp	\
 		spaceItem.cpp	spaceItem.hpp
 

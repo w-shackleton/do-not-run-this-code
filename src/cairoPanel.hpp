@@ -9,8 +9,6 @@
 
 #include "matrixHelper.hpp"
 
-using namespace std;
-
 #define COL_SIZE 4
 
 class CairoPanel : public wxPanel
@@ -40,6 +38,6 @@ unsigned char g;
 unsigned char r;
 unsigned char a;
 };
-ostream& operator<<(ostream& out, const Col& r);
+std::ostream& operator<<(std::ostream& out, const Col& r);
 
 #endif

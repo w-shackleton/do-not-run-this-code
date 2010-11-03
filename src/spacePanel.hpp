@@ -4,6 +4,9 @@
 #include <wx/wx.h>
 #include "cairoPanel.hpp"
 
+#include "objects/spaceItem.hpp"
+
+#include <list>
 class SpacePanel : public CairoPanel
 {
 	public:
@@ -35,6 +38,8 @@ class SpacePanel : public CairoPanel
 		   Current selection mode - what is being selected
 		   */
 		int sel;
+
+		std::list<Objects::SpaceItem*> objs;
 };
 
 // Some useful operators

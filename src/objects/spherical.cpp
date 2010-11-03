@@ -1,5 +1,7 @@
 #include "spherical.hpp"
 
+using namespace Objects;
+
 Spherical::Spherical(double sx, double sy, double sradius) :
 	SpaceItem(sx, sy),
 	radius(sradius)
