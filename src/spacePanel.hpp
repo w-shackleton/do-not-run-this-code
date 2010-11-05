@@ -7,10 +7,12 @@
 #include "objects/spaceItem.hpp"
 
 #include <list>
+
 class SpacePanel : public CairoPanel
 {
 	public:
 		SpacePanel(wxWindow *parent);
+		~SpacePanel();
 
 		DECLARE_EVENT_TABLE();
 	protected:
@@ -32,14 +34,16 @@ class SpacePanel : public CairoPanel
 		{
 			SEL_None,
 			SEL_Bg_move,
+			SEL_Item_move,
 		};
 		
 		/*
 		   Current selection mode - what is being selected
 		   */
 		int sel;
+		Objects::SpaceItem *selectedItem;
 
-		std::list<Objects::SpaceItem*> objs;
+		std::list<Objects::SpaceItem *> objs;
 };
 
 // Some useful operators

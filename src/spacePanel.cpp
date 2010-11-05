@@ -12,11 +12,22 @@ BEGIN_EVENT_TABLE(SpacePanel, CairoPanel)
 	EVT_MOUSEWHEEL(SpacePanel::mouseWheelMoved)*/
 END_EVENT_TABLE()
 
+using namespace std;
+
 SpacePanel::SpacePanel(wxWindow *parent) :
 	CairoPanel(parent),
 	mousePrevPos(wxEVT_MOTION)
 {
-	objs.push_back(&Objects::Planet(10, 10, 60));
+	objs.push_back(new Objects::Planet(100, 100, 60));
+}
+
+SpacePanel::~SpacePanel()
+{
+	for(list<Objects::SpaceItem *>::iterator it = objs.begin(); it != objs.end(); it++)
+	{
+		cout << "Deleting SpaceItem " << *it << endl;
+		delete *it;
+	}
 }
 
 void SpacePanel::redraw(bool repaint)
@@ -35,20 +46,47 @@ void SpacePanel::redraw(bool repaint)
 	cr->move_to(100, 100);
 	cr->line_to(250, 300);
 	cr->stroke();
+
+	// Draw objects
+	for(list<Objects::SpaceItem *>::iterator it = objs.begin(); it != objs.end(); it++)
+	{
+		(*it)->draw(cr);
+	}
 }
 
 void SpacePanel::mouseDown(wxMouseEvent& event)
 {
-	sel= SEL_Bg_move;
+	sel = SEL_None;
+	// If clicked place is object
+	double tx = event.m_x, ty = event.m_y;
+	cout << " X: " << tx << ",  Y: " << ty << endl;
+	matrix.get_inverse_matrix().transform_point(tx, ty);
+	cout << "tX: " << tx << ", tY: " << ty << endl;
+	for(list<Objects::SpaceItem *>::iterator it = objs.begin(); it != objs.end(); it++)
+	{
+		if((*it)->isClicked(tx, ty))
+		{
+			// Object is clicked.
+			sel = SEL_Item_move;
+			selectedItem = *it;
+		}
+	}
+	if(sel == SEL_None)
+		sel = SEL_Bg_move;
 	mousePrevPos = event;
 }
 
 void SpacePanel::mouseMoved(wxMouseEvent& event)
 {
+	wxPoint distMoved = event - mousePrevPos;
 	if(sel == SEL_Bg_move)
 	{
-		wxPoint distMoved = event - mousePrevPos;
 		matrix.transform(distMoved);
+		redraw(true);
+	}
+	else if(sel == SEL_Item_move)
+	{
+		selectedItem->move(distMoved.x, distMoved.y);
 		redraw(true);
 	}
 	mousePrevPos = event;
