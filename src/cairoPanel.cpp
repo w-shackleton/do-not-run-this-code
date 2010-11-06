@@ -12,6 +12,7 @@ END_EVENT_TABLE()
 CairoPanel::CairoPanel(wxWindow* parent)
 	: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxFULL_REPAINT_ON_RESIZE)
 {
+	SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 	wxSize pSize = GetSize();
 	surface = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, pSize.GetWidth(), pSize.GetHeight());
 	cr = Cairo::Context::create(surface);

@@ -51,7 +51,7 @@ am_spaceedit_OBJECTS = spaceedit-matrixHelper.$(OBJEXT) \
 	spaceedit-spacePanel.$(OBJEXT) spaceedit-cairoPanel.$(OBJEXT) \
 	spaceedit-spaceFrame.$(OBJEXT) spaceedit-spaceApp.$(OBJEXT)
 spaceedit_OBJECTS = $(am_spaceedit_OBJECTS)
-spaceedit_DEPENDENCIES = objects/libobjects.la
+spaceedit_DEPENDENCIES = objects/libobjects.la misc/libmisc.la
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
@@ -279,7 +279,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = objects
+SUBDIRS = objects misc
 spaceedit_SOURCES = \
 		matrixHelper.cpp	matrixHelper.hpp	\
 		spacePanel.cpp		spacePanel.hpp		\
@@ -287,9 +287,8 @@ spaceedit_SOURCES = \
 		spaceFrame.cpp		spaceFrame.hpp		\
 		spaceApp.cpp		spaceApp.hpp
 
-spaceedit_LDADD = @WX_LIBS@ @Cairomm_LIBS@ objects/libobjects.la
+spaceedit_LDADD = @WX_LIBS@ @Cairomm_LIBS@ objects/libobjects.la misc/libmisc.la
 spaceedit_CXXFLAGS = @WXCPPFLAGS@ @Cairomm_CFLAGS@
-AM_CPPFLAGS = -DPREFIX='"$(prefix)"'
 all: all-recursive
 
 .SUFFIXES:

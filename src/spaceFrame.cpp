@@ -8,9 +8,12 @@ END_EVENT_TABLE()
 #include <iostream>
 using namespace std;
 
+#include "misc/data.hpp"
+
 SpaceFrame::SpaceFrame()
 	: wxFrame(NULL, -1, _("SpaceGame Editor"), wxDefaultPosition, wxSize(640, 480))
 {
+	SetIcon(wxIcon(wxString(Misc::Data::getFilePath("icon.xpm").c_str(), wxConvUTF8)));
 	menuFile = new wxMenu;
 	menuAbout = new wxMenu;
 

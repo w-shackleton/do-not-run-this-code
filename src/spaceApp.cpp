@@ -6,11 +6,15 @@
 #include <iostream>
 using namespace std;
 
+#include "misc/data.hpp"
+
 IMPLEMENT_APP(SpaceApp)
 
 bool SpaceApp::OnInit()
 {
-	SetAppName(_T("SpaceGame Editor"));
+	if(!Misc::Data::initialise())
+		return false;
+	//SetAppName(_T("SpaceGame Editor"));
 	if(!wxApp::OnInit())
 		return false;
 

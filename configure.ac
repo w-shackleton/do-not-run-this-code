@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.64])
-AC_INIT([spaceedit], [1.3.0.1], [w.shackleton+spaceedit@gmail.com])
+AC_INIT([spaceedit], [0.1], [w.shackleton+spaceedit@gmail.com])
 AC_CONFIG_SRCDIR([src/spaceApp.cpp])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE
@@ -49,7 +49,9 @@ PKG_CHECK_MODULES([Cairomm], [cairomm-1.0 >= 1.8.0])
 # Checks for library functions.
 AC_CONFIG_FILES([
 Makefile
+data/Makefile
 src/Makefile
 src/objects/Makefile
+src/misc/Makefile
 ])
 AC_OUTPUT

@@ -1,4 +1,4 @@
-lib_LTLIBRARIES= libobjects.la
+pkglib_LTLIBRARIES= libobjects.la
 
 
 libobjects_la_SOURCES = \

@@ -34,7 +34,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = src/objects
+subdir = src/misc
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -67,17 +67,15 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
-libobjects_la_DEPENDENCIES =
-am_libobjects_la_OBJECTS = libobjects_la-planet.lo \
-	libobjects_la-spherical.lo libobjects_la-spaceItem.lo
-libobjects_la_OBJECTS = $(am_libobjects_la_OBJECTS)
+libmisc_la_LIBADD =
+am_libmisc_la_OBJECTS = data.lo
+libmisc_la_OBJECTS = $(am_libmisc_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
-libobjects_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(libobjects_la_CXXFLAGS) $(CXXFLAGS) $(libobjects_la_LDFLAGS) \
-	$(LDFLAGS) -o $@
+libmisc_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(libmisc_la_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -120,8 +118,8 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(libobjects_la_SOURCES)
-DIST_SOURCES = $(libobjects_la_SOURCES)
+SOURCES = $(libmisc_la_SOURCES)
+DIST_SOURCES = $(libmisc_la_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -261,15 +259,15 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-pkglib_LTLIBRARIES = libobjects.la
-libobjects_la_SOURCES = \
-		planet.cpp	planet.hpp	\
-		spherical.cpp	spherical.hpp	\
-		spaceItem.cpp	spaceItem.hpp
+pkglib_LTLIBRARIES = libmisc.la
+libmisc_la_SOURCES = \
+		data.cpp	data.hpp
 
-libobjects_la_LIBADD = @Cairomm_LIBS@
-libobjects_la_CXXFLAGS = @Cairomm_CFLAGS@
-libobjects_la_LDFLAGS = -no-undefined -version-info 0:0:0
+
+# libmisc_la_LIBADD = @WX_LIBS@
+# libmisc_la_CXXFLAGS = @WXCPPFLAGS@
+libmisc_la_LDFLAGS = -no-undefined -version-info 0:0:0
+AM_CPPFLAGS = -DPREFIX='"$(prefix)"'
 all: all-am
 
 .SUFFIXES:
@@ -283,9 +281,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/objects/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/misc/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu src/objects/Makefile
+	  $(AUTOMAKE) --gnu src/misc/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -335,8 +333,8 @@ clean-pkglibLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libobjects.la: $(libobjects_la_OBJECTS) $(libobjects_la_DEPENDENCIES) 
-	$(AM_V_CXXLD)$(libobjects_la_LINK) -rpath $(pkglibdir) $(libobjects_la_OBJECTS) $(libobjects_la_LIBADD) $(LIBS)
+libmisc.la: $(libmisc_la_OBJECTS) $(libmisc_la_DEPENDENCIES) 
+	$(AM_V_CXXLD)$(libmisc_la_LINK) -rpath $(pkglibdir) $(libmisc_la_OBJECTS) $(libmisc_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -344,9 +342,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-planet.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-spaceItem.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-spherical.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/data.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -371,30 +367,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
-
-libobjects_la-planet.lo: planet.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -MT libobjects_la-planet.lo -MD -MP -MF $(DEPDIR)/libobjects_la-planet.Tpo -c -o libobjects_la-planet.lo `test -f 'planet.cpp' || echo '$(srcdir)/'`planet.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libobjects_la-planet.Tpo $(DEPDIR)/libobjects_la-planet.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='planet.cpp' object='libobjects_la-planet.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -c -o libobjects_la-planet.lo `test -f 'planet.cpp' || echo '$(srcdir)/'`planet.cpp
-
-libobjects_la-spherical.lo: spherical.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -MT libobjects_la-spherical.lo -MD -MP -MF $(DEPDIR)/libobjects_la-spherical.Tpo -c -o libobjects_la-spherical.lo `test -f 'spherical.cpp' || echo '$(srcdir)/'`spherical.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libobjects_la-spherical.Tpo $(DEPDIR)/libobjects_la-spherical.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='spherical.cpp' object='libobjects_la-spherical.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -c -o libobjects_la-spherical.lo `test -f 'spherical.cpp' || echo '$(srcdir)/'`spherical.cpp
-
-libobjects_la-spaceItem.lo: spaceItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -MT libobjects_la-spaceItem.lo -MD -MP -MF $(DEPDIR)/libobjects_la-spaceItem.Tpo -c -o libobjects_la-spaceItem.lo `test -f 'spaceItem.cpp' || echo '$(srcdir)/'`spaceItem.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libobjects_la-spaceItem.Tpo $(DEPDIR)/libobjects_la-spaceItem.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='spaceItem.cpp' object='libobjects_la-spaceItem.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -c -o libobjects_la-spaceItem.lo `test -f 'spaceItem.cpp' || echo '$(srcdir)/'`spaceItem.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
