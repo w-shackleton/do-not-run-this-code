@@ -7,6 +7,6 @@ spaceedit_SOURCES = \
 		cairoPanel.cpp		cairoPanel.hpp		\
 		spaceFrame.cpp		spaceFrame.hpp		\
 		spaceApp.cpp		spaceApp.hpp
-spaceedit_LDADD = @WX_LIBS@ @Cairomm_LIBS@ objects/libobjects.a
+spaceedit_LDADD = @WX_LIBS@ @Cairomm_LIBS@ objects/libobjects.la
 spaceedit_CXXFLAGS = @WXCPPFLAGS@ @Cairomm_CFLAGS@
 AM_CPPFLAGS = -DPREFIX='"$(prefix)"'

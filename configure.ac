@@ -7,9 +7,11 @@ AC_CONFIG_SRCDIR([src/spaceApp.cpp])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE
 
+AC_CONFIG_MACRO_DIR([m4])
+
 # Checks for programs.
 AC_PROG_CXX
-AC_PROG_RANLIB
+LT_INIT
 
 AM_SILENT_RULES([yes])
 
