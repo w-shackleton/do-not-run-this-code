@@ -1,6 +1,5 @@
 #include "spacePanel.hpp"
 
-#include "objects/planet.hpp"
 BEGIN_EVENT_TABLE(SpacePanel, CairoPanel)
 	EVT_LEFT_DOWN(SpacePanel::mouseDown)
 	EVT_MOTION(SpacePanel::mouseMoved)
@@ -12,6 +11,9 @@ BEGIN_EVENT_TABLE(SpacePanel, CairoPanel)
 	EVT_MOUSEWHEEL(SpacePanel::mouseWheelMoved)*/
 END_EVENT_TABLE()
 
+#include "objects/planet.hpp"
+#include "objects/wall.hpp"
+
 using namespace std;
 
 SpacePanel::SpacePanel(wxWindow *parent) :
@@ -19,6 +21,7 @@ SpacePanel::SpacePanel(wxWindow *parent) :
 	mousePrevPos(wxEVT_MOTION)
 {
 	objs.push_back(new Objects::Planet(100, 100, 60));
+	objs.push_back(new Objects::Wall(200, 200, 300, M_PI / 8 * 1));
 }
 
 SpacePanel::~SpacePanel()

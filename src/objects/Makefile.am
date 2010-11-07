@@ -2,6 +2,8 @@ pkglib_LTLIBRARIES= libobjects.la
 
 
 libobjects_la_SOURCES = \
+		wall.cpp	wall.hpp	\
+		rectangular.cpp	rectangular.hpp	\
 		planet.cpp	planet.hpp	\
 		spherical.cpp	spherical.hpp	\
 		spaceItem.cpp	spaceItem.hpp

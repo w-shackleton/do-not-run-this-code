@@ -2,6 +2,7 @@ pkglib_LTLIBRARIES= libmisc.la
 
 
 libmisc_la_SOURCES = \
+		geometry.cpp	geometry.hpp	\
 		data.cpp	data.hpp
 
 # libmisc_la_LIBADD = @WX_LIBS@

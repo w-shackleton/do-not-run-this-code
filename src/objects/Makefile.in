@@ -68,7 +68,8 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
 libobjects_la_DEPENDENCIES =
-am_libobjects_la_OBJECTS = libobjects_la-planet.lo \
+am_libobjects_la_OBJECTS = libobjects_la-wall.lo \
+	libobjects_la-rectangular.lo libobjects_la-planet.lo \
 	libobjects_la-spherical.lo libobjects_la-spaceItem.lo
 libobjects_la_OBJECTS = $(am_libobjects_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
@@ -263,6 +264,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 pkglib_LTLIBRARIES = libobjects.la
 libobjects_la_SOURCES = \
+		wall.cpp	wall.hpp	\
+		rectangular.cpp	rectangular.hpp	\
 		planet.cpp	planet.hpp	\
 		spherical.cpp	spherical.hpp	\
 		spaceItem.cpp	spaceItem.hpp
@@ -345,8 +348,10 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-planet.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-rectangular.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-spaceItem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-spherical.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-wall.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -371,6 +376,22 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
+
+libobjects_la-wall.lo: wall.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -MT libobjects_la-wall.lo -MD -MP -MF $(DEPDIR)/libobjects_la-wall.Tpo -c -o libobjects_la-wall.lo `test -f 'wall.cpp' || echo '$(srcdir)/'`wall.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libobjects_la-wall.Tpo $(DEPDIR)/libobjects_la-wall.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='wall.cpp' object='libobjects_la-wall.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -c -o libobjects_la-wall.lo `test -f 'wall.cpp' || echo '$(srcdir)/'`wall.cpp
+
+libobjects_la-rectangular.lo: rectangular.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -MT libobjects_la-rectangular.lo -MD -MP -MF $(DEPDIR)/libobjects_la-rectangular.Tpo -c -o libobjects_la-rectangular.lo `test -f 'rectangular.cpp' || echo '$(srcdir)/'`rectangular.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libobjects_la-rectangular.Tpo $(DEPDIR)/libobjects_la-rectangular.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='rectangular.cpp' object='libobjects_la-rectangular.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -c -o libobjects_la-rectangular.lo `test -f 'rectangular.cpp' || echo '$(srcdir)/'`rectangular.cpp
 
 libobjects_la-planet.lo: planet.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -MT libobjects_la-planet.lo -MD -MP -MF $(DEPDIR)/libobjects_la-planet.Tpo -c -o libobjects_la-planet.lo `test -f 'planet.cpp' || echo '$(srcdir)/'`planet.cpp
