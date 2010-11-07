@@ -40,6 +40,17 @@ AC_SUBST(WXCFLAGS, "$WX_CFLAGS_ONLY")
 #LIBS="$LIBS $WX_LIBS"
 AC_SUBST(WXLIBS, "$WX_LIBS")
 
+# Check for Windows (for res)
+case "$host" in
+	*mingw*)
+		win32="win32"
+		;;
+	*cygwin*)
+		win32="win32"
+		;;
+esac
+AM_CONDITIONAL([WIN32], [test $win32 = "win32"])
+
 PKG_CHECK_MODULES([Cairomm], [cairomm-1.0 >= 1.8.0])
 
 # Checks for header files.

@@ -10,10 +10,17 @@ using namespace std;
 
 #include "misc/data.hpp"
 
+#ifdef __WXMSW__
+#define _FRAME_ICON "icon.xpm"
+#else
+#define _FRAME_ICON "iconlarge.xpm"
+#endif
+
 SpaceFrame::SpaceFrame()
 	: wxFrame(NULL, -1, _("SpaceGame Editor"), wxDefaultPosition, wxSize(640, 480))
 {
-	SetIcon(wxIcon(wxString(Misc::Data::getFilePath("icon.xpm").c_str(), wxConvUTF8)));
+	SetIcon(wxIcon(wxString(Misc::Data::getFilePath(_FRAME_ICON).c_str(), wxConvUTF8), wxBITMAP_TYPE_XPM));
+
 	menuFile = new wxMenu;
 	menuAbout = new wxMenu;
 

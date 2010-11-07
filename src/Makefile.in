@@ -35,6 +35,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = spaceedit$(EXEEXT)
+@WIN32_TRUE@am__append_1 = spaceedit.res
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -51,7 +52,8 @@ am_spaceedit_OBJECTS = spaceedit-matrixHelper.$(OBJEXT) \
 	spaceedit-spacePanel.$(OBJEXT) spaceedit-cairoPanel.$(OBJEXT) \
 	spaceedit-spaceFrame.$(OBJEXT) spaceedit-spaceApp.$(OBJEXT)
 spaceedit_OBJECTS = $(am_spaceedit_OBJECTS)
-spaceedit_DEPENDENCIES = objects/libobjects.la misc/libmisc.la
+spaceedit_DEPENDENCIES = objects/libobjects.la misc/libmisc.la \
+	$(am__append_1)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
@@ -287,8 +289,11 @@ spaceedit_SOURCES = \
 		spaceFrame.cpp		spaceFrame.hpp		\
 		spaceApp.cpp		spaceApp.hpp
 
-spaceedit_LDADD = @WX_LIBS@ @Cairomm_LIBS@ objects/libobjects.la misc/libmisc.la
+spaceedit_LDADD = @WX_LIBS@ @Cairomm_LIBS@ objects/libobjects.la \
+	misc/libmisc.la $(am__append_1)
 spaceedit_CXXFLAGS = @WXCPPFLAGS@ @Cairomm_CFLAGS@
+EXTRA_DIST = spaceedit.rc
+CLEANFILES = spaceedit.res
 all: all-recursive
 
 .SUFFIXES:
@@ -710,6 +715,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -807,6 +813,9 @@ uninstall-am: uninstall-binPROGRAMS
 	tags tags-recursive uninstall uninstall-am \
 	uninstall-binPROGRAMS
 
+
+@WIN32_TRUE@spaceedit.res: spaceedit.rc
+@WIN32_TRUE@	i586-mingw32msvc-windres spaceedit.rc -O coff -o spaceedit.res
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

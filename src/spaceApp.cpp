@@ -13,7 +13,10 @@ IMPLEMENT_APP(SpaceApp)
 bool SpaceApp::OnInit()
 {
 	if(!Misc::Data::initialise())
+	{
+		wxMessageDialog(NULL, _("Could not find application data,\npossibly because application was installed incorrectly?"), _("Error finding data"), wxOK | wxICON_EXCLAMATION).ShowModal();
 		return false;
+	}
 	//SetAppName(_T("SpaceGame Editor"));
 	if(!wxApp::OnInit())
 		return false;
