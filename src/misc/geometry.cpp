@@ -1,7 +1,5 @@
 #include "geometry.hpp"
 
-#include <iostream>
-
 Misc::Point::Point(double x, double y) :
 	x(x),
 	y(y)

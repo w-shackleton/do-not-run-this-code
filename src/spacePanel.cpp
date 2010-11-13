@@ -7,12 +7,17 @@ BEGIN_EVENT_TABLE(SpacePanel, CairoPanel)
 /*	EVT_RIGHT_DOWN(SpacePanel::rightClick)
 	EVT_LEAVE_WINDOW(SpacePanel::mouseLeftWindow)
 	EVT_KEY_DOWN(SpacePanel::keyPressed)
-	EVT_KEY_UP(SpacePanel::keyReleased)
-	EVT_MOUSEWHEEL(SpacePanel::mouseWheelMoved)*/
+	EVT_KEY_UP(SpacePanel::keyReleased)*/
+	EVT_MOUSEWHEEL(SpacePanel::mouseWheelMoved)
+
+	EVT_CONTEXT_MENU(SpacePanel::contextMenu)
+
+	EVT_MENU(SpacePanel::ID_Object_delete, SpacePanel::onObjectMenuDelete)
 END_EVENT_TABLE()
 
 #include "objects/planet.hpp"
 #include "objects/wall.hpp"
+#include "objects/levelWall.hpp"
 
 using namespace std;
 
@@ -20,8 +25,14 @@ SpacePanel::SpacePanel(wxWindow *parent) :
 	CairoPanel(parent),
 	mousePrevPos(wxEVT_MOTION)
 {
+	objs.push_back(new Objects::LevelWall(100, 100));
 	objs.push_back(new Objects::Planet(100, 100, 60));
 	objs.push_back(new Objects::Wall(200, 200, 300, M_PI / 8 * 1));
+
+	objectMenu = new wxMenu;
+	bgMenu = new wxMenu;
+
+	objectMenu->Append(ID_Object_delete, _("&Delete"));
 }
 
 SpacePanel::~SpacePanel()
@@ -57,25 +68,50 @@ void SpacePanel::redraw(bool repaint)
 	}
 }
 
-void SpacePanel::mouseDown(wxMouseEvent& event)
+int SpacePanel::getClickedObject(double x, double y, bool useBorder)
 {
-	sel = SEL_None;
 	// If clicked place is object
-	double tx = event.m_x, ty = event.m_y;
-	cout << " X: " << tx << ",  Y: " << ty << endl;
+	double tx = x, ty = y;
 	matrix.get_inverse_matrix().transform_point(tx, ty);
-	cout << "tX: " << tx << ", tY: " << ty << endl;
+
+	selectedItem = NULL;
+	int ret = CLICKED_None;
 	for(list<Objects::SpaceItem *>::iterator it = objs.begin(); it != objs.end(); it++)
 	{
 		if((*it)->isClicked(tx, ty))
 		{
 			// Object is clicked.
-			sel = SEL_Item_move;
 			selectedItem = *it;
+			ret = CLICKED_Inner;
+			continue;
+		}
+		if(useBorder)
+			if((*it)->isBorderClicked(tx, ty))
+		{
+			// Object border is clicked.
+			selectedItem = *it;
+			ret = CLICKED_Border;
+			continue;
 		}
 	}
-	if(sel == SEL_None)
+	return ret;
+}
+
+void SpacePanel::mouseDown(wxMouseEvent& event)
+{
+	if(event.m_shiftDown) // shift means apply to bg
 		sel = SEL_Bg_move;
+	else
+	{
+		int clickType = getClickedObject(event.m_x, event.m_y, true);
+
+		if(clickType == CLICKED_Inner)
+			sel = SEL_Item_move;
+		else if(clickType == CLICKED_Border)
+			sel = SEL_Item_border_move;
+		else
+			sel = SEL_Bg_move;
+	}
 	mousePrevPos = event;
 }
 
@@ -89,7 +125,17 @@ void SpacePanel::mouseMoved(wxMouseEvent& event)
 	}
 	else if(sel == SEL_Item_move)
 	{
+		distMoved.x /= matrix.sx;
+		distMoved.y /= matrix.sy;
 		selectedItem->move(distMoved.x, distMoved.y);
+		redraw(true);
+	}
+	else if(sel == SEL_Item_border_move)
+	{
+		double tx = event.m_x, ty = event.m_y;
+		matrix.get_inverse_matrix().transform_point(tx, ty);
+
+		selectedItem->moveBorder(tx, ty);
 		redraw(true);
 	}
 	mousePrevPos = event;
@@ -100,6 +146,40 @@ void SpacePanel::mouseReleased(wxMouseEvent& event)
 	sel= SEL_None;
 }
 
+void SpacePanel::mouseWheelMoved(wxMouseEvent& event)
+{
+	if(sel == SEL_None) // To make sure not clicking something
+	{
+		if(event.m_shiftDown) // shift means apply to bg
+		{
+			matrix.scale_rotation(event.m_wheelRotation);
+		}
+		else if(getClickedObject(event.m_x, event.m_y, false) == CLICKED_Inner)
+		{
+			selectedItem->scale(event.m_wheelRotation);
+		}
+		else
+		{
+			matrix.scale_rotation(event.m_wheelRotation);
+		}
+		redraw(true);
+	}
+}
+
+void SpacePanel::contextMenu(wxContextMenuEvent& event)
+{
+	wxPoint point = ScreenToClient(event.GetPosition());
+	if(getClickedObject(point.x, point.y, false) == CLICKED_Inner)
+	{
+		PopupMenu(objectMenu);
+	}
+	else
+	{
+		PopupMenu(bgMenu);
+	}
+//	redraw(true);
+}
+
 wxPoint operator-(const wxMouseEvent& lhs, const wxMouseEvent& rhs)
 {
 	wxPoint temp;
@@ -108,3 +188,11 @@ wxPoint operator-(const wxMouseEvent& lhs, const wxMouseEvent& rhs)
 	return temp;
 }
 
+void SpacePanel::onObjectMenuDelete(wxCommandEvent& WXUNUSED(event))
+{
+	cout << "Deleting item..." << endl;
+
+	objs.remove(selectedItem);
+
+	redraw(true);
+}

@@ -14,12 +14,14 @@ class MatrixHelper : public Cairo::Matrix
 		void transform(double x, double y);
 		void transform(wxPoint p);
 		void scale(double s);
+		void scale_rotation(int r);
 
 		operator Cairo::Matrix&();
-	protected:
+
 		double tx, ty;
 		double sx, sy;
 
+	protected:
 		Cairo::Matrix matrix, invmatrix;
 };
 

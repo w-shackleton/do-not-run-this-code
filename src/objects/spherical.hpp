@@ -12,6 +12,9 @@ namespace Objects
 		public:
 			Spherical(double sx, double sy, double sradius);
 			bool isClicked(int cx, int cy);
+			bool isBorderClicked(int cx, int cy);
+
+			void moveBorder(int dx, int dy);
 	};
 };
 #endif

@@ -18,6 +18,27 @@ bool Rectangular::isClicked(int cx, int cy)
 	updateCornerPoints();
 	return Misc::pointInPolygon(cornerPoints, Misc::Point(cx, cy));
 }
+bool Rectangular::isBorderClicked(int cx, int cy)
+{
+	// Temporarily resize rectangle to check if border was clicked
+	sx += BORDER_CLICK_SIZE;
+	sy += BORDER_CLICK_SIZE;
+	updateCornerPoints();
+	bool inOut = Misc::pointInPolygon(cornerPoints, Misc::Point(cx, cy));
+
+	sx -= BORDER_CLICK_SIZE * 2;
+	sy -= BORDER_CLICK_SIZE * 2;
+	updateCornerPoints();
+	bool inIn = Misc::pointInPolygon(cornerPoints, Misc::Point(cx, cy));
+
+	sx += BORDER_CLICK_SIZE;
+	sy += BORDER_CLICK_SIZE;
+
+	if(inOut)
+		if(inIn)
+			return true;
+	return false;
+}
 
 void Rectangular::updateCornerMatrix()
 {
@@ -51,4 +72,8 @@ void Rectangular::updateCornerPoints()
 	//{
 		//cout << "P" << i << ": " << cornerPoints[i].x << ", " << cornerPoints[i].y << endl;
 	//}
+}
+
+void Rectangular::moveBorder(int dx, int dy)
+{
 }

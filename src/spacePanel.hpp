@@ -18,15 +18,19 @@ class SpacePanel : public CairoPanel
 	protected:
 		void redraw(bool repaint);
 
+		int getClickedObject(double x, double y, bool useBorder);
+
 		// Some useful events
 		void mouseDown(wxMouseEvent& event);
 		void mouseMoved(wxMouseEvent& event);
 		void mouseReleased(wxMouseEvent& event);
-		/*void mouseWheelMoved(wxMouseEvent& event);
-		void rightClick(wxMouseEvent& event);
+		void mouseWheelMoved(wxMouseEvent& event);
+		/*void rightClick(wxMouseEvent& event);
 		void mouseLeftWindow(wxMouseEvent& event);
 		void keyPressed(wxKeyEvent& event);
 		void keyReleased(wxKeyEvent& event);*/
+
+		void contextMenu(wxContextMenuEvent& event);
 
 		wxMouseEvent mousePrevPos;
 
@@ -35,6 +39,19 @@ class SpacePanel : public CairoPanel
 			SEL_None,
 			SEL_Bg_move,
 			SEL_Item_move,
+			SEL_Item_border_move,
+		};
+
+		enum
+		{
+			CLICKED_None,
+			CLICKED_Inner,
+			CLICKED_Border
+		};
+
+		enum
+		{
+			ID_Object_delete = wxID_HIGHEST + 1,
 		};
 		
 		/*
@@ -44,6 +61,9 @@ class SpacePanel : public CairoPanel
 		Objects::SpaceItem *selectedItem;
 
 		std::list<Objects::SpaceItem *> objs;
+
+		wxMenu *objectMenu, *bgMenu;
+		void onObjectMenuDelete(wxCommandEvent& WXUNUSED(event));
 };
 
 // Some useful operators

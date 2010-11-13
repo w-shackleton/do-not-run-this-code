@@ -23,3 +23,13 @@ void Wall::draw(Cairo::RefPtr<Cairo::Context> &cr)
 	cr->rotate(-rotation);
 	cr->translate(-x, -y);
 }
+
+void Wall::scale(int r)
+{
+	if(r < 0)
+		sx += 20;
+	else if(r > 0)
+		sx -= 20;
+	if(sx < 80)
+		sx = 80;
+}

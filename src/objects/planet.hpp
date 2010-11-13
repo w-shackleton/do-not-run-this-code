@@ -11,6 +11,8 @@ namespace Objects
 		public:
 			Planet(double sx, double sy, double sradius);
 			void draw(Cairo::RefPtr<Cairo::Context> &cr);
+
+			void scale(int r);
 	};
 };
 #endif

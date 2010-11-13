@@ -20,3 +20,13 @@ void Planet::draw(Cairo::RefPtr<Cairo::Context> &cr)
 	cr->arc(x, y, radius, 0, 2 * M_PI);
 	cr->stroke();
 }
+
+void Planet::scale(int r)
+{
+	if(r < 0)
+		radius *= 1.1;
+	else if(r > 0)
+		radius /= 1.1;
+	if(radius < 30)
+		radius = 30;
+}

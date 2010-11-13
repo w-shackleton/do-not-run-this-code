@@ -2,6 +2,7 @@ pkglib_LTLIBRARIES= libobjects.la
 
 
 libobjects_la_SOURCES = \
+		levelWall.cpp	levelWall.hpp	\
 		wall.cpp	wall.hpp	\
 		rectangular.cpp	rectangular.hpp	\
 		planet.cpp	planet.hpp	\

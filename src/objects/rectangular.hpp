@@ -5,6 +5,7 @@
 #include "spaceItem.hpp"
 #include "../misc/geometry.hpp"
 
+
 namespace Objects
 {
 	class Rectangular : public SpaceItem
@@ -21,6 +22,9 @@ namespace Objects
 		public:
 			Rectangular(double x, double y, double sx, double sy, double rotation);
 			bool isClicked(int cx, int cy);
+			bool isBorderClicked(int cx, int cy);
+
+			void moveBorder(int dx, int dy);
 	};
 };
 

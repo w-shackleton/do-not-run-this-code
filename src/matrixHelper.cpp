@@ -52,6 +52,14 @@ void MatrixHelper::scale(double s)
 	sy *= s;
 }
 
+void MatrixHelper::scale_rotation(int r)
+{
+	if(r < 0)
+		scale(1.1);
+	else if(r > 0)
+		scale(1 / 1.1);
+}
+
 MatrixHelper::operator Cairo::Matrix&()
 {
 	return get_matrix();
