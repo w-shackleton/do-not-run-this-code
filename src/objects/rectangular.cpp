@@ -2,13 +2,16 @@
 
 using namespace Objects;
 #include <iostream>
+#include <cmath>
 using namespace std;
 
-Rectangular::Rectangular(double x, double y, double sx, double sy, double rotation) :
+Rectangular::Rectangular(double x, double y, double sx, double sy, double rotation, Misc::Point min, Misc::Point max) :
 	SpaceItem(x, y),
 	sx(sx),
 	sy(sy),
-	rotation(rotation)
+	rotation(rotation),
+	min(min),
+	max(max)
 {
 	cornerMatrix = Cairo::identity_matrix();
 }
@@ -34,8 +37,41 @@ bool Rectangular::isBorderClicked(int cx, int cy)
 	sx += BORDER_CLICK_SIZE;
 	sy += BORDER_CLICK_SIZE;
 
+	borderSelectedType = EdgeX_selected;
+
+	updateCornerPoints();
+
+	double px = cx, py = cy;
+	for(int i = 0; i < cornerPoints.size(); i++)
+	{
+		if(Misc::hypotenuse(cornerPoints[i].x - px, cornerPoints[i].y - py) < BORDER_CLICK_SIZE * 2) // Inside corner, x2 to add a bit of slack for the user
+		{
+			borderSelectedType = Corner_selected;
+			// borderCornerMoveOriginalPos = Misc::Point(x, y);
+		}
+	}
+
+	if(borderSelectedType == EdgeX_selected)
+	{
+		updateCornerMatrix(); // Get inverse Matrix
+		cornerMatrix.invert();
+		cornerMatrix.transform_point(px, py);
+
+		cout << "HELLO!" << endl;
+
+		double hy = abs(py / sy);
+		double hx = abs(px / sx);
+		cout << hx << ", " << hy << endl;
+		if(abs(py / sy) > abs(px / sx))
+		{
+			// Y is greater, therefore selecting horizontal edge.
+			borderSelectedType = EdgeY_selected;
+		}
+	}
+	cout << borderSelectedType << endl;
+
 	if(inOut)
-		if(inIn)
+		if(!inIn)
 			return true;
 	return false;
 }
@@ -76,4 +112,45 @@ void Rectangular::updateCornerPoints()
 
 void Rectangular::moveBorder(int dx, int dy)
 {
+	double px = dx, py = dy;
+
+	updateCornerMatrix(); // Get inverse Matrix
+	cornerMatrix.invert();
+	cornerMatrix.transform_point(px, py);
+		
+	if(borderSelectedType == Corner_selected)
+	{
+		// TODO: Make move from corner, leaving other corner intact
+		sx = px * 2;
+		sy = py * 2;
+
+		// Changed, so update
+		updateCornerPoints();
+	}
+	else if(borderSelectedType == EdgeX_selected)
+	{
+		sx = px * 2;
+	}
+	else if(borderSelectedType == EdgeY_selected)
+	{
+		sy = py * 2;
+	}
+	Misc::trimMinMax(sx, min.x, max.x);
+	Misc::trimMinMax(sy, min.y, max.y);
+}
+
+void Rectangular::scale(int r)
+{
+	if(r < 0)
+	{
+		sx += 20;
+		sy += 20;
+	}
+	else if(r > 0)
+	{
+		sx -= 20;
+		sy -= 20;
+	}
+	Misc::trimMinMax(sx, min.x, max.x);
+	Misc::trimMinMax(sy, min.y, max.y);
 }

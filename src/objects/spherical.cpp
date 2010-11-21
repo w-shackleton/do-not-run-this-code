@@ -7,6 +7,7 @@ using namespace Objects;
 #include <iostream>
 using namespace std;
 
+// TODO: Implement optional resize (like in rectangular.cpp)
 Spherical::Spherical(double sx, double sy, double sradius) :
 	SpaceItem(sx, sy),
 	radius(sradius)

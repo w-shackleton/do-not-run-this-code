@@ -19,12 +19,25 @@ namespace Objects
 
 			std::vector<Misc::Point> cornerPoints;
 			void updateCornerPoints();
+
+			Misc::Point min, max;
+
+			enum
+			{
+				Corner_selected,
+				EdgeX_selected,
+				EdgeY_selected,
+			};
+			int borderSelectedType;
+			// Misc::Point borderCornerMoveOriginalPos;
 		public:
-			Rectangular(double x, double y, double sx, double sy, double rotation);
+			Rectangular(double x, double y, double sx, double sy, double rotation, Misc::Point min, Misc::Point max);
 			bool isClicked(int cx, int cy);
 			bool isBorderClicked(int cx, int cy);
 
 			void moveBorder(int dx, int dy);
+
+			void scale(int r);
 	};
 };
 

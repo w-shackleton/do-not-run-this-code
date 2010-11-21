@@ -20,6 +20,12 @@ namespace Misc
 	{
 		return sqrt(x * x + y * y);
 	}
+
+	static inline void trimMinMax(double &num, double min, double max)
+	{
+		if(num < min) num = min;
+		if(num > max) num = max;
+	}
 }
 
 #endif

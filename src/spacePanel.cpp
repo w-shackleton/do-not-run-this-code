@@ -78,19 +78,19 @@ int SpacePanel::getClickedObject(double x, double y, bool useBorder)
 	int ret = CLICKED_None;
 	for(list<Objects::SpaceItem *>::iterator it = objs.begin(); it != objs.end(); it++)
 	{
-		if((*it)->isClicked(tx, ty))
-		{
-			// Object is clicked.
-			selectedItem = *it;
-			ret = CLICKED_Inner;
-			continue;
-		}
 		if(useBorder)
 			if((*it)->isBorderClicked(tx, ty))
 		{
 			// Object border is clicked.
 			selectedItem = *it;
 			ret = CLICKED_Border;
+			continue;
+		}
+		if((*it)->isClicked(tx, ty))
+		{
+			// Object is clicked.
+			selectedItem = *it;
+			ret = CLICKED_Inner;
 			continue;
 		}
 	}
