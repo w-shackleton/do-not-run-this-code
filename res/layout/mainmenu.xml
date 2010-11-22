@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content">
+<LinearLayout android:id="@+id/mainmenulayout" android:layout_width="fill_parent" android:layout_height="fill_parent" android:background="#000000" android:focusable="false"></LinearLayout><RelativeLayout android:layout_height="fill_parent" android:layout_width="fill_parent" android:paddingRight="20dip"><LinearLayout android:id="@+id/mainmenubuttons" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_alignParentRight="true" android:layout_centerVertical="true" style="@style/mainmenupanel">
+<Button android:text="Start" android:id="@+id/mainmenubuttonstart" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/mainmenuitem"></Button>
+<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Options" android:id="@+id/mainmenubuttonoptions" style="@style/mainmenuitem"></Button>
+<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Quit" android:id="@+id/mainmenubuttonquit" style="@style/mainmenuitem"></Button>
+</LinearLayout><LinearLayout android:layout_height="wrap_content" android:layout_width="wrap_content" android:orientation="vertical" android:background="@drawable/menuborder" android:padding="5dip" android:id="@+id/mainmenuoptions" android:layout_centerVertical="true" android:layout_alignParentRight="true" android:visibility="gone">
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:textColor="#FFFFFF" android:text="Options" android:textStyle="bold" android:layout_margin="5dip"></TextView><Button android:layout_width="wrap_content" android:text="Performance" android:id="@+id/mainmenuoptionsbuttonperformance" android:layout_height="wrap_content" style="@style/mainmenuitem"></Button>
+
+<ToggleButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/mainmenuoptionsbuttonsound" android:text="Sound" android:textOff="Sound: Off" android:textOn="Sound: On" style="@style/mainmenuitem"></ToggleButton><ToggleButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/mainmenuoptionsbuttonvibration" android:text="Vibration" android:textOff="Vibrate: Off" android:textOn="Vibrate: On" style="@style/mainmenuitem"></ToggleButton><Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/mainmenuoptionsbuttonback" android:text="Back" style="@style/mainmenuitem"></Button>
+
+
+</LinearLayout><LinearLayout android:layout_height="wrap_content" android:layout_width="wrap_content" android:orientation="vertical" android:background="@drawable/menuborder" android:padding="5dip" android:id="@+id/mainmenuoptionsperformance" android:layout_centerVertical="true" android:layout_alignParentRight="true" android:visibility="gone">
+
+
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:textColor="#FFFFFF" android:textStyle="bold" android:text="Performance Options" android:layout_marginLeft="5dip" android:layout_marginRight="5dip" android:layout_marginTop="5dip"></TextView><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:textColor="#FFFFFF" android:textStyle="bold" android:layout_marginBottom="5dip" android:layout_marginLeft="5dip" android:layout_marginRight="5dip" android:text="(Advanced)"></TextView><ToggleButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/mainmenuoptionsperformancebuttonantialiasing" android:text="Antialiasing" android:textOff="Antialiasing: Off" android:textOn="Antialiasing: On" style="@style/mainmenuitem"></ToggleButton><ToggleButton android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/mainmenuitem" android:id="@+id/mainmenuoptionsperformancebuttonstarfield" android:text="Starfield" android:textOff="Starfield disabled" android:textOn="Starfield enabled"></ToggleButton><Button android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/mainmenuitem" android:id="@+id/mainmenuoptionsperformancebuttonresetdb" android:text="Reset Game"></Button><Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Back" android:id="@+id/mainmenuoptionsperformancebuttonback" style="@style/mainmenuitem"></Button>
+
+</LinearLayout></RelativeLayout>
+
+
+</RelativeLayout>

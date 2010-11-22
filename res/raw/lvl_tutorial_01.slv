@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<level>
+	<name>Introduction</name>
+	<creator>Will</creator>
+	<start x="-40" y="20" />
+	<startspeed x="0" y="0" />
+	<bounds x="300" y="300" />
+	<items>
+		<planet x="0" y="-100" radius="40" density="0.7" bounciness="0.8" />
+		<infobox x="0" y="0" rotation="0" initialshow="true">Hello!$This is a message.
+It has a line break in it.
+Text.
+Text.
+Text.
+Text.
+Text.
+Text.$End of text.</infobox>
+	</items>
+</level>

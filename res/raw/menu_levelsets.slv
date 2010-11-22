@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<level>
+	<name>Levelset Menu</name>
+	<creator>Will</creator>
+	<start x="40" y="0" />
+	<startspeed x="0" y="10" />
+	<bounds x="240" y="160" />
+	<items>
+		<planet x="120" y="0" radius="25" density="0.5f" bounciness="1f" />
+	</items>
+</level>

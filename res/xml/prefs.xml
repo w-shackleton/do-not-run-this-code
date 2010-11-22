@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceCategory android:title="Performance Options"><CheckBoxPreference android:summaryOn="Antialiasing is enabled" android:summaryOff="Antialiasing is disabled" android:key="antialiasing" android:title="Antialiasing" android:enabled="true" android:defaultValue="true"></CheckBoxPreference>
+</PreferenceCategory>
+</PreferenceScreen>

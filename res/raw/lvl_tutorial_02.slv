@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<level>
+	<name>Sample level</name>
+	<creator>Will</creator>
+	<start x="-40" y="20" />
+	<startspeed x="10" y="10" />
+	<bounds x="300" y="300" />
+	<items>
+		<planet x="0" y="-100" radius="40" density="0.7" bounciness="0.8" />
+		<infobox x="0" y="0" rotation="0" initialshow="true">Hello!$This is a message which is shown when the level is started............!
+It has a line break in it.
+Text.
+Text.$End of text.</infobox>
+		<infobox x="100" y="25" rotation="0" initialshow="false">More messages</infobox>
+		<blackhole x="-30" y="-30" />
+		<gravity x="-100" y="-30" sx="10" sy="20" rotation="45" speed="10" />
+		<spring ax="100" ay="100" bx="100" by="140" bounciness="1.1" />
+		<teleporter x="-70" y="70" dx="-70" dy="-70" />
+		<wall x="-100" y="150" size="80" rotation="30" bounciness="0.9" />
+	</items>
+</level>
