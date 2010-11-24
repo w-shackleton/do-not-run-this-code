@@ -7,8 +7,8 @@ using namespace std;
 
 Rectangular::Rectangular(double x, double y, double sx, double sy, double rotation, Misc::Point min, Misc::Point max) :
 	SpaceItem(x, y),
-	sx(sx),
-	sy(sy),
+	sx(abs(sx)),
+	sy(abs(sy)),
 	rotation(rotation),
 	min(min),
 	max(max)
@@ -135,6 +135,8 @@ void Rectangular::moveBorder(int dx, int dy)
 	{
 		sy = py * 2;
 	}
+	sx = abs(sx);
+	sy = abs(sy);
 	Misc::trimMinMax(sx, min.x, max.x);
 	Misc::trimMinMax(sy, min.y, max.y);
 }

@@ -4,6 +4,8 @@ pkglib_LTLIBRARIES= libobjects.la
 libobjects_la_SOURCES = \
 		levelWall.cpp	levelWall.hpp	\
 		wall.cpp	wall.hpp	\
+		infobox.cpp	infobox.hpp	\
+		vortex.cpp	vortex.hpp	\
 		rectangular.cpp	rectangular.hpp	\
 		planet.cpp	planet.hpp	\
 		spherical.cpp	spherical.hpp	\

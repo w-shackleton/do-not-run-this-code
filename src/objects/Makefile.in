@@ -69,7 +69,8 @@ am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
 libobjects_la_DEPENDENCIES =
 am_libobjects_la_OBJECTS = libobjects_la-levelWall.lo \
-	libobjects_la-wall.lo libobjects_la-rectangular.lo \
+	libobjects_la-wall.lo libobjects_la-infobox.lo \
+	libobjects_la-vortex.lo libobjects_la-rectangular.lo \
 	libobjects_la-planet.lo libobjects_la-spherical.lo \
 	libobjects_la-spaceItem.lo
 libobjects_la_OBJECTS = $(am_libobjects_la_OBJECTS)
@@ -267,6 +268,8 @@ pkglib_LTLIBRARIES = libobjects.la
 libobjects_la_SOURCES = \
 		levelWall.cpp	levelWall.hpp	\
 		wall.cpp	wall.hpp	\
+		infobox.cpp	infobox.hpp	\
+		vortex.cpp	vortex.hpp	\
 		rectangular.cpp	rectangular.hpp	\
 		planet.cpp	planet.hpp	\
 		spherical.cpp	spherical.hpp	\
@@ -349,11 +352,13 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-infobox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-levelWall.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-planet.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-rectangular.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-spaceItem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-spherical.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-vortex.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-wall.Plo@am__quote@
 
 .cpp.o:
@@ -395,6 +400,22 @@ libobjects_la-wall.lo: wall.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='wall.cpp' object='libobjects_la-wall.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -c -o libobjects_la-wall.lo `test -f 'wall.cpp' || echo '$(srcdir)/'`wall.cpp
+
+libobjects_la-infobox.lo: infobox.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -MT libobjects_la-infobox.lo -MD -MP -MF $(DEPDIR)/libobjects_la-infobox.Tpo -c -o libobjects_la-infobox.lo `test -f 'infobox.cpp' || echo '$(srcdir)/'`infobox.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libobjects_la-infobox.Tpo $(DEPDIR)/libobjects_la-infobox.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='infobox.cpp' object='libobjects_la-infobox.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -c -o libobjects_la-infobox.lo `test -f 'infobox.cpp' || echo '$(srcdir)/'`infobox.cpp
+
+libobjects_la-vortex.lo: vortex.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -MT libobjects_la-vortex.lo -MD -MP -MF $(DEPDIR)/libobjects_la-vortex.Tpo -c -o libobjects_la-vortex.lo `test -f 'vortex.cpp' || echo '$(srcdir)/'`vortex.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libobjects_la-vortex.Tpo $(DEPDIR)/libobjects_la-vortex.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='vortex.cpp' object='libobjects_la-vortex.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -c -o libobjects_la-vortex.lo `test -f 'vortex.cpp' || echo '$(srcdir)/'`vortex.cpp
 
 libobjects_la-rectangular.lo: rectangular.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -MT libobjects_la-rectangular.lo -MD -MP -MF $(DEPDIR)/libobjects_la-rectangular.Tpo -c -o libobjects_la-rectangular.lo `test -f 'rectangular.cpp' || echo '$(srcdir)/'`rectangular.cpp

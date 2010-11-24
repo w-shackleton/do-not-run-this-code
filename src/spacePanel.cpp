@@ -17,6 +17,8 @@ END_EVENT_TABLE()
 
 #include "objects/planet.hpp"
 #include "objects/wall.hpp"
+#include "objects/infobox.hpp"
+#include "objects/vortex.hpp"
 #include "objects/levelWall.hpp"
 
 using namespace std;
@@ -28,6 +30,8 @@ SpacePanel::SpacePanel(wxWindow *parent) :
 	objs.push_back(new Objects::LevelWall(100, 100));
 	objs.push_back(new Objects::Planet(100, 100, 60));
 	objs.push_back(new Objects::Wall(200, 200, 300, M_PI / 8 * 1));
+	objs.push_back(new Objects::InfoBox(200, 200, M_PI / 8 * -2));
+	objs.push_back(new Objects::Vortex(400, 100, 200, 200, M_PI / 8 * -2));
 
 	objectMenu = new wxMenu;
 	bgMenu = new wxMenu;
