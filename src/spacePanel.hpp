@@ -25,6 +25,7 @@ class SpacePanel : public CairoPanel
 		void mouseMoved(wxMouseEvent& event);
 		void mouseReleased(wxMouseEvent& event);
 		void mouseWheelMoved(wxMouseEvent& event);
+		void middleDown(wxMouseEvent& event);
 		/*void rightClick(wxMouseEvent& event);
 		void mouseLeftWindow(wxMouseEvent& event);
 		void keyPressed(wxKeyEvent& event);
@@ -40,6 +41,7 @@ class SpacePanel : public CairoPanel
 			SEL_Bg_move,
 			SEL_Item_move,
 			SEL_Item_border_move,
+			SEL_Item_rotate,
 		};
 
 		enum

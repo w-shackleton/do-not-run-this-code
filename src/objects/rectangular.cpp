@@ -57,11 +57,8 @@ bool Rectangular::isBorderClicked(int cx, int cy)
 		cornerMatrix.invert();
 		cornerMatrix.transform_point(px, py);
 
-		cout << "HELLO!" << endl;
-
 		double hy = abs(py / sy);
 		double hx = abs(px / sx);
-		cout << hx << ", " << hy << endl;
 		if(abs(py / sy) > abs(px / sx))
 		{
 			// Y is greater, therefore selecting horizontal edge.
@@ -155,4 +152,9 @@ void Rectangular::scale(int r)
 	}
 	Misc::trimMinMax(sx, min.x, max.x);
 	Misc::trimMinMax(sy, min.y, max.y);
+}
+
+void Rectangular::rotate(double r)
+{
+	rotation += r * ROTATION_MULTIPLIER;
 }

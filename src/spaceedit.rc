@@ -13,7 +13,7 @@ BEGIN
       VALUE "LegalCopyright", "SpaceGame Level editor"
       VALUE "OriginalFilename", "spaceedit.exe"
       VALUE "ProductName", "SpaceGame Level editor"
-      VALUE "ProductVersion", "0.1 Alpha"
+      VALUE "ProductVersion", "0.1 Devel"
     END
   END
 

@@ -15,6 +15,7 @@ namespace Objects
 			bool isBorderClicked(int cx, int cy);
 
 			void moveBorder(int dx, int dy);
+			void rotate(double r); // In RADIANS
 	};
 };
 #endif

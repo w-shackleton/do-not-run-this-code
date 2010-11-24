@@ -5,6 +5,7 @@
 #include <cairomm/context.h>
 
 #define BORDER_CLICK_SIZE 8
+#define ROTATION_MULTIPLIER 0.04 /* Arbitary value, purely for user interactivity */
 
 namespace Objects
 {
@@ -22,6 +23,7 @@ namespace Objects
 			virtual void moveBorder(int dx, int dy) = 0;
 
 			virtual void scale(int r) = 0;
+			virtual void rotate(double r) = 0; // In RADIANS
 	};
 };
 

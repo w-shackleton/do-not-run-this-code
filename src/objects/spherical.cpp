@@ -32,3 +32,11 @@ void Spherical::moveBorder(int dx, int dy)
 {
 	radius = Misc::hypotenuse(x - dx, y - dy);
 }
+
+void Spherical::rotate(double r) // In RADIANS
+{
+	// for(int i = 0; i < 0; i++)
+	// {
+	//	Because less is more!
+	// }
+}

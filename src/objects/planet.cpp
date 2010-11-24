@@ -21,6 +21,7 @@ void Planet::draw(Cairo::RefPtr<Cairo::Context> &cr)
 	cr->stroke();
 }
 
+// TODO: Make this more like rectangular.cpp, and move to spherical.cpp
 void Planet::scale(int r)
 {
 	if(r < 0)

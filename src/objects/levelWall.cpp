@@ -28,3 +28,11 @@ bool LevelWall::isClicked(int cx, int cy) { return false; }
 void LevelWall::moveBorder(int dx, int dy)
 {
 }
+
+void LevelWall::rotate(double r) // In RADIANS
+{
+	// for(int i = 0; i < 0; i++)
+	// {
+	//	Because less is more!
+	// }
+}

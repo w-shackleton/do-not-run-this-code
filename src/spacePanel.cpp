@@ -4,6 +4,8 @@ BEGIN_EVENT_TABLE(SpacePanel, CairoPanel)
 	EVT_LEFT_DOWN(SpacePanel::mouseDown)
 	EVT_MOTION(SpacePanel::mouseMoved)
 	EVT_LEFT_UP(SpacePanel::mouseReleased)
+	EVT_MIDDLE_DOWN(SpacePanel::middleDown)
+	EVT_MIDDLE_UP(SpacePanel::mouseReleased)
 /*	EVT_RIGHT_DOWN(SpacePanel::rightClick)
 	EVT_LEAVE_WINDOW(SpacePanel::mouseLeftWindow)
 	EVT_KEY_DOWN(SpacePanel::keyPressed)
@@ -22,6 +24,8 @@ END_EVENT_TABLE()
 #include "objects/levelWall.hpp"
 
 using namespace std;
+
+// TODO: Add a whole stack of documentation to this!
 
 SpacePanel::SpacePanel(wxWindow *parent) :
 	CairoPanel(parent),
@@ -105,16 +109,23 @@ void SpacePanel::mouseDown(wxMouseEvent& event)
 {
 	if(event.m_shiftDown) // shift means apply to bg
 		sel = SEL_Bg_move;
+	else if(event.m_controlDown)
+		sel = SEL_Item_rotate;
 	else
 	{
-		int clickType = getClickedObject(event.m_x, event.m_y, true);
+		switch(getClickedObject(event.m_x, event.m_y, true))
+		{
 
-		if(clickType == CLICKED_Inner)
-			sel = SEL_Item_move;
-		else if(clickType == CLICKED_Border)
-			sel = SEL_Item_border_move;
-		else
-			sel = SEL_Bg_move;
+			case CLICKED_Inner:
+				sel = SEL_Item_move;
+				break;
+			case CLICKED_Border:
+				sel = SEL_Item_border_move;
+				break;
+			default:
+				sel = SEL_Bg_move;
+				break;
+		}
 	}
 	mousePrevPos = event;
 }
@@ -122,30 +133,34 @@ void SpacePanel::mouseDown(wxMouseEvent& event)
 void SpacePanel::mouseMoved(wxMouseEvent& event)
 {
 	wxPoint distMoved = event - mousePrevPos;
-	if(sel == SEL_Bg_move)
+	double tx = event.m_x, ty = event.m_y;
+	switch(sel)
 	{
-		matrix.transform(distMoved);
-		redraw(true);
-	}
-	else if(sel == SEL_Item_move)
-	{
-		distMoved.x /= matrix.sx;
-		distMoved.y /= matrix.sy;
-		selectedItem->move(distMoved.x, distMoved.y);
-		redraw(true);
-	}
-	else if(sel == SEL_Item_border_move)
-	{
-		double tx = event.m_x, ty = event.m_y;
-		matrix.get_inverse_matrix().transform_point(tx, ty);
+		case SEL_Bg_move:
+			matrix.transform(distMoved);
+			redraw(true);
+			break;
+		case SEL_Item_move:
+			distMoved.x /= matrix.sx;
+			distMoved.y /= matrix.sy;
+			selectedItem->move(distMoved.x, distMoved.y);
+			redraw(true);
+			break;
+		case SEL_Item_border_move:
+			matrix.get_inverse_matrix().transform_point(tx, ty);
 
-		selectedItem->moveBorder(tx, ty);
-		redraw(true);
+			selectedItem->moveBorder(tx, ty);
+			redraw(true);
+			break;
+		case SEL_Item_rotate:
+			selectedItem->rotate(distMoved.y);
+			redraw(true);
+			break;
 	}
 	mousePrevPos = event;
 }
 
-void SpacePanel::mouseReleased(wxMouseEvent& event)
+void SpacePanel::mouseReleased(wxMouseEvent& event) // Used for several buttons on the mouse
 {
 	sel= SEL_None;
 }
@@ -167,6 +182,14 @@ void SpacePanel::mouseWheelMoved(wxMouseEvent& event)
 			matrix.scale_rotation(event.m_wheelRotation);
 		}
 		redraw(true);
+	}
+}
+
+void SpacePanel::middleDown(wxMouseEvent& event)
+{
+	if(getClickedObject(event.m_x, event.m_y, false) == CLICKED_Inner) // Any other sort of click
+	{
+		sel = SEL_Item_rotate;
 	}
 }
 

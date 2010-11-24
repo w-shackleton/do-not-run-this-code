@@ -38,6 +38,7 @@ namespace Objects
 			void moveBorder(int dx, int dy);
 
 			void scale(int r);
+			void rotate(double r); // In RADIANS
 	};
 };
 
