@@ -1,1 +1,13 @@
 autom4te.cache
+Makefile
+*.la
+*.lo
+.deps
+.libs
+config.h
+config.log
+config.status
+libtool
+stamp-h1
+src/spaceedit
+src/spaceedit.exe

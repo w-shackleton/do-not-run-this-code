@@ -55,6 +55,9 @@ SpacePanel::~SpacePanel()
 void SpacePanel::redraw(bool repaint)
 {
 	CairoPanel::redraw(repaint);
+
+	//cr->set_antialias(Cairo::ANTIALIAS_NONE);
+
 	cr->save();
 	cr->set_source_rgb(0.5, 0.6, 0.7);
 	cr->paint();
@@ -74,6 +77,24 @@ void SpacePanel::redraw(bool repaint)
 	{
 		(*it)->draw(cr);
 	}
+
+	cr->translate(-matrix.tx / matrix.sx, -matrix.ty / matrix.sy);
+
+	// Draw screen size hinter
+	cr->set_source_rgba(0.9, 0.9, 0.3, 0.1);
+	cr->rectangle(0, 0, PHONE_SCREEN_X, PHONE_SCREEN_Y);
+	cr->fill();
+
+	double dashesData[] = {2, 2};
+	vector<double> dashes(dashesData, dashesData + sizeof(dashesData) / sizeof(double));
+	cr->set_dash(dashes, 0);
+
+	cr->set_source_rgba(0, 0, 0, 0.3);
+	cr->rectangle(0, 0, PHONE_SCREEN_X, PHONE_SCREEN_Y);
+	cr->stroke();
+
+	vector<double> blankDashes(0, 0);
+	cr->set_dash(blankDashes, 0);
 }
 
 int SpacePanel::getClickedObject(double x, double y, bool useBorder)
@@ -110,7 +131,10 @@ void SpacePanel::mouseDown(wxMouseEvent& event)
 	if(event.m_shiftDown) // shift means apply to bg
 		sel = SEL_Bg_move;
 	else if(event.m_controlDown)
+	{
 		sel = SEL_Item_rotate;
+		getClickedObject(event.m_x, event.m_y, false);
+	}
 	else
 	{
 		switch(getClickedObject(event.m_x, event.m_y, true))
@@ -171,15 +195,15 @@ void SpacePanel::mouseWheelMoved(wxMouseEvent& event)
 	{
 		if(event.m_shiftDown) // shift means apply to bg
 		{
-			matrix.scale_rotation(event.m_wheelRotation);
+			matrix.scale_rotation(-event.m_wheelRotation);
 		}
 		else if(getClickedObject(event.m_x, event.m_y, false) == CLICKED_Inner)
 		{
-			selectedItem->scale(event.m_wheelRotation);
+			selectedItem->scale(-event.m_wheelRotation);
 		}
 		else
 		{
-			matrix.scale_rotation(event.m_wheelRotation);
+			matrix.scale_rotation(-event.m_wheelRotation);
 		}
 		redraw(true);
 	}

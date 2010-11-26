@@ -5,7 +5,7 @@
 #include <cairomm/context.h>
 
 #define BORDER_CLICK_SIZE 8
-#define ROTATION_MULTIPLIER 0.04 /* Arbitary value, purely for user interactivity */
+#define ROTATION_MULTIPLIER 0.01 /* Arbitary value, purely for user interactivity */
 
 namespace Objects
 {

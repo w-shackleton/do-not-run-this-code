@@ -42,3 +42,8 @@ string Misc::Data::getFilePath(string file)
 {
 	return datadir + "/" + file;
 }
+
+//wxString Misc::Data::getFilePath(wxString file)
+//{
+	//return wxString(getFilePath(file.c_str()), wxConvUTF8);
+//}

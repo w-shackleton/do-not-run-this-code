@@ -17,7 +17,7 @@ void Vortex::draw(Cairo::RefPtr<Cairo::Context> &cr)
 	cr->translate(x, y);
 	cr->rotate(rotation);
 
-	cr->set_source_rgb(0.2, 0.2, 0.2);
+	cr->set_source_rgb(0.8, 0.0, 0.0);
 	cr->rectangle( - (sx / 2),  - (sy / 2), sx, sy);
 	cr->fill();
 

@@ -8,6 +8,9 @@
 
 #include <list>
 
+#define PHONE_SCREEN_X 480
+#define PHONE_SCREEN_Y 320
+
 class SpacePanel : public CairoPanel
 {
 	public:

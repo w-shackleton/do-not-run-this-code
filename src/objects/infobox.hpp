@@ -2,6 +2,8 @@
 #define INFOBOX_H
 
 #include "rectangular.hpp"
+#include <cairomm/surface.h>
+#include <cairomm/refptr.h>
 
 namespace Objects
 {
@@ -10,6 +12,8 @@ namespace Objects
 		public:
 			InfoBox(double x, double y, double rotation);
 			void draw(Cairo::RefPtr<Cairo::Context> &cr);
+		protected:
+			Cairo::RefPtr<Cairo::ImageSurface> img;
 	};
 };
 
