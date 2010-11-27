@@ -19,7 +19,7 @@ namespace Objects
 			virtual void draw(Cairo::RefPtr<Cairo::Context> &cr) = 0;
 			virtual bool isClicked(int cx, int cy) = 0;
 			virtual bool isBorderClicked(int cx, int cy) = 0;
-			void move(int dx, int dy);
+			void move(double dx, double dy);
 			virtual void moveBorder(int dx, int dy) = 0;
 
 			virtual void scale(int r) = 0;

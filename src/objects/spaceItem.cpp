@@ -8,7 +8,7 @@ SpaceItem::SpaceItem(double sx, double sy) :
 {
 }
 
-void SpaceItem::move(int dx, int dy)
+void SpaceItem::move(double dx, double dy)
 {
 	x += dx;
 	y += dy;

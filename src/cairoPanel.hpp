@@ -27,7 +27,10 @@ class CairoPanel : public wxPanel
 		Cairo::RefPtr<Cairo::ImageSurface> surface;
 		Cairo::RefPtr<Cairo::Context> cr;
 
-		virtual void redraw(bool repaint);
+		void redraw(bool toCairo, bool toScreen);
+		virtual void redraw_pre();
+		virtual void redraw_draw() = 0;
+		virtual void redraw_post(bool toScreen);
 
 		MatrixHelper matrix;
 };

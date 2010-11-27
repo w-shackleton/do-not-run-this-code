@@ -19,7 +19,7 @@ class SpacePanel : public CairoPanel
 
 		DECLARE_EVENT_TABLE();
 	protected:
-		void redraw(bool repaint);
+		void redraw_draw();
 
 		int getClickedObject(double x, double y, bool useBorder);
 
@@ -73,6 +73,6 @@ class SpacePanel : public CairoPanel
 
 // Some useful operators
 
-wxPoint operator-(const wxMouseEvent& lhs, const wxMouseEvent& rhs);
+wxRealPoint operator-(const wxMouseEvent& lhs, const wxMouseEvent& rhs);
 
 #endif

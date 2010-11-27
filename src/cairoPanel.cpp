@@ -20,7 +20,8 @@ CairoPanel::CairoPanel(wxWindow* parent)
 
 void CairoPanel::paintEvent(wxPaintEvent& evt)
 {
-	wxAutoBufferedPaintDC dc(this);
+	//wxAutoBufferedPaintDC dc(this);
+	wxPaintDC dc(this);
 	render(dc);
 }
 
@@ -64,14 +65,25 @@ void CairoPanel::sizeEvent(wxSizeEvent& evt)
 	surface = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, pSize.GetWidth(), pSize.GetHeight());
 	cr = Cairo::Context::create(surface);
 
-	redraw(false);
+	redraw(true, true);
 }
 
-void CairoPanel::redraw(bool repaint)
+void CairoPanel::redraw(bool toCairo, bool toScreen)
+{
+	redraw_pre();
+	if(toCairo) redraw_draw();
+	redraw_post(toScreen);
+}
+
+void CairoPanel::redraw_pre()
 {
 	cr->set_matrix(matrix.get_matrix());
-	if(repaint)
-		Refresh();
+}
+
+void CairoPanel::redraw_post(bool toScreen)
+{
+	if(toScreen)
+		paintNow();
 }
 
 ostream& operator<<(ostream& out, const Col& r)

@@ -12,7 +12,7 @@ class MatrixHelper : public Cairo::Matrix
 		Cairo::Matrix& get_inverse_matrix();
 		void reset();
 		void transform(double x, double y);
-		void transform(wxPoint p);
+		void transform(wxRealPoint p);
 		void scale(double s);
 		void scale_rotation(int r);
 

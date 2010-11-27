@@ -40,7 +40,7 @@ void MatrixHelper::transform(double x, double y)
 	ty += y;
 }
 
-void MatrixHelper::transform(wxPoint p)
+void MatrixHelper::transform(wxRealPoint p)
 {
 	tx += p.x;
 	ty += p.y;

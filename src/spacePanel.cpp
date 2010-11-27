@@ -41,6 +41,8 @@ SpacePanel::SpacePanel(wxWindow *parent) :
 	bgMenu = new wxMenu;
 
 	objectMenu->Append(ID_Object_delete, _("&Delete"));
+
+	redraw(true, true);
 }
 
 SpacePanel::~SpacePanel()
@@ -52,10 +54,8 @@ SpacePanel::~SpacePanel()
 	}
 }
 
-void SpacePanel::redraw(bool repaint)
+void SpacePanel::redraw_draw()
 {
-	CairoPanel::redraw(repaint);
-
 	//cr->set_antialias(Cairo::ANTIALIAS_NONE);
 
 	cr->save();
@@ -156,29 +156,29 @@ void SpacePanel::mouseDown(wxMouseEvent& event)
 
 void SpacePanel::mouseMoved(wxMouseEvent& event)
 {
-	wxPoint distMoved = event - mousePrevPos;
+	wxRealPoint distMoved = event - mousePrevPos;
 	double tx = event.m_x, ty = event.m_y;
 	switch(sel)
 	{
 		case SEL_Bg_move:
 			matrix.transform(distMoved);
-			redraw(true);
+			redraw(true, true);
 			break;
 		case SEL_Item_move:
 			distMoved.x /= matrix.sx;
 			distMoved.y /= matrix.sy;
 			selectedItem->move(distMoved.x, distMoved.y);
-			redraw(true);
+			redraw(true, true);
 			break;
 		case SEL_Item_border_move:
 			matrix.get_inverse_matrix().transform_point(tx, ty);
 
 			selectedItem->moveBorder(tx, ty);
-			redraw(true);
+			redraw(true, true);
 			break;
 		case SEL_Item_rotate:
 			selectedItem->rotate(distMoved.y);
-			redraw(true);
+			redraw(true, true);
 			break;
 	}
 	mousePrevPos = event;
@@ -205,7 +205,7 @@ void SpacePanel::mouseWheelMoved(wxMouseEvent& event)
 		{
 			matrix.scale_rotation(-event.m_wheelRotation);
 		}
-		redraw(true);
+		redraw(true, true);
 	}
 }
 
@@ -228,15 +228,6 @@ void SpacePanel::contextMenu(wxContextMenuEvent& event)
 	{
 		PopupMenu(bgMenu);
 	}
-//	redraw(true);
-}
-
-wxPoint operator-(const wxMouseEvent& lhs, const wxMouseEvent& rhs)
-{
-	wxPoint temp;
-	temp.x = lhs.m_x - rhs.m_x;
-	temp.y = lhs.m_y - rhs.m_y;
-	return temp;
 }
 
 void SpacePanel::onObjectMenuDelete(wxCommandEvent& WXUNUSED(event))
@@ -245,5 +236,13 @@ void SpacePanel::onObjectMenuDelete(wxCommandEvent& WXUNUSED(event))
 
 	objs.remove(selectedItem);
 
-	redraw(true);
+	redraw(true, true);
+}
+
+wxRealPoint operator-(const wxMouseEvent& lhs, const wxMouseEvent& rhs)
+{
+	wxRealPoint temp;
+	temp.x = lhs.m_x - rhs.m_x;
+	temp.y = lhs.m_y - rhs.m_y;
+	return temp;
 }
