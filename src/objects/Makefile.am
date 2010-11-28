@@ -9,8 +9,9 @@ libobjects_la_SOURCES = \
 		rectangular.cpp	rectangular.hpp	\
 		planet.cpp	planet.hpp	\
 		spherical.cpp	spherical.hpp	\
-		spaceItem.cpp	spaceItem.hpp
+		spaceItem.cpp	spaceItem.hpp	\
+		spaceItems.hpp
 
-libobjects_la_LIBADD = @Cairomm_LIBS@
+libobjects_la_LIBADD = @Cairomm_LIBS@ ../misc/libmisc.la
 libobjects_la_CXXFLAGS = @Cairomm_CFLAGS@
 libobjects_la_LDFLAGS      = -no-undefined -version-info 0:0:0

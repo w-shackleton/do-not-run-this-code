@@ -4,12 +4,14 @@
 #include <wx/wx.h>
 #include "spacePanel.hpp"
 
+#include <levelrw/levelManager.hpp>
+
 class SpaceFrame: public wxFrame
 {
 	public:
 		SpaceFrame();
 		DECLARE_EVENT_TABLE()
-	private:
+	protected:
 		wxMenu *menuFile, *menuAbout;
 		wxMenuBar *menuBar;
 		enum
@@ -23,6 +25,8 @@ class SpaceFrame: public wxFrame
 
 		void OnQuit(wxCommandEvent& event);
 		void OnAbout(wxCommandEvent& event);
+
+		Levels::LevelManager lmanager;
 };
 
 #endif
