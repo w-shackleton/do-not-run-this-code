@@ -53,7 +53,7 @@ am_spaceedit_OBJECTS = spaceedit-matrixHelper.$(OBJEXT) \
 	spaceedit-spaceFrame.$(OBJEXT) spaceedit-spaceApp.$(OBJEXT)
 spaceedit_OBJECTS = $(am_spaceedit_OBJECTS)
 spaceedit_DEPENDENCIES = objects/libobjects.la misc/libmisc.la \
-	$(am__append_1)
+	levelrw/liblevelrw.la $(am__append_1)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
@@ -278,10 +278,12 @@ sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
+tinyxml_CFLAGS = @tinyxml_CFLAGS@
+tinyxml_LIBS = @tinyxml_LIBS@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = objects misc
+SUBDIRS = misc objects levelrw
 spaceedit_SOURCES = \
 		matrixHelper.cpp	matrixHelper.hpp	\
 		spacePanel.cpp		spacePanel.hpp		\
@@ -290,8 +292,8 @@ spaceedit_SOURCES = \
 		spaceApp.cpp		spaceApp.hpp
 
 spaceedit_LDADD = @WX_LIBS@ @Cairomm_LIBS@ objects/libobjects.la \
-	misc/libmisc.la $(am__append_1)
-spaceedit_CXXFLAGS = @WXCPPFLAGS@ @Cairomm_CFLAGS@
+	misc/libmisc.la levelrw/liblevelrw.la $(am__append_1)
+spaceedit_CXXFLAGS = @WXCPPFLAGS@ @Cairomm_CFLAGS@ -Iobjects
 EXTRA_DIST = spaceedit.rc
 CLEANFILES = spaceedit.res
 all: all-recursive

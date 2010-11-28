@@ -8,13 +8,15 @@
 
 #include <list>
 
+#include <levelrw/levelManager.hpp>
+
 #define PHONE_SCREEN_X 480
 #define PHONE_SCREEN_Y 320
 
 class SpacePanel : public CairoPanel
 {
 	public:
-		SpacePanel(wxWindow *parent);
+		SpacePanel(wxWindow *parent, Levels::LevelManager &lmanager);
 		~SpacePanel();
 
 		DECLARE_EVENT_TABLE();
@@ -37,6 +39,7 @@ class SpacePanel : public CairoPanel
 		void contextMenu(wxContextMenuEvent& event);
 
 		wxMouseEvent mousePrevPos;
+		Levels::LevelManager &lmanager;
 
 		enum
 		{
@@ -64,8 +67,6 @@ class SpacePanel : public CairoPanel
 		   */
 		int sel;
 		Objects::SpaceItem *selectedItem;
-
-		std::list<Objects::SpaceItem *> objs;
 
 		wxMenu *objectMenu, *bgMenu;
 		void onObjectMenuDelete(wxCommandEvent& WXUNUSED(event));

@@ -24,34 +24,29 @@ END_EVENT_TABLE()
 #include "objects/levelWall.hpp"
 
 using namespace std;
+using namespace Levels;
 
 // TODO: Add a whole stack of documentation to this!
 
-SpacePanel::SpacePanel(wxWindow *parent) :
+SpacePanel::SpacePanel(wxWindow *parent, LevelManager &lmanager) :
 	CairoPanel(parent),
-	mousePrevPos(wxEVT_MOTION)
+	mousePrevPos(wxEVT_MOTION),
+	lmanager(lmanager)
 {
-	objs.push_back(new Objects::LevelWall(100, 100));
-	objs.push_back(new Objects::Planet(100, 100, 60));
-	objs.push_back(new Objects::Wall(200, 200, 300, M_PI / 8 * 1));
-	objs.push_back(new Objects::InfoBox(200, 200, M_PI / 8 * -2));
-	objs.push_back(new Objects::Vortex(400, 100, 200, 200, M_PI / 8 * -2));
-
 	objectMenu = new wxMenu;
 	bgMenu = new wxMenu;
 
 	objectMenu->Append(ID_Object_delete, _("&Delete"));
 
 	redraw(true, true);
+
+	// Save level test code
+	lmanager.openLevel("testin.slv");
+	lmanager.saveLevel("testout.slv");
 }
 
 SpacePanel::~SpacePanel()
 {
-	for(list<Objects::SpaceItem *>::iterator it = objs.begin(); it != objs.end(); it++)
-	{
-		cout << "Deleting SpaceItem " << *it << endl;
-		delete *it;
-	}
 }
 
 void SpacePanel::redraw_draw()
@@ -73,7 +68,7 @@ void SpacePanel::redraw_draw()
 	cr->stroke();
 
 	// Draw objects
-	for(list<Objects::SpaceItem *>::iterator it = objs.begin(); it != objs.end(); it++)
+	for(list<Objects::SpaceItem *>::iterator it = lmanager.objs.begin(); it != lmanager.objs.end(); it++)
 	{
 		(*it)->draw(cr);
 	}
@@ -105,7 +100,7 @@ int SpacePanel::getClickedObject(double x, double y, bool useBorder)
 
 	selectedItem = NULL;
 	int ret = CLICKED_None;
-	for(list<Objects::SpaceItem *>::iterator it = objs.begin(); it != objs.end(); it++)
+	for(list<Objects::SpaceItem *>::iterator it = lmanager.objs.begin(); it != lmanager.objs.end(); it++)
 	{
 		if(useBorder)
 			if((*it)->isBorderClicked(tx, ty))
@@ -234,7 +229,7 @@ void SpacePanel::onObjectMenuDelete(wxCommandEvent& WXUNUSED(event))
 {
 	cout << "Deleting item..." << endl;
 
-	objs.remove(selectedItem);
+	lmanager.objs.remove(selectedItem);
 
 	redraw(true, true);
 }

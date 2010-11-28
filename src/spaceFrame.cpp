@@ -37,7 +37,7 @@ SpaceFrame::SpaceFrame()
 	SetStatusText(_("SpaceGame Editor"));
 
 	hcontainer = new wxBoxSizer(wxHORIZONTAL);
-	spacePanel = new SpacePanel(this);
+	spacePanel = new SpacePanel(this, lmanager);
 	hcontainer->Add(spacePanel, 1, wxEXPAND);
 
 	SetSizer(hcontainer);

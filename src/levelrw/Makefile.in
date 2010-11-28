@@ -34,7 +34,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = src/misc
+subdir = src/levelrw
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -67,15 +67,17 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
-libmisc_la_LIBADD =
-am_libmisc_la_OBJECTS = geometry.lo data.lo
-libmisc_la_OBJECTS = $(am_libmisc_la_OBJECTS)
+liblevelrw_la_DEPENDENCIES = ../objects/libobjects.la
+am_liblevelrw_la_OBJECTS = liblevelrw_la-levelrw.lo \
+	liblevelrw_la-levelManager.lo
+liblevelrw_la_OBJECTS = $(am_liblevelrw_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
-libmisc_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(libmisc_la_LDFLAGS) $(LDFLAGS) -o $@
+liblevelrw_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(liblevelrw_la_CXXFLAGS) $(CXXFLAGS) $(liblevelrw_la_LDFLAGS) \
+	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -118,8 +120,8 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(libmisc_la_SOURCES)
-DIST_SOURCES = $(libmisc_la_SOURCES)
+SOURCES = $(liblevelrw_la_SOURCES)
+DIST_SOURCES = $(liblevelrw_la_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -261,16 +263,14 @@ tinyxml_LIBS = @tinyxml_LIBS@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-pkglib_LTLIBRARIES = libmisc.la
-libmisc_la_SOURCES = \
-		geometry.cpp	geometry.hpp	\
-		data.cpp	data.hpp
+pkglib_LTLIBRARIES = liblevelrw.la
+liblevelrw_la_SOURCES = \
+		     levelrw.cpp	levelrw.hpp		\
+		     levelManager.cpp	levelManager.hpp
 
-
-#libmisc_la_LIBADD = @WX_LIBS@
-#libmisc_la_CXXFLAGS = @WXCPPFLAGS@
-libmisc_la_LDFLAGS = -no-undefined -version-info 0:0:0
-AM_CPPFLAGS = -DPREFIX='"$(prefix)"'
+liblevelrw_la_LIBADD = @tinyxml_LIBS@ @Cairomm_LIBS@ ../objects/libobjects.la
+liblevelrw_la_CXXFLAGS = @tinyxml_CFLAGS@ @Cairomm_CFLAGS@ -I../objects
+liblevelrw_la_LDFLAGS = -no-undefined -version-info 0:0:0
 all: all-am
 
 .SUFFIXES:
@@ -284,9 +284,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/misc/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/levelrw/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu src/misc/Makefile
+	  $(AUTOMAKE) --gnu src/levelrw/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -336,8 +336,8 @@ clean-pkglibLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libmisc.la: $(libmisc_la_OBJECTS) $(libmisc_la_DEPENDENCIES) 
-	$(AM_V_CXXLD)$(libmisc_la_LINK) -rpath $(pkglibdir) $(libmisc_la_OBJECTS) $(libmisc_la_LIBADD) $(LIBS)
+liblevelrw.la: $(liblevelrw_la_OBJECTS) $(liblevelrw_la_DEPENDENCIES) 
+	$(AM_V_CXXLD)$(liblevelrw_la_LINK) -rpath $(pkglibdir) $(liblevelrw_la_OBJECTS) $(liblevelrw_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -345,8 +345,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/data.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/geometry.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liblevelrw_la-levelManager.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liblevelrw_la-levelrw.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -371,6 +371,22 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
+
+liblevelrw_la-levelrw.lo: levelrw.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblevelrw_la_CXXFLAGS) $(CXXFLAGS) -MT liblevelrw_la-levelrw.lo -MD -MP -MF $(DEPDIR)/liblevelrw_la-levelrw.Tpo -c -o liblevelrw_la-levelrw.lo `test -f 'levelrw.cpp' || echo '$(srcdir)/'`levelrw.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/liblevelrw_la-levelrw.Tpo $(DEPDIR)/liblevelrw_la-levelrw.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='levelrw.cpp' object='liblevelrw_la-levelrw.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblevelrw_la_CXXFLAGS) $(CXXFLAGS) -c -o liblevelrw_la-levelrw.lo `test -f 'levelrw.cpp' || echo '$(srcdir)/'`levelrw.cpp
+
+liblevelrw_la-levelManager.lo: levelManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblevelrw_la_CXXFLAGS) $(CXXFLAGS) -MT liblevelrw_la-levelManager.lo -MD -MP -MF $(DEPDIR)/liblevelrw_la-levelManager.Tpo -c -o liblevelrw_la-levelManager.lo `test -f 'levelManager.cpp' || echo '$(srcdir)/'`levelManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/liblevelrw_la-levelManager.Tpo $(DEPDIR)/liblevelrw_la-levelManager.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='levelManager.cpp' object='liblevelrw_la-levelManager.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblevelrw_la_CXXFLAGS) $(CXXFLAGS) -c -o liblevelrw_la-levelManager.lo `test -f 'levelManager.cpp' || echo '$(srcdir)/'`levelManager.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

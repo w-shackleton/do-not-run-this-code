@@ -52,6 +52,7 @@ esac
 AM_CONDITIONAL([WIN32], [test $win32 = "win32"])
 
 PKG_CHECK_MODULES([Cairomm], [cairomm-1.0 >= 1.8.0])
+PKG_CHECK_MODULES([tinyxml], [tinyxml >= 2.5.0])
 
 # Checks for header files.
 
@@ -64,5 +65,6 @@ data/Makefile
 src/Makefile
 src/objects/Makefile
 src/misc/Makefile
+src/levelrw/Makefile
 ])
 AC_OUTPUT

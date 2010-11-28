@@ -67,7 +67,7 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
-libobjects_la_DEPENDENCIES =
+libobjects_la_DEPENDENCIES = ../misc/libmisc.la
 am_libobjects_la_OBJECTS = libobjects_la-levelWall.lo \
 	libobjects_la-wall.lo libobjects_la-infobox.lo \
 	libobjects_la-vortex.lo libobjects_la-rectangular.lo \
@@ -261,6 +261,8 @@ sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
+tinyxml_CFLAGS = @tinyxml_CFLAGS@
+tinyxml_LIBS = @tinyxml_LIBS@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
@@ -273,9 +275,10 @@ libobjects_la_SOURCES = \
 		rectangular.cpp	rectangular.hpp	\
 		planet.cpp	planet.hpp	\
 		spherical.cpp	spherical.hpp	\
-		spaceItem.cpp	spaceItem.hpp
+		spaceItem.cpp	spaceItem.hpp	\
+		spaceItems.hpp
 
-libobjects_la_LIBADD = @Cairomm_LIBS@
+libobjects_la_LIBADD = @Cairomm_LIBS@ ../misc/libmisc.la
 libobjects_la_CXXFLAGS = @Cairomm_CFLAGS@
 libobjects_la_LDFLAGS = -no-undefined -version-info 0:0:0
 all: all-am
