@@ -9,6 +9,7 @@ namespace Objects
 	{
 		protected:
 			double radius;
+			virtual void saveXMLChild(TiXmlElement* item);
 		public:
 			Spherical(double sx, double sy, double sradius);
 			bool isClicked(int cx, int cy);

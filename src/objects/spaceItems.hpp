@@ -5,7 +5,6 @@
 #include<planet.hpp>
 #include<spaceItem.hpp>
 #include<vortex.hpp>
-#include<levelWall.hpp>
 #include<rectangular.hpp>
 #include<spherical.hpp>
 #include<wall.hpp>

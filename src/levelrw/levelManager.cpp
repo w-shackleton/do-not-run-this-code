@@ -2,6 +2,9 @@
 
 using namespace Levels;
 using namespace std;
+using namespace Misc;
+
+#include "spaceItems.hpp"
 
 LevelManager::LevelManager() :
 	objs(_objs)
@@ -17,16 +20,19 @@ void LevelManager::openLevel(std::string filename)
 {
 	// Load level here...
 	cleanObjs();
-	objs.push_back(new Objects::LevelWall(100, 100));
 	objs.push_back(new Objects::Planet(100, 100, 60));
 	objs.push_back(new Objects::Wall(200, 200, 300, M_PI / 8 * 1));
 	objs.push_back(new Objects::InfoBox(200, 200, M_PI / 8 * -2));
 	objs.push_back(new Objects::Vortex(400, 100, 200, 200, M_PI / 8 * -2));
+
+	levelName = "Test level";
+	creator = "Will";
+	border = Point(1000, 1000);
 }
 
 void LevelManager::saveLevel(std::string filename)
 {
-	writer.write(filename, &objs);
+	writer.write(filename, &objs, levelName, creator, size.x, size.y, speed.x, speed.y, border.x, border.y);
 }
 
 void LevelManager::cleanObjs()

@@ -17,12 +17,6 @@ BEGIN_EVENT_TABLE(SpacePanel, CairoPanel)
 	EVT_MENU(SpacePanel::ID_Object_delete, SpacePanel::onObjectMenuDelete)
 END_EVENT_TABLE()
 
-#include "objects/planet.hpp"
-#include "objects/wall.hpp"
-#include "objects/infobox.hpp"
-#include "objects/vortex.hpp"
-#include "objects/levelWall.hpp"
-
 using namespace std;
 using namespace Levels;
 

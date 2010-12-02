@@ -8,8 +8,8 @@ spaceedit_SOURCES = \
 		spaceFrame.cpp		spaceFrame.hpp		\
 		spaceApp.cpp		spaceApp.hpp
 
-spaceedit_LDADD = @WX_LIBS@ @Cairomm_LIBS@ objects/libobjects.la misc/libmisc.la levelrw/liblevelrw.la
-spaceedit_CXXFLAGS = @WXCPPFLAGS@ @Cairomm_CFLAGS@ -Iobjects
+spaceedit_LDADD = @WX_LIBS@ @Cairomm_LIBS@ @tinyxml_LIBS@ objects/libobjects.la misc/libmisc.la levelrw/liblevelrw.la
+spaceedit_CXXFLAGS = @WXCPPFLAGS@ @Cairomm_CFLAGS@ @tinyxml_CFLAGS@ -Iobjects -Imisc
 
 if WIN32
 

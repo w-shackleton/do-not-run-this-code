@@ -68,11 +68,10 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
 libobjects_la_DEPENDENCIES = ../misc/libmisc.la
-am_libobjects_la_OBJECTS = libobjects_la-levelWall.lo \
-	libobjects_la-wall.lo libobjects_la-infobox.lo \
-	libobjects_la-vortex.lo libobjects_la-rectangular.lo \
-	libobjects_la-planet.lo libobjects_la-spherical.lo \
-	libobjects_la-spaceItem.lo
+am_libobjects_la_OBJECTS = libobjects_la-wall.lo \
+	libobjects_la-infobox.lo libobjects_la-vortex.lo \
+	libobjects_la-rectangular.lo libobjects_la-planet.lo \
+	libobjects_la-spherical.lo libobjects_la-spaceItem.lo
 libobjects_la_OBJECTS = $(am_libobjects_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -268,7 +267,6 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 pkglib_LTLIBRARIES = libobjects.la
 libobjects_la_SOURCES = \
-		levelWall.cpp	levelWall.hpp	\
 		wall.cpp	wall.hpp	\
 		infobox.cpp	infobox.hpp	\
 		vortex.cpp	vortex.hpp	\
@@ -278,8 +276,8 @@ libobjects_la_SOURCES = \
 		spaceItem.cpp	spaceItem.hpp	\
 		spaceItems.hpp
 
-libobjects_la_LIBADD = @Cairomm_LIBS@ ../misc/libmisc.la
-libobjects_la_CXXFLAGS = @Cairomm_CFLAGS@
+libobjects_la_LIBADD = @Cairomm_LIBS@ @tinyxml_LIBS@ ../misc/libmisc.la
+libobjects_la_CXXFLAGS = @Cairomm_CFLAGS@ @tinyxml_CFLAGS@
 libobjects_la_LDFLAGS = -no-undefined -version-info 0:0:0
 all: all-am
 
@@ -356,7 +354,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-infobox.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-levelWall.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-planet.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-rectangular.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-spaceItem.Plo@am__quote@
@@ -387,14 +384,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
-
-libobjects_la-levelWall.lo: levelWall.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -MT libobjects_la-levelWall.lo -MD -MP -MF $(DEPDIR)/libobjects_la-levelWall.Tpo -c -o libobjects_la-levelWall.lo `test -f 'levelWall.cpp' || echo '$(srcdir)/'`levelWall.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libobjects_la-levelWall.Tpo $(DEPDIR)/libobjects_la-levelWall.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='levelWall.cpp' object='libobjects_la-levelWall.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -c -o libobjects_la-levelWall.lo `test -f 'levelWall.cpp' || echo '$(srcdir)/'`levelWall.cpp
 
 libobjects_la-wall.lo: wall.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -MT libobjects_la-wall.lo -MD -MP -MF $(DEPDIR)/libobjects_la-wall.Tpo -c -o libobjects_la-wall.lo `test -f 'wall.cpp' || echo '$(srcdir)/'`wall.cpp

@@ -13,7 +13,10 @@ namespace Levels
 	{
 		public:
 			LevelWriter();
-			void write(std::string filename, std::list<Objects::SpaceItem *>* objs);
+			void write(std::string filename, std::list<Objects::SpaceItem *>* objs, std::string levelName, std::string creator,
+					double sx, double sy,
+					double ssx, double ssy,
+					double bx, double by);
 		protected:
 			void cleanup();
 			TiXmlDocument doc;

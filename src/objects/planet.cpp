@@ -10,6 +10,12 @@ Planet::Planet(double sx, double sy, double sradius) :
 	Spherical(sx, sy, sradius)
 {
 }
+
+void Planet::saveXMLChild(TiXmlElement* item)
+{
+	Spherical::saveXMLChild(item);
+}
+
 void Planet::draw(Cairo::RefPtr<Cairo::Context> &cr)
 {
 	cr->set_source_rgb(0.1, 0.9, 0.1);

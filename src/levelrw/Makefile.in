@@ -67,7 +67,8 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
-liblevelrw_la_DEPENDENCIES = ../objects/libobjects.la
+liblevelrw_la_DEPENDENCIES = ../objects/libobjects.la \
+	../misc/libmisc.la
 am_liblevelrw_la_OBJECTS = liblevelrw_la-levelrw.lo \
 	liblevelrw_la-levelManager.lo
 liblevelrw_la_OBJECTS = $(am_liblevelrw_la_OBJECTS)
@@ -268,8 +269,8 @@ liblevelrw_la_SOURCES = \
 		     levelrw.cpp	levelrw.hpp		\
 		     levelManager.cpp	levelManager.hpp
 
-liblevelrw_la_LIBADD = @tinyxml_LIBS@ @Cairomm_LIBS@ ../objects/libobjects.la
-liblevelrw_la_CXXFLAGS = @tinyxml_CFLAGS@ @Cairomm_CFLAGS@ -I../objects
+liblevelrw_la_LIBADD = @tinyxml_LIBS@ @Cairomm_LIBS@ ../objects/libobjects.la ../misc/libmisc.la
+liblevelrw_la_CXXFLAGS = @tinyxml_CFLAGS@ @Cairomm_CFLAGS@ -I../objects -I../misc
 liblevelrw_la_LDFLAGS = -no-undefined -version-info 0:0:0
 all: all-am
 

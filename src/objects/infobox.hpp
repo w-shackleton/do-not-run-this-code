@@ -13,7 +13,9 @@ namespace Objects
 			InfoBox(double x, double y, double rotation);
 			void draw(Cairo::RefPtr<Cairo::Context> &cr);
 		protected:
+			void saveXMLChild(TiXmlElement* item);
 			Cairo::RefPtr<Cairo::ImageSurface> img;
+			inline std::string getName() { return "infobox"; }
 	};
 };
 

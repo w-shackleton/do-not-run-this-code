@@ -2,9 +2,10 @@
 #define LEVELMANAGER_H
 
 #include <list>
-#include "spaceItems.hpp"
 
 #include "levelrw.hpp"
+
+#include "geometry.hpp"
 
 namespace Levels
 {
@@ -23,6 +24,11 @@ namespace Levels
 		protected:
 			LevelWriter writer;
 			std::list<Objects::SpaceItem *> _objs;
+
+			std::string levelName;
+			std::string creator;
+
+			Misc::Point size, speed, border;
 	};
 };
 

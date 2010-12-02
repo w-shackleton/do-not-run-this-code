@@ -12,6 +12,11 @@ Vortex::Vortex(double x, double y, double sx, double sy, double rotation) :
 {
 }
 
+void Vortex::saveXMLChild(TiXmlElement* item)
+{
+	Rectangular::saveXMLChild(item);
+}
+
 void Vortex::draw(Cairo::RefPtr<Cairo::Context> &cr)
 {
 	cr->translate(x, y);

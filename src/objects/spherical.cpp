@@ -14,6 +14,12 @@ Spherical::Spherical(double sx, double sy, double sradius) :
 {
 }
 
+void Spherical::saveXMLChild(TiXmlElement* item)
+{
+	SpaceItem::saveXMLChild(item);
+	item->SetDoubleAttribute("radius", radius);
+}
+
 bool Spherical::isClicked(int cx, int cy)
 {
 	return Misc::hypotenuse(x - cx, y - cy) < radius;

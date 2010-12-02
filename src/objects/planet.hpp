@@ -8,6 +8,8 @@ namespace Objects
 	class Planet : public Spherical
 	{
 		protected:
+			inline std::string getName() { return "planet"; }
+			void saveXMLChild(TiXmlElement* item);
 		public:
 			Planet(double sx, double sy, double sradius);
 			void draw(Cairo::RefPtr<Cairo::Context> &cr);

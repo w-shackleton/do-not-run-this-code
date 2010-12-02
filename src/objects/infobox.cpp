@@ -27,10 +27,14 @@ void InfoBox::draw(Cairo::RefPtr<Cairo::Context> &cr)
 	//cr->fill();
 
 	cr->set_source(img, -sx, -sy);
-	cr->rectangle(-sx, -sy, sx * 2, sy * 2);
-	cr->fill();
+	cr->rectangle(-sx, -sy, sx * 2, sy * 2); cr->fill();
 
 	cr->scale(2, 2);
 	cr->rotate(-rotation);
 	cr->translate(-x, -y);
+}
+
+void InfoBox::saveXMLChild(TiXmlElement* item)
+{
+	Rectangular::saveXMLChild(item);
 }
