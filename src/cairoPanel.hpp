@@ -23,6 +23,10 @@ class CairoPanel : public wxPanel
 		void sizeEvent(wxSizeEvent& evt);
 
 		void render(wxDC& dc);
+
+		unsigned char *invdata;
+		int invdataSize;
+		int cairoWidth, cairoHeight;
 	protected:
 		Cairo::RefPtr<Cairo::ImageSurface> surface;
 		Cairo::RefPtr<Cairo::Context> cr;

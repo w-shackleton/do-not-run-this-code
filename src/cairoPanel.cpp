@@ -16,6 +16,12 @@ CairoPanel::CairoPanel(wxWindow* parent)
 	wxSize pSize = GetSize();
 	surface = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, pSize.GetWidth(), pSize.GetHeight());
 	cr = Cairo::Context::create(surface);
+
+	cairoWidth = surface->get_width();
+	cairoHeight = surface->get_height();
+
+	invdata = new unsigned char[cairoWidth * cairoHeight * 3];
+	invdataSize = cairoWidth * cairoHeight * 3;
 }
 
 void CairoPanel::paintEvent(wxPaintEvent& evt)
@@ -37,23 +43,30 @@ void CairoPanel::paintNow()
 void CairoPanel::render(wxDC& dc)
 {
 	unsigned char *data = surface->get_data();
-	int datas = surface->get_stride();
-	int dataw = surface->get_width();
-	int datah = surface->get_height();
-	unsigned char *invdata = new unsigned char[dataw * datah * 3];
-	unsigned char *invdataP = invdata;
 	
 	// Data goes BGRA - wxImage wants RGB
-	for(int i = 0; i < datas * datah; i += COL_SIZE)
+//	for(int i = 0; i < datas * datah; i += COL_SIZE)
+//	{
+//		*(invdataP++) = data[i + 2];
+//		*(invdataP++) = data[i + 1];
+//		*(invdataP++) = data[i];
+//	}
+
+	unsigned int size = 0;
+	while(size < invdataSize)
 	{
-		*(invdataP++) = data[i + 2];
-		*(invdataP++) = data[i + 1];
-		*(invdataP++) = data[i];
+//		memcpy(invdata + size++, data + 2, 1);
+//		memcpy(invdata + size++, data + 1, 1);
+//		memcpy(invdata + size++, data, 1);
+		*(invdata + size++) = *(data + 2);
+		*(invdata + size++) = *(data + 1);
+		*(invdata + size++) = *data;
+
+		data+=4;
 	}
 
-	wxBitmap img(wxImage(dataw, datah, invdata, true));
+	wxBitmap img(wxImage(cairoWidth, cairoHeight, invdata, true));
 	dc.DrawBitmap(img, 0, 0);
-	delete[] invdata;
 }
 
 void CairoPanel::sizeEvent(wxSizeEvent& evt)
@@ -64,6 +77,13 @@ void CairoPanel::sizeEvent(wxSizeEvent& evt)
 	wxSize pSize = GetSize();
 	surface = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, pSize.GetWidth(), pSize.GetHeight());
 	cr = Cairo::Context::create(surface);
+
+	cairoWidth = surface->get_width();
+	cairoHeight = surface->get_height();
+
+	delete[] invdata;
+	invdata = new unsigned char[cairoWidth * cairoHeight * 3];
+	invdataSize = cairoWidth * cairoHeight * 3;
 
 	redraw(true, true);
 }
