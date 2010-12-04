@@ -6,8 +6,11 @@ using namespace Objects;
 # include <cmath>
 #endif
 
+#define PLANET_MIN 30
+#define PLANET_MAX 200
+
 Planet::Planet(double sx, double sy, double sradius) :
-	Spherical(sx, sy, sradius)
+	Spherical(sx, sy, sradius, PLANET_MIN, PLANET_MAX)
 {
 }
 
@@ -25,15 +28,4 @@ void Planet::draw(Cairo::RefPtr<Cairo::Context> &cr)
 	cr->set_source_rgb(0, 0, 0);
 	cr->arc(x, y, radius, 0, 2 * M_PI);
 	cr->stroke();
-}
-
-// TODO: Make this more like rectangular.cpp, and move to spherical.cpp
-void Planet::scale(int r)
-{
-	if(r < 0)
-		radius *= 1.1;
-	else if(r > 0)
-		radius /= 1.1;
-	if(radius < 30)
-		radius = 30;
 }

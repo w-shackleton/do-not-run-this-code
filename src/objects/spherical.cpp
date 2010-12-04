@@ -8,9 +8,11 @@ using namespace Objects;
 using namespace std;
 
 // TODO: Implement optional resize (like in rectangular.cpp)
-Spherical::Spherical(double sx, double sy, double sradius) :
+Spherical::Spherical(double sx, double sy, double sradius, double min, double max) :
 	SpaceItem(sx, sy),
-	radius(sradius)
+	radius(sradius),
+	min(min),
+	max(max)
 {
 }
 
@@ -37,6 +39,7 @@ bool Spherical::isBorderClicked(int cx, int cy)
 void Spherical::moveBorder(int dx, int dy)
 {
 	radius = Misc::hypotenuse(x - dx, y - dy);
+	Misc::trimMinMax(radius, min, max);
 }
 
 void Spherical::rotate(double r) // In RADIANS
@@ -45,4 +48,13 @@ void Spherical::rotate(double r) // In RADIANS
 	// {
 	//	Because less is more!
 	// }
+}
+
+void Spherical::scale(int r)
+{
+	if(r < 0)
+		radius *= 1.1;
+	else if(r > 0)
+		radius /= 1.1;
+	Misc::trimMinMax(radius, min, max);
 }

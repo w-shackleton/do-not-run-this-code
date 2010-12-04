@@ -10,13 +10,16 @@ namespace Objects
 		protected:
 			double radius;
 			virtual void saveXMLChild(TiXmlElement* item);
+
+			double min, max;
 		public:
-			Spherical(double sx, double sy, double sradius);
+			Spherical(double sx, double sy, double sradius, double min, double max);
 			bool isClicked(int cx, int cy);
 			bool isBorderClicked(int cx, int cy);
 
 			void moveBorder(int dx, int dy);
 			void rotate(double r); // In RADIANS
+			void scale(int r);
 	};
 };
 #endif
