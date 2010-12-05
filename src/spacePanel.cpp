@@ -88,6 +88,9 @@ void SpacePanel::redraw_draw()
 
 int SpacePanel::getClickedObject(double x, double y, bool useBorder)
 {
+	// Level changed
+	lmanager.change();
+
 	// If clicked place is object
 	double tx = x, ty = y;
 	matrix.get_inverse_matrix().transform_point(tx, ty);

@@ -88,6 +88,11 @@ void CairoPanel::sizeEvent(wxSizeEvent& evt)
 	redraw(true, true);
 }
 
+void CairoPanel::redraw()
+{
+	redraw(true, true);
+}
+
 void CairoPanel::redraw(bool toCairo, bool toScreen)
 {
 	redraw_pre();

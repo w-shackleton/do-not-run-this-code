@@ -14,7 +14,7 @@ LevelWriter::LevelWriter()
 }
 
 void LevelWriter::write(string filename, std::list<Objects::SpaceItem *>* objs, string levelName, string creator,
-		double sx, double sy,
+		double px, double py,
 		double ssx, double ssy,
 		double bx, double by)
 {
@@ -40,8 +40,8 @@ void LevelWriter::write(string filename, std::list<Objects::SpaceItem *>* objs, 
 	// Start
 	{
 		TiXmlElement *name = new TiXmlElement("start");
-		name->SetDoubleAttribute("x", sx);
-		name->SetDoubleAttribute("y", sy);
+		name->SetDoubleAttribute("x", px);
+		name->SetDoubleAttribute("y", py);
 		level->LinkEndChild(name);
 	}
 

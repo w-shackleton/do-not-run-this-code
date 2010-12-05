@@ -7,6 +7,9 @@
 
 #include "geometry.hpp"
 
+#define LEVEL_MIN 200
+#define LEVEL_MAX 2000
+
 namespace Levels
 {
 	class LevelManager
@@ -15,9 +18,13 @@ namespace Levels
 			LevelManager();
 			~LevelManager();
 
+			void newLevel();
 			void openLevel(std::string filename);
+			bool save();
 			void saveLevel(std::string filename);
 
+			void change();
+			bool levelChanged;
 			void cleanObjs();
 
 			std::list<Objects::SpaceItem *>& objs;
@@ -25,10 +32,14 @@ namespace Levels
 			LevelWriter writer;
 			std::list<Objects::SpaceItem *> _objs;
 
+			std::string levelPath;
+
 			std::string levelName;
 			std::string creator;
 
-			Misc::Point size, speed, border;
+			Misc::Point position, speed, border;
+
+			double borderMin, borderMax;
 	};
 };
 

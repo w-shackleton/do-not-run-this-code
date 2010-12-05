@@ -16,6 +16,8 @@ class CairoPanel : public wxPanel
 	public:
 		CairoPanel(wxWindow* parent);
 
+		void redraw();
+
 		DECLARE_EVENT_TABLE();
 	private:
 		void paintNow();

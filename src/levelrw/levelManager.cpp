@@ -9,11 +9,22 @@ using namespace Misc;
 LevelManager::LevelManager() :
 	objs(_objs)
 {
+	newLevel();
 }
 
 LevelManager::~LevelManager()
 {
 	cleanObjs();
+}
+
+void LevelManager::newLevel()
+{
+	cleanObjs();
+
+	border = Point(500, 500);
+	position = Point(0, 0);
+	speed = Point(0, 0);
+	levelPath = "";
 }
 
 void LevelManager::openLevel(std::string filename)
@@ -30,9 +41,22 @@ void LevelManager::openLevel(std::string filename)
 	border = Point(1000, 1000);
 }
 
+bool LevelManager::save()
+{
+	if(levelPath == "")
+		return false;
+	saveLevel(levelPath);
+	return true;
+}
+
 void LevelManager::saveLevel(std::string filename)
 {
-	writer.write(filename, &objs, levelName, creator, size.x, size.y, speed.x, speed.y, border.x, border.y);
+	writer.write(filename, &objs, levelName, creator, position.x, position.y, speed.x, speed.y, border.x, border.y);
+}
+
+void LevelManager::change()
+{
+	levelChanged = true;
 }
 
 void LevelManager::cleanObjs()
@@ -40,7 +64,6 @@ void LevelManager::cleanObjs()
 	for(list<Objects::SpaceItem *>::iterator it = objs.begin(); it != objs.end(); it++)
 	{
 		delete *it;
-		cout << "Deleting..." << endl;
 	}
 	objs.clear();
 }
