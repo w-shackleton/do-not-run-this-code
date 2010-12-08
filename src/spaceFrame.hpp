@@ -29,6 +29,11 @@ class SpaceFrame: public wxFrame
 		wxBoxSizer *hcontainer;
 		SpacePanel *spacePanel;
 
+		/* Returns true if level saved successfully */
+		bool save();
+		bool saveAs();
+		bool open();
+
 		void OnQuit(wxCloseEvent& event);
 
 		void OnFileNew(wxCommandEvent& event);

@@ -19,7 +19,7 @@ namespace Levels
 			~LevelManager();
 
 			void newLevel();
-			void openLevel(std::string filename);
+			bool openLevel(std::string filename);
 			bool save();
 			void saveLevel(std::string filename);
 

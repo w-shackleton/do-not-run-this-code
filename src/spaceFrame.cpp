@@ -57,43 +57,89 @@ SpaceFrame::SpaceFrame()
 	SetAutoLayout(true);
 }
 
-void SpaceFrame::OnQuit(wxCloseEvent& event)
+bool SpaceFrame::save()
 {
-	if(checkForSave())
-		Destroy();
-}
-
-void SpaceFrame::OnFileNew(wxCommandEvent& event)
-{
-	if(!checkForSave()) return;
-	lmanager.newLevel();
-	spacePanel->redraw();
-}
-
-void SpaceFrame::OnFileOpen(wxCommandEvent& event)
-{
-	if(!checkForSave()) return;
-	wxFileDialog dialog(this, _("Open level"), wxT(""), wxT(""), _("Levels|*.slv"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-	if(dialog.ShowModal() == wxID_OK)
+	if(lmanager.levelChanged)
 	{
-		lmanager.openLevel((string)dialog.GetFilename().mb_str(wxConvUTF8));
+		if(!lmanager.save()) // If couldn't save automatically
+		{
+			return saveAs();
+		}
 	}
-	spacePanel->redraw();
+	return true;
 }
 
-void SpaceFrame::OnFileSave(wxCommandEvent& event)
-{
-	if(!lmanager.save())
-		OnFileSaveAs(event);
-}
-
-void SpaceFrame::OnFileSaveAs(wxCommandEvent& event)
+bool SpaceFrame::saveAs()
 {
 	wxFileDialog dialog(this, _("Save level"), wxT(""), wxT(""), _("Levels|*.slv"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 	if(dialog.ShowModal() == wxID_OK)
 	{
 		lmanager.saveLevel((string)dialog.GetFilename().mb_str(wxConvUTF8));
+		return true;
 	}
+	else return false;
+}
+
+bool SpaceFrame::open()
+{
+	if(!save()) return false;
+	wxFileDialog dialog(this, _("Open level"), wxT(""), wxT(""), _("Levels|*.slv"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+	if(dialog.ShowModal() == wxID_OK)
+	{
+		return lmanager.openLevel((string)dialog.GetFilename().mb_str(wxConvUTF8));
+	}
+	return false;
+}
+
+void SpaceFrame::OnQuit(wxCloseEvent& event)
+{
+	if(!lmanager.levelChanged)
+	{
+		Destroy();
+		return;
+	}
+	wxMessageDialog dialog(this, _("Do you want to save the current level?"), _("Save level?"), wxYES_NO | wxCANCEL | wxICON_QUESTION);
+	int ret = dialog.ShowModal();
+	switch(ret)
+	{
+		case wxID_CANCEL:
+			break;
+		case wxID_NO:
+			Destroy();
+			break;
+		case wxID_YES:
+			if(!save())
+				break;
+			else
+			{
+				Destroy();
+				break;
+			}
+	}
+}
+
+void SpaceFrame::OnFileNew(wxCommandEvent& event)
+{
+	if(!lmanager.levelChanged)
+	{
+		lmanager.newLevel();
+		spacePanel->redraw();
+	}
+}
+
+void SpaceFrame::OnFileOpen(wxCommandEvent& event)
+{
+	open();
+}
+
+void SpaceFrame::OnFileSave(wxCommandEvent& event)
+{
+	save();
+}
+
+void SpaceFrame::OnFileSaveAs(wxCommandEvent& event)
+{
+	saveAs();
 }
 
 void SpaceFrame::OnFileQuit(wxCommandEvent& event)
@@ -110,24 +156,3 @@ void SpaceFrame::OnHelpAbout(wxCommandEvent& event)
 {
 	wxMessageBox(_("SpaceGame editor\n\nDigitalsquid\ndigitalsquid.co.uk"));
 }
-
-bool SpaceFrame::checkForSave()
-{
-	if(!lmanager.levelChanged)
-		return TRUE;
-	wxMessageDialog dialog(this, _("Do you want to save the level?"), _("Save level?"), wxYES_NO | wxCANCEL | wxICON_QUESTION);
-	int result = dialog.ShowModal();
-	wxCommandEvent ev;
-	switch(result)
-	{
-		case wxID_CANCEL:
-			return FALSE;
-		case wxID_YES:
-			OnFileSave(ev);
-			break;
-		case wxID_NO:
-			break;
-	}
-	return TRUE;
-}
-

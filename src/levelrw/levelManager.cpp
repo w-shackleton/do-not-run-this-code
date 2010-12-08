@@ -25,9 +25,10 @@ void LevelManager::newLevel()
 	position = Point(0, 0);
 	speed = Point(0, 0);
 	levelPath = "";
+	levelChanged = true;
 }
 
-void LevelManager::openLevel(std::string filename)
+bool LevelManager::openLevel(std::string filename)
 {
 	// Load level here...
 	cleanObjs();
@@ -39,6 +40,7 @@ void LevelManager::openLevel(std::string filename)
 	levelName = "Test level";
 	creator = "Will";
 	border = Point(1000, 1000);
+	return true; // Return false if failed to load
 }
 
 bool LevelManager::save()
@@ -52,6 +54,7 @@ bool LevelManager::save()
 void LevelManager::saveLevel(std::string filename)
 {
 	writer.write(filename, &objs, levelName, creator, position.x, position.y, speed.x, speed.y, border.x, border.y);
+	levelChanged = false;
 }
 
 void LevelManager::change()
