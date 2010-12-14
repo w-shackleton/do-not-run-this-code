@@ -129,7 +129,25 @@ void SpaceFrame::OnFileNew(wxCommandEvent& event)
 
 void SpaceFrame::OnFileOpen(wxCommandEvent& event)
 {
-	open();
+	if(!lmanager.levelChanged)
+	{
+		open();
+		return;
+	}
+	wxMessageDialog dialog(this, _("DDDDDo you want to save the current level?"), _("Save level?"), wxYES_NO | wxCANCEL | wxICON_QUESTION);
+	int ret = dialog.ShowModal();
+	switch(ret)
+	{
+		case wxID_CANCEL:
+			break;
+		case wxID_NO:
+			lmanager.levelChanged = false; // Little hack
+			open();
+			break;
+		case wxID_YES:
+			open();
+			break;
+	}
 }
 
 void SpaceFrame::OnFileSave(wxCommandEvent& event)

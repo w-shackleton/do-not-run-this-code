@@ -12,6 +12,11 @@ Vortex::Vortex(double x, double y, double sx, double sy, double rotation) :
 {
 }
 
+Vortex::Vortex(TiXmlElement &item) :
+	Rectangular(item, Misc::Point(VORTEX_MIN_X, VORTEX_MIN_Y), Misc::Point(VORTEX_MAX_X, VORTEX_MAX_Y))
+{
+}
+
 void Vortex::saveXMLChild(TiXmlElement* item)
 {
 	Rectangular::saveXMLChild(item);

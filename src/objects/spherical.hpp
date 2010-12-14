@@ -14,6 +14,7 @@ namespace Objects
 			double min, max;
 		public:
 			Spherical(double sx, double sy, double sradius, double min, double max);
+			Spherical(TiXmlElement &item, double min, double max);
 			bool isClicked(int cx, int cy);
 			bool isBorderClicked(int cx, int cy);
 

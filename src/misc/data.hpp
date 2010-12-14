@@ -19,7 +19,11 @@ namespace Misc
 			//static wxString getFilePath(wxString file);
 		private:
 			Data(); // To stop initialising static class
+
 	};
+
+	std::string stringToUpper(std::string strToConvert);
+	std::string stringToLower(std::string strToConvert);
 }
 
 #endif

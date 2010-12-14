@@ -18,6 +18,7 @@ void LevelWriter::write(string filename, std::list<Objects::SpaceItem *>* objs, 
 		double ssx, double ssy,
 		double bx, double by)
 {
+	cout << "Saving level" << endl;
 	this->objs = objs;
 	level = new TiXmlElement("level");
 
@@ -81,9 +82,93 @@ void LevelWriter::write(string filename, std::list<Objects::SpaceItem *>* objs, 
 	doc.SaveFile(filename);
 	// Clean for next time
 	cleanup();
+
+	cout << "Level Saved" << endl;
 }
 
 void LevelWriter::cleanup()
 {
 	doc.RemoveChild(level);
+}
+
+LevelReader::LevelReader()
+{
+}
+
+bool LevelReader::open(const std::string &filename, std::list<Objects::SpaceItem *>* objs, std::string &levelName, std::string &levelCreator,
+		double &px, double &py,
+		double &ssx, double &ssy,
+		double &bx, double &by)
+{
+	TiXmlDocument doc(filename);
+	if(!doc.LoadFile()) return false;
+
+	cout << "Loading level..." << endl;
+
+	TiXmlElement *level = doc.FirstChildElement("level");
+
+	TiXmlElement *name = level->FirstChildElement("name");
+	if(name)
+	{
+		if(const char *n = name->GetText())
+			levelName = n;
+		else
+			levelName = "";
+	}
+
+	TiXmlElement *creator = level->FirstChildElement("creator");
+	if(creator)
+	{
+		if(const char *n = creator->GetText())
+			levelCreator = n;
+		else
+			levelCreator = "";
+	}
+
+	TiXmlElement *start = level->FirstChildElement("start");
+	if(start)
+	{
+		start->QueryDoubleAttribute("x", &px);
+		start->QueryDoubleAttribute("y", &py);
+	}
+
+	TiXmlElement *startspeed = level->FirstChildElement("startspeed");
+	if(startspeed)
+	{
+		startspeed->QueryDoubleAttribute("x", &ssx);
+		startspeed->QueryDoubleAttribute("y", &ssy);
+	}
+
+	TiXmlElement *bounds = level->FirstChildElement("bounds");
+	if(bounds)
+	{
+		bounds->QueryDoubleAttribute("x", &bx);
+		bounds->QueryDoubleAttribute("y", &by);
+	}
+
+	TiXmlElement *items = level->FirstChildElement("items");
+	if(items)
+	{
+		cout << "Items valid" << endl;
+		TiXmlElement *item = items->FirstChildElement();
+		while(item)
+		{
+			string itemName = item->ValueStr();
+			/**/ if(itemName == "infobox")
+				objs->push_back(new Objects::InfoBox(*item));
+			else if(itemName == "planet")
+				objs->push_back(new Objects::Planet(*item));
+			else if(itemName == "vortex")
+				objs->push_back(new Objects::Vortex(*item));
+			else if(itemName == "wall")
+				objs->push_back(new Objects::Wall(*item));
+
+			item = item->NextSiblingElement();
+			cout << "Loaded item" << endl;
+		}
+	}
+
+	cout << "Finished loading" << endl;
+
+	return true;
 }

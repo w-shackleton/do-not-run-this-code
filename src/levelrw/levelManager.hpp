@@ -6,6 +6,7 @@
 #include "levelrw.hpp"
 
 #include "geometry.hpp"
+#include "data.hpp"
 
 #define LEVEL_MIN 200
 #define LEVEL_MAX 2000
@@ -30,6 +31,7 @@ namespace Levels
 			std::list<Objects::SpaceItem *>& objs;
 		protected:
 			LevelWriter writer;
+			LevelReader reader;
 			std::list<Objects::SpaceItem *> _objs;
 
 			std::string levelPath;

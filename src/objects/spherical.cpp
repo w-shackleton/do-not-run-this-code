@@ -16,6 +16,14 @@ Spherical::Spherical(double sx, double sy, double sradius, double min, double ma
 {
 }
 
+Spherical::Spherical(TiXmlElement &item, double min, double max) :
+	SpaceItem(item),
+	min(min),
+	max(max)
+{
+	item.QueryDoubleAttribute("radius", &radius);
+}
+
 void Spherical::saveXMLChild(TiXmlElement* item)
 {
 	SpaceItem::saveXMLChild(item);

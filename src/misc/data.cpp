@@ -47,3 +47,22 @@ string Misc::Data::getFilePath(string file)
 //{
 	//return wxString(getFilePath(file.c_str()), wxConvUTF8);
 //}
+
+string Misc::stringToUpper(string strToConvert)
+{
+	for(unsigned int i=0;i<strToConvert.length();i++)
+	{
+		strToConvert[i] = toupper(strToConvert[i]);
+	}
+	return strToConvert;
+}
+
+string Misc::stringToLower(string strToConvert)
+{
+	for(unsigned int i=0;i<strToConvert.length();i++)
+	{
+		strToConvert[i] = tolower(strToConvert[i]);
+	}
+	return strToConvert;
+}
+

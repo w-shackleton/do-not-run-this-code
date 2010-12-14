@@ -6,6 +6,8 @@ using namespace Misc;
 
 #include "spaceItems.hpp"
 
+#include <fstream>
+
 LevelManager::LevelManager() :
 	objs(_objs)
 {
@@ -30,17 +32,11 @@ void LevelManager::newLevel()
 
 bool LevelManager::openLevel(std::string filename)
 {
-	// Load level here...
 	cleanObjs();
-	objs.push_back(new Objects::Planet(100, 100, 60));
-	objs.push_back(new Objects::Wall(200, 200, 300, M_PI / 8 * 1));
-	objs.push_back(new Objects::InfoBox(200, 200, M_PI / 8 * -2));
-	objs.push_back(new Objects::Vortex(400, 100, 200, 200, M_PI / 8 * -2));
 
-	levelName = "Test level";
-	creator = "Will";
-	border = Point(1000, 1000);
-	return true; // Return false if failed to load
+	if(!ifstream(filename.c_str()))
+		return false;
+	return reader.open(filename, &objs, levelName, creator, position.x, position.y, speed.x, speed.y, border.x, border.y);
 }
 
 bool LevelManager::save()
@@ -53,8 +49,14 @@ bool LevelManager::save()
 
 void LevelManager::saveLevel(std::string filename)
 {
+	if(!(filename.length() - Misc::stringToLower(filename).rfind(".slv") == 4)) // If name doesn't end in ending
+	{
+		filename += ".slv";
+	}
+	// INSERT FILENAME CHECK CODE
 	writer.write(filename, &objs, levelName, creator, position.x, position.y, speed.x, speed.y, border.x, border.y);
 	levelChanged = false;
+	levelPath = filename;
 }
 
 void LevelManager::change()

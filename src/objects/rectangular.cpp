@@ -16,6 +16,17 @@ Rectangular::Rectangular(double x, double y, double sx, double sy, double rotati
 	cornerMatrix = Cairo::identity_matrix();
 }
 
+Rectangular::Rectangular(TiXmlElement &item, Misc::Point min, Misc::Point max) :
+	SpaceItem(item),
+	min(min),
+	max(max)
+{
+	item.QueryDoubleAttribute("sx", &sx);
+	item.QueryDoubleAttribute("sy", &sy);
+	item.QueryDoubleAttribute("rotation", &rotation);
+	rotation *= M_PI / 180;
+}
+
 bool Rectangular::isClicked(int cx, int cy)
 {
 	updateCornerPoints();

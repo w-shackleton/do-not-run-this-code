@@ -9,6 +9,7 @@ namespace Objects
 	{
 		public:
 			Wall(double x, double y, double sx, double rotation);
+			Wall(TiXmlElement &item);
 			void draw(Cairo::RefPtr<Cairo::Context> &cr);
 		protected:
 			inline std::string getName() { return "wall"; }

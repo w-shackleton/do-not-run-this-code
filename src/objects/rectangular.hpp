@@ -33,6 +33,7 @@ namespace Objects
 			virtual void saveXMLChild(TiXmlElement* item);
 		public:
 			Rectangular(double x, double y, double sx, double sy, double rotation, Misc::Point min, Misc::Point max);
+			Rectangular(TiXmlElement &item, Misc::Point min, Misc::Point max);
 			bool isClicked(int cx, int cy);
 			bool isBorderClicked(int cx, int cy);
 

@@ -14,6 +14,11 @@ Planet::Planet(double sx, double sy, double sradius) :
 {
 }
 
+Planet::Planet(TiXmlElement &item) :
+	Spherical(item, PLANET_MIN, PLANET_MAX)
+{
+}
+
 void Planet::saveXMLChild(TiXmlElement* item)
 {
 	Spherical::saveXMLChild(item);

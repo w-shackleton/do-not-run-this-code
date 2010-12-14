@@ -17,6 +17,14 @@ Wall::Wall(double x, double y, double sx, double rotation) :
 	wall= Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("wall.png"));
 }
 
+Wall::Wall(TiXmlElement &item) :
+	Rectangular(item, Misc::Point(RECT_MIN_X, RECT_SIZE_Y), Misc::Point(RECT_MAX_X, RECT_SIZE_Y))
+{
+	sy = RECT_SIZE_Y;
+	wallside = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("wallside.png"));
+	wall= Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("wall.png"));
+}
+
 void Wall::saveXMLChild(TiXmlElement* item)
 {
 	Rectangular::saveXMLChild(item);

@@ -26,6 +26,17 @@ namespace Levels
 			TiXmlElement *level;
 			std::list<Objects::SpaceItem *>* objs;
 	};
+
+	class LevelReader
+	{
+		public:
+			LevelReader();
+			bool open(const std::string &filename, std::list<Objects::SpaceItem *>* objs, std::string &levelName, std::string &levelCreator,
+					double &px, double &py,
+					double &ssx, double &ssy,
+					double &bx, double &by);
+		protected:
+	};
 };
 
 #endif

@@ -10,10 +10,22 @@ using namespace Objects;
 #include <iostream>
 using namespace std;
 
-InfoBox::InfoBox(double x, double y, double rotation) :
-	Rectangular(x, y, INFOBOX_SIZE_X, INFOBOX_SIZE_Y, rotation, Misc::Point(INFOBOX_SIZE_X, INFOBOX_SIZE_Y), Misc::Point(INFOBOX_SIZE_X, INFOBOX_SIZE_Y))
+InfoBox::InfoBox(double x, double y, double rotation, std::string text, bool initialShow) :
+	Rectangular(x, y, INFOBOX_SIZE_X, INFOBOX_SIZE_Y, rotation, Misc::Point(INFOBOX_SIZE_X, INFOBOX_SIZE_Y), Misc::Point(INFOBOX_SIZE_X, INFOBOX_SIZE_Y)),
+	text(text),
+	initialShow(initialShow)
 {
 	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("message.png"));
+}
+
+InfoBox::InfoBox(TiXmlElement &item) :
+	Rectangular(item, Misc::Point(INFOBOX_SIZE_X, INFOBOX_SIZE_Y), Misc::Point(INFOBOX_SIZE_X, INFOBOX_SIZE_Y))
+{
+	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("message.png"));
+	text = item.Value();
+	initialShow = item.Attribute("initialshow") == "true";
+	sx = INFOBOX_SIZE_X;
+	sy = INFOBOX_SIZE_Y;
 }
 
 void InfoBox::draw(Cairo::RefPtr<Cairo::Context> &cr)
@@ -37,4 +49,6 @@ void InfoBox::draw(Cairo::RefPtr<Cairo::Context> &cr)
 void InfoBox::saveXMLChild(TiXmlElement* item)
 {
 	Rectangular::saveXMLChild(item);
+	item->SetValue(text);
+	item->SetAttribute("initialshow", initialShow ? "true" : "false");
 }

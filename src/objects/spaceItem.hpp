@@ -20,6 +20,7 @@ namespace Objects
 			double x, y;
 		public:
 			SpaceItem(double sx, double sy);
+			SpaceItem(TiXmlElement &item);
 
 			virtual void draw(Cairo::RefPtr<Cairo::Context> &cr) = 0;
 			virtual bool isClicked(int cx, int cy) = 0;

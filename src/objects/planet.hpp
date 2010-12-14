@@ -14,6 +14,7 @@ namespace Objects
 //			static std::vector<Type> types = {Type(1, .5, "planet1.jpg")};
 		public:
 			Planet(double sx, double sy, double sradius);
+			Planet(TiXmlElement &item);
 			void draw(Cairo::RefPtr<Cairo::Context> &cr);
 	};
 };
