@@ -56,6 +56,8 @@ void SpacePanel::redraw_draw()
 	cr->paint();
 
 	// Draw stars
+	cr->translate(-matrix.tx / 1.5, -matrix.ty / 1.5); // Give feeling of stars in background
+
 	cr->set_source_rgb(1, 1, 1);
 	cr->set_line_width(1 / matrix.sx);
 	for(vector<wxPoint>::iterator it = stars.begin(); it != stars.end(); it++)
@@ -64,6 +66,7 @@ void SpacePanel::redraw_draw()
 		cr->line_to(it->x + 1, it->y + 1);
 		cr->stroke();
 	}
+	cr->translate(matrix.tx / 1.5, matrix.ty / 1.5);
 
 	cr->set_line_width(2);
 

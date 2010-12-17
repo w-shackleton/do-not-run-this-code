@@ -76,7 +76,6 @@ bool Rectangular::isBorderClicked(int cx, int cy)
 			borderSelectedType = EdgeY_selected;
 		}
 	}
-	cout << borderSelectedType << endl;
 
 	if(inOut)
 		if(!inIn)

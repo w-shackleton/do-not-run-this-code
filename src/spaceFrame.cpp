@@ -23,6 +23,7 @@ using namespace std;
 #include "misc/data.hpp"
 
 #include "objects/spaceItems.hpp"
+#include "objects/infoboxEditor.hpp"
 
 #ifdef __WXMSW__
 #define _FRAME_ICON "icon.xpm"
@@ -206,8 +207,15 @@ void SpaceFrame::OnCreatePlanet(wxCommandEvent& event)
 void SpaceFrame::OnCreateInfoBox(wxCommandEvent& event)
 {
 	wxSize pos = spacePanel->getMovedPos() + spacePanel->GetSize() / 2;
-	// Process for creating / editing these things - some kind of dialog?
-	// Also, need to add support for custom right-click menus in editor (to change text)
+
+	string text;
+	bool initialShow;
+	
+	Objects::Helpers::InfoBoxEditor ibCreator(this, text, initialShow);
+	if(ibCreator.ShowModal() == 0) // If user clicked 'OK' - only want to create then
+	{
+		lmanager.objs.push_back(new Objects::InfoBox(pos.GetWidth(), pos.GetHeight(), 0, text, initialShow));
+	}
 	spacePanel->redraw();
 }
 

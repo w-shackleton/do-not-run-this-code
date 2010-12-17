@@ -9,8 +9,9 @@ libobjects_la_SOURCES = \
 		planet.cpp	planet.hpp	\
 		spherical.cpp	spherical.hpp	\
 		spaceItem.cpp	spaceItem.hpp	\
-		spaceItems.hpp
+		spaceItems.hpp			\
+		infoboxEditor.cpp	infoboxEditor.hpp
 
-libobjects_la_LIBADD = @Cairomm_LIBS@ @tinyxml_LIBS@ ../misc/libmisc.la
-libobjects_la_CXXFLAGS = @Cairomm_CFLAGS@ @tinyxml_CFLAGS@
+libobjects_la_LIBADD = @WX_LIBS@ @Cairomm_LIBS@ @tinyxml_LIBS@ ../misc/libmisc.la
+libobjects_la_CXXFLAGS = @WXCPPFLAGS@ @Cairomm_CFLAGS@ @tinyxml_CFLAGS@
 libobjects_la_LDFLAGS      = -no-undefined -version-info 0:0:0

@@ -1,0 +1,49 @@
+#include "infoboxEditor.hpp"
+
+#include <wx/sizer.h>
+#include <wx/button.h>
+
+#include <wx/wx.h>
+
+using namespace Objects;
+using namespace Objects::Helpers;
+
+BEGIN_EVENT_TABLE(InfoBoxEditor, wxDialog)
+	EVT_BUTTON(ID_Cancel_click, InfoBoxEditor::OnCancel)
+	EVT_BUTTON(ID_Ok_click, InfoBoxEditor::OnOk)
+END_EVENT_TABLE()
+
+InfoBoxEditor::InfoBoxEditor(wxWindow* parent, std::string &text, bool &initialShow) :
+	wxDialog(parent, -1, _("Edit Message box")),
+	text(text),
+	initialShow(initialShow)
+{
+	wxBoxSizer *vsizer = new wxBoxSizer(wxVERTICAL);
+
+	textEdit = new wxTextCtrl(this, -1, wxString(text.c_str(), wxConvUTF8));
+	vsizer->Add(textEdit);
+
+	initialShowBox = new wxCheckBox(this, -1, _("Show at level start"));
+	initialShowBox->SetValue(initialShow);
+	vsizer->Add(initialShowBox);
+
+	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
+	hsizer->Add(new wxButton(this, ID_Cancel_click, _("&Cancel")));
+	hsizer->Add(new wxButton(this, ID_Ok_click, _("O&k")));
+
+	vsizer->Add(hsizer);
+	SetSizer(vsizer);
+	vsizer->SetSizeHints(this);
+}
+
+void InfoBoxEditor::OnCancel(wxCommandEvent& event)
+{
+	EndModal(1);
+}
+
+void InfoBoxEditor::OnOk(wxCommandEvent& event)
+{
+	text = textEdit->GetValue().mb_str();
+	initialShow = initialShowBox->GetValue();
+	EndModal(0);
+}
