@@ -3,6 +3,11 @@
 #include <iostream>
 using namespace std;
 
+#include <misc/geometry.hpp>
+
+#define SCALE_MIN 0.5
+#define SCALE_MAX 2
+
 MatrixHelper::MatrixHelper() :
 	sx(1),
 	sy(1),
@@ -50,6 +55,8 @@ void MatrixHelper::scale(double s)
 {
 	sx *= s;
 	sy *= s;
+	Misc::trimMinMax(sx, SCALE_MIN, SCALE_MAX);
+	Misc::trimMinMax(sy, SCALE_MIN, SCALE_MAX);
 }
 
 void MatrixHelper::scale_rotation(int r)

@@ -14,6 +14,9 @@ class SpaceFrame: public wxFrame
 	protected:
 		wxMenu *menuFile, *menuAbout;
 		wxMenuBar *menuBar;
+
+		std::list<wxButton *> tbButtons;
+
 		enum
 		{
 			ID_File_New = wxID_HIGHEST + 1,
@@ -24,6 +27,11 @@ class SpaceFrame: public wxFrame
 
 			ID_Help_Help,
 			ID_Help_About,
+
+			ID_tb_c_planet,
+			ID_tb_c_infobox,
+			ID_tb_c_wall,
+			ID_tb_c_vortex,
 		};
 
 		wxBoxSizer *hcontainer;
@@ -44,6 +52,11 @@ class SpaceFrame: public wxFrame
 
 		void OnHelpAbout(wxCommandEvent& event);
 		void OnHelpHelp(wxCommandEvent& event);
+
+		void OnCreatePlanet(wxCommandEvent& event);
+		void OnCreateInfoBox(wxCommandEvent& event);
+		void OnCreateWall(wxCommandEvent& event);
+		void OnCreateVortex(wxCommandEvent& event);
 
 		/* Returns false if action should be cancelled */
 		bool checkForSave();

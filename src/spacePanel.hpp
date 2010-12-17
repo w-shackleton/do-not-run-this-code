@@ -68,6 +68,8 @@ class SpacePanel : public CairoPanel
 		int sel;
 		Objects::SpaceItem *selectedItem;
 
+		std::vector<wxPoint> stars;
+
 		wxMenu *objectMenu, *bgMenu;
 		void onObjectMenuDelete(wxCommandEvent& WXUNUSED(event));
 };

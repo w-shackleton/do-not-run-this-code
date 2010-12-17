@@ -22,21 +22,25 @@ using namespace Levels;
 
 // TODO: Add a whole stack of documentation to this!
 
+#define STARFIELD_SIZE 2000
+#define STARFIELD_STARS 1000
+
 SpacePanel::SpacePanel(wxWindow *parent, LevelManager &lmanager) :
 	CairoPanel(parent),
 	mousePrevPos(wxEVT_MOTION),
 	lmanager(lmanager)
 {
+	for(int i = 0; i < STARFIELD_STARS; i++)
+	{
+		stars.push_back(wxPoint(rand() % (STARFIELD_SIZE * 2) - STARFIELD_SIZE, rand() % (STARFIELD_SIZE * 2) - STARFIELD_SIZE));
+	}
+
 	objectMenu = new wxMenu;
 	bgMenu = new wxMenu;
 
 	objectMenu->Append(ID_Object_delete, _("&Delete"));
 
 	redraw(true, true);
-
-	// Save level test code
-	lmanager.openLevel("testin.slv");
-	lmanager.saveLevel("testout.slv");
 }
 
 SpacePanel::~SpacePanel()
@@ -48,18 +52,20 @@ void SpacePanel::redraw_draw()
 	//cr->set_antialias(Cairo::ANTIALIAS_NONE);
 
 	cr->save();
-	cr->set_source_rgb(0.5, 0.6, 0.7);
+	cr->set_source_rgb(0, 0, 0);
 	cr->paint();
 
-	cr->set_source_rgba(0.0, 0.0, 0.0, 0.7);
-	cr->arc(200.0, 200.0, 
-	50, 0.0, 1.7 * M_PI);
-	cr->stroke();
+	// Draw stars
+	cr->set_source_rgb(1, 1, 1);
+	cr->set_line_width(1 / matrix.sx);
+	for(vector<wxPoint>::iterator it = stars.begin(); it != stars.end(); it++)
+	{
+		cr->move_to(it->x, it->y);
+		cr->line_to(it->x + 1, it->y + 1);
+		cr->stroke();
+	}
 
-	cr->set_source_rgba(1.0, 0.0, 0.0, 0.7);
-	cr->move_to(100, 100);
-	cr->line_to(250, 300);
-	cr->stroke();
+	cr->set_line_width(2);
 
 	// Draw objects
 	for(list<Objects::SpaceItem *>::iterator it = lmanager.objs.begin(); it != lmanager.objs.end(); it++)
@@ -70,7 +76,7 @@ void SpacePanel::redraw_draw()
 	cr->translate(-matrix.tx / matrix.sx, -matrix.ty / matrix.sy);
 
 	// Draw screen size hinter
-	cr->set_source_rgba(0.9, 0.9, 0.3, 0.1);
+	cr->set_source_rgba(0.9, 0.9, 0.9, 0.1);
 	cr->rectangle(0, 0, PHONE_SCREEN_X, PHONE_SCREEN_Y);
 	cr->fill();
 
@@ -78,7 +84,7 @@ void SpacePanel::redraw_draw()
 	vector<double> dashes(dashesData, dashesData + sizeof(dashesData) / sizeof(double));
 	cr->set_dash(dashes, 0);
 
-	cr->set_source_rgba(0, 0, 0, 0.3);
+	cr->set_source_rgba(1, 1, 1, 0.3);
 	cr->rectangle(0, 0, PHONE_SCREEN_X, PHONE_SCREEN_Y);
 	cr->stroke();
 

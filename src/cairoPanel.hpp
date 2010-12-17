@@ -18,6 +18,13 @@ class CairoPanel : public wxPanel
 
 		void redraw();
 
+		inline wxSize getMovedPos()
+		{
+			double x = 0, y = 0;
+			matrix.get_inverse_matrix().transform_point(x, y);
+			return wxSize(x, y);
+		}
+
 		DECLARE_EVENT_TABLE();
 	private:
 		void paintNow();

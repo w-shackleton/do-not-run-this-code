@@ -10,12 +10,19 @@ BEGIN_EVENT_TABLE(SpaceFrame, wxFrame)
 
 	EVT_MENU(SpaceFrame::ID_Help_Help, SpaceFrame::OnHelpHelp)
 	EVT_MENU(SpaceFrame::ID_Help_About, SpaceFrame::OnHelpAbout)
+
+	EVT_BUTTON(SpaceFrame::ID_tb_c_planet, SpaceFrame::OnCreatePlanet)
+	EVT_BUTTON(SpaceFrame::ID_tb_c_infobox, SpaceFrame::OnCreateInfoBox)
+	EVT_BUTTON(SpaceFrame::ID_tb_c_wall, SpaceFrame::OnCreateWall)
+	EVT_BUTTON(SpaceFrame::ID_tb_c_vortex, SpaceFrame::OnCreateVortex)
 END_EVENT_TABLE()
 
 #include <iostream>
 using namespace std;
 
 #include "misc/data.hpp"
+
+#include "objects/spaceItems.hpp"
 
 #ifdef __WXMSW__
 #define _FRAME_ICON "icon.xpm"
@@ -44,8 +51,19 @@ SpaceFrame::SpaceFrame()
 	menuBar = new wxMenuBar;
 	menuBar->Append(menuFile, _("&File"));
 	menuBar->Append(menuAbout, _("&Help"));
-
 	SetMenuBar(menuBar);
+
+	wxToolBar *toolbar = CreateToolBar();
+	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_planet, _("Create Planet")));
+	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_infobox, _("Create Info Box")));
+	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_wall, _("Create Wall")));
+	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_vortex, _("Create Vortex")));
+	for(list<wxButton *>::iterator it = tbButtons.begin(); it != tbButtons.end(); it++)
+	{
+		toolbar->AddControl(*it);
+	}
+	toolbar->Realize();
+
 	CreateStatusBar();
 	SetStatusText(_("SpaceGame Editor"));
 
@@ -132,9 +150,10 @@ void SpaceFrame::OnFileOpen(wxCommandEvent& event)
 	if(!lmanager.levelChanged)
 	{
 		open();
+		spacePanel->redraw();
 		return;
 	}
-	wxMessageDialog dialog(this, _("DDDDDo you want to save the current level?"), _("Save level?"), wxYES_NO | wxCANCEL | wxICON_QUESTION);
+	wxMessageDialog dialog(this, _("Do you want to save the current level?"), _("Save level?"), wxYES_NO | wxCANCEL | wxICON_QUESTION);
 	int ret = dialog.ShowModal();
 	switch(ret)
 	{
@@ -143,9 +162,11 @@ void SpaceFrame::OnFileOpen(wxCommandEvent& event)
 		case wxID_NO:
 			lmanager.levelChanged = false; // Little hack
 			open();
+			spacePanel->redraw();
 			break;
 		case wxID_YES:
 			open();
+			spacePanel->redraw();
 			break;
 	}
 }
@@ -173,4 +194,33 @@ void SpaceFrame::OnHelpHelp(wxCommandEvent& event)
 void SpaceFrame::OnHelpAbout(wxCommandEvent& event)
 {
 	wxMessageBox(_("SpaceGame editor\n\nDigitalsquid\ndigitalsquid.co.uk"));
+}
+
+void SpaceFrame::OnCreatePlanet(wxCommandEvent& event)
+{
+	wxSize pos = spacePanel->getMovedPos() + spacePanel->GetSize() / 2;
+	lmanager.objs.push_back(new Objects::Planet(pos.GetWidth(), pos.GetHeight(), 50)); // Default radius
+	spacePanel->redraw();
+}
+
+void SpaceFrame::OnCreateInfoBox(wxCommandEvent& event)
+{
+	wxSize pos = spacePanel->getMovedPos() + spacePanel->GetSize() / 2;
+	// Process for creating / editing these things - some kind of dialog?
+	// Also, need to add support for custom right-click menus in editor (to change text)
+	spacePanel->redraw();
+}
+
+void SpaceFrame::OnCreateWall(wxCommandEvent& event)
+{
+	wxSize pos = spacePanel->getMovedPos() + spacePanel->GetSize() / 2;
+	lmanager.objs.push_back(new Objects::Wall(pos.GetWidth(), pos.GetHeight(), 100, 0));
+	spacePanel->redraw();
+}
+
+void SpaceFrame::OnCreateVortex(wxCommandEvent& event)
+{
+	wxSize pos = spacePanel->getMovedPos() + spacePanel->GetSize() / 2;
+	lmanager.objs.push_back(new Objects::Vortex(pos.GetWidth(), pos.GetHeight(), 100, 100, 0));
+	spacePanel->redraw();
 }
