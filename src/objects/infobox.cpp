@@ -7,6 +7,9 @@ using namespace Objects;
 
 #include "../misc/data.hpp"
 
+#include "infoboxEditor.hpp"
+using namespace Objects::Helpers;
+
 #include <iostream>
 using namespace std;
 
@@ -16,6 +19,7 @@ InfoBox::InfoBox(double x, double y, double rotation, std::string text, bool ini
 	initialShow(initialShow)
 {
 	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("message.png"));
+	contextMenu->Append(contextMenuNextAvailableSlot++, _("&Edit"));
 }
 
 InfoBox::InfoBox(TiXmlElement &item) :
@@ -51,4 +55,17 @@ void InfoBox::saveXMLChild(TiXmlElement* item)
 	Rectangular::saveXMLChild(item);
 	item->SetValue(text);
 	item->SetAttribute("initialshow", initialShow ? "true" : "false");
+}
+
+void InfoBox::onCMenuItemClick(int id)
+{
+	SpaceItem::onCMenuItemClick(id);
+	switch(id)
+	{
+		case ID_CMenu_2:
+			cout << "Editing..." << endl;
+			InfoBoxEditor editor(NULL, text, initialShow);
+			editor.ShowModal();
+			return;
+	}
 }

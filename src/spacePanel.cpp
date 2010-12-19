@@ -14,7 +14,16 @@ BEGIN_EVENT_TABLE(SpacePanel, CairoPanel)
 
 	EVT_CONTEXT_MENU(SpacePanel::contextMenu)
 
-	EVT_MENU(SpacePanel::ID_Object_delete, SpacePanel::onObjectMenuDelete)
+	EVT_MENU(Objects::ID_CMenu_1, SpacePanel::cMenuClick) // There MUST be a better way than this
+	EVT_MENU(Objects::ID_CMenu_2, SpacePanel::cMenuClick)
+	EVT_MENU(Objects::ID_CMenu_3, SpacePanel::cMenuClick)
+	EVT_MENU(Objects::ID_CMenu_4, SpacePanel::cMenuClick)
+	EVT_MENU(Objects::ID_CMenu_5, SpacePanel::cMenuClick)
+	EVT_MENU(Objects::ID_CMenu_6, SpacePanel::cMenuClick)
+	EVT_MENU(Objects::ID_CMenu_7, SpacePanel::cMenuClick)
+	EVT_MENU(Objects::ID_CMenu_8, SpacePanel::cMenuClick)
+	EVT_MENU(Objects::ID_CMenu_9, SpacePanel::cMenuClick)
+	EVT_MENU(Objects::ID_CMenu_10, SpacePanel::cMenuClick)
 END_EVENT_TABLE()
 
 using namespace std;
@@ -35,10 +44,7 @@ SpacePanel::SpacePanel(wxWindow *parent, LevelManager &lmanager) :
 		stars.push_back(wxPoint(rand() % (STARFIELD_SIZE * 2) - STARFIELD_SIZE, rand() % (STARFIELD_SIZE * 2) - STARFIELD_SIZE));
 	}
 
-	objectMenu = new wxMenu;
 	bgMenu = new wxMenu;
-
-	objectMenu->Append(ID_Object_delete, _("&Delete"));
 
 	redraw(true, true);
 }
@@ -70,10 +76,18 @@ void SpacePanel::redraw_draw()
 
 	cr->set_line_width(2);
 
-	// Draw objects
+	// Draw objects (and check for deletions)
 	for(list<Objects::SpaceItem *>::iterator it = lmanager.objs.begin(); it != lmanager.objs.end(); it++)
 	{
-		(*it)->draw(cr);
+		if((*it)->recycle)
+		{
+			delete *it;
+			lmanager.objs.erase(it);
+
+			Refresh();
+			break; // TODO: Find a better fix to this?
+		}
+		else (*it)->draw(cr);
 	}
 
 	cr->translate(-matrix.tx / matrix.sx, -matrix.ty / matrix.sy);
@@ -223,7 +237,20 @@ void SpacePanel::contextMenu(wxContextMenuEvent& event)
 	wxPoint point = ScreenToClient(event.GetPosition());
 	if(getClickedObject(point.x, point.y, false) == CLICKED_Inner)
 	{
-		PopupMenu(objectMenu);
+//		wxMenuItemList& items = objectMenu->GetMenuItems();
+//		wxMenuItemList::iterator iter = items.begin();
+//
+//		iter++;
+//		iter++; // Ignore first 2 items
+//
+//		for(; iter != items.end(); iter++)
+//		{
+//			wxMenuItem* i = *iter;
+//			items.erase(iter);
+//			delete i;
+//		}
+
+		PopupMenu(selectedItem->getContextMenu());
 	}
 	else
 	{
@@ -231,13 +258,10 @@ void SpacePanel::contextMenu(wxContextMenuEvent& event)
 	}
 }
 
-void SpacePanel::onObjectMenuDelete(wxCommandEvent& WXUNUSED(event))
+void SpacePanel::cMenuClick(wxCommandEvent& evt)
 {
-	cout << "Deleting item..." << endl;
-
-	lmanager.objs.remove(selectedItem);
-
-	redraw(true, true);
+	selectedItem->onCMenuItemClick(evt.GetId());
+	Refresh();
 }
 
 wxRealPoint operator-(const wxMouseEvent& lhs, const wxMouseEvent& rhs)

@@ -20,7 +20,7 @@ InfoBoxEditor::InfoBoxEditor(wxWindow* parent, std::string &text, bool &initialS
 {
 	wxBoxSizer *vsizer = new wxBoxSizer(wxVERTICAL);
 
-	textEdit = new wxTextCtrl(this, -1, wxString(text.c_str(), wxConvUTF8));
+	textEdit = new wxTextCtrl(this, -1, wxString(text.c_str(), wxConvUTF8), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
 	vsizer->Add(textEdit);
 
 	initialShowBox = new wxCheckBox(this, -1, _("Show at level start"));
@@ -29,6 +29,7 @@ InfoBoxEditor::InfoBoxEditor(wxWindow* parent, std::string &text, bool &initialS
 
 	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
 	hsizer->Add(new wxButton(this, ID_Cancel_click, _("&Cancel")));
+	SetEscapeId(ID_Cancel_click);
 	hsizer->Add(new wxButton(this, ID_Ok_click, _("O&k")));
 
 	vsizer->Add(hsizer);

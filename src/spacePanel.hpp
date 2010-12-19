@@ -57,11 +57,6 @@ class SpacePanel : public CairoPanel
 			CLICKED_Border
 		};
 
-		enum
-		{
-			ID_Object_delete = wxID_HIGHEST + 1,
-		};
-		
 		/*
 		   Current selection mode - what is being selected
 		   */
@@ -70,8 +65,9 @@ class SpacePanel : public CairoPanel
 
 		std::vector<wxPoint> stars;
 
-		wxMenu *objectMenu, *bgMenu;
-		void onObjectMenuDelete(wxCommandEvent& WXUNUSED(event));
+		wxMenu *bgMenu;
+
+		void cMenuClick(wxCommandEvent& evt);
 };
 
 // Some useful operators
