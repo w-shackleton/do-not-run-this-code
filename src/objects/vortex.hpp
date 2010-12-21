@@ -18,6 +18,8 @@ namespace Objects
 			Vortex(double x, double y, double sx, double sy, double rotation);
 			Vortex(TiXmlElement &item);
 			void draw(Cairo::RefPtr<Cairo::Context> &cr);
+
+			void onCMenuItemClick(int id);
 	};
 };
 

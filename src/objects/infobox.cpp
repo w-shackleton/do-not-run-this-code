@@ -26,6 +26,7 @@ InfoBox::InfoBox(TiXmlElement &item) :
 	Rectangular(item, Misc::Point(INFOBOX_SIZE_X, INFOBOX_SIZE_Y), Misc::Point(INFOBOX_SIZE_X, INFOBOX_SIZE_Y))
 {
 	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("message.png"));
+	contextMenu->Append(contextMenuNextAvailableSlot++, _("&Edit"));
 	text = item.Value();
 	initialShow = item.Attribute("initialshow") == "true";
 	sx = INFOBOX_SIZE_X;

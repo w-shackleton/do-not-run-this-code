@@ -19,12 +19,14 @@ Vortex::Vortex(double x, double y, double sx, double sy, double rotation) :
 	Rectangular(x, y, sx, sy, rotation, Misc::Point(VORTEX_MIN_X, VORTEX_MIN_Y), Misc::Point(VORTEX_MAX_X, VORTEX_MAX_Y))
 {
 	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath(IMG_NAME));
+	contextMenu->Append(contextMenuNextAvailableSlot++, _("&Change power"));
 }
 
 Vortex::Vortex(TiXmlElement &item) :
 	Rectangular(item, Misc::Point(VORTEX_MIN_X, VORTEX_MIN_Y), Misc::Point(VORTEX_MAX_X, VORTEX_MAX_Y))
 {
 	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath(IMG_NAME));
+	contextMenu->Append(contextMenuNextAvailableSlot++, _("&Change power"));
 }
 
 void Vortex::saveXMLChild(TiXmlElement* item)
@@ -49,4 +51,15 @@ void Vortex::draw(Cairo::RefPtr<Cairo::Context> &cr)
 //	cr->scale((double)IMG_SIZE_X / sx, (double)IMG_SIZE_Y / sy);
 	cr->rotate(-rotation);
 	cr->translate(-x, -y);
+}
+
+void Vortex::onCMenuItemClick(int id)
+{
+	SpaceItem::onCMenuItemClick(id);
+	switch(id)
+	{
+		case ID_CMenu_2:
+			cout << "Editing..." << endl;
+			return;
+	}
 }
