@@ -14,6 +14,11 @@ namespace Objects
 			void saveXMLChild(TiXmlElement* item);
 			
 			Cairo::RefPtr<Cairo::ImageSurface> img;
+
+			/*
+			  The 'power' of the vortex
+			 */
+			double power;
 		public:
 			Vortex(double x, double y, double sx, double sy, double rotation);
 			Vortex(TiXmlElement &item);
