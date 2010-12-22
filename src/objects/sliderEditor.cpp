@@ -21,7 +21,8 @@ Slider::Slider(double *value, int min, int max, std::string title) :
 }
 
 SliderEditor::SliderEditor(std::vector<Slider> &nums, std::string title) :
-	wxDialog(NULL, -1, wxString(title.c_str(), wxConvUTF8))
+	wxDialog(NULL, -1, wxString(title.c_str(), wxConvUTF8)),
+	nums(nums)
 {
 	wxBoxSizer *vsizer = new wxBoxSizer(wxVERTICAL);
 
@@ -61,4 +62,8 @@ void SliderEditor::OnCancel(wxCommandEvent& event)
 void SliderEditor::OnOk(wxCommandEvent& event)
 {
 	EndModal(0);
+	for(int i = 0; i < nums.size(); i++)
+	{
+		*nums[i].value = sliders[i]->GetValue();
+	}
 }

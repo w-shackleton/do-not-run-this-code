@@ -2,6 +2,7 @@ SUBDIRS = misc objects levelrw
 bin_PROGRAMS = spaceedit
 
 spaceedit_SOURCES = \
+		levelInfoEditor.cpp	levelInfoEditor.hpp	\
 		matrixHelper.cpp	matrixHelper.hpp	\
 		spacePanel.cpp		spacePanel.hpp		\
 		cairoPanel.cpp		cairoPanel.hpp		\

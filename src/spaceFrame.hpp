@@ -12,7 +12,7 @@ class SpaceFrame: public wxFrame
 		SpaceFrame();
 		DECLARE_EVENT_TABLE()
 	protected:
-		wxMenu *menuFile, *menuAbout;
+		wxMenu *menuFile, *menuLevel, *menuAbout, *menuCreate;
 		wxMenuBar *menuBar;
 
 		std::list<wxButton *> tbButtons;
@@ -24,6 +24,8 @@ class SpaceFrame: public wxFrame
 			ID_File_Save,
 			ID_File_SaveAs,
 			ID_File_Quit,
+
+			ID_Level_Change,
 
 			ID_Help_Help,
 			ID_Help_About,
@@ -49,6 +51,8 @@ class SpaceFrame: public wxFrame
 		void OnFileSave(wxCommandEvent& event);
 		void OnFileSaveAs(wxCommandEvent& event);
 		void OnFileQuit(wxCommandEvent& event);
+
+		void OnLevelInfoChange(wxCommandEvent& event);
 
 		void OnHelpAbout(wxCommandEvent& event);
 		void OnHelpHelp(wxCommandEvent& event);

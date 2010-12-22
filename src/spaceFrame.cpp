@@ -8,6 +8,8 @@ BEGIN_EVENT_TABLE(SpaceFrame, wxFrame)
 	EVT_MENU(SpaceFrame::ID_File_SaveAs, SpaceFrame::OnFileSaveAs)
 	EVT_MENU(SpaceFrame::ID_File_Quit, SpaceFrame::OnFileQuit)
 
+	EVT_MENU(SpaceFrame::ID_Level_Change, SpaceFrame::OnLevelInfoChange)
+
 	EVT_MENU(SpaceFrame::ID_Help_Help, SpaceFrame::OnHelpHelp)
 	EVT_MENU(SpaceFrame::ID_Help_About, SpaceFrame::OnHelpAbout)
 
@@ -38,6 +40,8 @@ SpaceFrame::SpaceFrame()
 	SetIcon(wxIcon(wxString(Misc::Data::getFilePath(_FRAME_ICON).c_str(), wxConvUTF8), wxBITMAP_TYPE_XPM));
 
 	menuFile = new wxMenu;
+	menuLevel = new wxMenu;
+	menuCreate = new wxMenu;
 	menuAbout = new wxMenu;
 
 	menuFile->Append(ID_File_New, _("&New\tCtrl-N"));
@@ -46,11 +50,20 @@ SpaceFrame::SpaceFrame()
 	menuFile->Append(ID_File_SaveAs, _("Save &As"));
 	menuFile->Append(ID_File_Quit, _("E&xit\tCtrl-Q"));
 
+	menuLevel->Append(ID_Level_Change, _("Edit &Level Info\tCtrl-L"));
+
+	menuCreate->Append(ID_tb_c_planet, _("Create Planet"));
+	menuCreate->Append(ID_tb_c_infobox, _("Create Info Box"));
+	menuCreate->Append(ID_tb_c_wall, _("Create Wall"));
+	menuCreate->Append(ID_tb_c_vortex, _("Create Vortex"));
+
 	menuAbout->Append(ID_Help_Help, _("&Help\tCtrl-H"));
 	menuAbout->Append(ID_Help_About, _("&About"));
 
 	menuBar = new wxMenuBar;
 	menuBar->Append(menuFile, _("&File"));
+	menuBar->Append(menuLevel, _("&Level"));
+	menuBar->Append(menuCreate, _("&Create"));
 	menuBar->Append(menuAbout, _("&Help"));
 	SetMenuBar(menuBar);
 
@@ -185,6 +198,10 @@ void SpaceFrame::OnFileSaveAs(wxCommandEvent& event)
 void SpaceFrame::OnFileQuit(wxCommandEvent& event)
 {
 	Close(TRUE);
+}
+
+void SpaceFrame::OnLevelInfoChange(wxCommandEvent& event)
+{
 }
 
 void SpaceFrame::OnHelpHelp(wxCommandEvent& event)

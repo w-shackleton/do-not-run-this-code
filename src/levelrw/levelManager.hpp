@@ -11,11 +11,15 @@
 #define LEVEL_MIN 200
 #define LEVEL_MAX 2000
 
+class LevelInfoEditor; // Friend
+
 namespace Levels
 {
 	class LevelManager
 	{
 		public:
+			friend class LevelInfoEditor;
+
 			LevelManager();
 			~LevelManager();
 

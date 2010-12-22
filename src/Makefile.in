@@ -48,7 +48,8 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_spaceedit_OBJECTS = spaceedit-matrixHelper.$(OBJEXT) \
+am_spaceedit_OBJECTS = spaceedit-levelInfoEditor.$(OBJEXT) \
+	spaceedit-matrixHelper.$(OBJEXT) \
 	spaceedit-spacePanel.$(OBJEXT) spaceedit-cairoPanel.$(OBJEXT) \
 	spaceedit-spaceFrame.$(OBJEXT) spaceedit-spaceApp.$(OBJEXT)
 spaceedit_OBJECTS = $(am_spaceedit_OBJECTS)
@@ -285,6 +286,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = misc objects levelrw
 spaceedit_SOURCES = \
+		levelInfoEditor.cpp	levelInfoEditor.hpp	\
 		matrixHelper.cpp	matrixHelper.hpp	\
 		spacePanel.cpp		spacePanel.hpp		\
 		cairoPanel.cpp		cairoPanel.hpp		\
@@ -385,6 +387,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-cairoPanel.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-levelInfoEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-matrixHelper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-spaceApp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-spaceFrame.Po@am__quote@
@@ -413,6 +416,22 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
+
+spaceedit-levelInfoEditor.o: levelInfoEditor.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -MT spaceedit-levelInfoEditor.o -MD -MP -MF $(DEPDIR)/spaceedit-levelInfoEditor.Tpo -c -o spaceedit-levelInfoEditor.o `test -f 'levelInfoEditor.cpp' || echo '$(srcdir)/'`levelInfoEditor.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/spaceedit-levelInfoEditor.Tpo $(DEPDIR)/spaceedit-levelInfoEditor.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='levelInfoEditor.cpp' object='spaceedit-levelInfoEditor.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -c -o spaceedit-levelInfoEditor.o `test -f 'levelInfoEditor.cpp' || echo '$(srcdir)/'`levelInfoEditor.cpp
+
+spaceedit-levelInfoEditor.obj: levelInfoEditor.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -MT spaceedit-levelInfoEditor.obj -MD -MP -MF $(DEPDIR)/spaceedit-levelInfoEditor.Tpo -c -o spaceedit-levelInfoEditor.obj `if test -f 'levelInfoEditor.cpp'; then $(CYGPATH_W) 'levelInfoEditor.cpp'; else $(CYGPATH_W) '$(srcdir)/levelInfoEditor.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/spaceedit-levelInfoEditor.Tpo $(DEPDIR)/spaceedit-levelInfoEditor.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='levelInfoEditor.cpp' object='spaceedit-levelInfoEditor.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -c -o spaceedit-levelInfoEditor.obj `if test -f 'levelInfoEditor.cpp'; then $(CYGPATH_W) 'levelInfoEditor.cpp'; else $(CYGPATH_W) '$(srcdir)/levelInfoEditor.cpp'; fi`
 
 spaceedit-matrixHelper.o: matrixHelper.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -MT spaceedit-matrixHelper.o -MD -MP -MF $(DEPDIR)/spaceedit-matrixHelper.Tpo -c -o spaceedit-matrixHelper.o `test -f 'matrixHelper.cpp' || echo '$(srcdir)/'`matrixHelper.cpp

@@ -30,14 +30,15 @@ namespace Objects
 			protected:
 				enum
 				{
-					ID_Cancel_click = wxID_HIGHEST + 1,
-					ID_Ok_click,
+					ID_Cancel_click = wxID_CANCEL,
+					ID_Ok_click = wxID_OK,
 				};
 
 				void OnCancel(wxCommandEvent& event);
 				void OnOk(wxCommandEvent& event);
 				
 				std::vector<wxSlider *> sliders;
+				std::vector<Slider> &nums;
 
 			private:
 		};

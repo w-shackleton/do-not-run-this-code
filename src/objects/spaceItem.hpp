@@ -28,7 +28,6 @@ namespace Objects
 			SpaceItem(double sx, double sy);
 			SpaceItem(TiXmlElement &item);
 			~SpaceItem();
-		public:
 
 			virtual void draw(Cairo::RefPtr<Cairo::Context> &cr) = 0;
 			virtual bool isClicked(int cx, int cy) = 0;
