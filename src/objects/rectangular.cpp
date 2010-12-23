@@ -21,6 +21,7 @@ Rectangular::Rectangular(TiXmlElement &item, Misc::Point min, Misc::Point max) :
 	min(min),
 	max(max)
 {
+	cornerMatrix = Cairo::identity_matrix();
 	item.QueryDoubleAttribute("sx", &sx);
 	item.QueryDoubleAttribute("sy", &sy);
 	item.QueryDoubleAttribute("rotation", &rotation);

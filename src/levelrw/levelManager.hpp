@@ -18,8 +18,6 @@ namespace Levels
 	class LevelManager
 	{
 		public:
-			friend class LevelInfoEditor;
-
 			LevelManager();
 			~LevelManager();
 
@@ -33,15 +31,17 @@ namespace Levels
 			void cleanObjs();
 
 			std::list<Objects::SpaceItem *>& objs;
+
+			std::string levelName;
+			std::string creator;
 		protected:
+			friend class LevelInfoEditor;
+
 			LevelWriter writer;
 			LevelReader reader;
 			std::list<Objects::SpaceItem *> _objs;
 
 			std::string levelPath;
-
-			std::string levelName;
-			std::string creator;
 
 			Misc::Point position, speed, border;
 

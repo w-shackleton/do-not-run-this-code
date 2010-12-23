@@ -2,6 +2,7 @@
 #define LEVELINFOEDITOR_H
 
 #include <wx/dialog.h>
+#include <wx/textctrl.h>
 
 #include "levelrw/levelManager.hpp"
 
@@ -19,6 +20,9 @@ class LevelInfoEditor : public wxDialog
 		};
 		void OnCancel(wxCommandEvent& event);
 		void OnOk(wxCommandEvent& event);
+
+		wxTextCtrl *title, *creator;
+		Levels::LevelManager &lmanager;
 };
 
 #endif

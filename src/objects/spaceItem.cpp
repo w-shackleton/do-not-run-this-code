@@ -19,6 +19,8 @@ SpaceItem::SpaceItem(TiXmlElement &item) :
 {
 	item.QueryDoubleAttribute("x", &x);
 	item.QueryDoubleAttribute("y", &y);
+	contextMenu = new wxMenu;
+	contextMenu->Append(contextMenuNextAvailableSlot++, _("&Delete"));
 }
 
 SpaceItem::~SpaceItem()

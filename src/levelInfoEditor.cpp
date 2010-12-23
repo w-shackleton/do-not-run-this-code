@@ -2,23 +2,42 @@
 
 #include <iostream>
 
+#include <wx/sizer.h>
+#include <wx/button.h>
+#include <wx/stattext.h>
+
 using namespace std;
 using namespace Levels;
 
 BEGIN_EVENT_TABLE(LevelInfoEditor, wxDialog)                  
-        EVT_BUTTON(ID_Cancel_click, LevelInfoEditor::OnCancel)
         EVT_BUTTON(ID_Ok_click, LevelInfoEditor::OnOk)        
+        EVT_BUTTON(ID_Cancel_click, LevelInfoEditor::OnCancel)
 END_EVENT_TABLE()                                          
 
 LevelInfoEditor::LevelInfoEditor(LevelManager &lmanager) :
-	wxDialog(NULL, -1, _("Edit Level Info"))
+	wxDialog(NULL, -1, _("Edit Level Info")),
+	lmanager(lmanager)
 {
-	wxBoxSizer hsizer = new wxBoxSizer(wxHORIZONTAL);                           
+	wxBoxSizer* vsizer = new wxBoxSizer(wxVERTICAL);
+
+	wxGridSizer *prefGrid = new wxGridSizer(2);
+	prefGrid->Add(new wxStaticText(this, -1, _("Level Title:")), 0, wxALL | wxALIGN_CENTRE, 5);
+	title = new wxTextCtrl(this, -1, wxString(lmanager.levelName.c_str(), wxConvUTF8), wxDefaultPosition, wxSize(180, -1));
+	prefGrid->Add(title, 1, wxALL | wxEXPAND, 5);
+
+	prefGrid->Add(new wxStaticText(this, -1, _("Author:")), 0, wxALL | wxALIGN_CENTRE, 5);
+	creator = new wxTextCtrl(this, -1, wxString(lmanager.creator.c_str(), wxConvUTF8), wxDefaultPosition, wxSize(180, -1));
+	prefGrid->Add(creator, 1, wxALL | wxEXPAND, 5);
+
+	vsizer->Add(prefGrid);
+	prefGrid->SetSizeHints(this);
+
+	wxBoxSizer* hsizer = new wxBoxSizer(wxHORIZONTAL);                           
 	hsizer->Add(new wxButton(this, ID_Cancel_click, _("&Cancel")), 1, wxALL, 5);
 	SetEscapeId(ID_Cancel_click);                                               
 	hsizer->Add(new wxButton(this, ID_Ok_click, _("O&k")), 1, wxALL, 5);        
 	                                                                            
-	vsizer->Add(hsizer);                                                        
+	vsizer->Add(hsizer, 1, wxEXPAND);                                                        
 	hsizer->SetSizeHints(this);                                                 
 	SetSizer(vsizer);                                                           
 	vsizer->SetSizeHints(this);                                                 
@@ -26,8 +45,14 @@ LevelInfoEditor::LevelInfoEditor(LevelManager &lmanager) :
 
 void LevelInfoEditor::OnCancel(wxCommandEvent& event)
 {
+	EndModal(1);
 }
 
 void LevelInfoEditor::OnOk(wxCommandEvent& event)
 {
+	lmanager.change(); // We have changed something
+	lmanager.levelName = title->GetValue().mb_str();
+	lmanager.creator = creator->GetValue().mb_str();
+
+	EndModal(0);
 }

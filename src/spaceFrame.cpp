@@ -27,6 +27,8 @@ using namespace std;
 #include "objects/spaceItems.hpp"
 #include "objects/infoboxEditor.hpp"
 
+#include "levelInfoEditor.hpp"
+
 #ifdef __WXMSW__
 #define _FRAME_ICON "icon.xpm"
 #else
@@ -156,6 +158,25 @@ void SpaceFrame::OnFileNew(wxCommandEvent& event)
 	{
 		lmanager.newLevel();
 		spacePanel->redraw();
+		return;
+	}
+	wxMessageDialog dialog(this, _("Do you want to save the current level?"), _("Save level?"), wxYES_NO | wxCANCEL | wxICON_QUESTION);
+	int ret = dialog.ShowModal();
+	switch(ret)
+	{
+		case wxID_CANCEL:
+			break;
+		case wxID_NO:
+			lmanager.levelChanged = false; // Little hack
+			lmanager.newLevel();
+			spacePanel->redraw();
+			break;
+		case wxID_YES:
+			if(!save())
+				break;
+			lmanager.newLevel();
+			spacePanel->redraw();
+			break;
 	}
 }
 
@@ -179,6 +200,8 @@ void SpaceFrame::OnFileOpen(wxCommandEvent& event)
 			spacePanel->redraw();
 			break;
 		case wxID_YES:
+			if(!save())
+				break;
 			open();
 			spacePanel->redraw();
 			break;
@@ -202,6 +225,8 @@ void SpaceFrame::OnFileQuit(wxCommandEvent& event)
 
 void SpaceFrame::OnLevelInfoChange(wxCommandEvent& event)
 {
+	LevelInfoEditor editor(lmanager);
+	editor.ShowModal();
 }
 
 void SpaceFrame::OnHelpHelp(wxCommandEvent& event)
