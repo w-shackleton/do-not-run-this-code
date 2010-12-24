@@ -26,6 +26,17 @@ namespace Misc
 		if(num < min) num = min;
 		if(num > max) num = max;
 	}
+
+	/*
+	   These colours go from 0 to 1, to comply with cairomm
+	   */
+	typedef struct Colour
+	{
+		Colour(double r, double g, double b);
+		Colour(bool none = false);
+		double r, g, b;
+		bool noColour;
+	} Colour;
 }
 
 #endif

@@ -5,7 +5,7 @@
 #include <list>
 #include <iostream>
 
-#include "../objects/spaceItems.hpp"
+#include "../objects/spaceItem.hpp"
 
 namespace Levels
 {

@@ -36,8 +36,10 @@ using namespace std;
 #define _FRAME_ICON "iconlarge.xpm"
 #endif
 
+#define FRAME_TITLE "Space Hopper Level Editor"
+
 SpaceFrame::SpaceFrame()
-	: wxFrame(NULL, -1, _("SpaceGame Editor"), wxDefaultPosition, wxSize(640, 480))
+	: wxFrame(NULL, -1, _(FRAME_TITLE), wxDefaultPosition, wxSize(640, 480))
 {
 	cout << "Loading!" << endl;
 	SetIcon(wxIcon(wxString(Misc::Data::getFilePath(_FRAME_ICON).c_str(), wxConvUTF8), wxBITMAP_TYPE_XPM));
@@ -95,6 +97,8 @@ SpaceFrame::SpaceFrame()
 
 	LevelInfoEditor editor(lmanager);
 	editor.ShowModal();
+
+	SetTitle(_(FRAME_TITLE) + wxString((" - " + lmanager.levelName).c_str(), wxConvUTF8));
 }
 
 bool SpaceFrame::save()
@@ -166,6 +170,7 @@ void SpaceFrame::OnFileNew(wxCommandEvent& event)
 		spacePanel->redraw();
 		LevelInfoEditor editor(lmanager, true);
 		editor.ShowModal();
+		SetTitle(_(FRAME_TITLE) + wxString((" - " + lmanager.levelName).c_str(), wxConvUTF8));
 		spacePanel->redraw();
 		return;
 	}
@@ -183,6 +188,7 @@ void SpaceFrame::OnFileNew(wxCommandEvent& event)
 			lmanager.newLevel();
 			spacePanel->redraw();
 			editor.ShowModal();
+			SetTitle(_(FRAME_TITLE) + wxString((" - " + lmanager.levelName).c_str(), wxConvUTF8));
 			spacePanel->redraw();
 			break;
 		case wxID_YES:
@@ -191,6 +197,7 @@ void SpaceFrame::OnFileNew(wxCommandEvent& event)
 			lmanager.newLevel();
 			spacePanel->redraw();
 			editor.ShowModal();
+			SetTitle(_(FRAME_TITLE) + wxString((" - " + lmanager.levelName).c_str(), wxConvUTF8));
 			spacePanel->redraw();
 			break;
 	}
@@ -243,6 +250,7 @@ void SpaceFrame::OnLevelInfoChange(wxCommandEvent& event)
 {
 	LevelInfoEditor editor(lmanager);
 	editor.ShowModal();
+	SetTitle(_(FRAME_TITLE) + wxString((" - " + lmanager.levelName).c_str(), wxConvUTF8));
 }
 
 void SpaceFrame::OnHelpHelp(wxCommandEvent& event)

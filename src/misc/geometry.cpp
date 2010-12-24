@@ -1,5 +1,7 @@
 #include "geometry.hpp"
 
+using namespace Misc;
+
 Misc::Point::Point(double x, double y) :
 	x(x),
 	y(y)
@@ -21,4 +23,20 @@ bool Misc::pointInPolygon(const std::vector<Point> points, const Misc::Point poi
 			c = !c;
 	}
 	return c;
+}
+
+Colour::Colour(double r, double g, double b) :
+	r(r),
+	g(g),
+	b(b),
+	noColour(false)
+{
+}
+
+Colour::Colour(bool none) :
+	r(0),
+	g(0),
+	b(0),
+	noColour(none)
+{
 }

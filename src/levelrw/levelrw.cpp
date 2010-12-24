@@ -7,6 +7,8 @@ using namespace std;
 
 #include <typeinfo>
 
+#include "../objects/spaceItems.hpp"
+
 LevelWriter::LevelWriter()
 {
 	decl = new TiXmlDeclaration("1.0", "", "");

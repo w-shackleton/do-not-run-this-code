@@ -52,7 +52,7 @@ void Vortex::draw(Cairo::RefPtr<Cairo::Context> &cr)
 	cr->rectangle( - (sx / 2),  - (sy / 2), sx, sy); cr->fill();
 
 	cr->set_source_rgb(0, 0, 0);
-	cr->rectangle( - (sx / 2),  - (IMG_SIZE_Y / 2), sx, IMG_SIZE_Y); cr->stroke();
+	cr->rectangle( - (sx / 2),  - (sy / 2), sx, sy); cr->stroke();
 
 //	cr->scale((double)IMG_SIZE_X / sx, (double)IMG_SIZE_Y / sy);
 	cr->rotate(-rotation);
