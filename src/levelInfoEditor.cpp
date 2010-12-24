@@ -14,8 +14,8 @@ BEGIN_EVENT_TABLE(LevelInfoEditor, wxDialog)
         EVT_BUTTON(ID_Cancel_click, LevelInfoEditor::OnCancel)
 END_EVENT_TABLE()                                          
 
-LevelInfoEditor::LevelInfoEditor(LevelManager &lmanager) :
-	wxDialog(NULL, -1, _("Edit Level Info")),
+LevelInfoEditor::LevelInfoEditor(LevelManager &lmanager, bool newLevel) :
+	wxDialog(NULL, -1, newLevel ? _("Edit Level Info") : _("Create New Level")),
 	lmanager(lmanager)
 {
 	wxBoxSizer* vsizer = new wxBoxSizer(wxVERTICAL);
@@ -33,7 +33,7 @@ LevelInfoEditor::LevelInfoEditor(LevelManager &lmanager) :
 	prefGrid->SetSizeHints(this);
 
 	wxBoxSizer* hsizer = new wxBoxSizer(wxHORIZONTAL);                           
-	hsizer->Add(new wxButton(this, ID_Cancel_click, _("&Cancel")), 1, wxALL, 5);
+	if(newLevel) hsizer->Add(new wxButton(this, ID_Cancel_click, _("&Cancel")), 1, wxALL, 5);
 	SetEscapeId(ID_Cancel_click);                                               
 	hsizer->Add(new wxButton(this, ID_Ok_click, _("O&k")), 1, wxALL, 5);        
 	                                                                            

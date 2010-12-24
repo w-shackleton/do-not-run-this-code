@@ -8,5 +8,6 @@
 #include<rectangular.hpp>
 #include<spherical.hpp>
 #include<wall.hpp>
+#include<blackhole.hpp>
 
 #endif

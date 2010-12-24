@@ -9,7 +9,7 @@
 class LevelInfoEditor : public wxDialog
 {
 	public:
-		LevelInfoEditor(Levels::LevelManager &lmanager);
+		LevelInfoEditor(Levels::LevelManager &lmanager, bool newLevel = false);
 	protected:
 		DECLARE_EVENT_TABLE();
 

@@ -17,6 +17,7 @@ BEGIN_EVENT_TABLE(SpaceFrame, wxFrame)
 	EVT_BUTTON(SpaceFrame::ID_tb_c_infobox, SpaceFrame::OnCreateInfoBox)
 	EVT_BUTTON(SpaceFrame::ID_tb_c_wall, SpaceFrame::OnCreateWall)
 	EVT_BUTTON(SpaceFrame::ID_tb_c_vortex, SpaceFrame::OnCreateVortex)
+	EVT_BUTTON(SpaceFrame::ID_tb_c_blackhole, SpaceFrame::OnCreateBlackHole)
 END_EVENT_TABLE()
 
 #include <iostream>
@@ -58,6 +59,7 @@ SpaceFrame::SpaceFrame()
 	menuCreate->Append(ID_tb_c_infobox, _("Create Info Box"));
 	menuCreate->Append(ID_tb_c_wall, _("Create Wall"));
 	menuCreate->Append(ID_tb_c_vortex, _("Create Vortex"));
+	menuCreate->Append(ID_tb_c_blackhole, _("Create Black Hole"));
 
 	menuAbout->Append(ID_Help_Help, _("&Help\tCtrl-H"));
 	menuAbout->Append(ID_Help_About, _("&About"));
@@ -74,6 +76,7 @@ SpaceFrame::SpaceFrame()
 	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_infobox, _("Create Info Box")));
 	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_wall, _("Create Wall")));
 	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_vortex, _("Create Vortex")));
+	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_blackhole, _("Create Black Hole")));
 	for(list<wxButton *>::iterator it = tbButtons.begin(); it != tbButtons.end(); it++)
 	{
 		toolbar->AddControl(*it);
@@ -89,6 +92,9 @@ SpaceFrame::SpaceFrame()
 
 	SetSizer(hcontainer);
 	SetAutoLayout(true);
+
+	LevelInfoEditor editor(lmanager);
+	editor.ShowModal();
 }
 
 bool SpaceFrame::save()
@@ -158,8 +164,14 @@ void SpaceFrame::OnFileNew(wxCommandEvent& event)
 	{
 		lmanager.newLevel();
 		spacePanel->redraw();
+		LevelInfoEditor editor(lmanager, true);
+		editor.ShowModal();
+		spacePanel->redraw();
 		return;
 	}
+
+	LevelInfoEditor editor(lmanager, true);
+
 	wxMessageDialog dialog(this, _("Do you want to save the current level?"), _("Save level?"), wxYES_NO | wxCANCEL | wxICON_QUESTION);
 	int ret = dialog.ShowModal();
 	switch(ret)
@@ -170,11 +182,15 @@ void SpaceFrame::OnFileNew(wxCommandEvent& event)
 			lmanager.levelChanged = false; // Little hack
 			lmanager.newLevel();
 			spacePanel->redraw();
+			editor.ShowModal();
+			spacePanel->redraw();
 			break;
 		case wxID_YES:
 			if(!save())
 				break;
 			lmanager.newLevel();
+			spacePanel->redraw();
+			editor.ShowModal();
 			spacePanel->redraw();
 			break;
 	}
@@ -274,3 +290,11 @@ void SpaceFrame::OnCreateVortex(wxCommandEvent& event)
 	lmanager.objs.push_back(new Objects::Vortex(pos.GetWidth(), pos.GetHeight(), 100, 100, 0));
 	spacePanel->redraw();
 }
+
+void SpaceFrame::OnCreateBlackHole(wxCommandEvent& event)
+{
+	wxSize pos = spacePanel->getMovedPos() + spacePanel->GetSize() / 2;
+	lmanager.objs.push_back(new Objects::BlackHole(pos.GetWidth(), pos.GetHeight()));
+	spacePanel->redraw();
+}
+

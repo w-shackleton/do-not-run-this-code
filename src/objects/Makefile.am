@@ -7,6 +7,7 @@ libobjects_la_SOURCES = \
 		vortex.cpp	vortex.hpp	\
 		rectangular.cpp	rectangular.hpp	\
 		planet.cpp	planet.hpp	\
+		blackhole.cpp	blackhole.hpp	\
 		spherical.cpp	spherical.hpp	\
 		spaceItem.cpp	spaceItem.hpp	\
 		spaceItems.hpp			\

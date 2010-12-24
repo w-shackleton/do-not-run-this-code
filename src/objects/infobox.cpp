@@ -27,7 +27,7 @@ InfoBox::InfoBox(TiXmlElement &item) :
 {
 	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("message.png"));
 	contextMenu->Append(contextMenuNextAvailableSlot++, _("&Edit"));
-	text = item.Value();
+	text = item.GetText();
 	initialShow = item.Attribute("initialshow") == "true";
 	sx = INFOBOX_SIZE_X;
 	sy = INFOBOX_SIZE_Y;
@@ -54,7 +54,10 @@ void InfoBox::draw(Cairo::RefPtr<Cairo::Context> &cr)
 void InfoBox::saveXMLChild(TiXmlElement* item)
 {
 	Rectangular::saveXMLChild(item);
-	item->SetValue(text);
+
+	TiXmlText *xtext = new TiXmlText(text);
+	item->LinkEndChild(xtext);
+
 	item->SetAttribute("initialshow", initialShow ? "true" : "false");
 }
 

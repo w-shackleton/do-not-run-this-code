@@ -71,8 +71,9 @@ libobjects_la_DEPENDENCIES = ../misc/libmisc.la
 am_libobjects_la_OBJECTS = libobjects_la-wall.lo \
 	libobjects_la-infobox.lo libobjects_la-vortex.lo \
 	libobjects_la-rectangular.lo libobjects_la-planet.lo \
-	libobjects_la-spherical.lo libobjects_la-spaceItem.lo \
-	libobjects_la-infoboxEditor.lo libobjects_la-sliderEditor.lo
+	libobjects_la-blackhole.lo libobjects_la-spherical.lo \
+	libobjects_la-spaceItem.lo libobjects_la-infoboxEditor.lo \
+	libobjects_la-sliderEditor.lo
 libobjects_la_OBJECTS = $(am_libobjects_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -273,6 +274,7 @@ libobjects_la_SOURCES = \
 		vortex.cpp	vortex.hpp	\
 		rectangular.cpp	rectangular.hpp	\
 		planet.cpp	planet.hpp	\
+		blackhole.cpp	blackhole.hpp	\
 		spherical.cpp	spherical.hpp	\
 		spaceItem.cpp	spaceItem.hpp	\
 		spaceItems.hpp			\
@@ -356,6 +358,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-blackhole.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-infobox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-infoboxEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-planet.Plo@am__quote@
@@ -429,6 +432,14 @@ libobjects_la-planet.lo: planet.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='planet.cpp' object='libobjects_la-planet.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -c -o libobjects_la-planet.lo `test -f 'planet.cpp' || echo '$(srcdir)/'`planet.cpp
+
+libobjects_la-blackhole.lo: blackhole.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -MT libobjects_la-blackhole.lo -MD -MP -MF $(DEPDIR)/libobjects_la-blackhole.Tpo -c -o libobjects_la-blackhole.lo `test -f 'blackhole.cpp' || echo '$(srcdir)/'`blackhole.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libobjects_la-blackhole.Tpo $(DEPDIR)/libobjects_la-blackhole.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='blackhole.cpp' object='libobjects_la-blackhole.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -c -o libobjects_la-blackhole.lo `test -f 'blackhole.cpp' || echo '$(srcdir)/'`blackhole.cpp
 
 libobjects_la-spherical.lo: spherical.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -MT libobjects_la-spherical.lo -MD -MP -MF $(DEPDIR)/libobjects_la-spherical.Tpo -c -o libobjects_la-spherical.lo `test -f 'spherical.cpp' || echo '$(srcdir)/'`spherical.cpp

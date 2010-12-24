@@ -34,6 +34,7 @@ class SpaceFrame: public wxFrame
 			ID_tb_c_infobox,
 			ID_tb_c_wall,
 			ID_tb_c_vortex,
+			ID_tb_c_blackhole,
 		};
 
 		wxBoxSizer *hcontainer;
@@ -61,6 +62,7 @@ class SpaceFrame: public wxFrame
 		void OnCreateInfoBox(wxCommandEvent& event);
 		void OnCreateWall(wxCommandEvent& event);
 		void OnCreateVortex(wxCommandEvent& event);
+		void OnCreateBlackHole(wxCommandEvent& event);
 
 		/* Returns false if action should be cancelled */
 		bool checkForSave();

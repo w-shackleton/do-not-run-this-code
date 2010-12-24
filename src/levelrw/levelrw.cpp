@@ -158,6 +158,8 @@ bool LevelReader::open(const std::string &filename, std::list<Objects::SpaceItem
 				objs->push_back(new Objects::InfoBox(*item));
 			else if(itemName == "planet")
 				objs->push_back(new Objects::Planet(*item));
+			else if(itemName == "blackhole")
+				objs->push_back(new Objects::BlackHole(*item));
 			else if(itemName == "gravity")
 				objs->push_back(new Objects::Vortex(*item));
 			else if(itemName == "wall")
