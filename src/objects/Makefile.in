@@ -73,7 +73,7 @@ am_libobjects_la_OBJECTS = libobjects_la-wall.lo \
 	libobjects_la-rectangular.lo libobjects_la-planet.lo \
 	libobjects_la-blackhole.lo libobjects_la-spherical.lo \
 	libobjects_la-spaceItem.lo libobjects_la-infoboxEditor.lo \
-	libobjects_la-sliderEditor.lo
+	libobjects_la-sliderEditor.lo libobjects_la-planetEditor.lo
 libobjects_la_OBJECTS = $(am_libobjects_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -279,7 +279,8 @@ libobjects_la_SOURCES = \
 		spaceItem.cpp	spaceItem.hpp	\
 		spaceItems.hpp			\
 		infoboxEditor.cpp	infoboxEditor.hpp	\
-		sliderEditor.cpp	sliderEditor.hpp
+		sliderEditor.cpp	sliderEditor.hpp	\
+		planetEditor.cpp	planetEditor.hpp
 
 libobjects_la_LIBADD = @WX_LIBS@ @Cairomm_LIBS@ @tinyxml_LIBS@ ../misc/libmisc.la
 libobjects_la_CXXFLAGS = @WXCPPFLAGS@ @Cairomm_CFLAGS@ @tinyxml_CFLAGS@
@@ -362,6 +363,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-infobox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-infoboxEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-planet.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-planetEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-rectangular.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-sliderEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-spaceItem.Plo@am__quote@
@@ -472,6 +474,14 @@ libobjects_la-sliderEditor.lo: sliderEditor.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='sliderEditor.cpp' object='libobjects_la-sliderEditor.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -c -o libobjects_la-sliderEditor.lo `test -f 'sliderEditor.cpp' || echo '$(srcdir)/'`sliderEditor.cpp
+
+libobjects_la-planetEditor.lo: planetEditor.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -MT libobjects_la-planetEditor.lo -MD -MP -MF $(DEPDIR)/libobjects_la-planetEditor.Tpo -c -o libobjects_la-planetEditor.lo `test -f 'planetEditor.cpp' || echo '$(srcdir)/'`planetEditor.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libobjects_la-planetEditor.Tpo $(DEPDIR)/libobjects_la-planetEditor.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='planetEditor.cpp' object='libobjects_la-planetEditor.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -c -o libobjects_la-planetEditor.lo `test -f 'planetEditor.cpp' || echo '$(srcdir)/'`planetEditor.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

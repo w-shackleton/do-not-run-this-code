@@ -1,7 +1,7 @@
 #ifndef CAIROPANEL_H
 #define CAIROPANEL_H
 
-#include <wx/wx.h>
+#include <wx/wx.h> // TODO: Remove!
 #include <wx/dcbuffer.h>
 #include <cairomm/surface.h>
 #include <cairomm/context.h>

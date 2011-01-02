@@ -12,7 +12,8 @@ libobjects_la_SOURCES = \
 		spaceItem.cpp	spaceItem.hpp	\
 		spaceItems.hpp			\
 		infoboxEditor.cpp	infoboxEditor.hpp	\
-		sliderEditor.cpp	sliderEditor.hpp
+		sliderEditor.cpp	sliderEditor.hpp	\
+		planetEditor.cpp	planetEditor.hpp
 
 libobjects_la_LIBADD = @WX_LIBS@ @Cairomm_LIBS@ @tinyxml_LIBS@ ../misc/libmisc.la
 libobjects_la_CXXFLAGS = @WXCPPFLAGS@ @Cairomm_CFLAGS@ @tinyxml_CFLAGS@

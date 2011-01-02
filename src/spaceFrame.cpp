@@ -18,6 +18,12 @@ BEGIN_EVENT_TABLE(SpaceFrame, wxFrame)
 	EVT_BUTTON(SpaceFrame::ID_tb_c_wall, SpaceFrame::OnCreateWall)
 	EVT_BUTTON(SpaceFrame::ID_tb_c_vortex, SpaceFrame::OnCreateVortex)
 	EVT_BUTTON(SpaceFrame::ID_tb_c_blackhole, SpaceFrame::OnCreateBlackHole)
+
+	EVT_MENU(SpaceFrame::ID_tb_c_planet, SpaceFrame::OnCreatePlanet)
+	EVT_MENU(SpaceFrame::ID_tb_c_infobox, SpaceFrame::OnCreateInfoBox)
+	EVT_MENU(SpaceFrame::ID_tb_c_wall, SpaceFrame::OnCreateWall)
+	EVT_MENU(SpaceFrame::ID_tb_c_vortex, SpaceFrame::OnCreateVortex)
+	EVT_MENU(SpaceFrame::ID_tb_c_blackhole, SpaceFrame::OnCreateBlackHole)
 END_EVENT_TABLE()
 
 #include <iostream>
@@ -27,6 +33,7 @@ using namespace std;
 
 #include "objects/spaceItems.hpp"
 #include "objects/infoboxEditor.hpp"
+#include "objects/planetEditor.hpp"
 
 #include "levelInfoEditor.hpp"
 
@@ -266,7 +273,13 @@ void SpaceFrame::OnHelpAbout(wxCommandEvent& event)
 void SpaceFrame::OnCreatePlanet(wxCommandEvent& event)
 {
 	wxSize pos = spacePanel->getMovedPos() + spacePanel->GetSize() / 2;
-	lmanager.objs.push_back(new Objects::Planet(pos.GetWidth(), pos.GetHeight(), 50)); // Default radius
+
+	int type = 3; // TODO: Implement type
+	Objects::Helpers::PlanetEditor editor(this, type);
+	if(editor.ShowModal() == 0)
+	{
+		lmanager.objs.push_back(new Objects::Planet(type, pos.GetWidth(), pos.GetHeight(), 50)); // Default radius
+	}
 	spacePanel->redraw();
 }
 

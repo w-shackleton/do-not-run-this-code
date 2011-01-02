@@ -3,8 +3,6 @@
 #include <wx/sizer.h>
 #include <wx/button.h>
 
-#include <wx/wx.h>
-
 using namespace Objects;
 using namespace Objects::Helpers;
 

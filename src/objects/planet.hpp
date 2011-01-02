@@ -7,46 +7,38 @@
 
 namespace Objects
 {
-	class Planet : public Spherical
+	namespace Helpers
+	{
+		class PlanetEditor;
+	};
+	class PlanetTypes;
+	class Planet;
+	class PlanetType
 	{
 		protected:
-			inline std::string getName() { return "planet"; }
-			void saveXMLChild(TiXmlElement* item);
+			friend class PlanetTypes;
+			friend class Planet;
+			friend class Objects::Helpers::PlanetEditor;
 
-//			static std::vector<Type> types = {Type(1, .5, "planet1.jpg")};
-			
-			class PlanetTypes;
-			class PlanetType
-			{
-				protected:
-					friend class PlanetTypes;
-					friend class Planet;
+			PlanetType(int id, std::string filename, double bounciness, double density, int minSize, int maxSize, Misc::Colour bgCol);
 
-					PlanetType(int id, std::string filename, double bounciness, double density, int minSize, int maxSize, Misc::Colour bgCol);
+			int id;
 
-					int id;
+			std::string filename;
+			double bounciness;
+			double density;
+			int minSize, maxSize;
 
-					std::string filename;
-					double bounciness;
-					double density;
-					int minSize, maxSize;
-
-					Misc::Colour bgCol;
-			};
-
-			class PlanetTypes : std::vector<PlanetType> // Just a way of initialising at load
-			{
-				protected:
-					PlanetTypes();
-					friend class Planet;
-			};
-
-			PlanetTypes planetTypes;
-
+			Misc::Colour bgCol;
 		public:
-			Planet(double sx, double sy, double sradius);
-			Planet(TiXmlElement &item);
-			void draw(Cairo::RefPtr<Cairo::Context> &cr);
+			PlanetType();
+	};
+
+	class PlanetTypes : public std::vector<PlanetType> // Just a way of initialising at load
+	{
+		public:
+			friend class Planet;
+			PlanetTypes();
 
 			enum // Existing numbers must never change; only add new
 			{
@@ -59,5 +51,25 @@ namespace Objects
 				PLANET_bounce2, // Bounciness of 1
 			};
 	};
+
+	static PlanetTypes planetTypes; // TODO: Make this static
+
+	class Planet : public Spherical
+	{
+		protected:
+			inline std::string getName() { return "planet"; }
+			void saveXMLChild(TiXmlElement* item);
+
+//			static std::vector<Type> types = {Type(1, .5, "planet1.jpg")};
+			
+
+			int type;
+			PlanetType planetType;
+		public:
+			Planet(int type, double sx, double sy, double sradius);
+			Planet(TiXmlElement &item);
+			void draw(Cairo::RefPtr<Cairo::Context> &cr);
+	};
 };
+
 #endif
