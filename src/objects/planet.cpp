@@ -62,11 +62,14 @@ PlanetType::PlanetType()
 PlanetTypes::PlanetTypes() :
 	vector<PlanetType>()
 {
-	push_back(PlanetType(PLANET_nobounce1,	"planet1.png", 0.2, 0.5, 30, 250, Colour(true)));
-	push_back(PlanetType(PLANET_sticky1,	"planet5.png", 0, 0.9, 40, 250, Colour(255, 0, 0)));
-	push_back(PlanetType(PLANET_bounce2,	"planet2.png", 1, 0.1, 20, 200, Colour(100, 100, 255)));
-	push_back(PlanetType(PLANET_n1,		"planet3.png", 0.6, 0.6, 20, 200, Colour(0, 100, 200)));
-	push_back(PlanetType(PLANET_n2,		"planet4.png", 0.7, 0.7, 20, 200, Colour(0, 100, 200)));
-	push_back(PlanetType(PLANET_n3,		"planet6.png", 0.8, 0.8, 20, 200, Colour(50, 60, 60)));
+	// Bounciness & density from 0 - 1.5?
+			//   ID			Filename		bn   dn   min max col
+	push_back(PlanetType(PLANET_nobounce1,	"planet1.png",		0.2, 0.5, 30, 250, Colour(true)));
+	push_back(PlanetType(PLANET_sticky1,	"planet5.png",		0,   0.9, 40, 250, Colour(255, 128, 0)));
+	push_back(PlanetType(PLANET_bounce2,	"planet2.png",		1,   0.1, 20, 200, Colour(100, 100, 255)));
+	push_back(PlanetType(PLANET_n1,		"planet3.png",		0.6, 0.6, 20, 200, Colour(0, 100, 200)));
+	push_back(PlanetType(PLANET_n2,		"planet4.png",		0.7, 0.7, 20, 200, Colour(0, 100, 200)));
+	push_back(PlanetType(PLANET_n3,		"planet6.png",		0.8, 0.8, 20, 200, Colour(50, 60, 60)));
+	push_back(PlanetType(PLANET_bounce1,	"planetbouncy.png",	1.3, 0.8, 20, 150, Colour(true)));
 }
 

@@ -3,9 +3,9 @@
 #include <wx/sizer.h>
 #include <wx/button.h>
 #include <wx/bmpbuttn.h>
+#include <wx/image.h>
 
 #include <wx/dcmemory.h>
-#include <wx/image.h>
 
 #include "../misc/data.hpp"
 
@@ -26,17 +26,27 @@ PlanetEditor::PlanetEditor(wxWindow* parent, int &type) :
 	wxDialog(parent, -1, _("Edit Planet")),
 	type(type)
 {
+	planetShadow = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("planet-s.png"));
+	if(planetShadow == NULL)
+		cout << "ERROR: planet shadow image not found!" << endl;
+	bounceicon = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("bounceicon.png"));
+	if(bounceicon == NULL)
+		cout << "ERROR: bounce icon not found!" << endl;
+	densityicon = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("densityicon.png"));
+	if(densityicon == NULL)
+		cout << "ERROR: density icon not found!" << endl;
+
 	wxBoxSizer *vsizer = new wxBoxSizer(wxVERTICAL);
 
-	wxGridSizer *grid = new wxGridSizer(3);
+	wxGridSizer *grid = new wxGridSizer(4);
 
 	// This is the list in planet.hpp
 	for(int i = 0; i < planetTypes.size(); i++)
 	{
-		PlanetBitmap bmp(planetTypes[i].filename, planetTypes[i].density, planetTypes[i].bounciness, type == planetTypes[i].id);
-		bitmaps.push_back(bmp); // Maintain list for deselecting
-		wxBitmapButton *b1 = new wxBitmapButton(this, BUTTON_ID_START + planetTypes[i].id, bmp);
+		wxBitmapButton *b1 = new wxBitmapButton(this, BUTTON_ID_START + planetTypes[i].id, createPlanetBitmap(planetTypes[i].filename, planetTypes[i].density, planetTypes[i].bounciness, planetTypes[i].bgCol));
+
 		b1->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PlanetEditor::OnPlanetSelect));
+
 		grid->Add(b1);
 	}
 
@@ -65,47 +75,42 @@ void PlanetEditor::OnOk(wxCommandEvent& event)
 
 void PlanetEditor::OnPlanetSelect(wxCommandEvent& event)
 {
-	tempType = planetTypes[event.GetId() - BUTTON_ID_START].id;
-	for(int i = 0; i < bitmaps.size(); i++)
-		bitmaps[i].select(false); // Deselect all previous
+//	tempType = planetTypes[event.GetId() - BUTTON_ID_START].id;
+//	for(int i = 0; i < bitmaps.size(); i++)
+		//bitmaps[i].select(false); // Deselect all previous
 
 //	((PlanetBitmap *)event.GetEventObject())->select();
 }
 
-PlanetEditor::PlanetBitmap::PlanetBitmap(std::string picture, double density, double bounciness, bool selected, int width, int height) :
-	wxBitmap(width, height),
-	width(width),
-	height(height),
-	selected(selected)
+wxBitmap PlanetEditor::createPlanetBitmap(std::string picture, double density, double bounciness, Misc::Colour&col, int width, int height)
 {
+	Cairo::RefPtr<Cairo::ImageSurface> img;
+
 	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath(picture));
-	imgWidth = img->get_width(); imgHeight = img->get_height();
-	bounceicon = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("bounceicon.png"));
+	int imgWidth = img->get_width(); int imgHeight = img->get_height();
+
 	if(img == NULL)
 		cout << "ERROR: Could not load image " << picture << "." << endl;
 
-	surface = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, width, height);
-	cr = Cairo::Context::create(surface);
-
-	draw();
-}
-
-void PlanetEditor::PlanetBitmap::select(bool select)
-{
-	selected = select;
-	draw();
-}
-
-void PlanetEditor::PlanetBitmap::draw()
-{
-	// DRAW HERE
-	cr->scale((double)width / (double)imgWidth, (double)height / (double)imgHeight);
-//	cr->scale(img->get_width() / width, img->get_height() / height);
+	Cairo::RefPtr<Cairo::ImageSurface> surface = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, width, height);
+	Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(surface);
 
 	cr->set_source_rgb(0, 0, 0);
 	cr->paint();
 
+	// DRAW HERE
+	cr->set_source_rgb(col.r / 256, col.g / 256, col.b / 256); // These are 0 anyway if invalid, so no need to add 'if' no bg
+	cr->arc(width / 2, height / 2, width / 2, 0, 2.0 * M_PI);
+	cr->fill();
+//	cout << "W: " << width << "," << imgWidth << ";" << height << "," << imgHeight << endl;
+	cr->scale((double)width / (double)imgWidth, (double)height / (double)imgHeight);
+//	cr->scale(img->get_width() / width, img->get_height() / height);
+
 	cr->set_source(img, 0, 0);
+	cr->rectangle(0, 0, img->get_width(), img->get_height());
+	cr->fill();
+
+	cr->set_source(planetShadow, 0, 0);
 	cr->rectangle(0, 0, img->get_width(), img->get_height());
 	cr->fill();
 
@@ -115,37 +120,41 @@ void PlanetEditor::PlanetBitmap::draw()
 	cr->scale((double)width / (double)220, (double)height / (double)220); // With a 10px border
 	cr->translate(10, 10);
 
+	// Energy bars should be from 50px to 200px (5px vertical border in the 30px space)
 	cr->set_source(bounceicon, 0, 170);
 	cr->paint();
 
-	// Energy bars should be from 50px to 200px (5px vertical border in the 30px space)
 	cr->set_source_rgb(0, 0, 0);
 	cr->rectangle(50, 175, 150, 20); cr->fill();
 
-	Misc::trimMinMax(bounciness, 0, 1.5);
+	Misc::trimMinMax(bounciness, 0, PLANET_BN_MAX);
 	cr->set_source_rgb(1, 0, 0);
-	cr->rectangle(50, 175, bounciness * 150, 20); cr->fill();
+	cr->rectangle(50, 175, bounciness * 150 / PLANET_BN_MAX, 20); cr->fill();
 
 	cr->set_source_rgb(1, 1, 1);
 	cr->rectangle(50, 175, 150, 20); cr->stroke();
 
-	// Selected tick
-	if(selected)
-	{
-		cr->set_source_rgb(0, 1, 0);
-		cr->move_to(0, 10);
-		cr->line_to(10, 20);
-		cr->line_to(20, 0);
-		cr->stroke();
-	}
+	// Second bar
+	cr->set_source(densityicon, 0, 130);
+	cr->paint();
+
+	cr->set_source_rgb(0, 0, 0);
+	cr->rectangle(50, 135, 150, 20); cr->fill();
+
+	Misc::trimMinMax(density, 0, PLANET_DN_MAX);
+	cr->set_source_rgb(1, 0, 0);
+	cr->rectangle(50, 135, density * 150 / PLANET_DN_MAX, 20); cr->fill();
+
+	cr->set_source_rgb(1, 1, 1);
+	cr->rectangle(50, 135, 150, 20); cr->stroke();
 
 	cr->set_identity_matrix();
 	// END DRAW
 
 	unsigned char *d = surface->get_data();
 
-	data = new unsigned char[width * height * 3];
-	dataSize = width * height * 3;               
+	unsigned char *data = new unsigned char[width * height * 3];
+	int dataSize = width * height * 3;               
 
 	unsigned int size = 0;
 	while(size < dataSize)
@@ -158,9 +167,6 @@ void PlanetEditor::PlanetBitmap::draw()
 	}
 
 	// This goes cairo->data->wxImage->wxBitmap->wxMemoryDC->wxBitmap! (memory efficient much!)
-	wxBitmap bmp(wxImage(width, height, data));
-
-	wxMemoryDC dc(*this);
-	dc.DrawBitmap(bmp, 0, 0, false);
+	return wxBitmap(wxImage(width, height, data));
 }
 

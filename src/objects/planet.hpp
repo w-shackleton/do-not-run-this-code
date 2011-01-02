@@ -5,6 +5,9 @@
 
 #include "../misc/geometry.hpp"
 
+#define PLANET_BN_MAX 1.5
+#define PLANET_DN_MAX 1.5
+
 namespace Objects
 {
 	namespace Helpers

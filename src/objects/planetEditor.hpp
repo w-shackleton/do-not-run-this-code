@@ -2,7 +2,10 @@
 #define PLANET_EDITOR_H
 
 #include <wx/dialog.h>
+#include <wx/bitmap.h>
+
 #include "planet.hpp"
+#include "../misc/geometry.hpp"
 
 #include <cairomm/surface.h>
 #include <cairomm/context.h>
@@ -35,30 +38,8 @@ namespace Objects
 				void OnOk(wxCommandEvent& event);
 				void OnPlanetSelect(wxCommandEvent& event);
 
-				class PlanetBitmap : public wxBitmap
-				{
-					public:
-						PlanetBitmap(std::string picture, double density, double bounciness, bool selected = false, int width = PLANETEDITOR_IMG_X, int height = PLANETEDITOR_IMG_Y);
-						void select(bool select = true);
-
-					protected:
-						void draw();
-
-						bool selected;
-
-						Cairo::RefPtr<Cairo::ImageSurface> img, bounceicon;
-						int imgWidth, imgHeight;
-						double density, bounciness;
-
-						Cairo::RefPtr<Cairo::ImageSurface> surface;
-						Cairo::RefPtr<Cairo::Context> cr;          
-
-						unsigned char *data;
-						int dataSize;
-						int width, height;
-				};
-
-				std::vector<PlanetBitmap> bitmaps;
+				Cairo::RefPtr<Cairo::ImageSurface> planetShadow, bounceicon, densityicon;
+				wxBitmap createPlanetBitmap(std::string picture, double density, double bounciness, Misc::Colour& col, int width = PLANETEDITOR_IMG_X, int height = PLANETEDITOR_IMG_Y);
 		};
 	}
 }

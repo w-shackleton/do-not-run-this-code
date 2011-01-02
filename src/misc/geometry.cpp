@@ -2,13 +2,13 @@
 
 using namespace Misc;
 
-Misc::Point::Point(double x, double y) :
+Point::Point(double x, double y) :
 	x(x),
 	y(y)
 {
 }
 
-Misc::Point::Point()
+Point::Point()
 {
 }
 
