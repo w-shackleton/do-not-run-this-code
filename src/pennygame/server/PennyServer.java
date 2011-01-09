@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import pennygame.lib.PennyMessage;
+import pennygame.lib.ext.Base64;
 import pennygame.lib.ext.Serialiser;
 
 public class PennyServer {
@@ -19,11 +20,13 @@ public class PennyServer {
 	 */
 	public static void main(String[] args) {
 		System.out.println("Hello!");
+		System.out.println(Base64.decode(Base64.encode("HELLO".getBytes())));
 		try {
 			PennyMessage pm = new PennyMessage();
 			pm.message = "QWERTYUIOP!";
 
 			Socket skt = new Socket("localhost", 1234);
+			skt.setSoTimeout(3000);
 			BufferedReader in = new BufferedReader(new InputStreamReader(
 					skt.getInputStream(), Serialiser.CHARSET));
 			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
