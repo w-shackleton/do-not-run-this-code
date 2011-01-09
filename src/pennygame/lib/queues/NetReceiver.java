@@ -1,18 +1,20 @@
 package pennygame.lib.queues;
 
-import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Reader;
 
 import pennygame.lib.ext.Serialiser;
+import pennygame.lib.queues.handlers.OnConnectionLostListener;
 
 public class NetReceiver extends MessageProducer {
-	protected final BufferedReader inStream;
-	private boolean connected = true;
+	protected final Reader inStream;
+	protected final OnConnectionLostListener connectionLostListener;
 	
-	public NetReceiver(BufferedReader inStream)
+	public NetReceiver(Reader inStream, OnConnectionLostListener connectionLostListener)
 	{
 		super();
 		this.inStream = inStream;
+		this.connectionLostListener = connectionLostListener;
 	}
 	
 	@Override
@@ -22,15 +24,13 @@ public class NetReceiver extends MessageProducer {
 		} catch (IOException e) {
 			System.out.println("ERROR: Could not receive message!");
 			e.printStackTrace();
-			setConnected(false); // This COULD be the problem - PushHandler checks this
+			if(!stopping)
+				connectionLostListener.onConnectionLost();
 		}
 	}
 
-	private synchronized void setConnected(boolean connected) {
-		this.connected = connected;
-	}
-
-	public synchronized boolean isConnected() {
-		return connected;
+	@Override
+	public synchronized void beginStopping() {
+		super.beginStopping();
 	}
 }

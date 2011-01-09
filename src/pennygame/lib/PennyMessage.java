@@ -15,7 +15,7 @@ public class PennyMessage implements Serializable {
 	 */
 	private static final long serialVersionUID = -5315670581578986435L;
 
-	protected int id;
+	public int id;
 
 	public String message = "Hello!";
 }

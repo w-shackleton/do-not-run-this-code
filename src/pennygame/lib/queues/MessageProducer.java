@@ -1,42 +1,43 @@
 package pennygame.lib.queues;
 
-import java.util.Vector;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import pennygame.lib.PennyMessage;
 
 public abstract class MessageProducer extends LoopingThread {
 	private static final int MAXQUEUE = 20; // Should never get this high anyway
-	private final Vector<PennyMessage> messages = new Vector<PennyMessage>();
+	private Queue<PennyMessage> messages;
 
 	public MessageProducer() {
-
+		messages = new LinkedList<PennyMessage>();
 	}
 
-	protected final synchronized void putMessage(PennyMessage msg) {
-		while (messages.size() == MAXQUEUE)
+	protected synchronized final void putMessage(PennyMessage msg) {
+		while (messages.size() == MAXQUEUE && !stopping)
 			try {
-				wait();
+				wait(500);
 			} catch (InterruptedException e) {
 				System.out
 						.println("MessageProducer.putMessage's wait was interrupted, should be nothing...");
 				e.printStackTrace();
 			}
-		messages.addElement(msg);
+		
+		messages.add(new PennyMessage());
 		notify();
 	}
 
-	protected final synchronized PennyMessage getMessage() {
+	protected synchronized final PennyMessage getMessage() {
 		notify();
 		while (messages.size() == 0)
 			try {
-				wait();
+				wait(500);
 			} catch (InterruptedException e) {
 				System.out
-						.println("MessageProducer.putMessage's wait was interrupted, should be nothing...");
+						.println("MessageProducer.getMessage's wait was interrupted, should be nothing...");
 				e.printStackTrace();
 			}
-		PennyMessage message = messages.firstElement();
-		messages.removeElement(message);
+		PennyMessage message = messages.poll();
 		notify();
 		return message;
 	}
