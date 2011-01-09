@@ -6,10 +6,10 @@ import java.io.IOException;
 import pennygame.lib.PennyMessage;
 import pennygame.lib.ext.Serialiser;
 
-public class NetSender extends MessageConsumer<MainThread> {
+public class NetSender<T extends MainThread> extends MessageConsumer<T> {
 	protected final BufferedWriter outStream;
 
-	public NetSender(MainThread producer, BufferedWriter outStream) {
+	public NetSender(T producer, BufferedWriter outStream) {
 		super(producer);
 		this.outStream = outStream;
 	}

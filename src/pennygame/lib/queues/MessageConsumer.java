@@ -1,9 +1,9 @@
 package pennygame.lib.queues;
 
-public abstract class MessageConsumer<P extends MessageProducer> extends LoopingThread {
-	protected final P producer;
+public abstract class MessageConsumer<T extends MessageProducer> extends LoopingThread {
+	protected final T producer;
 
-	public MessageConsumer(P producer) {
+	public MessageConsumer(T producer) {
 		this.producer = producer;
 	}
 }

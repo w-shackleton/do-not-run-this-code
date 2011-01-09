@@ -16,6 +16,13 @@ package pennygame.lib.queues;
  * @param <C>
  *            A consumer
  */
-public class MessageQueue<P extends MessageProducer, C extends MessageConsumer<P>> {
-
+public abstract class MessageQueue<P extends MessageProducer, C extends MessageConsumer<P>> {
+	public P producer;
+	public C consumer;
+	
+	public MessageQueue(P producer, C consumer)
+	{
+		this.producer = producer;
+		this.consumer = consumer;
+	}
 }

@@ -9,8 +9,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import pennygame.lib.PennyMessage;
 
@@ -37,7 +35,6 @@ public final class Serialiser {
 		wr.write(DELIMITER); // Write afterwards so other end will accept
 
 		wr.flush();
-		wr.close();
 	}
 
 	public static final String compose(PennyMessage msg) throws IOException {
@@ -45,7 +42,8 @@ public final class Serialiser {
 
 		baos.write(BEGIN_SEQ); // Begin
 		{
-			GZIPOutputStream gz = new GZIPOutputStream(baos); // Compress
+			//GZIPOutputStream gz = new GZIPOutputStream(baos); // Compress
+			ByteArrayOutputStream gz = baos;
 			{
 				ObjectOutputStream oos = new ObjectOutputStream(gz); // Write
 																		// object
@@ -87,7 +85,8 @@ public final class Serialiser {
 		Object obj = null;
 		ByteArrayInputStream bais = new ByteArrayInputStream(data);
 		{
-			GZIPInputStream gz = new GZIPInputStream(bais);
+			//GZIPInputStream gz = new GZIPInputStream(bais);
+			ByteArrayInputStream gz = bais;
 			{
 				ObjectInputStream ois = new ObjectInputStream(gz);
 				try {
