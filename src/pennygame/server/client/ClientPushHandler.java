@@ -11,5 +11,6 @@ public class ClientPushHandler extends PushHandler {
 
 	@Override
 	protected void processMessage(PennyMessage msg) {
+		System.out.println("Received msg " + msg.id + " with txt: " + msg.message);
 	}
 }
