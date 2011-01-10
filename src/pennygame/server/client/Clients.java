@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import pennygame.lib.GlobalPreferences;
 
 public final class Clients extends Thread {
-	final ConcurrentHashMap<Integer, Client> clients;
+	final ConcurrentHashMap<Integer, CConn> clients;
 	int topId = 0;
 	final ServerSocket serv;
 	private boolean stopping = false;
@@ -20,7 +20,7 @@ public final class Clients extends Thread {
 	 */
 	public Clients() throws IOException {
 		serv = new ServerSocket(GlobalPreferences.getPort());
-		clients = new ConcurrentHashMap<Integer, Client>();
+		clients = new ConcurrentHashMap<Integer, CConn>();
 		serv.setSoTimeout(1000); // To allow server to stop
 	}
 	
@@ -32,7 +32,7 @@ public final class Clients extends Thread {
 				try {
 					Socket sock = serv.accept();
 					
-					Client client = new Client(sock, this);
+					CConn client = new CConn(sock, this);
 					clients.putIfAbsent(topId++, client);
 					client.start(); // Start!
 					System.out.println("Client connected, starting next...");
@@ -51,7 +51,7 @@ public final class Clients extends Thread {
 		stopping = true;
 	}
 
-	public synchronized void onClientEnd(Client client) {
+	public synchronized void onClientEnd(CConn client) {
 		clients.remove(client);
 		System.out.println("Removed dead client");
 	}

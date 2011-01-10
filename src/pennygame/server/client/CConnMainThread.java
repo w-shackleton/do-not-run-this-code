@@ -1,9 +1,8 @@
 package pennygame.server.client;
 
-import pennygame.lib.PennyMessage;
 import pennygame.lib.queues.MainThread;
 
-public class ClientMainThread extends MainThread {
+public class CConnMainThread extends MainThread {
 	// TODO: Implement keepalive packet of '*,'
 	int id = 0;
 	@Override
@@ -13,8 +12,9 @@ public class ClientMainThread extends MainThread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		PennyMessage msg = new PennyMessage();
-		msg.id = id++;
-		putMessage(msg);
+	}
+	@Override
+	protected void setup() {
+		// TODO: Add login processing (Wait until request received from PushHandler)
 	}
 }
