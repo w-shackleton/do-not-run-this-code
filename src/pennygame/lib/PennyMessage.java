@@ -9,6 +9,8 @@ import java.io.Serializable;
  * 
  */
 public class PennyMessage implements Serializable {
+	public PennyMessage() {
+	}
 
 	/**
 	 * Serial UID

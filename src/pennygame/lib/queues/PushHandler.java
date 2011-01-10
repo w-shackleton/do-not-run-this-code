@@ -10,7 +10,9 @@ public abstract class PushHandler extends MessageConsumer<NetReceiver> {
 
 	@Override
 	protected void loop() {
-		processMessage(producer.getMessage());
+		PennyMessage m = producer.getMessage();
+		if(m != null)
+			processMessage(m);
 	}
 	
 	protected abstract void processMessage(PennyMessage msg);

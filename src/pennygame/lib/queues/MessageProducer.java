@@ -23,7 +23,7 @@ public abstract class MessageProducer extends LoopingThread {
 				e.printStackTrace();
 			}
 		
-		messages.add(new PennyMessage());
+		messages.add(msg);
 		notify();
 	}
 

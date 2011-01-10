@@ -28,6 +28,12 @@ public abstract class LoopingThread extends Thread {
 	public synchronized void beginStopping() {
 		stopping = true;
 	}
+	
+	/**
+	 * This function is called once to allow the connection to set itself up (process logins etc)
+	 */
+	protected void setup() {
+	}
 
 	/**
 	 * This function loops indefinitely when this loop is running.
