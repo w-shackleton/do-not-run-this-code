@@ -1,4 +1,4 @@
-package pennygame.server.client;
+package pennygame.server.admin;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -9,14 +9,13 @@ import pennygame.lib.GlobalPreferences;
 import pennygame.lib.msg.MLoginInitiate;
 import pennygame.lib.queues.MainThread;
 
-public class CConnMainThread extends MainThread {
+public class AdminConnMainThread extends MainThread {
 	KeyPair keys;
 	
-	public CConnMainThread(String threadID) {
+	public AdminConnMainThread(String threadID) {
 		super(threadID);
 	}
-	// TODO: Implement keepalive packet of '*,'
-	int id = 0;
+
 	@Override
 	protected void loop() {
 		try {
@@ -25,6 +24,7 @@ public class CConnMainThread extends MainThread {
 			e.printStackTrace();
 		}
 	}
+	
 	@Override
 	protected void setup() {
 		// Send a new RSA Key
