@@ -5,7 +5,8 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import pennygame.lib.PennyMessage;
+import pennygame.lib.msg.PennyMessage;
+import pennygame.lib.queues.NetReceiver;
 
 public final class Serialiser {
 	/**
@@ -22,6 +23,12 @@ public final class Serialiser {
 	public static final String CHARSET = "UTF-8";
 	protected static final char DELIMITER = ',';
 
+	/**
+	 * Serialises, compresses, b64s and writes the Message to wr.
+	 * @param msg
+	 * @param wr
+	 * @throws IOException if there is an error sending the data
+	 */
 	public static final void encode(PennyMessage msg, Writer wr)
 			throws IOException {
 		String s;
@@ -40,7 +47,36 @@ public final class Serialiser {
 			wr.flush();
 		}
 	}
+	
+	/**
+	 * Writes the preserialised message, ie the output from calling compose.
+	 * This puts less strain on the server.
+	 * @param encMsg Preserialised message to encode
+	 * @param wr {@link Writer} to write to
+	 * @throws IOException if there is an error sending the data
+	 */
+	public static final void encode(String encMsg, Writer wr) throws IOException {
+		if (!encMsg.startsWith(BEGIN_SEQ) || !encMsg.endsWith(END_SEQ))
+		{
+			System.out.println("Someone tried to encode a preserialised message which was invalid!");
+			return;
+		}
+		
+		synchronized(wr)
+		{
+			wr.write(encMsg);
+			wr.write(DELIMITER); // Write afterwards so other end will accept
+	
+			wr.flush();
+		}
+	}
 
+	/**
+	 * 'Composes' a message - this is used by the server so that each {@link pennygame.server.client.CConn} doesn't have to do this for multicast messages
+	 * @param msg
+	 * @return
+	 * @throws IOException
+	 */
 	public static final String compose(PennyMessage msg) throws IOException {
 		return BEGIN_CHAR + Base64.encodeObject(msg, Base64.GZIP) + END_CHAR;
 	}
@@ -54,15 +90,15 @@ public final class Serialiser {
 	 * @return The decoded {@link PennyMessage}, or null.
 	 * @throws IOException
 	 */
-	public static final PennyMessage decode(Reader r)
+	public static final PennyMessage decode(Reader r, NetReceiver.NetReceiverStopper stopper)
 			throws IOException {
-		return decompose(NextString(r));
+		return decompose(NextString(r, stopper));
 	}
 
 	public static final PennyMessage decompose(String s) {
 		if(s.charAt(0) == '*')
 		{
-			System.out.println("keepalive...");
+			// System.out.println("keepalive...");
 			return null; // Keepalive
 		}
 		if (!s.startsWith(BEGIN_SEQ) || !s.endsWith(END_SEQ))
@@ -99,12 +135,12 @@ public final class Serialiser {
 		return pm;
 	}
 
-	protected static final String NextString(Reader r)
+	protected static final String NextString(Reader r, NetReceiver.NetReceiverStopper stopper)
 			throws IOException {
-		return NextString(r, DELIMITER);
+		return NextString(r, DELIMITER, stopper);
 	}
 
-	protected static final String NextString(Reader r, char delimeter)
+	protected static final String NextString(Reader r, char delimeter, NetReceiver.NetReceiverStopper stopper)
 			throws IOException {
 		if (r == null)
 			throw new IOException();
@@ -123,8 +159,10 @@ public final class Serialiser {
 					// TODO: Change to use r.ready()?
 					while ((buf = r.read()) == -1) // Keep waiting for more text...
 					{
+						if(stopper.stopping) // Stop requested by NetReceiver
+							return "*";
 						try {
-							Thread.sleep(20);
+							Thread.sleep(80);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}

@@ -9,7 +9,7 @@ import java.io.Writer;
 import java.net.Socket;
 
 import pennygame.lib.ext.Serialiser;
-import pennygame.lib.queues.handlers.OnConnectionLostListener;
+import pennygame.lib.queues.handlers.OnConnectionListener;
 
 /**
  * This class is a pair of queues, ie. four threads (2 for the processing queues
@@ -20,19 +20,38 @@ import pennygame.lib.queues.handlers.OnConnectionLostListener;
  * @param <P>
  * @param <C>
  */
-public abstract class QueuePair<P extends MainThread, C extends PushHandler> implements OnConnectionLostListener  {
-	protected final MainThreadQueue<P> mainThreadQueue;
-	protected final PushHandlerQueue<C> pushHandlerQueue;
+public abstract class QueuePair<P extends MainThread, C extends PushHandler> implements OnConnectionListener  {
+	protected MainThreadQueue<P> mainThreadQueue;
+	protected PushHandlerQueue<C> pushHandlerQueue;
 	
-	protected final P mainThread; // Added for convenience
-	protected final C pushHandler;
+	protected P mainThread; // Added for convenience
+	protected C pushHandler;
 	
 	protected final Socket socket;
+	
+	/**
+	 * Unique identifier for this class. Purely used to debug threads
+	 */
+	private final int connectionId;
 
-	public QueuePair(Socket sock) {
+	/**
+	 * 
+	 * @param sock The socket to connect to
+	 * @param id An identifier. Doesn't have to be anything, purely used to identify threads for easier debugging
+	 */
+	public QueuePair(Socket sock, int id) {
+		super();
+		socket = sock;
+		connectionId = id;
+	}
+	
+	/**
+	 * Connects the socket, starts the queues and starts the threads.
+	 */
+	public synchronized void start()
+	{
 		Writer out = null;
 		Reader in = null;
-		socket = sock;
 		
 		try {
 			in = new InputStreamReader(
@@ -46,23 +65,15 @@ public abstract class QueuePair<P extends MainThread, C extends PushHandler> imp
 			e.printStackTrace();
 		}
 		
-		P mt = createMainThread();
-		NetSender<P> ns = new NetSender<P>(mt, out, this);
+		P mt = createMainThread("Cid: " + connectionId + ", MT");
+		NetSender<P> ns = new NetSender<P>(mt, out, this, "Cid: " + connectionId + ", NS");
 		mainThreadQueue = new MainThreadQueue<P>(mt, ns);
-		
-		NetReceiver nr = new NetReceiver(in, this);
-		pushHandlerQueue = new PushHandlerQueue<C>(nr, createPushHandler(nr));
-		
-		
 		mainThread = mainThreadQueue.producer;
+		
+		NetReceiver nr = new NetReceiver(in, this, "Cid: " + connectionId + ", NR");
+		pushHandlerQueue = new PushHandlerQueue<C>(nr, createPushHandler(nr, "Cid: " + connectionId + ", PH"));
 		pushHandler = pushHandlerQueue.consumer;
-	}
-	
-	/**
-	 * Connects the socket, starts the queues and starts the threads.
-	 */
-	public synchronized void start()
-	{
+		
 		mainThreadQueue.consumer.start(); // Start the consumer first
 		mainThreadQueue.producer.start();
 		
@@ -75,7 +86,7 @@ public abstract class QueuePair<P extends MainThread, C extends PushHandler> imp
 	 * 
 	 * @return The new Object derived from MainThread
 	 */
-	protected abstract P createMainThread();
+	protected abstract P createMainThread(String threadIdentifier);
 
 	/**
 	 * Creates the implementation of the push handler for this class, but doesn't start it.
@@ -84,7 +95,7 @@ public abstract class QueuePair<P extends MainThread, C extends PushHandler> imp
 	 *            The net receiver to pass to the creator
 	 * @return
 	 */
-	protected abstract C createPushHandler(NetReceiver nr);
+	protected abstract C createPushHandler(NetReceiver nr, String threadIdentifier);
 
 	@Override
 	public synchronized void onConnectionLost() {
@@ -95,11 +106,17 @@ public abstract class QueuePair<P extends MainThread, C extends PushHandler> imp
 	
 	public synchronized void stop()
 	{
-		mainThreadQueue.producer.beginStopping();
-		mainThreadQueue.consumer.beginStopping();
+		if(mainThreadQueue != null)
+		{
+			mainThreadQueue.producer.beginStopping();
+			mainThreadQueue.consumer.beginStopping();
+		}
 		
-		pushHandlerQueue.producer.beginStopping();
-		pushHandlerQueue.consumer.beginStopping();
+		if(pushHandlerQueue != null)
+		{
+			pushHandlerQueue.producer.beginStopping();
+			pushHandlerQueue.consumer.beginStopping();
+		}
 		
 		try {
 			socket.close();

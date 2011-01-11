@@ -4,18 +4,24 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.QueuePair;
+import pennygame.lib.queues.handlers.OnLoginHandler;
 
-public class SConn extends QueuePair<SConnMainThread, SConnPushHandler> {
+/**
+ * This is a connection to the server; it should be implemented over by the client, admin interface and fullscreen viewer
+ * @author william
+ *
+ */
+public abstract class SConn<P extends SConnMainThread, C extends SConnPushHandler> extends QueuePair<P, C> implements OnLoginHandler {
 	
 	protected final String server;
 	protected final int port;
 	
-	private final String username, password;
+	protected final String username;
+	protected final String password;
 
 	public SConn(String server, int port, String username, String password) {
-		super(new Socket());
+		super(new Socket(), 0); // No ID here as only 1 needed
 		this.server = server;
 		this.port = port;
 		this.username = username;
@@ -24,22 +30,32 @@ public class SConn extends QueuePair<SConnMainThread, SConnPushHandler> {
 	
 	@Override
 	public synchronized void start() {
-		try {
-			socket.connect(new InetSocketAddress(server, port));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(server == null || server.equals("") || port == 0)
+		{
+			onConnectionLost();
+			return;
 		}
+		try {
+			socket.connect(new InetSocketAddress(server, port), 3000);
+		} catch (IOException e) {
+			System.out.println("Could not connect!");
+			e.printStackTrace();
+			onConnectionLost();
+			return;
+		}
+		super.start();
+		
+		onConnected();
 	}
+	
+	public synchronized void asyncStart() {
+		Thread t = new Thread(new Runnable() {
 
-	@Override
-	protected SConnMainThread createMainThread() {
-		return new SConnMainThread(username, password);
+			@Override
+			public void run() {
+				start();
+			}
+		});
+		t.start();
 	}
-
-	@Override
-	protected SConnPushHandler createPushHandler(NetReceiver nr) {
-		return new SConnPushHandler(nr);
-	}
-
 }

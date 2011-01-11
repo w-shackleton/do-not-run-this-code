@@ -4,15 +4,15 @@ import java.io.IOException;
 import java.io.Reader;
 
 import pennygame.lib.ext.Serialiser;
-import pennygame.lib.queues.handlers.OnConnectionLostListener;
+import pennygame.lib.queues.handlers.OnConnectionListener;
 
 public class NetReceiver extends MessageProducer {
 	protected final Reader inStream;
-	protected final OnConnectionLostListener connectionLostListener;
+	protected final OnConnectionListener connectionLostListener;
 	
-	public NetReceiver(Reader inStream, OnConnectionLostListener connectionLostListener)
+	public NetReceiver(Reader inStream, OnConnectionListener connectionLostListener, String threadID)
 	{
-		super();
+		super(threadID);
 		this.inStream = inStream;
 		this.connectionLostListener = connectionLostListener;
 	}
@@ -20,7 +20,7 @@ public class NetReceiver extends MessageProducer {
 	@Override
 	protected void loop() {
 		try {
-			putMessage(Serialiser.decode(inStream));
+			putMessage(Serialiser.decode(inStream, serialiserStopper));
 		} catch (IOException e) {
 			System.out.println("ERROR: Could not receive message!");
 			e.printStackTrace();
@@ -32,5 +32,13 @@ public class NetReceiver extends MessageProducer {
 	@Override
 	public synchronized void beginStopping() {
 		super.beginStopping();
+		serialiserStopper.stopping = true;
+	}
+	
+	NetReceiverStopper serialiserStopper = new NetReceiverStopper();
+	
+	public static final class NetReceiverStopper
+	{
+		public boolean stopping = false;
 	}
 }

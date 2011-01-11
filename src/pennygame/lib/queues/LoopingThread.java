@@ -8,11 +8,12 @@ public abstract class LoopingThread extends Thread {
 	protected int pauseTime = 20;
 	protected boolean stopping = false;
 
-	public LoopingThread() {
-		super();
+	public LoopingThread(String threadID) {
+		super(threadID);
 	}
 
 	public void run() {
+		setup();
 		while (!stopping) {
 			loop();
 			try {
@@ -23,6 +24,7 @@ public abstract class LoopingThread extends Thread {
 				e.printStackTrace();
 			}
 		}
+		finish();
 	}
 
 	public synchronized void beginStopping() {
@@ -33,6 +35,13 @@ public abstract class LoopingThread extends Thread {
 	 * This function is called once to allow the connection to set itself up (process logins etc)
 	 */
 	protected void setup() {
+	}
+	
+	/**
+	 * This is run after the loop has stopped
+	 */
+	protected void finish() {
+		
 	}
 
 	/**

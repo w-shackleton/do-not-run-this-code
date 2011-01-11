@@ -3,18 +3,18 @@ package pennygame.lib.queues;
 import java.io.IOException;
 import java.io.Writer;
 
-import pennygame.lib.PennyMessage;
 import pennygame.lib.ext.Serialiser;
-import pennygame.lib.queues.handlers.OnConnectionLostListener;
+import pennygame.lib.msg.PennyMessage;
+import pennygame.lib.queues.handlers.OnConnectionListener;
 
 public class NetSender<T extends MainThread> extends MessageConsumer<T> {
 	protected final Writer outStream;
-	protected final OnConnectionLostListener connectionLostListener;
+	protected final OnConnectionListener connectionLostListener;
 	
 	private long previousTime;
 	
-	public NetSender(T producer, Writer outStream, OnConnectionLostListener connectionLostListener) {
-		super(producer);
+	public NetSender(T producer, Writer outStream, OnConnectionListener connectionLostListener, String threadID) {
+		super(producer, threadID);
 		this.outStream = outStream;
 		this.connectionLostListener = connectionLostListener;
 		previousTime = System.currentTimeMillis();
@@ -30,19 +30,36 @@ public class NetSender<T extends MainThread> extends MessageConsumer<T> {
 				connectionLostListener.onConnectionLost(); // Try and reconnect / safely kill.
 		}
 		
-		PennyMessage msg = producer.getMessage();
+		Object msg = producer.getMessageNow(); // Used to use getMessage, but then keepalives wouldn't work
 		if (msg == null) {
-			System.out.println("NetSender received a blank message...");
-			return; // Somehow a blank message got in here; oh well.
+			// System.out.println("NetSender received a blank message...");
+			return; // Somehow a blank message got in here; oh well. Probably because no messages left in queue
 		}
 
-		try {
-			Serialiser.encode(msg, outStream);
-		} catch (IOException e) {
-			System.out.println("ERROR: Could not send message out! (probably means client has disconnected)");
-			if(!stopping) // When we are stopping IO errors will probably occur
-				connectionLostListener.onConnectionLost(); // Try and reconnect / safely kill.
+		// Check type
+		if(PennyMessage.class.isAssignableFrom(msg.getClass())) // If it is a pennymessage
+		{
+			System.out.println("Sending");
+			try {
+				Serialiser.encode((PennyMessage) msg, outStream);
+			} catch (IOException e) {
+				System.out.println("ERROR: Could not send message out! (probably means client has disconnected)");
+				if(!stopping) // When we are stopping IO errors will probably occur
+					connectionLostListener.onConnectionLost(); // Try and reconnect / safely kill.
+			}
 		}
+		else if(String.class.isAssignableFrom(msg.getClass())) // If it is a pennymessage
+		{
+			try {
+				Serialiser.encode((PennyMessage) msg, outStream);
+			} catch (IOException e) {
+				System.out.println("ERROR: Could not send preserialised message out! (probably means client has disconnected)");
+				if(!stopping) // When we are stopping IO errors will probably occur
+					connectionLostListener.onConnectionLost(); // Try and reconnect / safely kill.
+			}
+		}
+		else
+			System.out.println("NetSender just tried to send a not recognised message format");
 	}
 	
 	private void keepAlive() throws IOException
