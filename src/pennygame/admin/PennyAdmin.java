@@ -18,4 +18,24 @@ public class PennyAdmin extends LoginApplet<AdminSConn> {
 		return GlobalPreferences.getAdminport();
 	}
 	
+	AdminFrame adminFrame;
+
+	@Override
+	protected void startMainWindow(AdminSConn serverConnection) {
+		adminFrame = new AdminFrame(serverConnection, this);
+		adminFrame.setVisible(true);
+	}
+
+	@Override
+	protected void closeMainWindow() {
+		if(adminFrame == null) return;
+		adminFrame.setVisible(false);
+	}
+	
+	protected void adminFrameFinished() {
+		adminFrame = null;
+		statusLabel.setText("");
+		passwordField.setText("");
+		enableLoginUI(true);
+	}
 }

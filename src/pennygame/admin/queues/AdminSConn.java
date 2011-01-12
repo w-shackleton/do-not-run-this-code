@@ -47,7 +47,7 @@ public class AdminSConn extends SConn<AdminSConnMainThread, AdminSConnPushHandle
 	@Override
 	protected AdminSConnPushHandler createPushHandler(NetReceiver nr,
 			String threadIdentifier) {
-		return new AdminSConnPushHandler(nr, loginHandler, threadIdentifier, mainThread.msgBacks);
+		return new AdminSConnPushHandler(nr, loginHandler, threadIdentifier, mainThread.msgBacks, connectionEnder);
 	}
 
 }
