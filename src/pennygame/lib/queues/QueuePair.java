@@ -124,4 +124,22 @@ public abstract class QueuePair<P extends MainThread, C extends PushHandler> imp
 			e.printStackTrace();
 		}
 	}
+	
+	// TODO: move to implements?
+	protected ConnectionEnder connectionEnder = new ConnectionEnder() {
+		
+		@Override
+		public void endConnection() {
+			stop();
+		}
+	};
+	
+	/**
+	 * Used to let child threads notify the QueuePair implementation that it should / has died
+	 * @author william
+	 *
+	 */
+	public interface ConnectionEnder {
+		public void endConnection();
+	}
 }

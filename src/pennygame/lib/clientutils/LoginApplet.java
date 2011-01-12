@@ -49,7 +49,7 @@ public abstract class LoginApplet<T extends SConn<? extends SConnMainThread, ? e
 	/**
 	 * Status label at the bottom
 	 */
-	JLabel statusLabel;
+	protected JLabel statusLabel;
 
 	/**
 	 * Serial Version UID
@@ -58,7 +58,7 @@ public abstract class LoginApplet<T extends SConn<? extends SConnMainThread, ? e
 
 	@Override
 	public void init() {
-		super.start();
+		super.init();
 		WindowUtilities.setNativeLookAndFeel();
 		getGraphics().drawString("Loading...", 20, 30);
 		try {
@@ -173,8 +173,10 @@ public abstract class LoginApplet<T extends SConn<? extends SConnMainThread, ? e
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					statusLabel.setText("Couldn't connect!");
+					if(!connectionIsAvailable) // So that this doesn't happen when closing window
+						statusLabel.setText("Couldn't connect!");
 					enableLoginUI(true);
+					closeMainWindow();
 				}
 			});
 		}
@@ -189,6 +191,8 @@ public abstract class LoginApplet<T extends SConn<? extends SConnMainThread, ? e
 			});
 		}
 	};
+	
+	private boolean connectionIsAvailable = false;
 
 	protected final OnLoginHandler loginHandler = new OnLoginHandler() {
 
@@ -208,10 +212,20 @@ public abstract class LoginApplet<T extends SConn<? extends SConnMainThread, ? e
 				@Override
 				public void run() {
 					statusLabel.setText("Ready!");
+					connectionIsAvailable = true;
+					startMainWindow(serverConnection);
 				}
 			});
 		}
 	};
+	
+	/**
+	 * Starts the main window of the client with the specified connection to the server
+	 * @param serverConnection
+	 */
+	protected abstract void startMainWindow(T serverConnection);
+	
+	protected abstract void closeMainWindow();
 
 	protected ActionListener onLoginButtonPressed = new ActionListener() {
 		@Override
