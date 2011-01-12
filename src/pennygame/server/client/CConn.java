@@ -21,7 +21,7 @@ public class CConn extends QueuePair<CConnMainThread, CConnPushHandler> {
 
 	@Override
 	protected CConnPushHandler createPushHandler(NetReceiver nr, String threadID) {
-		CConnPushHandler cPushHandler = new CConnPushHandler(nr, threadID);
+		CConnPushHandler cPushHandler = new CConnPushHandler(nr, threadID, mainThread.cConnMsgBacks);
 		return cPushHandler;
 	}
 	

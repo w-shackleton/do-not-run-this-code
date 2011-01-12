@@ -27,7 +27,7 @@ public class AdminConn extends
 	@Override
 	protected AdminConnPushHandler createPushHandler(NetReceiver nr,
 			String threadIdentifier) {
-		return new AdminConnPushHandler(nr, threadIdentifier);
+		return new AdminConnPushHandler(nr, threadIdentifier, mainThread.adminMsgBacks, connectionEnder);
 	}
 
 	@Override

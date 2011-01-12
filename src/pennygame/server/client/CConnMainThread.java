@@ -3,9 +3,11 @@ package pennygame.server.client;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.SecureRandom;
 
 import pennygame.lib.GlobalPreferences;
+import pennygame.lib.msg.MLoginCompleted;
 import pennygame.lib.msg.MLoginInitiate;
 import pennygame.lib.queues.MainThread;
 
@@ -41,5 +43,29 @@ public class CConnMainThread extends MainThread {
 			MLoginInitiate loginInitiate = new MLoginInitiate(keys.getPublic());
 			putMessage(loginInitiate);
 		}
+		
+		while(!loginCompleted && !stopping)
+		{
+			try {
+				Thread.sleep(50); // Wait a bit for response
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		putMessage(new MLoginCompleted(true, "admin"));
 	}
+	
+	CConnMsgBacks cConnMsgBacks = new CConnMsgBacks();
+	
+	class CConnMsgBacks {
+		public PrivateKey getPrivateKey() {
+			return keys.getPrivate();
+		}
+		
+		public void loginSuccess() {
+			loginCompleted = true;
+		}
+	}
+	
+	protected boolean loginCompleted = false;
 }

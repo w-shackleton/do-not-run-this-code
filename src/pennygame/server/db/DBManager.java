@@ -8,27 +8,36 @@ import java.sql.Statement;
 import pennygame.lib.queues.LoopingThread;
 
 public class DBManager extends LoopingThread {
+	private static final String server = "10.4.1.9";
+	private static final String database = "penny";
+	private static final String username = "penny";
+	private static final String password = "f7qMfKej0Lmfzi4B76";
+	private static final String dbUrl = "jdbc:mysql://" + server + "/" + database;
+	
 	final Connection conn;
 	
 	public DBManager() throws SQLException {
 		super("DB Mgmt");
 		try {
-			Class.forName("org.sqlite.JDBC");
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
 		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
 		
-		conn = DriverManager.getConnection("jdbc:sqlite:penny.db");
-		conn.setAutoCommit(true);
+		conn = DriverManager.getConnection(dbUrl, username, password);
+		System.out.println("Database connected");
+		// conn.setAutoCommit(true);
+		
+		// DEBUG ONLY!!!!!
+		resetDB();
 	}
 	
 	@Override
 	protected void setup() {
-		try {
-			resetDB();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override
@@ -46,7 +55,7 @@ public class DBManager extends LoopingThread {
 		System.out.println("Database closed");
 	}
 	
-	protected void resetDB() throws SQLException {
+	public void resetDB() throws SQLException {
 		Statement stat = conn.createStatement();
 		stat.executeUpdate("drop table if exists users;");
 		
@@ -55,6 +64,6 @@ public class DBManager extends LoopingThread {
 	
 	protected void initialiseDB() throws SQLException {
 		Statement stat = conn.createStatement();
-		stat.executeUpdate("create table if not exists users (id INTEGER PRIMARY KEY, user TEXT, pass TEXT);");
+		stat.executeUpdate("create table if not exists users (id INT(16) UNSIGNED PRIMARY KEY AUTO_INCREMENT, username VARCHAR(40) NOT NULL, password VARCHAR(128) NOT NULL);");
 	}
 }
