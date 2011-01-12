@@ -44,6 +44,6 @@ public class CSConn extends SConn<CSConnMainThread, CSConnPushHandler> {
 
 	@Override
 	protected CSConnPushHandler createPushHandler(NetReceiver nr, String threadID) {
-		return new CSConnPushHandler(nr, this, threadID, mainThread.msgBacks); // Give it loginHandler, so it can tell us when login is completed
+		return new CSConnPushHandler(nr, this, threadID, mainThread.msgBacks, connectionEnder); // Give it loginHandler, so it can tell us when login is completed
 	}
 }

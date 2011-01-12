@@ -17,4 +17,14 @@ public class PennyClient extends LoginApplet<CSConn> {
 	protected int getPort() {
 		return GlobalPreferences.getPort();
 	}
+
+	@Override
+	protected void startMainWindow(CSConn serverConnection) {
+		
+	}
+
+	@Override
+	protected void closeMainWindow() {
+		
+	}
 }
