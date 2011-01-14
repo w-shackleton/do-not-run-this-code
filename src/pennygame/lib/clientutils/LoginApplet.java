@@ -202,6 +202,7 @@ public abstract class LoginApplet<T extends SConn<? extends SConnMainThread, ? e
 				@Override
 				public void run() {
 					statusLabel.setText("Login failed, please try again.");
+					enableLoginUI(true);
 				}
 			});
 		}

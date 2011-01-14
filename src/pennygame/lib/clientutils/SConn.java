@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import pennygame.lib.msg.PennyMessage;
 import pennygame.lib.queues.QueuePair;
 import pennygame.lib.queues.handlers.OnLoginHandler;
 
@@ -57,5 +58,9 @@ public abstract class SConn<P extends SConnMainThread, C extends SConnPushHandle
 			}
 		});
 		t.start();
+	}
+	
+	protected void sendMessage(PennyMessage msg) {
+		mainThread.sendMessage(msg);
 	}
 }
