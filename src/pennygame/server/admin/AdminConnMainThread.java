@@ -5,17 +5,23 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
+import java.sql.SQLException;
 
 import pennygame.lib.GlobalPreferences;
 import pennygame.lib.msg.MLoginCompleted;
 import pennygame.lib.msg.MLoginInitiate;
+import pennygame.lib.msg.adm.MAUserList;
 import pennygame.lib.queues.MainThread;
+import pennygame.server.db.GameUtils;
 
 public class AdminConnMainThread extends MainThread {
 	KeyPair keys;
 	
-	public AdminConnMainThread(String threadID) {
+	protected final GameUtils gameUtils;
+	
+	public AdminConnMainThread(String threadID, GameUtils gameUtils) {
 		super(threadID);
+		this.gameUtils = gameUtils;
 	}
 
 	@Override
@@ -65,6 +71,14 @@ public class AdminConnMainThread extends MainThread {
 		public void loginSuccess(boolean success) {
 			loginCompleted = true;
 			loginSuccess = success;
+		}
+		
+		public void refreshUserList() {
+			try {
+				putMessage(new MAUserList(gameUtils.users.getUsers()));
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

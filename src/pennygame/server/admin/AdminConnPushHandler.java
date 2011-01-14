@@ -1,23 +1,35 @@
 package pennygame.server.admin;
 
+import java.sql.SQLException;
+
 import pennygame.lib.ext.Base64;
 import pennygame.lib.ext.PasswordUtils;
 import pennygame.lib.msg.MLoginRequest;
+import pennygame.lib.msg.MRefresher;
 import pennygame.lib.msg.PennyMessage;
+import pennygame.lib.msg.adm.MAGamePause;
+import pennygame.lib.msg.adm.MAUserAdd;
+import pennygame.lib.msg.adm.MAUserModifyRequest;
 import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.PushHandler;
 import pennygame.lib.queues.QueuePair.ConnectionEnder;
+import pennygame.server.db.GameUtils;
 
 public class AdminConnPushHandler extends PushHandler {
 	final AdminConnMainThread.AdminMsgBacks adminMsgBacks;
 	
 	protected final ConnectionEnder connEnder;
+	
+	protected final GameUtils gameUtils;
 
-	public AdminConnPushHandler(NetReceiver producer, String threadID, AdminConnMainThread.AdminMsgBacks msgBacks, ConnectionEnder connEnder) {
+	public AdminConnPushHandler(NetReceiver producer, String threadID, AdminConnMainThread.AdminMsgBacks msgBacks, ConnectionEnder connEnder, GameUtils gameUtils) {
 		super(producer, threadID);
 		adminMsgBacks = msgBacks;
 		this.connEnder = connEnder;
+		this.gameUtils = gameUtils;
 	}
+	
+	protected boolean loggedIn = false;
 
 	@Override
 	protected void processMessage(PennyMessage msg) {
@@ -27,8 +39,11 @@ public class AdminConnPushHandler extends PushHandler {
 			MLoginRequest logReq = (MLoginRequest) msg;
 			byte[] hashText = PasswordUtils.decryptPassword(adminMsgBacks.getPrivateKey(), logReq.pass);
 			String hashedPass = Base64.encodeBytes(hashText);
-			if(hashedPass.equals("nU4eI71bcnBGqeO0t9tXvY1u5oQ=")) // Current pass is 'pass'
+			if(hashedPass.equals("nU4eI71bcnBGqeO0t9tXvY1u5oQ=") && logReq.username.equals("admin"))// Current pass is 'pass'
+			{
 				adminMsgBacks.loginSuccess(true);
+				loggedIn = true;
+			}
 			else
 			{
 				adminMsgBacks.loginSuccess(false);
@@ -39,6 +54,47 @@ public class AdminConnPushHandler extends PushHandler {
 				}
 				connEnder.endConnection();
 			}
+		}
+		if(!loggedIn) return; // Don't do anything until so.
+		
+		if(cls.equals(MAUserAdd.class)) {
+			System.out.println("Adding new user to DB");
+			MAUserAdd usrReq = (MAUserAdd) msg;
+			byte[] hashText = PasswordUtils.decryptPassword(adminMsgBacks.getPrivateKey(), usrReq.newPassword);
+			
+			try {
+				gameUtils.users.createUser(usrReq.user.getUsername(), hashText, usrReq.user.getPennies(), usrReq.user.getBottles());
+			} catch (SQLException e) {
+				System.out.println("Couldn't create user!");
+				e.printStackTrace();
+			}
+			
+			adminMsgBacks.refreshUserList();
+		}
+		else if(cls.equals(MRefresher.class)) {
+			int what = ((MRefresher)msg).what;
+			switch(what) {
+			case MRefresher.REF_USERLIST:
+				adminMsgBacks.refreshUserList();
+				break;
+			}
+		}
+		else if(cls.equals(MAUserModifyRequest.class)) {
+			MAUserModifyRequest usrReq = (MAUserModifyRequest) msg;
+			
+			switch(usrReq.getAction()) {
+			case MAUserModifyRequest.DELETE_USER:
+				try {
+					gameUtils.users.deleteUser(usrReq.getId());
+					adminMsgBacks.refreshUserList();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				break;
+			}
+		}
+		else if(cls.equals(MAGamePause.class)) {
+			gameUtils.pauseGame(((MAGamePause)msg).shouldPause());
 		}
 	}
 }

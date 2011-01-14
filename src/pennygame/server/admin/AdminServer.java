@@ -7,15 +7,18 @@ import java.net.SocketTimeoutException;
 
 import pennygame.lib.GlobalPreferences;
 import pennygame.lib.queues.LoopingThread;
+import pennygame.server.db.GameUtils;
 
 public class AdminServer extends LoopingThread {
 	AdminConn admin = null;
 	final ServerSocket serv;
+	final GameUtils gameUtils;
 
-	public AdminServer() throws IOException {
+	public AdminServer(GameUtils gameUtils) throws IOException {
 		super("Admin Server monitor");
 		serv = new ServerSocket(GlobalPreferences.getAdminport());
 		serv.setSoTimeout(1000);
+		this.gameUtils = gameUtils;
 	}
 	
 	@Override
@@ -39,7 +42,7 @@ public class AdminServer extends LoopingThread {
 				}
 			}
 			if(stopping) return;
-			admin = new AdminConn(sock, this);
+			admin = new AdminConn(sock, this, gameUtils);
 			admin.start();
 		} else
 			try {

@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
 import pennygame.lib.GlobalPreferences;
+import pennygame.server.db.GameUtils;
 
 public final class Clients extends Thread {
 	final ConcurrentHashMap<Integer, CConn> clients;
@@ -16,15 +17,19 @@ public final class Clients extends Thread {
 	final ServerSocket serv;
 	private boolean stopping = false;
 	
+	private final GameUtils gameUtils;
+	
 	/**
 	 * Creates a new list of clients which will accept connections.
 	 * @throws IOException if the new socket can't be created
 	 */
-	public Clients() throws IOException {
+	public Clients(GameUtils gameUtils) throws IOException {
 		super("Connection starter");
 		serv = new ServerSocket(GlobalPreferences.getPort());
 		clients = new ConcurrentHashMap<Integer, CConn>();
 		serv.setSoTimeout(1000); // To allow server to stop
+		
+		this.gameUtils = gameUtils;
 	}
 	
 	@Override
@@ -35,7 +40,7 @@ public final class Clients extends Thread {
 				try {
 					Socket sock = serv.accept();
 					
-					CConn client = new CConn(sock, this, topId);
+					CConn client = new CConn(sock, this, topId, gameUtils);
 					clients.putIfAbsent(topId++, client);
 					client.start(); // Start!
 					System.out.println("Client connected, starting next...");

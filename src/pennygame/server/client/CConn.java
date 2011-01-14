@@ -4,13 +4,17 @@ import java.net.Socket;
 
 import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.QueuePair;
+import pennygame.server.db.GameUtils;
 
 public class CConn extends QueuePair<CConnMainThread, CConnPushHandler> {
 	protected Clients parent;
+	
+	private final GameUtils gameUtils;
 
-	public CConn(Socket sock, Clients parent, int id) {
+	public CConn(Socket sock, Clients parent, int id, GameUtils gameUtils) {
 		super(sock, id);
 		this.parent = parent;
+		this.gameUtils = gameUtils;
 	}
 
 	@Override
@@ -21,7 +25,7 @@ public class CConn extends QueuePair<CConnMainThread, CConnPushHandler> {
 
 	@Override
 	protected CConnPushHandler createPushHandler(NetReceiver nr, String threadID) {
-		CConnPushHandler cPushHandler = new CConnPushHandler(nr, threadID, mainThread.cConnMsgBacks);
+		CConnPushHandler cPushHandler = new CConnPushHandler(nr, threadID, mainThread.cConnMsgBacks, connectionEnder, gameUtils);
 		return cPushHandler;
 	}
 	

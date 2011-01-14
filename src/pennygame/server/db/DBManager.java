@@ -12,10 +12,11 @@ public class DBManager extends LoopingThread {
 	private static final String database = "penny";
 	private static final String username = "penny";
 	private static final String password = "f7qMfKej0Lmfzi4B76";
-	private static final String dbUrl = "jdbc:mysql://" + server + "/" + database;
-	
+	private static final String dbUrl = "jdbc:mysql://" + server + "/"
+			+ database;
+
 	final Connection conn;
-	
+
 	public DBManager() throws SQLException {
 		super("DB Mgmt");
 		try {
@@ -27,24 +28,25 @@ public class DBManager extends LoopingThread {
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		
+
 		conn = DriverManager.getConnection(dbUrl, username, password);
-		System.out.println("Database connected");
+		System.out.println("DB connected");
 		// conn.setAutoCommit(true);
-		
-		// DEBUG ONLY!!!!!
-		resetDB();
+
+		// DEBUG ONLY!!!!! (one or the other)
+		// resetDB();
+		initialiseDB();
 	}
-	
+
 	@Override
 	protected void setup() {
 	}
 
 	@Override
 	protected void loop() {
-		
+
 	}
-	
+
 	@Override
 	protected void finish() {
 		try {
@@ -54,16 +56,28 @@ public class DBManager extends LoopingThread {
 		}
 		System.out.println("Database closed");
 	}
-	
+
 	public void resetDB() throws SQLException {
 		Statement stat = conn.createStatement();
 		stat.executeUpdate("drop table if exists users;");
-		
+
 		initialiseDB();
 	}
-	
+
 	protected void initialiseDB() throws SQLException {
 		Statement stat = conn.createStatement();
-		stat.executeUpdate("create table if not exists users (id INT(16) UNSIGNED PRIMARY KEY AUTO_INCREMENT, username VARCHAR(40) NOT NULL, password VARCHAR(128) NOT NULL);");
+		stat.executeUpdate("create table if not exists users (" +
+				"id INT(16) UNSIGNED PRIMARY KEY AUTO_INCREMENT," +
+				"username VARCHAR(40) UNIQUE NOT NULL," +
+				"password VARCHAR(50) NOT NULL," +
+				"pennies INT(32) NOT NULL," +
+				"bottles INT(32) NOT NULL," +
+				"INDEX(username(10), password)," +
+				"INDEX(username(10))" +
+				") TYPE=INNODB;");
+	}
+
+	public Connection getConnection() {
+		return conn;
 	}
 }

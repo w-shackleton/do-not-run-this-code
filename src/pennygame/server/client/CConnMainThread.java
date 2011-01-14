@@ -52,7 +52,7 @@ public class CConnMainThread extends MainThread {
 				e.printStackTrace();
 			}
 		}
-		putMessage(new MLoginCompleted(true, "admin"));
+		putMessage(new MLoginCompleted(loginSuccess, loginName));
 	}
 	
 	CConnMsgBacks cConnMsgBacks = new CConnMsgBacks();
@@ -62,10 +62,14 @@ public class CConnMainThread extends MainThread {
 			return keys.getPrivate();
 		}
 		
-		public void loginSuccess() {
+		public void loginSuccess(boolean success, String userName) {
 			loginCompleted = true;
+			loginSuccess = success;
+			loginName = userName;
 		}
 	}
 	
 	protected boolean loginCompleted = false;
+	protected boolean loginSuccess = false;
+	protected String loginName = "";
 }
