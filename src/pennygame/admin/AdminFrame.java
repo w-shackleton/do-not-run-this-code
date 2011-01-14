@@ -6,53 +6,71 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.JToggleButton;
+import javax.swing.border.EmptyBorder;
 
-import pennygame.admin.dialogs.NewUserDialog;
 import pennygame.admin.queues.AdminSConn;
+import pennygame.admin.uiparts.UserTab;
 
 public final class AdminFrame extends JFrame implements WindowListener {
 	
 	protected final AdminSConn serv;
 	protected final PennyAdmin applet;
+	
+	JTabbedPane tabs;
+	
+	public final UserTab userTab;
 
 	private static final long serialVersionUID = -8102000347833420431L;
 
 	public AdminFrame(AdminSConn serv, PennyAdmin applet) {
 		super("Pennygame Admin");
 		this.serv = serv;
-		
 		this.applet = applet;
+		
+		userTab = new UserTab(this, serv);
+		
+		serv.setParentFrame(this);
 		
 		addWindowListener(this);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		
 		initUI();
+		
 	}
 	
 	protected void initUI() {
 		JPanel content = new JPanel();
 		content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 		
-		JTabbedPane tabs = new JTabbedPane();
+		JPanel topPanel = new JPanel();
+		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
+		
+		final JToggleButton pausedButton = new JToggleButton("Pause Game");
+		pausedButton.setBorder(new EmptyBorder(10, 10, 10, 10));
+		pausedButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				serv.pause(pausedButton.isSelected());
+				if(pausedButton.isSelected())
+					pausedButton.setText("* PAUSED *");
+				else
+					pausedButton.setText("Pause Game");
+			}
+		});
+		topPanel.add(pausedButton);
+		
+		content.add(topPanel);
+		
+		tabs = new JTabbedPane();
 		content.add(tabs);
 		
 		// Initialise Tabs
-		{
-			// Users tab
-			JPanel userTab = new JPanel();
-			userTab.setLayout(new BoxLayout(userTab, BoxLayout.Y_AXIS));
-			
-			tabs.addTab("Users", null, userTab, "Manage Users in the game");
-			
-			JButton addUser = new JButton("Add new User");
-			addUser.addActionListener(addUserListener);
-			userTab.add(addUser);
-		}
+		tabs.addTab("Users", null, userTab, "Manage Users in the game");
 		
 		add(content);
 		pack();
@@ -90,12 +108,4 @@ public final class AdminFrame extends JFrame implements WindowListener {
 	@Override
 	public void windowOpened(WindowEvent arg0) { }
 	
-	protected ActionListener addUserListener = new ActionListener() {
-		
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			NewUserDialog d = new NewUserDialog(AdminFrame.this);
-			d.setVisible(true);
-		}
-	};
 }
