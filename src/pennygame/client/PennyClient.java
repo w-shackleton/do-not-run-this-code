@@ -17,14 +17,25 @@ public class PennyClient extends LoginApplet<CSConn> {
 	protected int getPort() {
 		return GlobalPreferences.getPort();
 	}
+	
+	PennyFrame frame;
 
 	@Override
 	protected void startMainWindow(CSConn serverConnection) {
-		
+		frame = new PennyFrame(serverConnection, this);
+		frame.setVisible(true);
 	}
 
 	@Override
 	protected void closeMainWindow() {
-		
+		if(frame == null) return;
+		frame.setVisible(false);
+	}
+	
+	protected void frameFinished() {
+		frame = null;
+		statusLabel.setText("");
+		passwordField.setText("");
+		enableLoginUI(true);
 	}
 }
