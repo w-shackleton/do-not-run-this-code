@@ -6,7 +6,7 @@ import java.util.Queue;
 import pennygame.lib.msg.PennyMessage;
 
 public abstract class MessageProducer extends LoopingThread {
-	private static final int MAXQUEUE = 20; // Should never get this high anyway
+	private static final int MAXQUEUE = 200; // Should never get this high anyway
 	
 	/**
 	 * The message queue. Object is used here, as this can also contain strings
@@ -19,6 +19,24 @@ public abstract class MessageProducer extends LoopingThread {
 	}
 
 	protected synchronized final void putMessage(PennyMessage msg) {
+		while (messages.size() == MAXQUEUE && !stopping)
+			try {
+				wait(500);
+			} catch (InterruptedException e) {
+				System.out
+						.println("MessageProducer.putMessage's wait was interrupted, should be nothing...");
+				e.printStackTrace();
+			}
+		
+		messages.add(msg);
+		notify();
+	}
+
+	/**
+	 * Puts a preserialised message into this queue
+	 * @param msg
+	 */
+	protected synchronized final void putMessage(String msg) {
 		while (messages.size() == MAXQUEUE && !stopping)
 			try {
 				wait(500);

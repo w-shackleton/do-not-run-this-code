@@ -13,6 +13,11 @@ public class MAUserModifyRequest extends PennyMessage {
 	 */
 	public static final int CHANGE_PASSWORD = 2;
 	
+	/**
+	 * Change the user's friendlyname. Data in this case is a String with the new name.
+	 */
+	public static final int CHANGE_FRIENDLYNAME = 3;
+	
 	private final int id;
 	private final int action;
 	

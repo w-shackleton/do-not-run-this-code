@@ -51,7 +51,7 @@ public class NetSender<T extends MainThread> extends MessageConsumer<T> {
 		else if(String.class.isAssignableFrom(msg.getClass())) // If it is a pennymessage
 		{
 			try {
-				Serialiser.encode((PennyMessage) msg, outStream);
+				Serialiser.encode((String) msg, outStream);
 			} catch (IOException e) {
 				System.out.println("ERROR: Could not send preserialised message out! (probably means client has disconnected)");
 				if(!stopping) // When we are stopping IO errors will probably occur

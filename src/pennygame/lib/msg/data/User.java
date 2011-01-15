@@ -12,18 +12,20 @@ public class User implements Serializable {
 	private static final long serialVersionUID = -8823359246201248197L;
 	
 	private final int id;
-	private String username;
+	private String username, friendlyname;
 	private int pennies, bottles;
 	
 	public User(String username, int pennies, int bottles) {
 		setUsername(username);
+		setFriendlyname(username);
 		setPennies(pennies);
 		setBottles(bottles);
 		id = 0;
 	}
 	
-	public User(int id, String username, int pennies, int bottles) {
+	public User(int id, String username, String friendlyname, int pennies, int bottles) {
 		setUsername(username);
+		setFriendlyname(friendlyname);
 		setPennies(pennies);
 		setBottles(bottles);
 		this.id = id;
@@ -55,5 +57,13 @@ public class User implements Serializable {
 
 	public int getId() {
 		return id;
+	}
+
+	public void setFriendlyname(String friendlyname) {
+		this.friendlyname = friendlyname;
+	}
+
+	public String getFriendlyname() {
+		return friendlyname;
 	}
 }
