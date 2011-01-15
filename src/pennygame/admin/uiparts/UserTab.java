@@ -68,7 +68,8 @@ public class UserTab extends JPanel {
 		add(userTabButtons);
 		
 		userTable = new JTable(userTableModel);
-		userTable.getColumnModel().getColumn(0).setPreferredWidth(180);
+		userTable.getColumnModel().getColumn(0).setPreferredWidth(140);
+		userTable.getColumnModel().getColumn(1).setPreferredWidth(140);
 		userTable.setAutoCreateRowSorter(true);
 		
 		// Context menu
@@ -84,7 +85,7 @@ public class UserTab extends JPanel {
 		userTableContextMenu.add(changePassword);
 		
 		scrollPane = new JScrollPane(userTable);
-		scrollPane.setPreferredSize(new Dimension(330, 300));
+		scrollPane.setPreferredSize(new Dimension(380, 300));
 		userTable.setFillsViewportHeight(true);
 		scrollPane.setBorder(new EmptyBorder(10, 10, 10, 10));
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -117,9 +118,11 @@ public class UserTab extends JPanel {
 			switch(columnIndex) {
 			case 0: // Username
 				return userList.get(rowIndex).getUsername();
-			case 1: // Pennies
+			case 1: // Friendlyname
+				return userList.get(rowIndex).getFriendlyname();
+			case 2: // Pennies
 				return userList.get(rowIndex).getPennies();
-			case 2: // Bottles
+			case 3: // Bottles
 				return userList.get(rowIndex).getBottles();
 			default:
 				return "";
@@ -128,6 +131,14 @@ public class UserTab extends JPanel {
 		
 		@Override
 		public void setValueAt(Object value, int row, int col) {
+			System.out.println("Change!!");
+			if(col == 1) { // Friendly name
+				{
+					userList.get(row).setFriendlyname((String) value);
+					fireTableDataChanged();
+					serv.modifyUser(userList.get(row).getId(), MAUserModifyRequest.CHANGE_FRIENDLYNAME, value);
+				}
+			}
 		}
 		
 		@Override
@@ -145,7 +156,6 @@ public class UserTab extends JPanel {
 			return columnNames[col];
 		}
 		
-		@Override
 		public boolean isCellEditable(int row, int col) {
 			return false;
 		}
@@ -157,15 +167,17 @@ public class UserTab extends JPanel {
 			case 0:
 				return String.class;
 			case 1:
-				return Integer.class;
+				return String.class;
 			case 2:
+				return Integer.class;
+			case 3:
 				return Integer.class;
 			default:
 				return String.class;
 			}
 		}
 		
-		private String[] columnNames = new String[] {"Username", "Pennies", "Bottles"};
+		private String[] columnNames = new String[] {"Username", "Friendly name", "Pennies", "Bottles"};
 	};
 	
 	protected LinkedList<User> userList = new LinkedList<User>();
@@ -180,6 +192,9 @@ public class UserTab extends JPanel {
 		public void mousePressed(MouseEvent e) {
 			if(e.isPopupTrigger()) {
 				userTableContextMenu.show(e.getComponent(), e.getX(), e.getY());
+			}
+			else if(e.getButton() == MouseEvent.BUTTON1) {
+				userTable.editCellAt(userTable.getSelectedRow(), userTable.getSelectedColumn());
 			}
 		}
 		public void mouseReleased(MouseEvent e) {
