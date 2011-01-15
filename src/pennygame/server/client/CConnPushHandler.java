@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import pennygame.lib.ext.PasswordUtils;
 import pennygame.lib.msg.MLoginRequest;
+import pennygame.lib.msg.MPutQuote;
 import pennygame.lib.msg.PennyMessage;
 import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.PushHandler;
@@ -22,6 +23,8 @@ public class CConnPushHandler extends PushHandler {
 	private final GameUtils gameUtils;
 	private final ConnectionEnder connEnder;
 	
+	private int userId = -1;
+	
 	public CConnPushHandler(NetReceiver producer, String threadID, CConnMainThread.CConnMsgBacks msgBacks, ConnectionEnder connEnder, GameUtils gameUtils) {
 		super(producer, threadID);
 		cConnMsgBacks = msgBacks;
@@ -39,12 +42,13 @@ public class CConnPushHandler extends PushHandler {
 			MLoginRequest logReq = (MLoginRequest) msg;
 			byte[] hashText = PasswordUtils.decryptPassword(cConnMsgBacks.getPrivateKey(), logReq.pass);
 			try {
-				if(gameUtils.users.checkLogin(logReq.username, hashText)) { // User is valid
-					cConnMsgBacks.loginSuccess(true, logReq.username);
+				userId = gameUtils.users.checkLogin(logReq.username, hashText);
+				if(userId != -1) { // User is valid
+					cConnMsgBacks.loginSuccess(true, userId, logReq.username);
 					loggedIn = true;
 				}
 				else {
-					cConnMsgBacks.loginSuccess(false, logReq.username);
+					cConnMsgBacks.loginSuccess(false, -1, logReq.username);
 					try {
 						Thread.sleep(1000); // Leave a bit of time for message to get through
 					} catch (InterruptedException e) {
@@ -57,6 +61,15 @@ public class CConnPushHandler extends PushHandler {
 			}
 		}
 		
-		if(!loggedIn) return;
+		if(!loggedIn) return; // To stop messages getting through before login completed
+		
+		if(cls.equals(MPutQuote.class)) {
+			MPutQuote req = (MPutQuote) msg;
+			try {
+				gameUtils.quotes.putQuote(req.getType(), userId, req.getPennies(), req.getBottles());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

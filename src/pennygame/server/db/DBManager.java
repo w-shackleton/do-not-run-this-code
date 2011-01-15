@@ -33,9 +33,12 @@ public class DBManager extends LoopingThread {
 		System.out.println("DB connected");
 		// conn.setAutoCommit(true);
 
-		// DEBUG ONLY!!!!! (one or the other)
-		// resetDB();
-		initialiseDB();
+		// DEBUG ONLY!!!!! (resets DB)
+		final boolean DEBUG = false;
+		if(DEBUG)
+			resetDB();
+		else
+			initialiseDB();
 	}
 
 	@Override
@@ -60,6 +63,7 @@ public class DBManager extends LoopingThread {
 	public void resetDB() throws SQLException {
 		Statement stat = conn.createStatement();
 		stat.executeUpdate("drop table if exists users;");
+		stat.executeUpdate("drop table if exists quotes;");
 
 		initialiseDB();
 	}
@@ -68,12 +72,30 @@ public class DBManager extends LoopingThread {
 		Statement stat = conn.createStatement();
 		stat.executeUpdate("create table if not exists users (" +
 				"id INT(16) UNSIGNED PRIMARY KEY AUTO_INCREMENT," +
-				"username VARCHAR(40) UNIQUE NOT NULL," +
+				"username VARCHAR(20) UNIQUE NOT NULL," +
 				"password VARCHAR(50) NOT NULL," +
+				"friendlyname VARCHAR(20) NOT NULL," +
 				"pennies INT(32) NOT NULL," +
 				"bottles INT(32) NOT NULL," +
-				"INDEX(username(10), password)," +
-				"INDEX(username(10))" +
+				"INDEX(id)," +
+				"INDEX(username(10), password)" +
+				") TYPE=INNODB;");
+		stat.executeUpdate("CREATE TABLE IF NOT EXISTS quotes (" +
+				"id INT(32) UNSIGNED PRIMARY KEY AUTO_INCREMENT," +
+				"status ENUM('open', 'closed', 'cancelled', 'timeout') NOT NULL DEFAULT 'open'," +
+				"type ENUM('buy', 'sell') NOT NULL," +
+				"idfrom INT(16) UNSIGNED NOT NULL," +
+				"idto   INT(16) NULL," +
+				"bottles INT(32) NOT NULL," +
+				"pennies INT(32) UNSIGNED NOT NULL," +
+				"lockid INT(16) UNSIGNED," +
+				"timecreated TIMESTAMP NOT NULL DEFAULT NOW()," +
+				"timeaccepted TIMESTAMP NULL," +
+				"" +
+				"INDEX(status, pennies)," +
+				"INDEX(type)," +
+				"INDEX(pennies)," +
+				"INDEX(idfrom, idto)" +
 				") TYPE=INNODB;");
 	}
 

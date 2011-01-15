@@ -19,22 +19,25 @@ import pennygame.lib.msg.data.User;
 public class UserUtils {
 
 	private final Connection conn;
-	private final PreparedStatement newUserStatement, checkUserStatement, deleteUserStatement;
+	private final PreparedStatement newUserStatement, checkUserStatement, deleteUserStatement, changePasswordStatement, changeFriendlyNameStatement;
 
 	UserUtils(Connection conn) throws SQLException {
 		this.conn = conn;
 		newUserStatement = conn
-				.prepareStatement("INSERT INTO users(username, password, pennies, bottles) VALUES (?, ?, ?, ?);");
+				.prepareStatement("INSERT INTO users(username, password, pennies, bottles, friendlyname) VALUES (?, ?, ?, ?, ?);");
 		checkUserStatement = conn.prepareStatement("SELECT id FROM users WHERE username=? AND password=?;");
 		deleteUserStatement = conn.prepareStatement("DELETE FROM users WHERE id=?;");
+		changePasswordStatement = conn.prepareStatement("UPDATE users SET password=? WHERE id=?");
+		changeFriendlyNameStatement = conn.prepareStatement("UPDATE users SET friendlyname=? WHERE id=?");
 	}
 
-	public synchronized void createUser(String username, byte[] hashPass, int pennies,
-			int bottles) throws SQLException {
+	public synchronized void createUser(String username, byte[] hashPass, int pennies, int bottles) throws SQLException {
+		System.out.println("Added new user");
 		newUserStatement.setString(1, username.toLowerCase());
 		newUserStatement.setString(2, Base64.encodeBytes(hashPass));
 		newUserStatement.setInt(3, pennies);
 		newUserStatement.setInt(4, bottles);
+		newUserStatement.setString(5, username);
 
 		newUserStatement.executeUpdate();
 	}
@@ -48,36 +51,49 @@ public class UserUtils {
 
 		Statement statement = conn.createStatement();
 
-		ResultSet rs = statement
-				.executeQuery("SELECT id, username, pennies, bottles FROM users;");
+		ResultSet rs = statement.executeQuery("SELECT id, username, friendlyname, pennies, bottles FROM users;");
 		while (rs.next()) {
-			userList.add(new User(rs.getInt("id"), rs.getString("username"), rs
-					.getInt("pennies"), rs.getInt("bottles")));
+			userList.add(new User(rs.getInt("id"), rs.getString("username"), rs.getString("friendlyname"),
+					rs.getInt("pennies"), rs.getInt("bottles")));
 		}
 		rs.close();
 		statement.close();
 
 		return userList;
 	}
-	
+
 	/**
 	 * Checks if the username and password are valid
+	 * 
 	 * @param username
 	 * @param hashPass
-	 * @return true if the user & password combo are valid
-	 * @throws SQLException 
+	 * @return the user's ID if the user is valid, or -1 if they aren't
+	 * @throws SQLException
 	 */
-	public synchronized boolean checkLogin(String username, byte[] hashPass) throws SQLException {
-		checkUserStatement.setString(1, username);
+	public synchronized int checkLogin(String username, byte[] hashPass) throws SQLException {
+		checkUserStatement.setString(1, username.toLowerCase());
 		checkUserStatement.setString(2, Base64.encodeBytes(hashPass));
-		
+
 		ResultSet rs = checkUserStatement.executeQuery();
-		return rs.last(); // Returns false if no rows
-		// TODO: Check this works!
+		if(!rs.last()) return -1;
+		
+		return rs.getInt("id");
 	}
-	
+
 	public synchronized void deleteUser(int userId) throws SQLException {
 		deleteUserStatement.setInt(1, userId);
 		deleteUserStatement.executeUpdate();
+	}
+
+	public synchronized void changePassword(int userId, byte[] hashPass) throws SQLException {
+		changePasswordStatement.setString(1, Base64.encodeBytes(hashPass));
+		changePasswordStatement.setInt(2, userId);
+		changePasswordStatement.executeUpdate();
+	}
+
+	public synchronized void changeFriendlyName(int userId, String friendlyName) throws SQLException {
+		changeFriendlyNameStatement.setString(1, friendlyName);
+		changeFriendlyNameStatement.setInt(2, userId);
+		changeFriendlyNameStatement.executeUpdate();
 	}
 }

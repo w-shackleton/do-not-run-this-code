@@ -17,8 +17,7 @@ public class CConnMainThread extends MainThread {
 	public CConnMainThread(String threadID) {
 		super(threadID);
 	}
-	// TODO: Implement keepalive packet of '*,'
-	int id = 0;
+	
 	@Override
 	protected void loop() {
 		try {
@@ -62,14 +61,20 @@ public class CConnMainThread extends MainThread {
 			return keys.getPrivate();
 		}
 		
-		public void loginSuccess(boolean success, String userName) {
+		public void loginSuccess(boolean success, int userID, String userName) {
 			loginCompleted = true;
 			loginSuccess = success;
 			loginName = userName;
+			loginId = userID;
 		}
 	}
 	
 	protected boolean loginCompleted = false;
 	protected boolean loginSuccess = false;
 	protected String loginName = "";
+	protected int loginId = -1;
+	
+	protected void sendSerialisedMessage(String m) {
+		putMessage(m);
+	}
 }

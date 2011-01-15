@@ -39,4 +39,8 @@ public class CConn extends QueuePair<CConnMainThread, CConnPushHandler> {
 	public void onConnected() {
 		// Not used
 	}
+	
+	public void sendSerialisedMessage(String msg) {
+		mainThread.sendSerialisedMessage(msg);
+	}
 }

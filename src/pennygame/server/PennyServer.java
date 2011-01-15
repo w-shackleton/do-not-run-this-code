@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.sql.SQLException;
 
 import pennygame.server.admin.AdminServer;
+import pennygame.server.client.CMulticaster;
 import pennygame.server.client.Clients;
 import pennygame.server.db.DBManager;
 import pennygame.server.db.GameUtils;
@@ -15,6 +16,7 @@ public class PennyServer {
 	static Clients clients;
 	static AdminServer admin;
 	static DBManager db;
+	static CMulticaster multicast;
 	
 	/**
 	 * @param args
@@ -34,12 +36,17 @@ public class PennyServer {
 		db.start();
 		System.out.println("DB started");
 		
+		System.out.println("Multicaster...");
+		multicast = new CMulticaster();
+		System.out.println("Multicaster initialised");
+		multicast.start();
+		System.out.println("Multicaster started");
+		
 		System.out.println("Game Utils...");
 		GameUtils gameUtils = null;
 		try {
-			gameUtils = new GameUtils(db.getConnection());
+			gameUtils = new GameUtils(db.getConnection(), multicast);
 		} catch (SQLException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
 		
@@ -57,6 +64,7 @@ public class PennyServer {
 		System.out.println("Clients initialised");
 		clients.start();
 		System.out.println("Clients started");
+		multicast.setClients(clients);
 		
 		System.out.println("Admin...");
 		try {
@@ -88,6 +96,7 @@ public class PennyServer {
 		}
 		
 		db.beginStopping();
+		multicast.beginStopping();
 		clients.beginStopping();
 		admin.beginStopping();
 	}
