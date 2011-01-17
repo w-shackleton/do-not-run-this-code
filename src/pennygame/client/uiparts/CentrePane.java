@@ -1,18 +1,24 @@
 package pennygame.client.uiparts;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import pennygame.client.PennyFrame;
 import pennygame.client.queues.CSConn;
@@ -24,8 +30,15 @@ public class CentrePane extends JPanel {
 	
 	final PennyFrame parent;
 	final CSConn serv;
-
-	public CentrePane(PennyFrame parent, CSConn serv) {
+	
+	JScrollPane scrollPane;
+	JTable openQTable;
+	
+	static final String LABEL_BUYING = "BUYING";
+	static final String LABEL_SELLING = "SELLING";
+	
+	
+	public CentrePane(PennyFrame parent, CSConn serv, LinkedList<JComponent> pausingItems) {
 		super();
 		this.parent = parent;
 		this.serv = serv;
@@ -36,7 +49,7 @@ public class CentrePane extends JPanel {
 			JLabel label = new JLabel("Quotes", SwingConstants.LEFT);
 			add(label);
 			
-			JTable openQTable = new JTable(openQuotesModel);
+			openQTable = new JTable(openQuotesModel);
 			
 			openQTable.getColumnModel().getColumn(0).setPreferredWidth(100);
 			openQTable.getColumnModel().getColumn(1).setPreferredWidth(50);
@@ -45,17 +58,31 @@ public class CentrePane extends JPanel {
 			openQTable.getColumnModel().getColumn(4).setPreferredWidth(40);
 			openQTable.getColumnModel().getColumn(5).setPreferredWidth(10);
 			openQTable.getColumnModel().getColumn(6).setPreferredWidth(50);
+			
+			openQTable.getColumnModel().getColumn(1).setCellRenderer(openQuotesRenderer);
+			
 			// openQTable.getColumnModel().getColumn(7).setPreferredWidth(50);
+			openQTable.setFont(Font.decode("Sans-9"));
+			openQTable.setRowHeight(12);
+			openQTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			
 			openQTable.setAutoCreateRowSorter(true);
 			openQTable.setFillsViewportHeight(true);
 			openQTable.addMouseListener(openQuotesClickListener);
 			
-			JScrollPane scrollPane = new JScrollPane(openQTable);
+			openQTable.setMinimumSize(openQTable.getPreferredSize());
 			
-			scrollPane.setPreferredSize(new Dimension(500, 400));
-			scrollPane.setMinimumSize(new Dimension(500, 400));
-			scrollPane.setMaximumSize(new Dimension(500, 400));
+			scrollPane = new JScrollPane(openQTable);
+			
+			pausingItems.add(openQTable);
+			
+			// scrollPane.setPreferredSize(new Dimension(500, 400));
+			// scrollPane.setMinimumSize(new Dimension(500, 400));
+			// scrollPane.setMaximumSize(new Dimension(500, 400));
+			Dimension spSize = scrollPane.getPreferredSize();
+			spSize.height += 20;
+			scrollPane.setMinimumSize(spSize);
+			scrollPane.setMaximumSize(new Dimension(spSize.width, 600));
 			
 			scrollPane.setBorder(new EmptyBorder(10, 10, 10, 10));
 			
@@ -70,13 +97,13 @@ public class CentrePane extends JPanel {
 
 		@Override
 		public Object getValueAt(int row, int col) {
-			if(row < openQuoteList.size() + getShiftLevel() && row > getShiftLevel()) {
+			if(row < openQuoteList.size() + getShiftLevel() && row >= getShiftLevel()) {
 				row -= getShiftLevel();
 				switch(col) {
 				case 0:
 					return openQuoteList.get(row).getFromName();
 				case 1:
-					return openQuoteList.get(row).getType() == OpenQuote.TYPE_BUY ? "BUYING" : "SELLING";
+					return openQuoteList.get(row).getType() == OpenQuote.TYPE_BUY ? LABEL_BUYING : LABEL_SELLING;
 				case 2:
 					return openQuoteList.get(row).getBottles();
 				case 3:
@@ -97,7 +124,7 @@ public class CentrePane extends JPanel {
 		
 		@Override
 		public int getRowCount() {
-			return 30;
+			return openQuoteListTotal;
 		}
 		
 		@Override
@@ -139,6 +166,30 @@ public class CentrePane extends JPanel {
 		}
 	};
 	
+	protected DefaultTableCellRenderer openQuotesRenderer = new DefaultTableCellRenderer() {
+
+		private static final long serialVersionUID = 3264586781621089278L;
+		
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value,
+                boolean isSelected, boolean hasFocus, int row, int column) {
+			Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			
+			String s = table.getModel().getValueAt(row, column).toString();
+			
+			if(s.equalsIgnoreCase(LABEL_BUYING)) {
+				c.setBackground(new Color(255, 200, 200));
+			}
+			else if(s.equalsIgnoreCase(LABEL_SELLING)) {
+				c.setBackground(new Color(200, 255, 200));
+			} else {
+				c.setBackground(Color.WHITE);
+			}
+			
+			return c;
+		}
+	};
+		
 	protected MouseAdapter openQuotesClickListener = new MouseAdapter() {
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -153,5 +204,11 @@ public class CentrePane extends JPanel {
 		this.openQuoteList = list;
 		openQuoteListTotal = total;
 		openQuotesModel.fireTableDataChanged();
+		
+		Dimension spSize = scrollPane.getPreferredSize();
+		spSize.height += 20;
+		scrollPane.setMinimumSize(spSize);
+		scrollPane.setMaximumSize(new Dimension(spSize.width, 600));
+		openQTable.setMinimumSize(openQTable.getPreferredSize());
 	}
 }

@@ -3,6 +3,7 @@ package pennygame.client;
 import pennygame.client.queues.CSConn;
 import pennygame.lib.GlobalPreferences;
 import pennygame.lib.clientutils.LoginApplet;
+import pennygame.lib.msg.data.User;
 
 public class PennyClient extends LoginApplet<CSConn> {
 
@@ -21,8 +22,8 @@ public class PennyClient extends LoginApplet<CSConn> {
 	PennyFrame frame;
 
 	@Override
-	protected void startMainWindow(CSConn serverConnection) {
-		frame = new PennyFrame(serverConnection, this);
+	protected void startMainWindow(CSConn serverConnection, User userInfo) {
+		frame = new PennyFrame(serverConnection, this, userInfo);
 		frame.setVisible(true);
 	}
 

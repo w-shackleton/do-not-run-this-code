@@ -1,13 +1,17 @@
 package pennygame.client.uiparts;
 
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.LinkedList;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -17,18 +21,20 @@ import javax.swing.border.EmptyBorder;
 import pennygame.client.PennyFrame;
 import pennygame.client.queues.CSConn;
 import pennygame.lib.msg.MPutQuote;
+import pennygame.lib.msg.data.User;
 
 public class RightPane extends JPanel {
 
 	private static final long serialVersionUID = 7005036371205867048L;
+	protected static final String FRIENDLYNAME_TEXT = "My name: ";
 
 	final PennyFrame parent;
 	final CSConn serv;
 
 	final JTextField buyQPennies, buyQBottles;
 	final JTextField sellQPennies, sellQBottles;
-
-	public RightPane(PennyFrame parent, CSConn serv) {
+	
+	public RightPane(PennyFrame parent, CSConn serv, final User userInfo, LinkedList<JComponent> pausingItems) {
 		super();
 		this.parent = parent;
 		this.serv = serv;
@@ -36,6 +42,35 @@ public class RightPane extends JPanel {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 		setBorder(new EmptyBorder(10, 10, 10, 10));
+		
+		{ // Title
+			JPanel pan = new JPanel();
+			pan.setLayout(new BoxLayout(pan, BoxLayout.X_AXIS));
+			
+			final JLabel myName = new JLabel(FRIENDLYNAME_TEXT + userInfo.getFriendlyname());
+			myName.setFont(myName.getFont().deriveFont(14f).deriveFont(Font.BOLD));
+			pan.add(myName);
+			
+			pan.add(Box.createRigidArea(new Dimension(10, 1)));
+			
+			JButton changeMyName = new JButton("Change");
+			changeMyName.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					String newName = JOptionPane.showInputDialog(RightPane.this.parent, "Please enter a new name", userInfo.getFriendlyname());
+					if(newName.length() > 3) {
+						RightPane.this.serv.changeMyName(newName); // Change my new name, this will trigger the quote list to refresh
+						myName.setText(FRIENDLYNAME_TEXT + newName);
+						userInfo.setFriendlyname(newName);
+					}
+				}
+			});
+			pan.add(changeMyName);
+			pausingItems.add(changeMyName);
+			
+			add(pan);
+			add(Box.createRigidArea(new Dimension(1, 10)));
+		}
 
 		{ // Sell box
 			JPanel pan = new JPanel();
@@ -61,6 +96,7 @@ public class RightPane extends JPanel {
 				}
 			});
 			pan.add(sellQBottles);
+			pausingItems.add(sellQBottles);
 
 			label = new JLabel(" bottles at ");
 			pan.add(label);
@@ -84,6 +120,7 @@ public class RightPane extends JPanel {
 				}
 			});
 			pan.add(sellQPennies);
+			pausingItems.add(sellQPennies);
 
 			label = new JLabel(" pence per bottle");
 			pan.add(label);
@@ -95,6 +132,7 @@ public class RightPane extends JPanel {
 			JButton sellQButton = new JButton("Offer to SELL");
 			sellQButton.addActionListener(onSell);
 			add(sellQButton);
+			pausingItems.add(sellQButton);
 		}
 
 		add(Box.createVerticalStrut(30));
@@ -123,6 +161,7 @@ public class RightPane extends JPanel {
 				}
 			});
 			pan.add(buyQBottles);
+			pausingItems.add(buyQBottles);
 
 			label = new JLabel(" bottles at ");
 			pan.add(label);
@@ -146,6 +185,7 @@ public class RightPane extends JPanel {
 				}
 			});
 			pan.add(buyQPennies);
+			pausingItems.add(buyQPennies);
 
 			label = new JLabel(" pence per bottle");
 			pan.add(label);
@@ -157,8 +197,12 @@ public class RightPane extends JPanel {
 			JButton buyQButton = new JButton("Offer to BUY");
 			buyQButton.addActionListener(onBuy);
 			add(buyQButton);
+			pausingItems.add(buyQButton);
 		}
-		add(Box.createVerticalGlue());
+		
+		setPreferredSize(getPreferredSize());
+		setMinimumSize(getPreferredSize());
+		setMaximumSize(getPreferredSize());
 	}
 
 	protected ActionListener onSell = new ActionListener() {

@@ -3,7 +3,10 @@ package pennygame.client;
 import java.awt.BorderLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.Iterator;
+import java.util.LinkedList;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -11,6 +14,7 @@ import javax.swing.JPanel;
 import pennygame.client.queues.CSConn;
 import pennygame.client.uiparts.CentrePane;
 import pennygame.client.uiparts.RightPane;
+import pennygame.lib.msg.data.User;
 
 public class PennyFrame extends JFrame implements WindowListener {
 	
@@ -22,10 +26,15 @@ public class PennyFrame extends JFrame implements WindowListener {
 	public RightPane rp;
 	public CentrePane cp;
 	
-	public PennyFrame(CSConn serv, PennyClient applet) {
+	protected final User userInfo;
+	
+	protected final LinkedList<JComponent> pausingItems = new LinkedList<JComponent>();
+	
+	public PennyFrame(CSConn serv, PennyClient applet, User userInfo) {
 		super("Pennybottle game");
 		this.serv = serv;
 		this.applet = applet;
+		this.userInfo = userInfo;
 		
 		addWindowListener(this);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -44,7 +53,7 @@ public class PennyFrame extends JFrame implements WindowListener {
 		}
 		
 		{ // RIGHT PANE
-			rp = new RightPane(this, serv);
+			rp = new RightPane(this, serv, userInfo, pausingItems);
 			container.add(rp, BorderLayout.LINE_END);
 		}
 		
@@ -57,7 +66,7 @@ public class PennyFrame extends JFrame implements WindowListener {
 		}
 		
 		{ // CENTRE PANE
-			cp = new CentrePane(this, serv);
+			cp = new CentrePane(this, serv, pausingItems);
 			container.add(cp, BorderLayout.CENTER);
 		}
 		
@@ -70,7 +79,7 @@ public class PennyFrame extends JFrame implements WindowListener {
 
 	@Override
 	public void windowClosing(WindowEvent arg0) {
-		int n = JOptionPane.showConfirmDialog(this, "Do you really want to close?", "Close Penny Admin?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		int n = JOptionPane.showConfirmDialog(this, "Do you really want to close?", "Close Pennygame?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if(n == JOptionPane.YES_OPTION)
 		{
 			serv.stop();
@@ -84,4 +93,12 @@ public class PennyFrame extends JFrame implements WindowListener {
 	@Override public void windowDeiconified(WindowEvent arg0) { } 
 	@Override public void windowIconified(WindowEvent arg0) { } 
 	@Override public void windowOpened(WindowEvent arg0) { } 
+	
+	public void pauseGame(boolean pause) {
+		Iterator<JComponent> it = pausingItems.iterator();
+		
+		while(it.hasNext()) {
+			it.next().setEnabled(!pause);
+		}
+	}
 }

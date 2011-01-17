@@ -4,6 +4,7 @@ import pennygame.client.PennyFrame;
 import pennygame.lib.clientutils.SConnMainThread.MsgBacks;
 import pennygame.lib.clientutils.SConnPushHandler;
 import pennygame.lib.msg.MOpenQuotesList;
+import pennygame.lib.msg.MPauseGame;
 import pennygame.lib.msg.PennyMessage;
 import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.QueuePair.ConnectionEnder;
@@ -28,7 +29,13 @@ public class CSConnPushHandler extends SConnPushHandler {
 		Class<? extends PennyMessage> cls = msg.getClass();
 		
 		if(cls.equals(MOpenQuotesList.class)) {
-			System.out.println("New open quote list received!");
+			System.out.println("New open quote list received");
+			MOpenQuotesList q = (MOpenQuotesList) msg;
+			frame.cp.updateOpenQuoteList(q.getList(), q.getTotal());
+		}
+		else if(cls.equals(MPauseGame.class)) {
+			System.out.println("Pausing / resuming");
+			frame.pauseGame(((MPauseGame)msg).isPaused());
 		}
 	}
 }

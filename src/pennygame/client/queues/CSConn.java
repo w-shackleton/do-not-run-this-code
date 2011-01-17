@@ -2,7 +2,9 @@ package pennygame.client.queues;
 
 import pennygame.client.PennyFrame;
 import pennygame.lib.clientutils.SConn;
+import pennygame.lib.msg.MChangeMyName;
 import pennygame.lib.msg.MPutQuote;
+import pennygame.lib.msg.data.User;
 import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.handlers.OnConnectionListener;
 import pennygame.lib.queues.handlers.OnLoginHandler;
@@ -19,8 +21,8 @@ public class CSConn extends SConn<CSConnMainThread, CSConnPushHandler> {
 	}
 
 	@Override
-	public void onLoginCompleted() {
-		loginHandler.onLoginCompleted();
+	public void onLoginCompleted(User userInfo) {
+		loginHandler.onLoginCompleted(userInfo);
 	}
 
 	@Override
@@ -54,6 +56,7 @@ public class CSConn extends SConn<CSConnMainThread, CSConnPushHandler> {
 	public void setParentFrame(PennyFrame frame) {
 		this.frame = frame;
 		pushHandler.setParentFrame(frame);
+		mainThread.refreshOpenQuoteList = true; // Get the list for the first time
 	}
 	
 	/**
@@ -64,5 +67,9 @@ public class CSConn extends SConn<CSConnMainThread, CSConnPushHandler> {
 	 */
 	public void putQuote(int type, int pennies, int bottles) {
 		sendMessage(new MPutQuote(type, pennies, bottles));
+	}
+	
+	public void changeMyName(String newName) {
+		sendMessage(new MChangeMyName(newName));
 	}
 }
