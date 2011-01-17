@@ -8,6 +8,7 @@ import pennygame.lib.msg.MLoginRequest;
 import pennygame.lib.msg.MRefresher;
 import pennygame.lib.msg.PennyMessage;
 import pennygame.lib.msg.adm.MAGamePause;
+import pennygame.lib.msg.adm.MAGameSetting;
 import pennygame.lib.msg.adm.MAUserAdd;
 import pennygame.lib.msg.adm.MAUserModifyRequest;
 import pennygame.lib.queues.NetReceiver;
@@ -116,6 +117,24 @@ public class AdminConnPushHandler extends PushHandler {
 			}
 		} else if (cls.equals(MAGamePause.class)) {
 			gameUtils.pauseGame(((MAGamePause) msg).shouldPause());
+		} else if(cls.equals(MAGameSetting.class)) {
+			
+			MAGameSetting s = (MAGameSetting) msg;
+			
+			switch(s.what()) {
+			case MAGameSetting.WHAT_QUOTE_TIMEOUT:
+				if(s.setOrGet())
+					gameUtils.quotes.setQuoteTimeout((Integer) s.getData());
+				else
+					adminMsgBacks.sendQuoteTimeout(gameUtils.quotes.getQuoteTimeout());
+				break;
+			case MAGameSetting.WHAT_QUOTE_NUMBER:
+				if(s.setOrGet())
+					gameUtils.quotes.setNumQuotes((Integer) s.getData());
+				else
+					adminMsgBacks.sendNumQuotes(gameUtils.quotes.getNumQuotes());
+				break;
+			}
 		}
 	}
 }

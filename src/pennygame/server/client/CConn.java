@@ -19,7 +19,7 @@ public class CConn extends QueuePair<CConnMainThread, CConnPushHandler> {
 
 	@Override
 	protected CConnMainThread createMainThread(String threadID) {
-		CConnMainThread cMainThread = new CConnMainThread(threadID);
+		CConnMainThread cMainThread = new CConnMainThread(threadID, gameUtils);
 		return cMainThread;
 	}
 

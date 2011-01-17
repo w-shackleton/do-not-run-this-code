@@ -3,9 +3,12 @@ package pennygame.server.client;
 import java.sql.SQLException;
 
 import pennygame.lib.ext.PasswordUtils;
+import pennygame.lib.msg.MChangeMyName;
 import pennygame.lib.msg.MLoginRequest;
 import pennygame.lib.msg.MPutQuote;
+import pennygame.lib.msg.MRefresher;
 import pennygame.lib.msg.PennyMessage;
+import pennygame.lib.msg.data.User;
 import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.PushHandler;
 import pennygame.lib.queues.QueuePair.ConnectionEnder;
@@ -23,7 +26,7 @@ public class CConnPushHandler extends PushHandler {
 	private final GameUtils gameUtils;
 	private final ConnectionEnder connEnder;
 	
-	private int userId = -1;
+	private User user = null;
 	
 	public CConnPushHandler(NetReceiver producer, String threadID, CConnMainThread.CConnMsgBacks msgBacks, ConnectionEnder connEnder, GameUtils gameUtils) {
 		super(producer, threadID);
@@ -42,13 +45,13 @@ public class CConnPushHandler extends PushHandler {
 			MLoginRequest logReq = (MLoginRequest) msg;
 			byte[] hashText = PasswordUtils.decryptPassword(cConnMsgBacks.getPrivateKey(), logReq.pass);
 			try {
-				userId = gameUtils.users.checkLogin(logReq.username, hashText);
-				if(userId != -1) { // User is valid
-					cConnMsgBacks.loginSuccess(true, userId, logReq.username);
+				user = gameUtils.users.checkLogin(logReq.username, hashText);
+				if(user != null) { // User is valid
+					cConnMsgBacks.loginSuccess(true, user.getId(), logReq.username, user.getFriendlyname());
 					loggedIn = true;
 				}
 				else {
-					cConnMsgBacks.loginSuccess(false, -1, logReq.username);
+					cConnMsgBacks.loginSuccess(false, -1, logReq.username, "");
 					try {
 						Thread.sleep(1000); // Leave a bit of time for message to get through
 					} catch (InterruptedException e) {
@@ -66,7 +69,21 @@ public class CConnPushHandler extends PushHandler {
 		if(cls.equals(MPutQuote.class)) {
 			MPutQuote req = (MPutQuote) msg;
 			try {
-				gameUtils.quotes.putQuote(req.getType(), userId, req.getPennies(), req.getBottles());
+				gameUtils.quotes.putQuote(req.getType(), user.getId(), req.getPennies(), req.getBottles());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		else if(cls.equals(MRefresher.class)) { // Refresh signals
+			switch(((MRefresher)msg).what) {
+			case MRefresher.REF_OPENQUOTELIST:
+				cConnMsgBacks.resendOpenQuotesList = true;
+			}
+		}
+		else if(cls.equals(MChangeMyName.class)) {
+			try {
+				gameUtils.users.changeFriendlyName(user.getId(), ((MChangeMyName)msg).getNewName());
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

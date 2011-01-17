@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import pennygame.lib.GlobalPreferences;
 import pennygame.lib.msg.MLoginCompleted;
 import pennygame.lib.msg.MLoginInitiate;
+import pennygame.lib.msg.adm.MAGameSetting;
 import pennygame.lib.msg.adm.MAUserList;
 import pennygame.lib.queues.MainThread;
 import pennygame.server.db.GameUtils;
@@ -58,7 +59,7 @@ public class AdminConnMainThread extends MainThread {
 				e.printStackTrace();
 			}
 		}
-		putMessage(new MLoginCompleted(loginSuccess, "admin"));
+		putMessage(new MLoginCompleted(loginSuccess, -2, "admin", "admin"));
 	}
 	
 	AdminMsgBacks adminMsgBacks = new AdminMsgBacks();
@@ -79,6 +80,14 @@ public class AdminConnMainThread extends MainThread {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+		}
+		
+		public void sendQuoteTimeout(int timeout) {
+			putMessage(new MAGameSetting(false, MAGameSetting.WHAT_QUOTE_TIMEOUT, timeout));
+		}
+		
+		public void sendNumQuotes(int num) {
+			putMessage(new MAGameSetting(false, MAGameSetting.WHAT_QUOTE_NUMBER, num));
 		}
 	}
 	

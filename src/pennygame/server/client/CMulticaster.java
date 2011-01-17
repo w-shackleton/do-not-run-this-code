@@ -36,6 +36,8 @@ public class CMulticaster extends MessageProducer {
 			
 			Iterator<CConn> it = cs.iterator();
 			
+			System.out.println("Multicasting message...");
+			
 			while(it.hasNext()) {
 				CConn client = it.next();
 				client.sendSerialisedMessage(sMsg);
@@ -61,5 +63,6 @@ public class CMulticaster extends MessageProducer {
 	
 	public void multicastMessage(PennyMessage msg) {
 		putMessage(msg);
+		System.out.println("Multicasting message...");
 	}
 }

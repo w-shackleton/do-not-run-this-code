@@ -93,6 +93,7 @@ public class DBManager extends LoopingThread {
 				"timeaccepted TIMESTAMP NULL," +
 				"" +
 				"INDEX(status, pennies)," +
+				"INDEX(status, timecreated)," +
 				"INDEX(type)," +
 				"INDEX(pennies)," +
 				"INDEX(idfrom, idto)" +

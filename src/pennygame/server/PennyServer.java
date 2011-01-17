@@ -95,9 +95,10 @@ public class PennyServer {
 			}
 		}
 		
-		db.beginStopping();
+		gameUtils.beginStopping();
 		multicast.beginStopping();
 		clients.beginStopping();
 		admin.beginStopping();
+		db.beginStopping();
 	}
 }

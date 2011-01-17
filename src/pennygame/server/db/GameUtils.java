@@ -3,6 +3,7 @@ package pennygame.server.db;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import pennygame.lib.msg.MPauseGame;
 import pennygame.server.client.CMulticaster;
 
 public class GameUtils {
@@ -16,9 +17,9 @@ public class GameUtils {
 	
 	public GameUtils(Connection conn, CMulticaster multicast) throws SQLException {
 		this.conn = conn;
-		this.multicast = new CMulticaster();
-		this.users = new UserUtils(conn);
+		this.multicast = multicast;
 		this.quotes = new QuoteUtils(conn, multicast);
+		this.users = new UserUtils(conn, quotes);
 	}
 
 	/**
@@ -27,10 +28,15 @@ public class GameUtils {
 	 */
 	public void pauseGame(boolean gamePaused) {
 		this.gamePaused = gamePaused;
-		// TODO: Notify clients of this!
+		System.out.println("Pausing / resuming game");
+		multicast.multicastMessage(new MPauseGame(gamePaused));
 	}
 
 	public boolean isGamePaused() {
 		return gamePaused;
+	}
+	
+	public synchronized void beginStopping() {
+		quotes.beginStopping();
 	}
 }

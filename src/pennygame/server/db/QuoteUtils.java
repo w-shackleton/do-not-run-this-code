@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import pennygame.lib.msg.MOpenQuotesList;
 import pennygame.lib.msg.MPutQuote;
 import pennygame.lib.msg.data.OpenQuote;
+import pennygame.lib.queues.LoopingThread;
 import pennygame.server.client.CMulticaster;
 
 /**
@@ -21,16 +22,20 @@ public final class QuoteUtils {
 	private final PreparedStatement putQuoteStatement, getOpenQuotesStatement;
 	private final CMulticaster multicast;
 	
+	protected final QuotePurger quotePurger;
+	
 	QuoteUtils(Connection conn, CMulticaster multicast) throws SQLException {
 		this.multicast = multicast;
+		this.quotePurger = new QuotePurger(conn);
+		quotePurger.start();
 		
 		putQuoteStatement = conn.prepareStatement("INSERT INTO quotes(type, idfrom, pennies, bottles) VALUES (?, ?, ?, ?);");
 		getOpenQuotesStatement = conn.prepareStatement(
 				"SELECT * FROM " +
-				"((SELECT quotes.id, quotes.type, users.friendlyname AS fromname, quotes.pennies, quotes.bottles, quotes.bottles * CAST(quotes.pennies AS SIGNED) AS value " +
+				"((SELECT quotes.id, quotes.type, users.friendlyname AS fromname, quotes.pennies, quotes.bottles, quotes.bottles * CAST(quotes.pennies AS SIGNED) AS value, quotes.timecreated AS time " +
 				"FROM quotes, users WHERE status='open' AND type='sell' AND quotes.idfrom = users.id ORDER BY pennies LIMIT ?) " +
 				"UNION ALL " +
-				" (SELECT quotes.id, quotes.type, users.friendlyname AS fromname, quotes.pennies, quotes.bottles, quotes.bottles * CAST(quotes.pennies AS SIGNED) AS value " +
+				" (SELECT quotes.id, quotes.type, users.friendlyname AS fromname, quotes.pennies, quotes.bottles, quotes.bottles * CAST(quotes.pennies AS SIGNED) AS value, quotes.timecreated AS time " +
 				"FROM quotes, users WHERE status='open' AND type='buy'  AND quotes.idfrom = users.id ORDER BY pennies DESC LIMIT ?)) " +
 				"AS tbl ORDER BY tbl.pennies DESC;"); // This searches through all buy and sells, unions them and then sorts the result.
 	}
@@ -65,8 +70,20 @@ public final class QuoteUtils {
 	
 	private int numberOfQuotes = 15;
 	
+	/**
+	 * Sets the number of EACH quote to show, ie 15 will show 30 in total
+	 * @param number
+	 */
 	public synchronized void setNumQuotes(int number) {
 		numberOfQuotes = number;
+	}
+	
+	public int getNumQuotes() {
+		return numberOfQuotes;
+	}
+	
+	public int getTotalNumQuotes() {
+		return numberOfQuotes * 2;
 	}
 	
 	/**
@@ -84,7 +101,7 @@ public final class QuoteUtils {
 		while(rs.next()) {
 			String type = rs.getString("type");
 			int t;
-			if(type == "buy") t = OpenQuote.TYPE_BUY;
+			if(type.equals("buy")) t = OpenQuote.TYPE_BUY;
 			else t = OpenQuote.TYPE_SELL;
 			list.add(new OpenQuote(rs.getInt("id"), t, rs.getString("fromname"), rs.getInt("pennies"), rs.getInt("bottles"), rs.getTimestamp("time")));
 		}
@@ -94,9 +111,85 @@ public final class QuoteUtils {
 	
 	public synchronized void pushOpenQuotes() {
 		try {
-			multicast.multicastMessage(new MOpenQuotesList(getOpenQuotes()));
+			multicast.multicastMessage(new MOpenQuotesList(getOpenQuotes(), getTotalNumQuotes()));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public synchronized int getQuoteTimeout() {
+		return quotePurger.getQuoteTimeout();
+	}
+	
+	public synchronized void setQuoteTimeout(int secs) {
+		quotePurger.setQuoteTimeout(secs);
+	}
+	
+	/**
+	 * Deletes old quotes (older than a specified timeout) from the database
+	 * @author william
+	 *
+	 */
+	public class QuotePurger extends LoopingThread {
+		
+		protected PreparedStatement deleteOldQuotes;
+		
+		protected Object waitObject;
+
+		protected QuotePurger(Connection conn) throws SQLException {
+			super("Old quote purger");
+			deleteOldQuotes = conn.prepareStatement(
+					"UPDATE quotes SET status='timeout' " +
+					"WHERE status='open' AND timecreated < TIMESTAMPADD(SECOND, ?, NOW());");
+		}
+		
+		@Override
+		protected void setup() {
+			waitObject = new Object();
+		}
+
+		@Override
+		protected void loop() {
+			try {
+				deleteOldQuotes.setInt(1, -quoteTimeout);
+				int numRows = deleteOldQuotes.executeUpdate();
+				
+				if(numRows > 0) { // List has changed, resend
+					System.out.println("Timeouted " + numRows + " old quotes from the DB, pushing new list");
+				
+					pushOpenQuotes();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			synchronized(waitObject) {
+				try {
+					waitObject.wait(3000);
+				} catch (InterruptedException e1) { }
+			}
+		}
+		
+		protected int quoteTimeout = 60;
+		
+		protected synchronized void setQuoteTimeout(int secs) {
+			quoteTimeout = Math.abs(secs);
+		}
+		
+		protected synchronized int getQuoteTimeout() {
+			return quoteTimeout;
+		}
+		
+		@Override
+		public synchronized void beginStopping() {
+			synchronized(waitObject) {
+				waitObject.notify();
+			}
+			super.beginStopping();
+		}
+	}
+	
+	public synchronized void beginStopping() {
+		quotePurger.beginStopping();
 	}
 }

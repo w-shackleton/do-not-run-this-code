@@ -19,13 +19,15 @@ import pennygame.lib.msg.data.User;
 public class UserUtils {
 
 	private final Connection conn;
+	private final QuoteUtils quotes;
 	private final PreparedStatement newUserStatement, checkUserStatement, deleteUserStatement, changePasswordStatement, changeFriendlyNameStatement;
 
-	UserUtils(Connection conn) throws SQLException {
+	UserUtils(Connection conn, QuoteUtils quotes) throws SQLException {
 		this.conn = conn;
+		this.quotes = quotes;
 		newUserStatement = conn
 				.prepareStatement("INSERT INTO users(username, password, pennies, bottles, friendlyname) VALUES (?, ?, ?, ?, ?);");
-		checkUserStatement = conn.prepareStatement("SELECT id FROM users WHERE username=? AND password=?;");
+		checkUserStatement = conn.prepareStatement("SELECT id, friendlyname FROM users WHERE username=? AND password=?;");
 		deleteUserStatement = conn.prepareStatement("DELETE FROM users WHERE id=?;");
 		changePasswordStatement = conn.prepareStatement("UPDATE users SET password=? WHERE id=?");
 		changeFriendlyNameStatement = conn.prepareStatement("UPDATE users SET friendlyname=? WHERE id=?");
@@ -67,17 +69,17 @@ public class UserUtils {
 	 * 
 	 * @param username
 	 * @param hashPass
-	 * @return the user's ID if the user is valid, or -1 if they aren't
+	 * @return the user's details if the user is valid, or null if they aren't
 	 * @throws SQLException
 	 */
-	public synchronized int checkLogin(String username, byte[] hashPass) throws SQLException {
+	public synchronized User checkLogin(String username, byte[] hashPass) throws SQLException {
 		checkUserStatement.setString(1, username.toLowerCase());
 		checkUserStatement.setString(2, Base64.encodeBytes(hashPass));
 
 		ResultSet rs = checkUserStatement.executeQuery();
-		if(!rs.last()) return -1;
+		if(!rs.last()) return null;
 		
-		return rs.getInt("id");
+		return new User(rs.getInt("id"), username, rs.getString("friendlyname"));
 	}
 
 	public synchronized void deleteUser(int userId) throws SQLException {
@@ -95,5 +97,7 @@ public class UserUtils {
 		changeFriendlyNameStatement.setString(1, friendlyName);
 		changeFriendlyNameStatement.setInt(2, userId);
 		changeFriendlyNameStatement.executeUpdate();
+		
+		quotes.pushOpenQuotes(); // Refresh users
 	}
 }
