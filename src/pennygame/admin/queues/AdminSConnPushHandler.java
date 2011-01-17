@@ -4,6 +4,7 @@ import pennygame.admin.AdminFrame;
 import pennygame.lib.clientutils.SConnMainThread.MsgBacks;
 import pennygame.lib.clientutils.SConnPushHandler;
 import pennygame.lib.msg.PennyMessage;
+import pennygame.lib.msg.adm.MAGameSetting;
 import pennygame.lib.msg.adm.MAUserList;
 import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.QueuePair.ConnectionEnder;
@@ -28,6 +29,21 @@ public class AdminSConnPushHandler extends SConnPushHandler {
 		if(cls.equals(MAUserList.class)) {
 			if(frame != null) {
 				frame.userTab.updateUserList(((MAUserList)msg).getUsers());
+			}
+		}
+		
+		else if(cls.equals(MAGameSetting.class)) {
+			MAGameSetting s = (MAGameSetting) msg;
+			
+			if(!s.setOrGet()) {
+				switch(s.what()) {
+				case MAGameSetting.WHAT_QUOTE_TIMEOUT:
+					frame.setQuoteTimeout((Integer) s.getData());
+					break;
+				case MAGameSetting.WHAT_QUOTE_NUMBER:
+					frame.setQuoteNumber((Integer) s.getData());
+					break;
+				}
 			}
 		}
 	}

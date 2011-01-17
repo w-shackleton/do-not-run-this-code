@@ -3,6 +3,7 @@ package pennygame.admin;
 import pennygame.admin.queues.AdminSConn;
 import pennygame.lib.GlobalPreferences;
 import pennygame.lib.clientutils.LoginApplet;
+import pennygame.lib.msg.data.User;
 
 public class PennyAdmin extends LoginApplet<AdminSConn> {
 
@@ -21,7 +22,7 @@ public class PennyAdmin extends LoginApplet<AdminSConn> {
 	AdminFrame adminFrame;
 
 	@Override
-	protected void startMainWindow(AdminSConn serverConnection) {
+	protected void startMainWindow(AdminSConn serverConnection, User userInfo) {
 		adminFrame = new AdminFrame(serverConnection, this);
 		adminFrame.setVisible(true);
 	}

@@ -1,15 +1,20 @@
 package pennygame.admin;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
 
@@ -24,6 +29,8 @@ public final class AdminFrame extends JFrame implements WindowListener {
 	JTabbedPane tabs;
 	
 	public final UserTab userTab;
+	
+	JTextField quoteTimeout, quoteNumber;
 
 	private static final long serialVersionUID = -8102000347833420431L;
 
@@ -50,19 +57,71 @@ public final class AdminFrame extends JFrame implements WindowListener {
 		JPanel topPanel = new JPanel();
 		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
 		
-		final JToggleButton pausedButton = new JToggleButton("Pause Game");
-		pausedButton.setBorder(new EmptyBorder(10, 10, 10, 10));
-		pausedButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				serv.pause(pausedButton.isSelected());
-				if(pausedButton.isSelected())
-					pausedButton.setText("* PAUSED *");
-				else
-					pausedButton.setText("Pause Game");
-			}
-		});
-		topPanel.add(pausedButton);
+		{
+			final JToggleButton pausedButton = new JToggleButton("Pause Game");
+			pausedButton.setBorder(new EmptyBorder(10, 10, 10, 10));
+			pausedButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					serv.pause(pausedButton.isSelected());
+					if(pausedButton.isSelected())
+						pausedButton.setText("* PAUSED *");
+					else
+						pausedButton.setText("Pause Game");
+				}
+			});
+			topPanel.add(pausedButton);
+		}
+		
+		{
+			topPanel.add(Box.createRigidArea(new Dimension(20, 1)));
+			
+			JLabel label = new JLabel("Quote Timeout: ");
+			topPanel.add(label);
+			
+			quoteTimeout = new JTextField(3);
+			topPanel.add(quoteTimeout);
+			
+			JButton quoteTimeoutSet = new JButton("Set timeout");
+			quoteTimeoutSet.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					int timeout;
+					try {
+						timeout = Integer.valueOf(quoteTimeout.getText());
+					} catch(NumberFormatException e) {
+						return;
+					}
+					serv.setQuoteTimeout(timeout);
+				}
+			});
+			topPanel.add(quoteTimeoutSet);
+		}
+		
+		{
+			topPanel.add(Box.createRigidArea(new Dimension(20, 1)));
+			
+			JLabel label = new JLabel("Number of quotes (x2): ");
+			topPanel.add(label);
+			
+			quoteNumber = new JTextField(3);
+			topPanel.add(quoteNumber);
+			
+			JButton quoteTimeoutSet = new JButton("Set number");
+			quoteTimeoutSet.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					int timeout;
+					try {
+						timeout = Integer.valueOf(quoteNumber.getText());
+					} catch(NumberFormatException e) {
+						return;
+					}
+					serv.setQuoteNumber(timeout);
+				}
+			});
+			topPanel.add(quoteTimeoutSet);
+		}
 		
 		content.add(topPanel);
 		
@@ -74,6 +133,9 @@ public final class AdminFrame extends JFrame implements WindowListener {
 		
 		add(content);
 		pack();
+		
+		serv.getQuoteTimeout();
+		serv.getQuoteNumber();
 	}
 
 	@Override
@@ -108,4 +170,11 @@ public final class AdminFrame extends JFrame implements WindowListener {
 	@Override
 	public void windowOpened(WindowEvent arg0) { }
 	
+	public void setQuoteTimeout(int timeout) {
+		quoteTimeout.setText("" + timeout);
+	}
+	
+	public void setQuoteNumber(int num) {
+		quoteNumber.setText("" + num);
+	}
 }

@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
@@ -71,6 +72,8 @@ public class UserTab extends JPanel {
 		userTable.getColumnModel().getColumn(0).setPreferredWidth(140);
 		userTable.getColumnModel().getColumn(1).setPreferredWidth(140);
 		userTable.setAutoCreateRowSorter(true);
+		
+		userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		// Context menu
 		userTableContextMenu = new JPopupMenu();

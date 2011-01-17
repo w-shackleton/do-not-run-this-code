@@ -2,11 +2,14 @@ package pennygame.admin.queues;
 
 import pennygame.admin.AdminFrame;
 import pennygame.admin.CommInterfaces.CreateNewUser;
+import pennygame.lib.Utils;
 import pennygame.lib.clientutils.SConn;
 import pennygame.lib.ext.PasswordUtils;
 import pennygame.lib.msg.adm.MAGamePause;
+import pennygame.lib.msg.adm.MAGameSetting;
 import pennygame.lib.msg.adm.MAUserAdd;
 import pennygame.lib.msg.adm.MAUserModifyRequest;
+import pennygame.lib.msg.data.User;
 import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.handlers.OnConnectionListener;
 import pennygame.lib.queues.handlers.OnLoginHandler;
@@ -24,9 +27,9 @@ public class AdminSConn extends SConn<AdminSConnMainThread, AdminSConnPushHandle
 	}
 
 	@Override
-	public void onLoginCompleted() {
+	public void onLoginCompleted(User userInfo) {
 		
-		loginHandler.onLoginCompleted();
+		loginHandler.onLoginCompleted(userInfo);
 	}
 
 	@Override
@@ -94,5 +97,23 @@ public class AdminSConn extends SConn<AdminSConnMainThread, AdminSConnPushHandle
 	
 	public void pause(boolean pause) {
 		sendMessage(new MAGamePause(pause));
+	}
+	
+	public void setQuoteTimeout(int timeout) {
+		timeout = Utils.trimMin(timeout, 10);
+		sendMessage(new MAGameSetting(true, MAGameSetting.WHAT_QUOTE_TIMEOUT, timeout));
+	}
+	
+	public void getQuoteTimeout() {
+		sendMessage(new MAGameSetting(MAGameSetting.WHAT_QUOTE_TIMEOUT));
+	}
+	
+	public void setQuoteNumber(int num) {
+		num = Utils.trimMinMax(num, 5, 20);
+		sendMessage(new MAGameSetting(true, MAGameSetting.WHAT_QUOTE_NUMBER, num));
+	}
+	
+	public void getQuoteNumber() {
+		sendMessage(new MAGameSetting(MAGameSetting.WHAT_QUOTE_NUMBER));
 	}
 }
