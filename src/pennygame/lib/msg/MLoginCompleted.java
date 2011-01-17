@@ -1,5 +1,7 @@
 package pennygame.lib.msg;
 
+import pennygame.lib.msg.data.User;
+
 public class MLoginCompleted extends PennyMessage {
 	/**
 	 * 
@@ -8,10 +10,10 @@ public class MLoginCompleted extends PennyMessage {
 	
 	public final boolean success;
 	
-	public final String username;
+	public final User user;
 
-	public MLoginCompleted(boolean success, String username) {
+	public MLoginCompleted(boolean success, int id, String username, String friendlyName) {
 		this.success = success;
-		this.username = username;
+		user = new User(id, username, friendlyName);
 	}
 }

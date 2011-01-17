@@ -16,6 +16,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import pennygame.lib.ext.WindowUtilities;
+import pennygame.lib.msg.data.User;
 import pennygame.lib.queues.handlers.OnConnectionListener;
 import pennygame.lib.queues.handlers.OnLoginHandler;
 
@@ -208,13 +209,13 @@ public abstract class LoginApplet<T extends SConn<? extends SConnMainThread, ? e
 		}
 
 		@Override
-		public void onLoginCompleted() {
+		public void onLoginCompleted(final User userInfo) {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
 					statusLabel.setText("Ready!");
 					connectionIsAvailable = true;
-					startMainWindow(serverConnection);
+					startMainWindow(serverConnection, userInfo);
 				}
 			});
 		}
@@ -224,7 +225,7 @@ public abstract class LoginApplet<T extends SConn<? extends SConnMainThread, ? e
 	 * Starts the main window of the client with the specified connection to the server
 	 * @param serverConnection
 	 */
-	protected abstract void startMainWindow(T serverConnection);
+	protected abstract void startMainWindow(T serverConnection, User userInfo);
 	
 	protected abstract void closeMainWindow();
 

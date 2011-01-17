@@ -33,7 +33,7 @@ public class SConnPushHandler extends PushHandler {
 			MLoginCompleted lMsg = (MLoginCompleted) msg;
 			System.out.println("Received login completion message");
 			if(lMsg.success)
-				loginHandler.onLoginCompleted();
+				loginHandler.onLoginCompleted(lMsg.user);
 			else
 			{
 				loginHandler.onLoginFailed();

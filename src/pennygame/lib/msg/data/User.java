@@ -30,6 +30,12 @@ public class User implements Serializable {
 		setBottles(bottles);
 		this.id = id;
 	}
+	
+	public User(int id, String username, String friendlyname) {
+		this.id = id;
+		this.username = username;
+		this.friendlyname = friendlyname;
+	}
 
 	public void setUsername(String username) {
 		this.username = username;
