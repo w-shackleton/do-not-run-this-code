@@ -28,14 +28,6 @@ public abstract class MessageProducer extends LoopingThread {
 				e.printStackTrace();
 			}
 			
-		if(getClass().getName().contains("CMulticaster"))
-			System.out.println("MESSAGE RECEIVED");
-		
-		try {
-		System.out.println("MESSAGE SENT: " + msg.getClass().getName());
-		if(PennyMessage.class.isAssignableFrom(msg.getClass()) || String.class.isAssignableFrom(msg.getClass()))
-			System.out.println("MESSAGE IS VALID");
-		} catch(Exception e) { }
 		messages.add(msg);
 		notify();
 	}
@@ -53,8 +45,6 @@ public abstract class MessageProducer extends LoopingThread {
 						.println("MessageProducer.putMessage's wait was interrupted, should be nothing...");
 				e.printStackTrace();
 			}
-		if(getClass().getName().contains("CMulticaster"))
-			System.out.println("MESSAGE RECEIVED: " + msg.getClass().getName());
 		
 		messages.add(msg);
 		notify();
@@ -86,8 +76,7 @@ public abstract class MessageProducer extends LoopingThread {
 	protected synchronized final Object getMessageNow() {
 		Object message = messages.poll();
 		if(message == null) return null;
-		if(getClass().getName().contains("CMulticaster"))
-			System.out.println("MESSAGE RECEIVED: " + message.getClass().getName());
+		
 		if(PennyMessage.class.isAssignableFrom(message.getClass()) || String.class.isAssignableFrom(message.getClass()))
 			return message;
 		return null;
