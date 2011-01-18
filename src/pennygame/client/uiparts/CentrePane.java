@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.DateFormat;
 import java.util.LinkedList;
 
 import javax.swing.BoxLayout;
@@ -51,13 +52,13 @@ public class CentrePane extends JPanel {
 			
 			openQTable = new JTable(openQuotesModel);
 			
-			openQTable.getColumnModel().getColumn(0).setPreferredWidth(100);
-			openQTable.getColumnModel().getColumn(1).setPreferredWidth(50);
+			openQTable.getColumnModel().getColumn(0).setPreferredWidth(90);
+			openQTable.getColumnModel().getColumn(1).setPreferredWidth(60);
 			openQTable.getColumnModel().getColumn(2).setPreferredWidth(40);
-			openQTable.getColumnModel().getColumn(3).setPreferredWidth(10);
+			openQTable.getColumnModel().getColumn(3).setPreferredWidth(8);
 			openQTable.getColumnModel().getColumn(4).setPreferredWidth(40);
-			openQTable.getColumnModel().getColumn(5).setPreferredWidth(10);
-			openQTable.getColumnModel().getColumn(6).setPreferredWidth(50);
+			openQTable.getColumnModel().getColumn(5).setPreferredWidth(8);
+			openQTable.getColumnModel().getColumn(6).setPreferredWidth(40);
 			
 			openQTable.getColumnModel().getColumn(1).setCellRenderer(openQuotesRenderer);
 			
@@ -66,7 +67,6 @@ public class CentrePane extends JPanel {
 			openQTable.setRowHeight(12);
 			openQTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			
-			openQTable.setAutoCreateRowSorter(true);
 			openQTable.setFillsViewportHeight(true);
 			openQTable.addMouseListener(openQuotesClickListener);
 			
@@ -81,6 +81,7 @@ public class CentrePane extends JPanel {
 			// scrollPane.setMaximumSize(new Dimension(500, 400));
 			Dimension spSize = scrollPane.getPreferredSize();
 			spSize.height += 20;
+			spSize.width = 286;
 			scrollPane.setMinimumSize(spSize);
 			scrollPane.setMaximumSize(new Dimension(spSize.width, 600));
 			
@@ -115,7 +116,8 @@ public class CentrePane extends JPanel {
 				case 6:
 					return openQuoteList.get(row).getValue();
 				case 7:
-					return "";
+					DateFormat df = DateFormat.getTimeInstance();
+					return df.format(openQuoteList.get(row).getTime());
 					// return openQuoteList.get(row).getTime();
 				}
 			}
