@@ -65,4 +65,39 @@ public class CMulticaster extends MessageProducer {
 		putMessage(msg);
 		System.out.println("Multicasting message...");
 	}
+	
+	/**
+	 * Sends a message to a specified list of clients; this doesn't get done on another thread
+	 * @param clientIds A list of clients to send to
+	 * @param msg The message to send
+	 */
+	public void sendMessageToClients(int[] clientIds, PennyMessage msg) {
+		String sMsg;
+		try {
+			sMsg = Serialiser.compose(msg);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		for(int clientId : clientIds) {
+			CConn client = clients.getClientForUserId(clientId);
+			if(client == null) continue;
+			
+			client.sendSerialisedMessage(sMsg);
+		}
+	}
+	
+	public void sendMessageToClient(int clientId, PennyMessage msg) {
+		String sMsg;
+		try {
+			sMsg = Serialiser.compose(msg);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+		CConn client = clients.getClientForUserId(clientId);
+		if(client == null) return;
+		client.sendSerialisedMessage(sMsg);
+	}
 }

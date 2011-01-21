@@ -10,6 +10,8 @@ public class CConn extends QueuePair<CConnMainThread, CConnPushHandler> {
 	protected Clients parent;
 	
 	private final GameUtils gameUtils;
+	
+	int userId;
 
 	public CConn(Socket sock, Clients parent, int id, GameUtils gameUtils) {
 		super(sock, id);
@@ -19,7 +21,7 @@ public class CConn extends QueuePair<CConnMainThread, CConnPushHandler> {
 
 	@Override
 	protected CConnMainThread createMainThread(String threadID) {
-		CConnMainThread cMainThread = new CConnMainThread(threadID, gameUtils);
+		CConnMainThread cMainThread = new CConnMainThread(threadID, gameUtils, this);
 		return cMainThread;
 	}
 
@@ -42,5 +44,10 @@ public class CConn extends QueuePair<CConnMainThread, CConnPushHandler> {
 	
 	public void sendSerialisedMessage(String msg) {
 		mainThread.sendSerialisedMessage(msg);
+	}
+	
+	void setMyId(int id) {
+		userId = id;
+		parent.onClientLogin(this, userId);
 	}
 }

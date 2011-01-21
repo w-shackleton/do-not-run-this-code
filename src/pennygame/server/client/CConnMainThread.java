@@ -10,17 +10,23 @@ import java.sql.SQLException;
 import pennygame.lib.GlobalPreferences;
 import pennygame.lib.msg.MLoginCompleted;
 import pennygame.lib.msg.MLoginInitiate;
+import pennygame.lib.msg.MOSMessage;
 import pennygame.lib.msg.MOpenQuotesList;
+import pennygame.lib.msg.MPutQuote;
+import pennygame.lib.msg.data.OpenQuote;
+import pennygame.lib.msg.tr.MTRequestResponse;
 import pennygame.lib.queues.MainThread;
 import pennygame.server.db.GameUtils;
 
 public class CConnMainThread extends MainThread {
 	KeyPair keys;
 	final GameUtils gameUtils;
+	final CConn parent;
 	
-	public CConnMainThread(String threadID, GameUtils gameUtils) {
+	public CConnMainThread(String threadID, GameUtils gameUtils, CConn parent) {
 		super(threadID);
 		this.gameUtils = gameUtils;
+		this.parent = parent;
 	}
 	
 	@Override
@@ -32,6 +38,22 @@ public class CConnMainThread extends MainThread {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+		}
+		if(cConnMsgBacks.resendMyInfoList) {
+			cConnMsgBacks.resendMyInfoList = false;
+			try {
+				putMessage(gameUtils.quotes.getUserMoneyMessage(parent.userId, 30)); // TODO: Get user money worth
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		if(cConnMsgBacks.errorPuttingQuote != 0) {
+			if(cConnMsgBacks.errorPuttingQuote == MPutQuote.TYPE_BUY) {
+				putMessage(new MOSMessage(MOSMessage.QUOTE_ERROR_NOT_ENOUGH_PENNIES)); // Notify user
+			} else {
+				putMessage(new MOSMessage(MOSMessage.QUOTE_ERROR_NOT_ENOUGH_BOTTLES));
+			}
+			cConnMsgBacks.errorPuttingQuote = 0;
 		}
 	}
 	@Override
@@ -75,9 +97,31 @@ public class CConnMainThread extends MainThread {
 			loginName = userName;
 			loginFriendlyName = friendlyName;
 			loginId = userID;
+			if(loginSuccess)
+				parent.setMyId(userID);
 		}
 		
 		protected boolean resendOpenQuotesList = false;
+		protected boolean resendMyInfoList = false;
+		
+		/**
+		 * Signifies that there was an error putting up a quote.
+		 * 0 means success, or a constant from {@link MPutQuote} signifies a fail with that item.
+		 */
+		protected int errorPuttingQuote = 0;
+		
+		/**
+		 * Tell the client the result of their quote request
+		 * @param quoteId
+		 * @param quote
+		 */
+		protected void sendQuoteRequestResponse(int quoteId, OpenQuote quote) {
+			if(quote == null) {
+				putMessage(new MTRequestResponse(quoteId, false));
+			} else {
+				putMessage(new MTRequestResponse(quoteId, true, quote));
+			}
+		}
 	}
 	
 	protected boolean loginCompleted = false;
