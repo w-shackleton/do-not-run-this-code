@@ -3,9 +3,12 @@ package pennygame.client.queues;
 import pennygame.client.PennyFrame;
 import pennygame.lib.clientutils.SConnMainThread.MsgBacks;
 import pennygame.lib.clientutils.SConnPushHandler;
+import pennygame.lib.msg.MMyInfo;
+import pennygame.lib.msg.MOSMessage;
 import pennygame.lib.msg.MOpenQuotesList;
 import pennygame.lib.msg.MPauseGame;
 import pennygame.lib.msg.PennyMessage;
+import pennygame.lib.msg.tr.MTRequestResponse;
 import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.QueuePair.ConnectionEnder;
 import pennygame.lib.queues.handlers.OnLoginHandler;
@@ -36,6 +39,33 @@ public class CSConnPushHandler extends SConnPushHandler {
 		else if(cls.equals(MPauseGame.class)) {
 			System.out.println("Pausing / resuming");
 			frame.pauseGame(((MPauseGame)msg).isPaused());
+		}
+		else if(cls.equals(MMyInfo.class)) {
+			System.out.println("Refreshing user info");
+			frame.lp.updateUserInfo((MMyInfo) msg);
+		}
+		else if(cls.equals(MOSMessage.class)) {
+			MOSMessage mmsg = (MOSMessage) msg;
+			
+			switch(mmsg.getMessage()) {
+			case MOSMessage.QUOTE_ERROR_NOT_ENOUGH_BOTTLES:
+				frame.notifyUserOfError("Not enough potential bottles to place transaction\n" +
+						"(Try deleting some quotes first)");
+				break;
+			case MOSMessage.QUOTE_ERROR_NOT_ENOUGH_PENNIES:
+				frame.notifyUserOfError("Not enough potential pennies to place transaction\n" +
+						"(Try deleting some quotes first)");
+				break;
+			}
+		}
+		
+		else if(cls.equals(MTRequestResponse.class)) {
+			MTRequestResponse rMsg = (MTRequestResponse) msg;
+			if(rMsg.wasSuccessful()) {
+				frame.askIfQuoteAccept(rMsg.getQuote());
+			} else {
+				frame.notifyUserOfError("Quote already taken");
+			}
 		}
 	}
 }

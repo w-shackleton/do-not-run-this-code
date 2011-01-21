@@ -5,6 +5,7 @@ import pennygame.lib.clientutils.SConn;
 import pennygame.lib.msg.MChangeMyName;
 import pennygame.lib.msg.MPutQuote;
 import pennygame.lib.msg.data.User;
+import pennygame.lib.msg.tr.MTRequest;
 import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.handlers.OnConnectionListener;
 import pennygame.lib.queues.handlers.OnLoginHandler;
@@ -57,6 +58,7 @@ public class CSConn extends SConn<CSConnMainThread, CSConnPushHandler> {
 		this.frame = frame;
 		pushHandler.setParentFrame(frame);
 		mainThread.refreshOpenQuoteList = true; // Get the list for the first time
+		mainThread.refreshMyInfo = true; // And my info
 	}
 	
 	/**
@@ -71,5 +73,13 @@ public class CSConn extends SConn<CSConnMainThread, CSConnPushHandler> {
 	
 	public void changeMyName(String newName) {
 		sendMessage(new MChangeMyName(newName));
+	}
+	
+	/**
+	 * Accepts the quote with the given ID number
+	 * @param id
+	 */
+	public void acceptQuote(int id) {
+		sendMessage(new MTRequest(id));
 	}
 }

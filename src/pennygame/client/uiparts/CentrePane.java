@@ -54,15 +54,18 @@ public class CentrePane extends JPanel {
 			
 			openQTable.getColumnModel().getColumn(0).setPreferredWidth(90);
 			openQTable.getColumnModel().getColumn(1).setPreferredWidth(60);
-			openQTable.getColumnModel().getColumn(2).setPreferredWidth(40);
+			openQTable.getColumnModel().getColumn(2).setPreferredWidth(55);
 			openQTable.getColumnModel().getColumn(3).setPreferredWidth(8);
-			openQTable.getColumnModel().getColumn(4).setPreferredWidth(40);
+			openQTable.getColumnModel().getColumn(4).setPreferredWidth(55);
 			openQTable.getColumnModel().getColumn(5).setPreferredWidth(8);
-			openQTable.getColumnModel().getColumn(6).setPreferredWidth(40);
+			openQTable.getColumnModel().getColumn(6).setPreferredWidth(60);
+			openQTable.getColumnModel().getColumn(7).setPreferredWidth(80);
 			
 			openQTable.getColumnModel().getColumn(1).setCellRenderer(openQuotesRenderer);
 			
-			// openQTable.getColumnModel().getColumn(7).setPreferredWidth(50);
+			openQTable.getTableHeader().setReorderingAllowed(false);
+			openQTable.getTableHeader().setResizingAllowed(false);
+			
 			openQTable.setFont(Font.decode("Sans-9"));
 			openQTable.setRowHeight(12);
 			openQTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -81,7 +84,7 @@ public class CentrePane extends JPanel {
 			// scrollPane.setMaximumSize(new Dimension(500, 400));
 			Dimension spSize = scrollPane.getPreferredSize();
 			spSize.height += 20;
-			spSize.width = 286;
+			spSize.width = 416;
 			scrollPane.setMinimumSize(spSize);
 			scrollPane.setMaximumSize(new Dimension(spSize.width, 600));
 			
@@ -106,7 +109,7 @@ public class CentrePane extends JPanel {
 				case 1:
 					return openQuoteList.get(row).getType() == OpenQuote.TYPE_BUY ? LABEL_BUYING : LABEL_SELLING;
 				case 2:
-					return openQuoteList.get(row).getBottles();
+					return Math.abs(openQuoteList.get(row).getBottles());
 				case 3:
 					return "@";
 				case 4:
@@ -114,7 +117,7 @@ public class CentrePane extends JPanel {
 				case 5:
 					return "=";
 				case 6:
-					return openQuoteList.get(row).getValue();
+					return Math.abs(openQuoteList.get(row).getValue());
 				case 7:
 					DateFormat df = DateFormat.getTimeInstance();
 					return df.format(openQuoteList.get(row).getTime());
@@ -163,10 +166,14 @@ public class CentrePane extends JPanel {
 		
 		private String[] columnNames = {"User", "Type", "Bottles", "@", "Pennies", "=", "Value", "At"};
 		
-		private int getShiftLevel() {
-			return (openQuoteListTotal - openQuoteList.size()) / 2;
-		}
+		// private int getShiftLevel() {
+			// return (openQuoteListTotal - openQuoteList.size()) / 2;
+		// }
 	};
+	
+	private int getShiftLevel() {
+		return (openQuoteListTotal - openQuoteList.size()) / 2;
+	}
 	
 	protected DefaultTableCellRenderer openQuotesRenderer = new DefaultTableCellRenderer() {
 
@@ -195,7 +202,15 @@ public class CentrePane extends JPanel {
 	protected MouseAdapter openQuotesClickListener = new MouseAdapter() {
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			
+			if(e.getButton() == MouseEvent.BUTTON1) {
+				int listRow = openQTable.getSelectedRow() - getShiftLevel();
+				if(listRow >= openQuoteList.size() || listRow < 0) return;
+				
+				System.out.println("Row " + listRow + " selected, processing.");
+				
+				int tradeId = openQuoteList.get(listRow).getId();
+				serv.acceptQuote(tradeId);
+			}
 		}
 	};
 	

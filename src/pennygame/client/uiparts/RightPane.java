@@ -79,7 +79,7 @@ public class RightPane extends JPanel {
 			JLabel label = new JLabel("Sell ");
 			pan.add(label);
 
-			sellQBottles = new JTextField(5);
+			sellQBottles = new JTextField(3);
 			sellQBottles.addKeyListener(new KeyListener() {
 				@Override
 				public void keyTyped(KeyEvent e) {
@@ -101,7 +101,7 @@ public class RightPane extends JPanel {
 			label = new JLabel(" bottles at ");
 			pan.add(label);
 
-			sellQPennies = new JTextField(5);
+			sellQPennies = new JTextField(3);
 			sellQPennies.addKeyListener(new KeyListener() {
 				@Override
 				public void keyTyped(KeyEvent e) {
@@ -122,7 +122,7 @@ public class RightPane extends JPanel {
 			pan.add(sellQPennies);
 			pausingItems.add(sellQPennies);
 
-			label = new JLabel(" pence per bottle");
+			label = new JLabel(" ppb.");
 			pan.add(label);
 
 			add(pan);
@@ -144,7 +144,7 @@ public class RightPane extends JPanel {
 			JLabel label = new JLabel("Buy ");
 			pan.add(label);
 
-			buyQBottles = new JTextField(5);
+			buyQBottles = new JTextField(3);
 			buyQBottles.addKeyListener(new KeyListener() {
 				@Override
 				public void keyTyped(KeyEvent e) {
@@ -166,7 +166,7 @@ public class RightPane extends JPanel {
 			label = new JLabel(" bottles at ");
 			pan.add(label);
 
-			buyQPennies = new JTextField(5);
+			buyQPennies = new JTextField(3);
 			buyQPennies.addKeyListener(new KeyListener() {
 				@Override
 				public void keyTyped(KeyEvent e) {
@@ -187,7 +187,7 @@ public class RightPane extends JPanel {
 			pan.add(buyQPennies);
 			pausingItems.add(buyQPennies);
 
-			label = new JLabel(" pence per bottle");
+			label = new JLabel(" ppb.");
 			pan.add(label);
 
 			add(pan);

@@ -3,6 +3,7 @@ package pennygame.client;
 import java.awt.BorderLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -10,10 +11,13 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import pennygame.client.queues.CSConn;
 import pennygame.client.uiparts.CentrePane;
+import pennygame.client.uiparts.LeftPane;
 import pennygame.client.uiparts.RightPane;
+import pennygame.lib.msg.data.OpenQuote;
 import pennygame.lib.msg.data.User;
 
 public class PennyFrame extends JFrame implements WindowListener {
@@ -25,6 +29,7 @@ public class PennyFrame extends JFrame implements WindowListener {
 	
 	public RightPane rp;
 	public CentrePane cp;
+	public LeftPane lp;
 	
 	protected final User userInfo;
 	
@@ -49,7 +54,8 @@ public class PennyFrame extends JFrame implements WindowListener {
 		container.setLayout(new BorderLayout());
 		
 		{ // LEFT PANE
-			
+			lp = new LeftPane(this, serv, pausingItems);
+			container.add(lp, BorderLayout.LINE_START);
 		}
 		
 		{ // RIGHT PANE
@@ -100,5 +106,23 @@ public class PennyFrame extends JFrame implements WindowListener {
 		while(it.hasNext()) {
 			it.next().setEnabled(!pause);
 		}
+	}
+	
+	public void notifyUserOfError(final String error) {
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					JOptionPane.showMessageDialog(PennyFrame.this, error, "", JOptionPane.WARNING_MESSAGE);
+				}
+			});
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void askIfQuoteAccept(OpenQuote quote) {
+		
 	}
 }
