@@ -45,7 +45,7 @@ public class PennyServer {
 		System.out.println("Game Utils...");
 		GameUtils gameUtils = null;
 		try {
-			gameUtils = new GameUtils(db.getConnection(), multicast);
+			gameUtils = new GameUtils(db.getConnection(), db.getQuoteAcceptingConnection(), multicast);
 		} catch (SQLException e2) {
 			e2.printStackTrace();
 		}

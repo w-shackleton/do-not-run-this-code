@@ -14,6 +14,7 @@ import pennygame.lib.msg.MOSMessage;
 import pennygame.lib.msg.MOpenQuotesList;
 import pennygame.lib.msg.MPutQuote;
 import pennygame.lib.msg.data.OpenQuote;
+import pennygame.lib.msg.tr.MTAcceptResponse;
 import pennygame.lib.msg.tr.MTRequestResponse;
 import pennygame.lib.queues.MainThread;
 import pennygame.server.db.GameUtils;
@@ -121,6 +122,10 @@ public class CConnMainThread extends MainThread {
 			} else {
 				putMessage(new MTRequestResponse(quoteId, true, quote));
 			}
+		}
+		
+		protected void sendQuoteAcceptResponse(int quoteId, int status) {
+			putMessage(new MTAcceptResponse(quoteId, status));
 		}
 	}
 	

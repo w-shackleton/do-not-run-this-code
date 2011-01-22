@@ -6,11 +6,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 
+import pennygame.lib.GlobalPreferences;
 import pennygame.lib.msg.MMyInfo;
 import pennygame.lib.msg.MOpenQuotesList;
 import pennygame.lib.msg.MPutQuote;
 import pennygame.lib.msg.data.OpenQuote;
 import pennygame.lib.msg.data.PB;
+import pennygame.lib.msg.tr.MTAcceptResponse;
 import pennygame.lib.queues.LoopingThread;
 import pennygame.server.client.CMulticaster;
 
@@ -22,23 +24,27 @@ import pennygame.server.client.CMulticaster;
 public final class QuoteUtils {
 	
 	private final PreparedStatement putQuoteStatement, getOpenQuotesStatement, getUserClosedTradesStatement, getUserOpenQuotesStatement, getUserMoneyStatement;
-	private final PreparedStatement getQuoteInfoStatement, requestQuoteLockStatement;
+	private final PreparedStatement getQuoteInfoStatement, requestQuoteLockStatement, acceptLockedQuoteStatement, declineLockedQuoteStatement, acceptLockQuoteUpdateMyMoney, acceptLockQuoteUpdateOtherMoney;
 	private final CMulticaster multicast;
 	
 	protected final QuotePurger quotePurger;
 	
-	QuoteUtils(Connection conn, CMulticaster multicast) throws SQLException {
+	private final Connection quoteAcceptingConn;
+	
+	QuoteUtils(Connection conn, Connection quoteAcceptingConn, CMulticaster multicast) throws SQLException {
 		this.multicast = multicast;
 		this.quotePurger = new QuotePurger(conn);
+		this.quoteAcceptingConn = quoteAcceptingConn;
+		
 		quotePurger.start();
 		
 		putQuoteStatement = conn.prepareStatement("INSERT INTO quotes(type, idfrom, pennies, bottles) VALUES (?, ?, ?, ?);");
 		getOpenQuotesStatement = conn.prepareStatement(
 				"SELECT * FROM " +
-				"((SELECT quotes.id, quotes.type, users.friendlyname AS fromname, quotes.pennies, quotes.bottles, quotes.bottles * CAST(quotes.pennies AS SIGNED) AS value, quotes.timecreated AS time " +
+				"((SELECT quotes.id, quotes.type, users.friendlyname AS fromname, quotes.idfrom, quotes.pennies, quotes.bottles, quotes.bottles * CAST(quotes.pennies AS SIGNED) AS value, quotes.timecreated AS time " +
 				"FROM quotes, users WHERE status='open' AND type='sell' AND quotes.idfrom = users.id ORDER BY pennies LIMIT ?) " +
 				"UNION ALL " +
-				" (SELECT quotes.id, quotes.type, users.friendlyname AS fromname, quotes.pennies, quotes.bottles, quotes.bottles * CAST(quotes.pennies AS SIGNED) AS value, quotes.timecreated AS time " +
+				" (SELECT quotes.id, quotes.type, users.friendlyname AS fromname, quotes.idfrom, quotes.pennies, quotes.bottles, quotes.bottles * CAST(quotes.pennies AS SIGNED) AS value, quotes.timecreated AS time " +
 				"FROM quotes, users WHERE status='open' AND type='buy'  AND quotes.idfrom = users.id ORDER BY pennies DESC LIMIT ?)) " +
 				"AS tbl ORDER BY tbl.pennies DESC;"); // This searches through all buy and sells, unions them and then sorts the result.
 		getUserClosedTradesStatement = conn.prepareStatement(
@@ -46,7 +52,7 @@ public final class QuoteUtils {
 				"(SELECT type, idfrom, idto, bottles, pennies, timeaccepted FROM quotes WHERE " +
 				"status='closed' AND (idfrom=? OR idto=?) " +
 				"ORDER BY timeaccepted DESC LIMIT 40) as tbl " +
-				"ORDER BY timeaccepted;"); // TODO: Optimise this's OR statement with an index?
+				"ORDER BY timeaccepted;");
 		getUserOpenQuotesStatement = conn.prepareStatement(
 				"SELECT * FROM quotes WHERE status='open' AND idfrom=? ORDER BY timecreated;");
 		getUserMoneyStatement = conn.prepareStatement(
@@ -61,11 +67,20 @@ public final class QuoteUtils {
 				);
 		
 		getQuoteInfoStatement = conn.prepareStatement(
-				"SELECT quotes.id, quotes.type, users.friendlyname AS fromname, quotes.pennies, " +
+				"SELECT quotes.id, quotes.type, users.friendlyname AS fromname, quotes.idfrom, quotes.pennies, " +
 				"quotes.bottles, quotes.bottles * CAST(quotes.pennies AS SIGNED) AS value, quotes.timecreated AS time " +
 				"FROM quotes, users WHERE quotes.idfrom = users.id AND quotes.id=?;");
 		requestQuoteLockStatement = conn.prepareStatement(
 				"UPDATE quotes SET lockid=?, timeaccepted=NOW() WHERE id=? AND status='open' AND lockid IS NULL;");
+		
+		acceptLockedQuoteStatement = quoteAcceptingConn.prepareStatement(
+				"UPDATE quotes SET status='closed', lockid=NULL WHERE id=? AND lockid=?;"); // No status=open because it could have timed out somehow
+		acceptLockQuoteUpdateMyMoney = quoteAcceptingConn.prepareStatement(
+				"UPDATE users SET bottles=bottles + ?, pennies=pennies - ? WHERE id=?;");
+		acceptLockQuoteUpdateOtherMoney = quoteAcceptingConn.prepareStatement(
+				"UPDATE users SET bottles=bottles - ?, pennies=pennies + ? WHERE id=?;");
+		declineLockedQuoteStatement = quoteAcceptingConn.prepareStatement(
+				"UPDATE quotes SET lockid=NULL, timeaccepted=NULL WHERE id=? AND lockid=?;");
 	}
 	
 	/**
@@ -78,7 +93,7 @@ public final class QuoteUtils {
 	 * @return true if succesful, false if not
 	 */
 	public synchronized boolean putQuote(int type, int userId, int pennies, int bottles) throws SQLException {
-		LinkedList<PB> money = getUserMoney(userId, 1); // UserID doesn't matter here
+		LinkedList<PB> money = getUserMoney(userId, 1); // Estimated worth doesn't matter here
 		// We want items 2 and 3 (potential money)
 		
 		// Least possible pennies
@@ -145,7 +160,7 @@ public final class QuoteUtils {
 			int t;
 			if(type.equals("buy")) t = OpenQuote.TYPE_BUY;
 			else t = OpenQuote.TYPE_SELL;
-			list.add(new OpenQuote(rs.getInt("id"), t, rs.getString("fromname"), rs.getInt("pennies"), rs.getInt("bottles"), rs.getTimestamp("time")));
+			list.add(new OpenQuote(rs.getInt("id"), t, rs.getString("fromname"), rs.getInt("idfrom"), rs.getInt("pennies"), rs.getInt("bottles"), rs.getTimestamp("time")));
 		}
 		
 		return list;
@@ -159,11 +174,16 @@ public final class QuoteUtils {
 		}
 	}
 	
+	/**
+	 * @param id
+	 * @return An {@link OpenQuote} describing the given id, or null
+	 * @throws SQLException
+	 */
 	public synchronized OpenQuote getQuoteInfo(int id) throws SQLException {
 		getQuoteInfoStatement.setInt(1, id);
 		ResultSet rs = getQuoteInfoStatement.executeQuery();
 		while(rs.next()) {
-			return new OpenQuote(id, rs.getString("type").equals("buy") ? OpenQuote.TYPE_BUY : OpenQuote.TYPE_SELL, rs.getString("fromname"), rs.getInt("pennies"), rs.getInt("bottles"), rs.getTimestamp("time"));
+			return new OpenQuote(id, rs.getString("type").equals("buy") ? OpenQuote.TYPE_BUY : OpenQuote.TYPE_SELL, rs.getString("fromname"), rs.getInt("idfrom"), rs.getInt("pennies"), rs.getInt("bottles"), rs.getTimestamp("time"));
 		}
 		return null;
 	}
@@ -207,7 +227,7 @@ public final class QuoteUtils {
 	 * Tries to lock the quote for accepting
 	 * @param userId
 	 * @param quoteId
-	 * @return true if sucessful, false if someone else got there first
+	 * @return true if successful, false if someone else got there first
 	 * @throws SQLException 
 	 */
 	public synchronized boolean requestLockQuote(int userId, int quoteId) throws SQLException {
@@ -217,6 +237,58 @@ public final class QuoteUtils {
 		int rows = requestQuoteLockStatement.executeUpdate(); // Will return 0 if row already grabbed
 		return rows == 1;
 	}
+	
+	
+	public synchronized int acceptLockedQuote(int userId, int quoteId, boolean accept) throws SQLException {
+		if(accept) {
+			OpenQuote q = getQuoteInfo(quoteId);
+			if(q == null) return MTAcceptResponse.ACCEPT_QUOTE_FAIL; // Get info about quote
+			
+			LinkedList<PB> money = getUserMoney(userId, 1);
+			// Check against 0, 2, 3 (0 because of some weird logic I haven't figured out)
+			money.remove(1); // Don't need
+			for(PB testMoney : money) {
+				if(testMoney.getBottles() - q.getBottles() < 0) return MTAcceptResponse.ACCEPT_QUOTE_NOMONEY; // If exceeds bottles
+				if(testMoney.getPennies() + q.getValue() < 0) return MTAcceptResponse.ACCEPT_QUOTE_NOMONEY; // If exceeds pennies
+			}
+		
+			acceptLockedQuoteStatement.setInt(1, quoteId);
+			acceptLockedQuoteStatement.setInt(2, userId);
+			if(acceptLockedQuoteStatement.executeUpdate() != 1) {
+				quoteAcceptingConn.rollback();
+				return MTAcceptResponse.ACCEPT_QUOTE_FAIL;
+			}
+			
+			acceptLockQuoteUpdateMyMoney.setInt(1, q.getBottles());
+			acceptLockQuoteUpdateMyMoney.setInt(2, q.getValue());
+			acceptLockQuoteUpdateMyMoney.setInt(3, userId);
+			if(acceptLockQuoteUpdateMyMoney.executeUpdate() != 1) {
+				quoteAcceptingConn.rollback();
+				return MTAcceptResponse.ACCEPT_QUOTE_FAIL;
+			}
+			
+			acceptLockQuoteUpdateOtherMoney.setInt(1, q.getBottles());
+			acceptLockQuoteUpdateOtherMoney.setInt(2, q.getValue());
+			acceptLockQuoteUpdateOtherMoney.setInt(3, q.getIdFrom());
+			if(acceptLockQuoteUpdateOtherMoney.executeUpdate() != 1) {
+				quoteAcceptingConn.rollback();
+				return MTAcceptResponse.ACCEPT_QUOTE_FAIL;
+			}
+			
+			quoteAcceptingConn.commit();
+			
+			pushOpenQuotes();
+			pushUserMoney(userId, 42);
+			pushUserMoney(q.getIdFrom(), 42);
+		} else { // Reset quote
+			declineLockedQuoteStatement.setInt(1, quoteId);
+			declineLockedQuoteStatement.setInt(2, userId);
+			declineLockedQuoteStatement.executeUpdate();
+			quoteAcceptingConn.commit();
+		}
+		return MTAcceptResponse.ACCEPT_QUOTE_SUCCESS;
+	}
+	
 	
 	public synchronized int getQuoteTimeout() {
 		return quotePurger.getQuoteTimeout();
@@ -233,9 +305,10 @@ public final class QuoteUtils {
 	 */
 	public class QuotePurger extends LoopingThread {
 		
-		protected final PreparedStatement deleteOldQuotes, getOldQuoteUserIds;
+		protected final PreparedStatement deleteOldQuotes, getOldQuoteUserIds, resetTimeoutedLockedQuotes;
 		
 		protected Object waitObject;
+		protected final int lockWaitTimeout = GlobalPreferences.getQuoteAcceptTimeout() + 2; // 2 to give a bit of a gap
 
 		protected QuotePurger(Connection conn) throws SQLException {
 			super("Old quote purger");
@@ -245,6 +318,10 @@ public final class QuoteUtils {
 			getOldQuoteUserIds = conn.prepareStatement(
 					"SELECT idfrom AS userid FROM quotes " +
 					"WHERE status='open' AND timecreated < TIMESTAMPADD(SECOND, ?, NOW()) AND lockid IS NULL GROUP BY idfrom;");
+			
+			resetTimeoutedLockedQuotes = conn.prepareStatement(
+					"UPDATE quotes SET lockid=NULL, timeaccepted=NULL " +
+					"WHERE status='open' AND timeaccepted < TIMESTAMPADD(SECOND, ?, NOW()) AND lockid IS NOT NULL;");
 		}
 		
 		@Override
@@ -272,6 +349,10 @@ public final class QuoteUtils {
 				
 					pushOpenQuotes();
 				}
+				
+				// Expire old locked quotes (so they don't become stuck)
+				resetTimeoutedLockedQuotes.setInt(1, -lockWaitTimeout);
+				resetTimeoutedLockedQuotes.executeUpdate();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

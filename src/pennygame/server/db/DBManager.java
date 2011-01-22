@@ -15,7 +15,7 @@ public class DBManager extends LoopingThread {
 	private static final String dbUrl = "jdbc:mysql://" + server + "/"
 			+ database;
 
-	final Connection conn;
+	private final Connection conn, quoteAcceptingConn;
 
 	public DBManager() throws SQLException {
 		super("DB Mgmt");
@@ -30,6 +30,8 @@ public class DBManager extends LoopingThread {
 		}
 
 		conn = DriverManager.getConnection(dbUrl, username, password);
+		quoteAcceptingConn = DriverManager.getConnection(dbUrl, username, password);
+		quoteAcceptingConn.setAutoCommit(false); // Uses transactions
 		System.out.println("DB connected");
 		// conn.setAutoCommit(true);
 
@@ -102,5 +104,9 @@ public class DBManager extends LoopingThread {
 
 	public Connection getConnection() {
 		return conn;
+	}
+
+	public Connection getQuoteAcceptingConnection() {
+		return quoteAcceptingConn;
 	}
 }

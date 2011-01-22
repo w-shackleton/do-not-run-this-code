@@ -9,11 +9,14 @@ import pennygame.lib.msg.MPutQuote;
 import pennygame.lib.msg.MRefresher;
 import pennygame.lib.msg.PennyMessage;
 import pennygame.lib.msg.data.User;
+import pennygame.lib.msg.tr.MTAccept;
+import pennygame.lib.msg.tr.MTAcceptResponse;
 import pennygame.lib.msg.tr.MTRequest;
 import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.PushHandler;
 import pennygame.lib.queues.QueuePair.ConnectionEnder;
 import pennygame.server.db.GameUtils;
+import pennygame.server.db.QuoteUtils;
 
 /**
  * Perhaps this should be made non-threaded, and pass its messages to the other main thread (too many...)
@@ -108,6 +111,25 @@ public class CConnPushHandler extends PushHandler {
 				} catch (SQLException e) { e.printStackTrace(); }
 			} else {
 					cConnMsgBacks.sendQuoteRequestResponse(tMsg.getQuoteId(), null);
+			}
+		}
+		else if(cls.equals(MTAccept.class)) {
+			MTAccept tMsg = (MTAccept) msg;
+			int retVal = MTAcceptResponse.ACCEPT_QUOTE_FAIL;
+			try {
+				retVal = gameUtils.quotes.acceptLockedQuote(user.getId(), tMsg.getQuoteId(), tMsg.isAccepted());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			switch(retVal) {
+			case MTAcceptResponse.ACCEPT_QUOTE_SUCCESS:
+				break;
+			case MTAcceptResponse.ACCEPT_QUOTE_FAIL:
+				cConnMsgBacks.sendQuoteAcceptResponse(tMsg.getQuoteId(), retVal);
+				break;
+			case MTAcceptResponse.ACCEPT_QUOTE_NOMONEY:
+				cConnMsgBacks.sendQuoteAcceptResponse(tMsg.getQuoteId(), retVal);
+				break;
 			}
 		}
 	}
