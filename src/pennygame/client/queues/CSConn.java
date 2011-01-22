@@ -5,6 +5,7 @@ import pennygame.lib.clientutils.SConn;
 import pennygame.lib.msg.MChangeMyName;
 import pennygame.lib.msg.MPutQuote;
 import pennygame.lib.msg.data.User;
+import pennygame.lib.msg.tr.MTAccept;
 import pennygame.lib.msg.tr.MTRequest;
 import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.handlers.OnConnectionListener;
@@ -81,5 +82,9 @@ public class CSConn extends SConn<CSConnMainThread, CSConnPushHandler> {
 	 */
 	public void acceptQuote(int id) {
 		sendMessage(new MTRequest(id));
+	}
+	
+	public void confirmAcceptQuote(int id, boolean accept) {
+		sendMessage(new MTAccept(id, accept));
 	}
 }

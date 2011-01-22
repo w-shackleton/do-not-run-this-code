@@ -8,6 +8,7 @@ import pennygame.lib.msg.MOSMessage;
 import pennygame.lib.msg.MOpenQuotesList;
 import pennygame.lib.msg.MPauseGame;
 import pennygame.lib.msg.PennyMessage;
+import pennygame.lib.msg.tr.MTAcceptResponse;
 import pennygame.lib.msg.tr.MTRequestResponse;
 import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.QueuePair.ConnectionEnder;
@@ -65,6 +66,17 @@ public class CSConnPushHandler extends SConnPushHandler {
 				frame.askIfQuoteAccept(rMsg.getQuote());
 			} else {
 				frame.notifyUserOfError("Quote already taken");
+			}
+		}
+		else if(cls.equals(MTAcceptResponse.class)) {
+			MTAcceptResponse rMsg = (MTAcceptResponse) msg;
+			switch(rMsg.getStatus()) {
+			case MTAcceptResponse.ACCEPT_QUOTE_FAIL:
+				frame.notifyUserOfError("Could not accept quote; unknown error occurred.");
+				break;
+			case MTAcceptResponse.ACCEPT_QUOTE_NOMONEY:
+				frame.notifyUserOfError("Not enough money to accept quote");
+				break;
 			}
 		}
 	}

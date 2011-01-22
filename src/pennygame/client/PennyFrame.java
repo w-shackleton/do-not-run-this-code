@@ -17,6 +17,8 @@ import pennygame.client.queues.CSConn;
 import pennygame.client.uiparts.CentrePane;
 import pennygame.client.uiparts.LeftPane;
 import pennygame.client.uiparts.RightPane;
+import pennygame.lib.GlobalPreferences;
+import pennygame.lib.clientutils.TimeoutDialog;
 import pennygame.lib.msg.data.OpenQuote;
 import pennygame.lib.msg.data.User;
 
@@ -122,7 +124,15 @@ public class PennyFrame extends JFrame implements WindowListener {
 		}
 	}
 	
-	public void askIfQuoteAccept(OpenQuote quote) {
-		
+	public void askIfQuoteAccept(final OpenQuote quote) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				TimeoutDialog t = new TimeoutDialog(PennyFrame.this, "Accept " + quote.getBottles() + "b @ " + quote.getPennies() + "ppb = " + quote.getValue() + "p\nFrom " + quote.getFromName() + "?", "Accept trade?", GlobalPreferences.getQuoteAcceptTimeout());
+				t.setVisible(true);
+				
+				serv.confirmAcceptQuote(quote.getId(), t.isOk());
+			}
+		});
 	}
 }
