@@ -20,13 +20,15 @@ public class OpenQuote implements Serializable {
 	private final int pennies, bottles, value;
 	
 	private final String fromName;
+	private final int idFrom;
 	
 	private final Timestamp time;
 	
-	public OpenQuote(int id, int type, String fromName, int pennies, int bottles, Timestamp time) {
+	public OpenQuote(int id, int type, String fromName, int idfrom, int pennies, int bottles, Timestamp time) {
 		this.id = id;
 		this.type = type;
 		this.fromName = fromName;
+		this.idFrom = idfrom;
 		this.time = time;
 		this.pennies = pennies;
 		this.bottles = bottles;
@@ -59,5 +61,9 @@ public class OpenQuote implements Serializable {
 
 	public Timestamp getTime() {
 		return time;
+	}
+
+	public int getIdFrom() {
+		return idFrom;
 	}
 }
