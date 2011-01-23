@@ -20,7 +20,7 @@ public class UserUtils {
 
 	private final Connection conn;
 	private final QuoteUtils quotes;
-	private final PreparedStatement newUserStatement, checkUserStatement, deleteUserStatement, changePasswordStatement, changeFriendlyNameStatement;
+	private final PreparedStatement newUserStatement, checkUserStatement, deleteUserStatement, changePasswordStatement, changeFriendlyNameStatement, updateWorthGuessStatement;
 
 	UserUtils(Connection conn, QuoteUtils quotes) throws SQLException {
 		this.conn = conn;
@@ -31,6 +31,7 @@ public class UserUtils {
 		deleteUserStatement = conn.prepareStatement("DELETE FROM users WHERE id=?;");
 		changePasswordStatement = conn.prepareStatement("UPDATE users SET password=? WHERE id=?");
 		changeFriendlyNameStatement = conn.prepareStatement("UPDATE users SET friendlyname=? WHERE id=?");
+		updateWorthGuessStatement = conn.prepareStatement("INSERT INTO worthguess(userid, guess) VALUES (?, ?);");
 	}
 
 	public synchronized void createUser(String username, byte[] hashPass, int pennies, int bottles) throws SQLException {
@@ -99,5 +100,14 @@ public class UserUtils {
 		changeFriendlyNameStatement.executeUpdate();
 		
 		quotes.pushOpenQuotes(); // Refresh users
+	}
+	
+	public synchronized void updateGuessedWorth(int userId, int guess) throws SQLException {
+		updateWorthGuessStatement.setInt(1, userId);
+		updateWorthGuessStatement.setInt(2, guess);
+		updateWorthGuessStatement.executeUpdate();
+		
+		quotes.userWorthGuesses.put(userId, guess); // Update cache
+		quotes.pushUserMoney(userId);
 	}
 }

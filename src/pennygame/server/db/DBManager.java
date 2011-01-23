@@ -100,6 +100,14 @@ public class DBManager extends LoopingThread {
 				"INDEX(pennies)," +
 				"INDEX(idfrom, idto)" +
 				") TYPE=INNODB;");
+		stat.executeUpdate("CREATE TABLE IF NOT EXISTS worthguess (" +
+				"id INT(32) UNSIGNED PRIMARY KEY AUTO_INCREMENT," +
+				"userid INT(16) NOT NULL," +
+				"guess INT(32) NOT NULL," +
+				"time TIMESTAMP NOT NULL DEFAULT NOW()," +
+				"" +
+				"INDEX(userid)" +
+				") TYPE=INNODB;");
 	}
 
 	public Connection getConnection() {

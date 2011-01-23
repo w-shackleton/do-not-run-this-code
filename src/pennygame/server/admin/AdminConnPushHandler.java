@@ -134,6 +134,8 @@ public class AdminConnPushHandler extends PushHandler {
 				else
 					adminMsgBacks.sendNumQuotes(gameUtils.quotes.getNumQuotes());
 				break;
+			case MAGameSetting.WHAT_RESET_GAME:
+				break;
 			}
 		}
 	}

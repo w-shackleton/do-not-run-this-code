@@ -7,6 +7,7 @@ import pennygame.lib.msg.MChangeMyName;
 import pennygame.lib.msg.MLoginRequest;
 import pennygame.lib.msg.MPutQuote;
 import pennygame.lib.msg.MRefresher;
+import pennygame.lib.msg.MUpdateGWorth;
 import pennygame.lib.msg.PennyMessage;
 import pennygame.lib.msg.data.User;
 import pennygame.lib.msg.tr.MTAccept;
@@ -16,7 +17,6 @@ import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.PushHandler;
 import pennygame.lib.queues.QueuePair.ConnectionEnder;
 import pennygame.server.db.GameUtils;
-import pennygame.server.db.QuoteUtils;
 
 /**
  * Perhaps this should be made non-threaded, and pass its messages to the other main thread (too many...)
@@ -130,6 +130,14 @@ public class CConnPushHandler extends PushHandler {
 			case MTAcceptResponse.ACCEPT_QUOTE_NOMONEY:
 				cConnMsgBacks.sendQuoteAcceptResponse(tMsg.getQuoteId(), retVal);
 				break;
+			}
+		}
+		else if(cls.equals(MUpdateGWorth.class)) {
+			MUpdateGWorth uMsg = (MUpdateGWorth) msg;
+			try {
+				gameUtils.users.updateGuessedWorth(user.getId(), uMsg.getgWorth());
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 		}
 	}

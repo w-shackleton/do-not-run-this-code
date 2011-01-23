@@ -43,7 +43,7 @@ public class CConnMainThread extends MainThread {
 		if(cConnMsgBacks.resendMyInfoList) {
 			cConnMsgBacks.resendMyInfoList = false;
 			try {
-				putMessage(gameUtils.quotes.getUserMoneyMessage(parent.userId, 30)); // TODO: Get user money worth
+				putMessage(gameUtils.quotes.getUserMoneyMessage(parent.userId)); // TODO: Get user money worth
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

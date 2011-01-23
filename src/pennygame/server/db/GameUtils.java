@@ -39,4 +39,7 @@ public class GameUtils {
 	public synchronized void beginStopping() {
 		quotes.beginStopping();
 	}
+	
+	public synchronized void resetGame() {
+	}
 }

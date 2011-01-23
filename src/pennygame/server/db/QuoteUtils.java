@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.LinkedList;
+import java.util.concurrent.ConcurrentHashMap;
 
 import pennygame.lib.GlobalPreferences;
 import pennygame.lib.msg.MMyInfo;
@@ -31,10 +33,26 @@ public final class QuoteUtils {
 	
 	private final Connection quoteAcceptingConn;
 	
+	/**
+	 * A map of users' guesses at the bottle's worth. This is also stored in the DB, and is stored here for ease of access
+	 */
+	protected final ConcurrentHashMap<Integer, Integer> userWorthGuesses;
+	
 	QuoteUtils(Connection conn, Connection quoteAcceptingConn, CMulticaster multicast) throws SQLException {
 		this.multicast = multicast;
 		this.quotePurger = new QuotePurger(conn);
 		this.quoteAcceptingConn = quoteAcceptingConn;
+		
+		{
+			userWorthGuesses = new ConcurrentHashMap<Integer, Integer>();
+			Statement s = conn.createStatement();
+			ResultSet rs = s.executeQuery("SELECT * FROM worthguess ORDER BY id;");
+			while(rs.next()) {
+				synchronized(userWorthGuesses) {
+					userWorthGuesses.put(rs.getInt("userid"), rs.getInt("guess")); // Load each item into the list (load cache)
+				}
+			}
+		}
 		
 		quotePurger.start();
 		
@@ -93,7 +111,7 @@ public final class QuoteUtils {
 	 * @return true if succesful, false if not
 	 */
 	public synchronized boolean putQuote(int type, int userId, int pennies, int bottles) throws SQLException {
-		LinkedList<PB> money = getUserMoney(userId, 1); // Estimated worth doesn't matter here
+		LinkedList<PB> money = getUserMoney(userId); // Estimated worth doesn't matter here
 		// We want items 2 and 3 (potential money)
 		
 		// Least possible pennies
@@ -194,13 +212,16 @@ public final class QuoteUtils {
 	 * @return a {@link LinkedList} containing: current money, potential money, potential worst money, potential most money
 	 * @throws SQLException 
 	 */
-	public synchronized LinkedList<PB> getUserMoney(int id, int estimatedWorth) throws SQLException {
+	public synchronized LinkedList<PB> getUserMoney(int id) throws SQLException {
 		LinkedList<PB> nums = new LinkedList<PB>();
 		
 		getUserMoneyStatement.setInt(1, id);
 		getUserMoneyStatement.setInt(2, id);
 		getUserMoneyStatement.setInt(3, id);
 		getUserMoneyStatement.setInt(4, id);
+		
+		Integer estimatedWorth = userWorthGuesses.get(id);
+		if(estimatedWorth == null) estimatedWorth = 1;
 		
 		ResultSet rs = getUserMoneyStatement.executeQuery();
 		
@@ -211,14 +232,22 @@ public final class QuoteUtils {
 		return nums;
 	}
 	
-	public MMyInfo getUserMoneyMessage(int id, int estimatedWorth) throws SQLException {
-		LinkedList<PB> nums = getUserMoney(id, estimatedWorth);
-		return new MMyInfo(nums.get(0), nums.get(1), nums.get(2), nums.get(3));
+	public MMyInfo getUserMoneyMessage(int id) throws SQLException {
+		LinkedList<PB> nums = getUserMoney(id);
+		
+		Integer estWorth = userWorthGuesses.get(id);
+		if(estWorth == null) estWorth = 1;
+		
+		return new MMyInfo(nums.get(0), nums.get(1), nums.get(2), nums.get(3), estWorth);
 	}
 	
-	public synchronized void pushUserMoney(int id, int estimatedWorth) throws SQLException {
-		LinkedList<PB> nums = getUserMoney(id, estimatedWorth);
-		MMyInfo info = new MMyInfo(nums.get(0), nums.get(1), nums.get(2), nums.get(3));
+	public synchronized void pushUserMoney(int id) throws SQLException {
+		LinkedList<PB> nums = getUserMoney(id);
+		
+		Integer estWorth = userWorthGuesses.get(id);
+		if(estWorth == null) estWorth = 1;
+		
+		MMyInfo info = new MMyInfo(nums.get(0), nums.get(1), nums.get(2), nums.get(3), estWorth);
 		
 		multicast.sendMessageToClient(id, info);
 	}
@@ -244,12 +273,12 @@ public final class QuoteUtils {
 			OpenQuote q = getQuoteInfo(quoteId);
 			if(q == null) return MTAcceptResponse.ACCEPT_QUOTE_FAIL; // Get info about quote
 			
-			LinkedList<PB> money = getUserMoney(userId, 1);
+			LinkedList<PB> money = getUserMoney(userId);
 			// Check against 0, 2, 3 (0 because of some weird logic I haven't figured out)
 			money.remove(1); // Don't need
 			for(PB testMoney : money) {
-				if(testMoney.getBottles() - q.getBottles() < 0) return MTAcceptResponse.ACCEPT_QUOTE_NOMONEY; // If exceeds bottles
-				if(testMoney.getPennies() + q.getValue() < 0) return MTAcceptResponse.ACCEPT_QUOTE_NOMONEY; // If exceeds pennies
+				if(testMoney.getBottles() + q.getBottles() < 0) return MTAcceptResponse.ACCEPT_QUOTE_NOMONEY; // If exceeds bottles
+				if(testMoney.getPennies() - q.getValue() < 0) return MTAcceptResponse.ACCEPT_QUOTE_NOMONEY; // If exceeds pennies
 			}
 		
 			acceptLockedQuoteStatement.setInt(1, quoteId);
@@ -278,8 +307,8 @@ public final class QuoteUtils {
 			quoteAcceptingConn.commit();
 			
 			pushOpenQuotes();
-			pushUserMoney(userId, 42);
-			pushUserMoney(q.getIdFrom(), 42);
+			pushUserMoney(userId);
+			pushUserMoney(q.getIdFrom());
 		} else { // Reset quote
 			declineLockedQuoteStatement.setInt(1, quoteId);
 			declineLockedQuoteStatement.setInt(2, userId);
@@ -341,7 +370,7 @@ public final class QuoteUtils {
 				
 				// Now list has changed, notify users
 				while(usersToNotify.next()) {
-					pushUserMoney(usersToNotify.getInt("userid"), 42);
+					pushUserMoney(usersToNotify.getInt("userid"));
 				}
 				
 				if(numRows > 0) { // List has changed, resend
