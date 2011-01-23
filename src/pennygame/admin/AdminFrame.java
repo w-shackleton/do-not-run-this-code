@@ -132,6 +132,7 @@ public final class AdminFrame extends JFrame implements WindowListener {
 		tabs.addTab("Users", null, userTab, "Manage Users in the game");
 		
 		add(content);
+		
 		pack();
 		
 		serv.getQuoteTimeout();

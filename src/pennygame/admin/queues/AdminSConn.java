@@ -116,4 +116,8 @@ public class AdminSConn extends SConn<AdminSConnMainThread, AdminSConnPushHandle
 	public void getQuoteNumber() {
 		sendMessage(new MAGameSetting(MAGameSetting.WHAT_QUOTE_NUMBER));
 	}
+	
+	public void resetGame() {
+		sendMessage(new MAGameSetting(true, MAGameSetting.WHAT_RESET_GAME, null));
+	}
 }
