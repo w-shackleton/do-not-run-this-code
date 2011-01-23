@@ -91,8 +91,10 @@ public class RightPane extends JPanel {
 
 				@Override
 				public void keyPressed(KeyEvent e) {
-					if (e.getKeyCode() == KeyEvent.VK_ENTER)
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 						sellQPennies.requestFocusInWindow();
+						sellQPennies.selectAll();
+					}
 				}
 			});
 			pan.add(sellQBottles);
@@ -116,6 +118,7 @@ public class RightPane extends JPanel {
 					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 						sellQBottles.requestFocusInWindow();
 						onSell.actionPerformed(null);
+						sellQBottles.selectAll();
 					}
 				}
 			});
@@ -156,8 +159,10 @@ public class RightPane extends JPanel {
 
 				@Override
 				public void keyPressed(KeyEvent e) {
-					if (e.getKeyCode() == KeyEvent.VK_ENTER)
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 						buyQPennies.requestFocusInWindow();
+						buyQPennies.selectAll();
+					}
 				}
 			});
 			pan.add(buyQBottles);
@@ -181,6 +186,7 @@ public class RightPane extends JPanel {
 					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 						buyQBottles.requestFocusInWindow();
 						onBuy.actionPerformed(null);
+						buyQBottles.selectAll();
 					}
 				}
 			});

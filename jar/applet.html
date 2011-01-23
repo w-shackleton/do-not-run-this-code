@@ -1,9 +1,14 @@
 <html>
 	<head>
-		<title>Pennybottle game</title>
+		<title>Pennybottle game admin</title>
 	</head>
 
 	<body>
-		<applet archive="pennyclient.jar" code="pennygame.client.PennyClient" width="200" height="200" style="border: 1px black solid;" />
+		<script src="http://www.java.com/js/deployJava.js"></script>
+		<script> 
+			var attributes = { code:'pennygame.client.PennyClient', archive:'pennyclient.jar', width:200, height:200} ; 
+			var parameters = {jnlp_href: 'pennyclient.jnlp', server:'10.4.1.8'} ; 
+			deployJava.runApplet(attributes, parameters, '1.6'); 
+		</script>
 	</body>
 </html>

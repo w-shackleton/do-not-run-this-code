@@ -4,6 +4,7 @@ import pennygame.client.PennyFrame;
 import pennygame.lib.clientutils.SConn;
 import pennygame.lib.msg.MChangeMyName;
 import pennygame.lib.msg.MPutQuote;
+import pennygame.lib.msg.MUpdateGWorth;
 import pennygame.lib.msg.data.User;
 import pennygame.lib.msg.tr.MTAccept;
 import pennygame.lib.msg.tr.MTRequest;
@@ -86,5 +87,9 @@ public class CSConn extends SConn<CSConnMainThread, CSConnPushHandler> {
 	
 	public void confirmAcceptQuote(int id, boolean accept) {
 		sendMessage(new MTAccept(id, accept));
+	}
+	
+	public void setWorthGuess(int guess) {
+		sendMessage(new MUpdateGWorth(guess));
 	}
 }

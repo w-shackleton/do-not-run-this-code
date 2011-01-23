@@ -4,13 +4,23 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.LinkedList;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
@@ -28,6 +38,9 @@ public class LeftPane extends JPanel {
 	final CSConn serv;
 	
 	final JTable currentInfoTable, predictedInfoTable;
+	
+	final JTextField worthGuess;
+	final JButton worthGuessSubmit;
 
 	public LeftPane(PennyFrame parent, CSConn serv, LinkedList<JComponent> pausingItems) {
 		super();
@@ -35,6 +48,36 @@ public class LeftPane extends JPanel {
 		this.serv = serv;
 		
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		setBorder(new EmptyBorder(10, 10, 10, 0));
+		
+		{ // Worth guess
+			Box hBox = Box.createHorizontalBox();
+			hBox.add(Box.createGlue());
+			JLabel label = new JLabel("My worth estimate: ");
+			hBox.add(label);
+			
+			worthGuess = new JTextField("1", 3);
+			worthGuess.setMaximumSize(worthGuess.getPreferredSize());
+			worthGuess.addKeyListener(new KeyListener() {
+				@Override public void keyTyped(KeyEvent e) { }
+				@Override public void keyReleased(KeyEvent e) { }
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+						worthGuessSubmitClicked.actionPerformed(null); // Submit on enter
+					}
+				}
+			});
+			hBox.add(worthGuess);
+			
+			worthGuessSubmit = new JButton("Update");
+			worthGuessSubmit.addActionListener(worthGuessSubmitClicked);
+			hBox.add(worthGuessSubmit);
+			
+			hBox.setMaximumSize(hBox.getPreferredSize());
+			
+			add(hBox);
+		}
 		
 		{ // Current worth table
 			currentInfoTable = new JTable(myCurrentInfoModel);
@@ -281,5 +324,25 @@ public class LeftPane extends JPanel {
 		
 		myCurrentInfoModel.fireTableDataChanged();
 		myPredictedInfoModel.fireTableDataChanged();
+		
+		worthGuess.setText(String.valueOf(myInfo.getEstimatedWorth()));
 	}
+	
+	protected ActionListener worthGuessSubmitClicked = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int n = 0;
+			try {
+				n = Integer.valueOf(worthGuess.getText());
+			} catch(NumberFormatException e1) {
+			}
+			
+			if(n <= 0) {
+				JOptionPane.showMessageDialog(parent, "Not a valid number!", "Number error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			serv.setWorthGuess(n);
+		}
+	};
 }
