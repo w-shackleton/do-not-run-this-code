@@ -7,12 +7,14 @@ public class MMyInfo extends PennyMessage {
 	private static final long serialVersionUID = -361006050829383407L;
 
 	private final PB current, potential, potential1, potential2;
+	private final int estimatedWorth;
 	
-	public MMyInfo(PB current, PB potential, PB p1, PB p2) {
+	public MMyInfo(PB current, PB potential, PB p1, PB p2, int estimatedWorth) {
 		this.current = current;
 		this.potential = potential;
 		potential1 = p1;
 		potential2 = p2;
+		this.estimatedWorth = estimatedWorth;
 	}
 
 	public PB getCurrent() {
@@ -36,5 +38,9 @@ public class MMyInfo extends PennyMessage {
 	 */
 	public PB getPotential2() {
 		return potential2;
+	}
+
+	public int getEstimatedWorth() {
+		return estimatedWorth;
 	}
 }
