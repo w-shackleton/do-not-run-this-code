@@ -7,7 +7,7 @@ public interface OnLoginHandler {
 	/**
 	 * Called when login has completed; gameplay can begin
 	 */
-	public void onLoginCompleted(User userInfo);
+	public void onLoginCompleted(User userInfo, boolean isPaused);
 	
 	/**
 	 * Called when invalid username & password found

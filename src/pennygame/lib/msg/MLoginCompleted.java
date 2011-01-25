@@ -11,9 +11,16 @@ public class MLoginCompleted extends PennyMessage {
 	public final boolean success;
 	
 	public final User user;
+	
+	private final boolean paused;
 
-	public MLoginCompleted(boolean success, int id, String username, String friendlyName) {
+	public MLoginCompleted(boolean success, int id, String username, String friendlyName, boolean paused) {
 		this.success = success;
 		user = new User(id, username, friendlyName);
+		this.paused = paused;
+	}
+
+	public boolean isPaused() {
+		return paused;
 	}
 }

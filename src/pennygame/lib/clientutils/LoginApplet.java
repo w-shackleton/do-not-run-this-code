@@ -209,13 +209,13 @@ public abstract class LoginApplet<T extends SConn<? extends SConnMainThread, ? e
 		}
 
 		@Override
-		public void onLoginCompleted(final User userInfo) {
+		public void onLoginCompleted(final User userInfo, final boolean paused) {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
 					statusLabel.setText("Ready!");
 					connectionIsAvailable = true;
-					startMainWindow(serverConnection, userInfo);
+					startMainWindow(serverConnection, userInfo, paused);
 				}
 			});
 		}
@@ -225,7 +225,7 @@ public abstract class LoginApplet<T extends SConn<? extends SConnMainThread, ? e
 	 * Starts the main window of the client with the specified connection to the server
 	 * @param serverConnection
 	 */
-	protected abstract void startMainWindow(T serverConnection, User userInfo);
+	protected abstract void startMainWindow(T serverConnection, User userInfo, boolean paused);
 	
 	protected abstract void closeMainWindow();
 
