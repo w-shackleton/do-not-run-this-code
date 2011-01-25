@@ -22,7 +22,7 @@ public class PennyAdmin extends LoginApplet<AdminSConn> {
 	AdminFrame adminFrame;
 
 	@Override
-	protected void startMainWindow(AdminSConn serverConnection, User userInfo) {
+	protected void startMainWindow(AdminSConn serverConnection, User userInfo, boolean paused) {
 		adminFrame = new AdminFrame(serverConnection, this);
 		adminFrame.setVisible(true);
 	}

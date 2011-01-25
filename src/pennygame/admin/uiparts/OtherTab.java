@@ -40,7 +40,7 @@ public class OtherTab extends JPanel {
 			if(JOptionPane.showConfirmDialog(parent, "Are you sure you want to reset the game?", "Reset game?", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 				if(JOptionPane.showConfirmDialog(parent, "Are you really sure you want to reset the game?", "Reset game??", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 					if(JOptionPane.showConfirmDialog(parent, "Are you really really sure you want to reset the game?", "Reset game???", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-						
+						serv.resetGame();
 					}
 				}
 			}

@@ -19,6 +19,7 @@ import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
 
 import pennygame.admin.queues.AdminSConn;
+import pennygame.admin.uiparts.OtherTab;
 import pennygame.admin.uiparts.UserTab;
 
 public final class AdminFrame extends JFrame implements WindowListener {
@@ -29,6 +30,7 @@ public final class AdminFrame extends JFrame implements WindowListener {
 	JTabbedPane tabs;
 	
 	public final UserTab userTab;
+	protected final OtherTab otherTab;
 	
 	JTextField quoteTimeout, quoteNumber;
 
@@ -40,6 +42,7 @@ public final class AdminFrame extends JFrame implements WindowListener {
 		this.applet = applet;
 		
 		userTab = new UserTab(this, serv);
+		otherTab = new OtherTab(this, serv);
 		
 		serv.setParentFrame(this);
 		
@@ -130,6 +133,7 @@ public final class AdminFrame extends JFrame implements WindowListener {
 		
 		// Initialise Tabs
 		tabs.addTab("Users", null, userTab, "Manage Users in the game");
+		tabs.addTab("Other", null, otherTab, "Other utilities");
 		
 		add(content);
 		

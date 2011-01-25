@@ -27,9 +27,9 @@ public class AdminSConn extends SConn<AdminSConnMainThread, AdminSConnPushHandle
 	}
 
 	@Override
-	public void onLoginCompleted(User userInfo) {
+	public void onLoginCompleted(User userInfo, boolean pause) {
 		
-		loginHandler.onLoginCompleted(userInfo);
+		loginHandler.onLoginCompleted(userInfo, pause);
 	}
 
 	@Override
