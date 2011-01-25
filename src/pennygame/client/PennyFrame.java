@@ -37,7 +37,7 @@ public class PennyFrame extends JFrame implements WindowListener {
 	
 	protected final LinkedList<JComponent> pausingItems = new LinkedList<JComponent>();
 	
-	public PennyFrame(CSConn serv, PennyClient applet, User userInfo) {
+	public PennyFrame(CSConn serv, PennyClient applet, User userInfo, boolean paused) {
 		super("Pennybottle game");
 		this.serv = serv;
 		this.applet = applet;
@@ -47,6 +47,8 @@ public class PennyFrame extends JFrame implements WindowListener {
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		
 		initUI();
+		
+		pauseGame(paused);
 		
 		serv.setParentFrame(this);
 	}

@@ -16,7 +16,7 @@ import pennygame.lib.queues.handlers.OnLoginHandler;
 public class CSConn extends SConn<CSConnMainThread, CSConnPushHandler> {
 	protected final OnLoginHandler loginHandler;
 	protected final OnConnectionListener connectionListener;
-
+	
 	public CSConn(String server, int port, String username, String password, OnLoginHandler loginHandler, OnConnectionListener connectionListener) {
 		super(server, port, username, password);
 		this.loginHandler = loginHandler;
@@ -24,8 +24,8 @@ public class CSConn extends SConn<CSConnMainThread, CSConnPushHandler> {
 	}
 
 	@Override
-	public void onLoginCompleted(User userInfo) {
-		loginHandler.onLoginCompleted(userInfo);
+	public void onLoginCompleted(User userInfo, boolean paused) {
+		loginHandler.onLoginCompleted(userInfo, paused);
 	}
 
 	@Override

@@ -22,8 +22,8 @@ public class PennyClient extends LoginApplet<CSConn> {
 	PennyFrame frame;
 
 	@Override
-	protected void startMainWindow(CSConn serverConnection, User userInfo) {
-		frame = new PennyFrame(serverConnection, this, userInfo);
+	protected void startMainWindow(CSConn serverConnection, User userInfo, boolean paused) {
+		frame = new PennyFrame(serverConnection, this, userInfo, paused);
 		frame.setVisible(true);
 	}
 
