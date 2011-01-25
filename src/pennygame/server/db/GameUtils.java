@@ -2,6 +2,7 @@ package pennygame.server.db;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import pennygame.lib.msg.MPauseGame;
 import pennygame.server.client.CMulticaster;
@@ -40,6 +41,18 @@ public class GameUtils {
 		quotes.beginStopping();
 	}
 	
-	public synchronized void resetGame() {
+	public synchronized void resetGame() throws SQLException {
+		multicast.stopAllClients();
+		try {
+			Thread.sleep(500); // Give a bit of time to stop.
+		} catch (InterruptedException e) { e.printStackTrace(); }
+		
+		conn.setAutoCommit(false);
+		Statement stat = conn.createStatement();
+		stat.executeUpdate("DELETE FROM quotes;");
+		stat.executeUpdate("DELETE FROM worthguess;");
+		stat.executeUpdate("DELETE FROM users;");
+		conn.commit();
+		conn.setAutoCommit(true);
 	}
 }

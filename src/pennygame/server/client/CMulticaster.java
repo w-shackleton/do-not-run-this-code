@@ -100,4 +100,18 @@ public class CMulticaster extends MessageProducer {
 		if(client == null) return;
 		client.sendSerialisedMessage(sMsg);
 	}
+	
+	/**
+	 * Disconnects all connected clients immediately
+	 */
+	public void stopAllClients() {
+			Collection<CConn> cs = clients.clients.values();
+			
+			Iterator<CConn> it = cs.iterator();
+			
+			while(it.hasNext()) {
+				CConn client = it.next();
+				client.stopConnection();
+			}
+	}
 }

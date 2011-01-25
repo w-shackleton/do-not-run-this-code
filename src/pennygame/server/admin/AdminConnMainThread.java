@@ -59,7 +59,7 @@ public class AdminConnMainThread extends MainThread {
 				e.printStackTrace();
 			}
 		}
-		putMessage(new MLoginCompleted(loginSuccess, -2, "admin", "admin"));
+		putMessage(new MLoginCompleted(loginSuccess, -2, "admin", "admin", false));
 	}
 	
 	AdminMsgBacks adminMsgBacks = new AdminMsgBacks();

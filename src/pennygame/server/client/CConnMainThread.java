@@ -82,7 +82,7 @@ public class CConnMainThread extends MainThread {
 				e.printStackTrace();
 			}
 		}
-		putMessage(new MLoginCompleted(loginSuccess, loginId, loginName, loginFriendlyName));
+		putMessage(new MLoginCompleted(loginSuccess, loginId, loginName, loginFriendlyName, gameUtils.isGamePaused()));
 	}
 	
 	CConnMsgBacks cConnMsgBacks = new CConnMsgBacks();

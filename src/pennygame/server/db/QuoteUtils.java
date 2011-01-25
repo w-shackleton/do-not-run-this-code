@@ -92,7 +92,7 @@ public final class QuoteUtils {
 				"UPDATE quotes SET lockid=?, timeaccepted=NOW() WHERE id=? AND status='open' AND lockid IS NULL;");
 		
 		acceptLockedQuoteStatement = quoteAcceptingConn.prepareStatement(
-				"UPDATE quotes SET status='closed', lockid=NULL WHERE id=? AND lockid=?;"); // No status=open because it could have timed out somehow
+				"UPDATE quotes SET status='closed', lockid=NULL, idto=? WHERE id=? AND lockid=?;"); // No status=open because it could have timed out somehow
 		acceptLockQuoteUpdateMyMoney = quoteAcceptingConn.prepareStatement(
 				"UPDATE users SET bottles=bottles + ?, pennies=pennies - ? WHERE id=?;");
 		acceptLockQuoteUpdateOtherMoney = quoteAcceptingConn.prepareStatement(
@@ -281,8 +281,9 @@ public final class QuoteUtils {
 				if(testMoney.getPennies() - q.getValue() < 0) return MTAcceptResponse.ACCEPT_QUOTE_NOMONEY; // If exceeds pennies
 			}
 		
-			acceptLockedQuoteStatement.setInt(1, quoteId);
-			acceptLockedQuoteStatement.setInt(2, userId);
+			acceptLockedQuoteStatement.setInt(1, userId);
+			acceptLockedQuoteStatement.setInt(2, quoteId);
+			acceptLockedQuoteStatement.setInt(3, userId);
 			if(acceptLockedQuoteStatement.executeUpdate() != 1) {
 				quoteAcceptingConn.rollback();
 				return MTAcceptResponse.ACCEPT_QUOTE_FAIL;

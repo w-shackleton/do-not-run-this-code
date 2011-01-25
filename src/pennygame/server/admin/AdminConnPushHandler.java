@@ -135,6 +135,12 @@ public class AdminConnPushHandler extends PushHandler {
 					adminMsgBacks.sendNumQuotes(gameUtils.quotes.getNumQuotes());
 				break;
 			case MAGameSetting.WHAT_RESET_GAME:
+				try {
+					gameUtils.resetGame();
+					adminMsgBacks.refreshUserList();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 				break;
 			}
 		}

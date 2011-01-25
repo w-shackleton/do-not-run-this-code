@@ -36,6 +36,13 @@ public class CConn extends QueuePair<CConnMainThread, CConnPushHandler> {
 		super.onConnectionLost();
 		parent.onClientEnd(this); // Tell parent to delete me (to be gc'd)!
 	}
+	
+	/**
+	 * Stops this connection to the client
+	 */
+	public synchronized void stopConnection() {
+		onConnectionLost();
+	}
 
 	@Override
 	public void onConnected() {
