@@ -10,11 +10,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import pennygame.lib.GlobalPreferences;
 import pennygame.lib.msg.MMyInfo;
+import pennygame.lib.msg.MMyQuotesList;
 import pennygame.lib.msg.MOpenQuotesList;
 import pennygame.lib.msg.MPutQuote;
+import pennygame.lib.msg.data.ClosedQuote;
 import pennygame.lib.msg.data.OpenQuote;
 import pennygame.lib.msg.data.PB;
 import pennygame.lib.msg.tr.MTAcceptResponse;
+import pennygame.lib.msg.tr.MTCancelResponse;
 import pennygame.lib.queues.LoopingThread;
 import pennygame.server.client.CMulticaster;
 
@@ -26,7 +29,7 @@ import pennygame.server.client.CMulticaster;
 public final class QuoteUtils {
 	
 	private final PreparedStatement putQuoteStatement, getOpenQuotesStatement, getUserClosedTradesStatement, getUserOpenQuotesStatement, getUserMoneyStatement;
-	private final PreparedStatement getQuoteInfoStatement, requestQuoteLockStatement, acceptLockedQuoteStatement, declineLockedQuoteStatement, acceptLockQuoteUpdateMyMoney, acceptLockQuoteUpdateOtherMoney;
+	private final PreparedStatement getQuoteInfoStatement, requestQuoteLockStatement, acceptLockedQuoteStatement, declineLockedQuoteStatement, acceptLockQuoteUpdateMyMoney, acceptLockQuoteUpdateOtherMoney, cancelQuoteStatement;
 	private final CMulticaster multicast;
 	
 	protected final QuotePurger quotePurger;
@@ -56,8 +59,9 @@ public final class QuoteUtils {
 		
 		quotePurger.start();
 		
+		// TODO: Switch a lot of these to views?
 		putQuoteStatement = conn.prepareStatement("INSERT INTO quotes(type, idfrom, pennies, bottles) VALUES (?, ?, ?, ?);");
-		getOpenQuotesStatement = conn.prepareStatement(
+		getOpenQuotesStatement = conn.prepareStatement( // TODO: get rid of 'value', as I think it isn't used
 				"SELECT * FROM " +
 				"((SELECT quotes.id, quotes.type, users.friendlyname AS fromname, quotes.idfrom, quotes.pennies, quotes.bottles, quotes.bottles * CAST(quotes.pennies AS SIGNED) AS value, quotes.timecreated AS time " +
 				"FROM quotes, users WHERE status='open' AND type='sell' AND quotes.idfrom = users.id ORDER BY pennies LIMIT ?) " +
@@ -67,12 +71,15 @@ public final class QuoteUtils {
 				"AS tbl ORDER BY tbl.pennies DESC;"); // This searches through all buy and sells, unions them and then sorts the result.
 		getUserClosedTradesStatement = conn.prepareStatement(
 				"SELECT * FROM " +
-				"(SELECT type, idfrom, idto, bottles, pennies, timeaccepted FROM quotes WHERE " +
-				"status='closed' AND (idfrom=? OR idto=?) " +
-				"ORDER BY timeaccepted DESC LIMIT 40) as tbl " +
-				"ORDER BY timeaccepted;");
+				"(SELECT quotes.id, type, u1.friendlyname AS fromname, u2.friendlyname AS toname, quotes.bottles, quotes.pennies, timeaccepted AS time " +
+				"FROM quotes " +
+				"JOIN users AS u1 ON quotes.idfrom = u1.id " +
+				"JOIN users AS u2 ON quotes.idto = u2.id " +
+				"WHERE status='closed' AND (idfrom=? OR idto=?) " +
+				"ORDER BY time DESC LIMIT 40) " +
+				"as tbl ORDER BY time;");
 		getUserOpenQuotesStatement = conn.prepareStatement(
-				"SELECT * FROM quotes WHERE status='open' AND idfrom=? ORDER BY timecreated;");
+				"SELECT id, type, bottles, pennies, timecreated AS time FROM quotes WHERE status='open' AND idfrom=? ORDER BY timecreated;");
 		getUserMoneyStatement = conn.prepareStatement(
 				"SELECT (bottles - q.pbottles) AS nbottles, " +
 				"(pennies + q.pvalue) AS npennies " +
@@ -99,6 +106,8 @@ public final class QuoteUtils {
 				"UPDATE users SET bottles=bottles - ?, pennies=pennies + ? WHERE id=?;");
 		declineLockedQuoteStatement = quoteAcceptingConn.prepareStatement(
 				"UPDATE quotes SET lockid=NULL, timeaccepted=NULL WHERE id=? AND lockid=?;");
+		cancelQuoteStatement = conn.prepareStatement(
+				"UPDATE quotes SET status='cancelled', timeaccepted=NOW() WHERE id=? AND status='open' AND idfrom=? AND lockid IS NULL;");
 	}
 	
 	/**
@@ -252,6 +261,49 @@ public final class QuoteUtils {
 		multicast.sendMessageToClient(id, info);
 	}
 	
+	public synchronized LinkedList<OpenQuote> getUserOpenQuotes(int id) throws SQLException {
+		LinkedList<OpenQuote> quotes = new LinkedList<OpenQuote>();
+		
+		getUserOpenQuotesStatement.setInt(1, id);
+		ResultSet rs = getUserOpenQuotesStatement.executeQuery();
+		
+		while(rs.next()) {
+			String type = rs.getString("type");
+			int t;
+			if(type.equals("buy")) t = OpenQuote.TYPE_BUY;
+			else t = OpenQuote.TYPE_SELL;
+			quotes.add(new OpenQuote(rs.getInt("id"), t, "Me", id, rs.getInt("pennies"), rs.getInt("bottles"), rs.getTimestamp("time")));
+		}
+		
+		return quotes;
+	}
+	
+	public synchronized LinkedList<ClosedQuote> getUserClosedQuotes(int id) throws SQLException {
+		LinkedList<ClosedQuote> quotes = new LinkedList<ClosedQuote>();
+		
+		getUserClosedTradesStatement.setInt(1, id);
+		getUserClosedTradesStatement.setInt(2, id);
+		ResultSet rs = getUserClosedTradesStatement.executeQuery();
+		
+		while(rs.next()) {
+			String type = rs.getString("type");
+			int t;
+			if(type.equals("buy")) t = ClosedQuote.TYPE_BUY;
+			else t = ClosedQuote.TYPE_SELL;
+			quotes.add(new ClosedQuote(rs.getInt("id"), t, rs.getString("fromname"), rs.getString("toname"), rs.getInt("pennies"), rs.getInt("bottles"), rs.getTimestamp("time")));
+		}
+		
+		return quotes;
+	}
+	
+	public MMyQuotesList getUserQuotes(int id) throws SQLException {
+		return new MMyQuotesList(getUserOpenQuotes(id), getUserClosedQuotes(id));
+	}
+	
+	public void pushUserQuotes(int id) throws SQLException {
+		multicast.sendMessageToClient(id, getUserQuotes(id));
+	}
+	
 	/**
 	 * Tries to lock the quote for accepting
 	 * @param userId
@@ -310,6 +362,8 @@ public final class QuoteUtils {
 			pushOpenQuotes();
 			pushUserMoney(userId);
 			pushUserMoney(q.getIdFrom());
+			pushUserQuotes(userId);
+			pushUserQuotes(q.getIdFrom());
 		} else { // Reset quote
 			declineLockedQuoteStatement.setInt(1, quoteId);
 			declineLockedQuoteStatement.setInt(2, userId);
@@ -319,6 +373,16 @@ public final class QuoteUtils {
 		return MTAcceptResponse.ACCEPT_QUOTE_SUCCESS;
 	}
 	
+	public synchronized int cancelOpenQuote(int userId, int quoteId) throws SQLException {
+		cancelQuoteStatement.setInt(1, quoteId);
+		cancelQuoteStatement.setInt(2, userId);
+		
+		int num = cancelQuoteStatement.executeUpdate();
+		
+		if(num != 1) return MTCancelResponse.RESPONSE_ALREADY_TAKEN;
+		
+		return MTCancelResponse.RESPONSE_OK;
+	}
 	
 	public synchronized int getQuoteTimeout() {
 		return quotePurger.getQuoteTimeout();
@@ -372,6 +436,7 @@ public final class QuoteUtils {
 				// Now list has changed, notify users
 				while(usersToNotify.next()) {
 					pushUserMoney(usersToNotify.getInt("userid"));
+					pushUserQuotes(usersToNotify.getInt("userid"));
 				}
 				
 				if(numRows > 0) { // List has changed, resend

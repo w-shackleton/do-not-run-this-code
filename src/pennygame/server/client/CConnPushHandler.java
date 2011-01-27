@@ -12,6 +12,8 @@ import pennygame.lib.msg.PennyMessage;
 import pennygame.lib.msg.data.User;
 import pennygame.lib.msg.tr.MTAccept;
 import pennygame.lib.msg.tr.MTAcceptResponse;
+import pennygame.lib.msg.tr.MTCancel;
+import pennygame.lib.msg.tr.MTCancelResponse;
 import pennygame.lib.msg.tr.MTRequest;
 import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.PushHandler;
@@ -76,8 +78,10 @@ public class CConnPushHandler extends PushHandler {
 				if(!gameUtils.quotes.putQuote(req.getType(), user.getId(), req.getPennies(), req.getBottles())) {
 					// Not enough money to put up quote
 					cConnMsgBacks.errorPuttingQuote = req.getType();
-				} else
+				} else {
 					cConnMsgBacks.resendMyInfoList = true;
+					cConnMsgBacks.resendMyQuotesList = true;
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -90,6 +94,10 @@ public class CConnPushHandler extends PushHandler {
 				break;
 			case MRefresher.REF_MYINFO:
 				cConnMsgBacks.resendMyInfoList = true;
+				break;
+			case MRefresher.REF_MYQUOTES:
+				cConnMsgBacks.resendMyQuotesList = true;
+				break;
 			}
 		}
 		else if(cls.equals(MChangeMyName.class)) {
@@ -136,6 +144,22 @@ public class CConnPushHandler extends PushHandler {
 			MUpdateGWorth uMsg = (MUpdateGWorth) msg;
 			try {
 				gameUtils.users.updateGuessedWorth(user.getId(), uMsg.getgWorth());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		else if(cls.equals(MTCancel.class)) {
+			
+			try {
+				int status = gameUtils.quotes.cancelOpenQuote(user.getId(), ((MTCancel)msg).getQuoteId());
+				if(status == MTCancelResponse.RESPONSE_ALREADY_TAKEN) {
+					cConnMsgBacks.sendQuoteCancelFailResponse(((MTCancel)msg).getQuoteId(), status);
+				}
+				else {
+					cConnMsgBacks.resendMyQuotesList = true;
+					cConnMsgBacks.resendMyInfoList = true;
+					gameUtils.quotes.pushOpenQuotes();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

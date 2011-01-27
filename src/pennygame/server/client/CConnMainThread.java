@@ -15,6 +15,7 @@ import pennygame.lib.msg.MOpenQuotesList;
 import pennygame.lib.msg.MPutQuote;
 import pennygame.lib.msg.data.OpenQuote;
 import pennygame.lib.msg.tr.MTAcceptResponse;
+import pennygame.lib.msg.tr.MTCancelResponse;
 import pennygame.lib.msg.tr.MTRequestResponse;
 import pennygame.lib.queues.MainThread;
 import pennygame.server.db.GameUtils;
@@ -44,6 +45,14 @@ public class CConnMainThread extends MainThread {
 			cConnMsgBacks.resendMyInfoList = false;
 			try {
 				putMessage(gameUtils.quotes.getUserMoneyMessage(parent.userId)); // TODO: Get user money worth
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		if(cConnMsgBacks.resendMyQuotesList) {
+			cConnMsgBacks.resendMyQuotesList = false;
+			try {
+				putMessage(gameUtils.quotes.getUserQuotes(parent.userId));
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -104,6 +113,7 @@ public class CConnMainThread extends MainThread {
 		
 		protected boolean resendOpenQuotesList = false;
 		protected boolean resendMyInfoList = false;
+		protected boolean resendMyQuotesList = false;
 		
 		/**
 		 * Signifies that there was an error putting up a quote.
@@ -126,6 +136,10 @@ public class CConnMainThread extends MainThread {
 		
 		protected void sendQuoteAcceptResponse(int quoteId, int status) {
 			putMessage(new MTAcceptResponse(quoteId, status));
+		}
+		
+		protected void sendQuoteCancelFailResponse(int quoteId, int status) {
+			putMessage(new MTCancelResponse(quoteId, status));
 		}
 	}
 	
