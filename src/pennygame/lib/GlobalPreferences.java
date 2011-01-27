@@ -8,8 +8,8 @@ import java.io.UnsupportedEncodingException;
  *
  */
 public final class GlobalPreferences {
-	private static final int port = 8852;
-	private static final int adminPort = 8853;
+	private static int port = 8852;
+	private static int adminPort = 8853;
 	private static final int keySize = 1024;
 	
 	private static final String salt = "FJDNnfjdjfduf789ud8ffkdnsfklDUOfn8dhfjkdnhs fdjsfhdsfuhdyf7d8hfjidH&y7fd8sy7fudnJFNsario78w4uy38hfnejknf4jn589234-4i9230iroempqjg8r9g07ur890gum890 h";
@@ -19,6 +19,10 @@ public final class GlobalPreferences {
 	
 	public static int getPort() {
 		return port;
+	}
+	
+	public static void setPort(int port) {
+		GlobalPreferences.port = port;
 	}
 
 	public static int getKeysize() {
@@ -45,6 +49,10 @@ public final class GlobalPreferences {
 
 	public static int getAdminport() {
 		return adminPort;
+	}
+	
+	public static void setAdminport(int adminPort) {
+		GlobalPreferences.adminPort = adminPort;
 	}
 
 	public static int getQuoteAcceptTimeout() {
