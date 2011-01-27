@@ -10,11 +10,13 @@ public class AdminConn extends
 		QueuePair<AdminConnMainThread, AdminConnPushHandler> {
 	final AdminServer parent;
 	final GameUtils gameUtils;
+	final String adminPass;
 
-	public AdminConn(Socket sock, AdminServer parent, GameUtils gameUtils) {
+	public AdminConn(Socket sock, AdminServer parent, GameUtils gameUtils, String adminPass) {
 		super(sock, -1);
 		this.parent = parent;
 		this.gameUtils = gameUtils;
+		this.adminPass = adminPass;
 	}
 
 	@Override
@@ -30,7 +32,7 @@ public class AdminConn extends
 	@Override
 	protected AdminConnPushHandler createPushHandler(NetReceiver nr,
 			String threadIdentifier) {
-		return new AdminConnPushHandler(nr, threadIdentifier, mainThread.adminMsgBacks, connectionEnder, gameUtils);
+		return new AdminConnPushHandler(nr, threadIdentifier, mainThread.adminMsgBacks, connectionEnder, gameUtils, adminPass);
 	}
 
 	@Override

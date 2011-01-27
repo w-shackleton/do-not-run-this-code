@@ -1,6 +1,7 @@
 package pennygame.server.admin;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -13,12 +14,15 @@ public class AdminServer extends LoopingThread {
 	AdminConn admin = null;
 	final ServerSocket serv;
 	final GameUtils gameUtils;
+	final String adminPass;
 
-	public AdminServer(GameUtils gameUtils) throws IOException {
+	public AdminServer(GameUtils gameUtils, String listenAddress, int listenPort, String adminPass) throws IOException {
 		super("Admin Server monitor");
-		serv = new ServerSocket(GlobalPreferences.getAdminport());
+		GlobalPreferences.setAdminport(listenPort);
+		serv = new ServerSocket(GlobalPreferences.getAdminport(), 0, InetAddress.getByName(listenAddress));
 		serv.setSoTimeout(1000);
 		this.gameUtils = gameUtils;
+		this.adminPass = adminPass;
 	}
 	
 	@Override
@@ -42,7 +46,7 @@ public class AdminServer extends LoopingThread {
 				}
 			}
 			if(stopping) return;
-			admin = new AdminConn(sock, this, gameUtils);
+			admin = new AdminConn(sock, this, gameUtils, adminPass);
 			admin.start();
 		} else
 			try {

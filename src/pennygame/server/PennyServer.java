@@ -24,9 +24,18 @@ public class PennyServer {
 	public static void main(String[] args) {
 		System.out.println("Pennygame Server starting");
 		
+		System.out.println("Loading settings...");
+		try {
+		SettingsLoader.loadSettings("settings.txt");
+		} catch(IOException e) {
+			System.out.println("Couldn't load settings!");
+			e.printStackTrace();
+			return;
+		}
+		
 		System.out.println("DB...");
 		try {
-			db = new DBManager();
+			db = new DBManager(SettingsLoader.getMySqlAddress(), SettingsLoader.getMySqlDatabase(), SettingsLoader.getMySqlUsername(), SettingsLoader.getMySqlPassword());
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			System.exit(1);
@@ -55,7 +64,7 @@ public class PennyServer {
 		
 		System.out.println("Clients...");
 		try {
-			clients = new Clients(gameUtils);
+			clients = new Clients(gameUtils, SettingsLoader.getListenAddress(), SettingsLoader.getListenPort());
 		} catch (IOException e) {
 			System.out.println("Couldn't create socket. Bye!!");
 			e.printStackTrace();
@@ -68,7 +77,7 @@ public class PennyServer {
 		
 		System.out.println("Admin...");
 		try {
-			admin = new AdminServer(gameUtils);
+			admin = new AdminServer(gameUtils, SettingsLoader.getListenAddress(), SettingsLoader.getAdminListenPort(), SettingsLoader.getAdminEncryptedPassword());
 		} catch (IOException e1) {
 			System.out.println("Couldn't create admin socket. Bye!!");
 			e1.printStackTrace();

@@ -22,13 +22,15 @@ public class AdminConnPushHandler extends PushHandler {
 	protected final ConnectionEnder connEnder;
 
 	protected final GameUtils gameUtils;
+	protected final String adminPass;
 
 	public AdminConnPushHandler(NetReceiver producer, String threadID, AdminConnMainThread.AdminMsgBacks msgBacks,
-			ConnectionEnder connEnder, GameUtils gameUtils) {
+			ConnectionEnder connEnder, GameUtils gameUtils, String adminPass) {
 		super(producer, threadID);
 		adminMsgBacks = msgBacks;
 		this.connEnder = connEnder;
 		this.gameUtils = gameUtils;
+		this.adminPass = adminPass;
 	}
 
 	protected boolean loggedIn = false;
@@ -42,7 +44,7 @@ public class AdminConnPushHandler extends PushHandler {
 			MLoginRequest logReq = (MLoginRequest) msg;
 			byte[] hashText = PasswordUtils.decryptPassword(adminMsgBacks.getPrivateKey(), logReq.pass);
 			String hashedPass = Base64.encodeBytes(hashText);
-			if (hashedPass.equals("nU4eI71bcnBGqeO0t9tXvY1u5oQ=") && logReq.username.equals("admin"))// Current
+			if (hashedPass.equals(adminPass) && logReq.username.equals("admin"))// Current
 																										// pass
 																										// is
 																										// 'pass'

@@ -8,17 +8,15 @@ import java.sql.Statement;
 import pennygame.lib.queues.LoopingThread;
 
 public class DBManager extends LoopingThread {
-	private static final String server = "10.4.1.9";
-	private static final String database = "penny";
-	private static final String username = "penny";
-	private static final String password = "f7qMfKej0Lmfzi4B76";
-	private static final String dbUrl = "jdbc:mysql://" + server + "/"
-			+ database;
-
+	// TODO: Change to not a thread!
+	
 	private final Connection conn, quoteAcceptingConn;
 
-	public DBManager() throws SQLException {
+	public DBManager(String server, String database, String username, String password) throws SQLException {
 		super("DB Mgmt");
+		
+		String dbUrl = "jdbc:mysql://" + server + "/" + database;
+		
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 		} catch (ClassNotFoundException e) {

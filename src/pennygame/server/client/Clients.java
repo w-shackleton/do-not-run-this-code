@@ -1,6 +1,7 @@
 package pennygame.server.client;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -29,9 +30,10 @@ public final class Clients extends Thread {
 	 * Creates a new list of clients which will accept connections.
 	 * @throws IOException if the new socket can't be created
 	 */
-	public Clients(GameUtils gameUtils) throws IOException {
+	public Clients(GameUtils gameUtils, String listenAddress, int listenPort) throws IOException {
 		super("Connection starter");
-		serv = new ServerSocket(GlobalPreferences.getPort());
+		GlobalPreferences.setPort(listenPort);
+		serv = new ServerSocket(GlobalPreferences.getPort(), 0, InetAddress.getByName(listenAddress));
 		clients = new ConcurrentHashMap<Integer, CConn>();
 		clientIds = new ConcurrentHashMap<Integer, Integer>();
 		serv.setSoTimeout(1000); // To allow server to stop
