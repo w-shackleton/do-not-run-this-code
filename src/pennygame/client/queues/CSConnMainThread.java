@@ -21,8 +21,14 @@ public class CSConnMainThread extends SConnMainThread {
 			putMessage(new MRefresher(MRefresher.REF_MYINFO));
 			refreshMyInfo = false;
 		}
+		if(refreshMyQuotes)
+		{
+			putMessage(new MRefresher(MRefresher.REF_MYQUOTES));
+			refreshMyQuotes = false;
+		}
 	}
 	
 	protected boolean refreshOpenQuoteList = false;
 	protected boolean refreshMyInfo = false;
+	protected boolean refreshMyQuotes = false;
 }

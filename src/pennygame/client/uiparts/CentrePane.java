@@ -17,7 +17,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -48,6 +47,7 @@ public class CentrePane extends JPanel {
 		
 		{ // Open Quote list
 			JLabel label = new JLabel("Quotes", SwingConstants.LEFT);
+			label.setFont(label.getFont().deriveFont(Font.BOLD));
 			add(label);
 			
 			openQTable = new JTable(openQuotesModel);
@@ -88,7 +88,7 @@ public class CentrePane extends JPanel {
 			scrollPane.setMinimumSize(spSize);
 			scrollPane.setMaximumSize(new Dimension(spSize.width, 600));
 			
-			scrollPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+			// scrollPane.setBorder(new EmptyBorder(10, 10, 10, 10));
 			
 			// openQTable.setRowHeight(12);
 			

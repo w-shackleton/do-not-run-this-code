@@ -4,11 +4,13 @@ import pennygame.client.PennyFrame;
 import pennygame.lib.clientutils.SConnMainThread.MsgBacks;
 import pennygame.lib.clientutils.SConnPushHandler;
 import pennygame.lib.msg.MMyInfo;
+import pennygame.lib.msg.MMyQuotesList;
 import pennygame.lib.msg.MOSMessage;
 import pennygame.lib.msg.MOpenQuotesList;
 import pennygame.lib.msg.MPauseGame;
 import pennygame.lib.msg.PennyMessage;
 import pennygame.lib.msg.tr.MTAcceptResponse;
+import pennygame.lib.msg.tr.MTCancelResponse;
 import pennygame.lib.msg.tr.MTRequestResponse;
 import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.QueuePair.ConnectionEnder;
@@ -45,6 +47,10 @@ public class CSConnPushHandler extends SConnPushHandler {
 			System.out.println("Refreshing user info");
 			frame.lp.updateUserInfo((MMyInfo) msg);
 		}
+		else if(cls.equals(MMyQuotesList.class)) {
+			System.out.println("Refreshing user quotes");
+			frame.lp.updateUserQuotes((MMyQuotesList) msg);
+		}
 		else if(cls.equals(MOSMessage.class)) {
 			MOSMessage mmsg = (MOSMessage) msg;
 			
@@ -77,6 +83,12 @@ public class CSConnPushHandler extends SConnPushHandler {
 			case MTAcceptResponse.ACCEPT_QUOTE_NOMONEY:
 				frame.notifyUserOfError("Not enough money to accept quote");
 				break;
+			}
+		}
+		else if(cls.equals(MTCancelResponse.class)) {
+			MTCancelResponse cMsg = (MTCancelResponse) msg;
+			if(cMsg.getResponse() == MTCancelResponse.RESPONSE_ALREADY_TAKEN) {
+				frame.notifyUserOfError("Quote already taken whilst trying to cancel");
 			}
 		}
 	}

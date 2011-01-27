@@ -130,7 +130,10 @@ public class PennyFrame extends JFrame implements WindowListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				TimeoutDialog t = new TimeoutDialog(PennyFrame.this, "Accept " + quote.getBottles() + "b @ " + quote.getPennies() + "ppb = " + quote.getValue() + "p\nFrom " + quote.getFromName() + "?", "Accept trade?", GlobalPreferences.getQuoteAcceptTimeout());
+				TimeoutDialog t = new TimeoutDialog(
+						PennyFrame.this,
+						"<html><p>Accept <b>" + Math.abs(quote.getBottles()) + "</b> bottles @ <b>" +
+						quote.getPennies() + "</b> ppb = <b>" + Math.abs(quote.getValue()) + "</b> pennies</p><p>From <b>" + quote.getFromName() + "</b>?</html>", "Accept trade?", GlobalPreferences.getQuoteAcceptTimeout());
 				t.setVisible(true);
 				
 				serv.confirmAcceptQuote(quote.getId(), t.isOk());

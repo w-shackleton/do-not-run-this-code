@@ -7,6 +7,7 @@ import pennygame.lib.msg.MPutQuote;
 import pennygame.lib.msg.MUpdateGWorth;
 import pennygame.lib.msg.data.User;
 import pennygame.lib.msg.tr.MTAccept;
+import pennygame.lib.msg.tr.MTCancel;
 import pennygame.lib.msg.tr.MTRequest;
 import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.handlers.OnConnectionListener;
@@ -61,6 +62,7 @@ public class CSConn extends SConn<CSConnMainThread, CSConnPushHandler> {
 		pushHandler.setParentFrame(frame);
 		mainThread.refreshOpenQuoteList = true; // Get the list for the first time
 		mainThread.refreshMyInfo = true; // And my info
+		mainThread.refreshMyQuotes = true; // AND my quotes
 	}
 	
 	/**
@@ -83,6 +85,14 @@ public class CSConn extends SConn<CSConnMainThread, CSConnPushHandler> {
 	 */
 	public void acceptQuote(int id) {
 		sendMessage(new MTRequest(id));
+	}
+	
+	/**
+	 * Cancels a currently open quote of the user.
+	 * @param id
+	 */
+	public void cancelQuote(int id) {
+		sendMessage(new MTCancel(id));
 	}
 	
 	public void confirmAcceptQuote(int id, boolean accept) {

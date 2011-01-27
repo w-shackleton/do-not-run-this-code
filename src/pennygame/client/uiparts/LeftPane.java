@@ -8,6 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.text.DateFormat;
 import java.util.LinkedList;
 
 import javax.swing.Box;
@@ -17,17 +20,21 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.border.EmptyBorder;
+import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.JTableHeader;
 
 import pennygame.client.PennyFrame;
 import pennygame.client.queues.CSConn;
+import pennygame.lib.clientutils.TimeoutDialog;
 import pennygame.lib.msg.MMyInfo;
+import pennygame.lib.msg.MMyQuotesList;
+import pennygame.lib.msg.data.ClosedQuote;
+import pennygame.lib.msg.data.OpenQuote;
 import pennygame.lib.msg.data.PB;
 
 public class LeftPane extends JPanel {
@@ -38,9 +45,15 @@ public class LeftPane extends JPanel {
 	final CSConn serv;
 	
 	final JTable currentInfoTable, predictedInfoTable;
+	final JTable pastTradesTable, currentQuotesTable;
 	
 	final JTextField worthGuess;
 	final JButton worthGuessSubmit;
+	
+	final JScrollPane pastTradesScrollPane; 
+	
+	static final String LABEL_BUYING = "B";
+	static final String LABEL_SELLING = "S";
 
 	public LeftPane(PennyFrame parent, CSConn serv, LinkedList<JComponent> pausingItems) {
 		super();
@@ -48,7 +61,7 @@ public class LeftPane extends JPanel {
 		this.serv = serv;
 		
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		setBorder(new EmptyBorder(10, 10, 10, 0));
+		// setBorder(new EmptyBorder(10, 10, 10, 0));
 		
 		{ // Worth guess
 			Box hBox = Box.createHorizontalBox();
@@ -79,12 +92,60 @@ public class LeftPane extends JPanel {
 			add(hBox);
 		}
 		
+		{ // Past trades (leading to current worth)
+			pastTradesTable = new JTable(myPastTradesModel);
+			pastTradesTable.getColumnModel().getColumn(0).setPreferredWidth(60);
+			pastTradesTable.getColumnModel().getColumn(1).setPreferredWidth(60);
+			pastTradesTable.getColumnModel().getColumn(2).setPreferredWidth(30);
+			pastTradesTable.getColumnModel().getColumn(3).setPreferredWidth(40);
+			pastTradesTable.getColumnModel().getColumn(4).setPreferredWidth(40);
+			pastTradesTable.getColumnModel().getColumn(5).setPreferredWidth(50);
+			pastTradesTable.getColumnModel().getColumn(6).setPreferredWidth(60);
+			
+			pastTradesTable.getColumnModel().getColumn(2).setCellRenderer(pastTradesRenderer);
+			
+			pastTradesTable.getTableHeader().setReorderingAllowed(false);
+			pastTradesTable.getTableHeader().setResizingAllowed(false);
+			
+			pastTradesTable.setFont(Font.decode("Sans-9"));
+			pastTradesTable.setRowHeight(12);
+			pastTradesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			
+			pastTradesTable.setFillsViewportHeight(true);
+			// pastTradesTable.addMouseListener(openQuotesClickListener);
+			
+			pastTradesTable.setMinimumSize(pastTradesTable.getPreferredSize());
+			
+			pastTradesScrollPane = new JScrollPane(pastTradesTable);
+			pastTradesScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			pastTradesScrollPane.setWheelScrollingEnabled(true);
+			
+			pausingItems.add(pastTradesScrollPane);
+			
+			Dimension spSize = new Dimension(400, 100);
+			pastTradesScrollPane.setMinimumSize(spSize);
+			pastTradesScrollPane.setPreferredSize(spSize);
+			
+			spSize = new Dimension(spSize);
+			spSize.height = pastTradesScrollPane.getMaximumSize().height;
+			pastTradesScrollPane.setMaximumSize(spSize);
+			
+			// scrollPane.setBorder(new EmptyBorder(0, 10, 0, 10));
+			
+			// openQTable.setRowHeight(12);
+			
+			add(pastTradesScrollPane);
+		}
+		
 		{ // Current worth table
 			currentInfoTable = new JTable(myCurrentInfoModel);
-			currentInfoTable.getColumnModel().getColumn(0).setPreferredWidth(120);
+			currentInfoTable.getColumnModel().getColumn(0).setPreferredWidth(60);
 			currentInfoTable.getColumnModel().getColumn(1).setPreferredWidth(60);
-			currentInfoTable.getColumnModel().getColumn(2).setPreferredWidth(60);
-			currentInfoTable.getColumnModel().getColumn(3).setPreferredWidth(60);
+			currentInfoTable.getColumnModel().getColumn(2).setPreferredWidth(30);
+			currentInfoTable.getColumnModel().getColumn(3).setPreferredWidth(40);
+			currentInfoTable.getColumnModel().getColumn(4).setPreferredWidth(40);
+			currentInfoTable.getColumnModel().getColumn(5).setPreferredWidth(50);
+			currentInfoTable.getColumnModel().getColumn(6).setPreferredWidth(60);
 			
 			currentInfoTable.setFont(Font.decode("Sans-9"));
 			currentInfoTable.setRowHeight(12);
@@ -97,30 +158,73 @@ public class LeftPane extends JPanel {
 			
 			currentInfoTable.setMinimumSize(currentInfoTable.getPreferredSize());
 			
-			Dimension spSize = currentInfoTable.getPreferredSize();
-			// spSize.height += 20;
-			spSize.width = 290;
-			currentInfoTable.setMinimumSize(spSize);
-			currentInfoTable.setMaximumSize(spSize);
+			JScrollPane scrollPane = new JScrollPane(currentInfoTable);
+			scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			scrollPane.setWheelScrollingEnabled(true);
 			
-			Dimension hSize = currentInfoTable.getTableHeader().getMinimumSize();
-			hSize.width = 290;
-			JTableHeader h = currentInfoTable.getTableHeader();
-			h.setMaximumSize(hSize);
+			pausingItems.add(scrollPane);
 			
-			add(h);
-			add(currentInfoTable);
+			Dimension spSize = new Dimension(400, 40);
+			scrollPane.setMinimumSize(spSize);
+			scrollPane.setPreferredSize(spSize);
+			scrollPane.setMaximumSize(spSize);
 			
-			pausingItems.add(h);
-			pausingItems.add(currentInfoTable);
+			add(scrollPane);
+			
+			pausingItems.add(scrollPane);
+		}
+		
+		{ // My Current trades (leading to predicted worth)
+			currentQuotesTable = new JTable(myCurrentQuotesModel);
+			currentQuotesTable.getColumnModel().getColumn(0).setPreferredWidth(60);
+			currentQuotesTable.getColumnModel().getColumn(1).setPreferredWidth(60);
+			currentQuotesTable.getColumnModel().getColumn(2).setPreferredWidth(30);
+			currentQuotesTable.getColumnModel().getColumn(3).setPreferredWidth(40);
+			currentQuotesTable.getColumnModel().getColumn(4).setPreferredWidth(40);
+			currentQuotesTable.getColumnModel().getColumn(5).setPreferredWidth(50);
+			currentQuotesTable.getColumnModel().getColumn(6).setPreferredWidth(60);
+			
+			currentQuotesTable.getColumnModel().getColumn(2).setCellRenderer(pastTradesRenderer); // We'll use this for now
+			
+			currentQuotesTable.getTableHeader().setReorderingAllowed(false);
+			currentQuotesTable.getTableHeader().setResizingAllowed(false);
+			
+			currentQuotesTable.setFont(Font.decode("Sans-9"));
+			currentQuotesTable.setRowHeight(12);
+			currentQuotesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			
+			currentQuotesTable.setFillsViewportHeight(true);
+			currentQuotesTable.addMouseListener(currentQuotesClickListener);
+			
+			Dimension size = currentQuotesTable.getMinimumSize();
+			size.height = 200;
+			currentQuotesTable.setMaximumSize(size);
+			
+			JScrollPane scrollPane = new JScrollPane(currentQuotesTable);
+			scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			
+			pausingItems.add(scrollPane);
+			
+			Dimension spSize = new Dimension(400, 100);
+			scrollPane.setMinimumSize(spSize);
+			scrollPane.setPreferredSize(spSize);
+			
+			spSize = new Dimension(spSize);
+			spSize.height = scrollPane.getMaximumSize().height;
+			scrollPane.setMaximumSize(spSize);
+			
+			add(scrollPane);
 		}
 		
 		{ // Predicted worth table
 			predictedInfoTable = new JTable(myPredictedInfoModel);
-			predictedInfoTable.getColumnModel().getColumn(0).setPreferredWidth(120);
+			predictedInfoTable.getColumnModel().getColumn(0).setPreferredWidth(60);
 			predictedInfoTable.getColumnModel().getColumn(1).setPreferredWidth(60);
-			predictedInfoTable.getColumnModel().getColumn(2).setPreferredWidth(60);
-			predictedInfoTable.getColumnModel().getColumn(3).setPreferredWidth(60);
+			predictedInfoTable.getColumnModel().getColumn(2).setPreferredWidth(30);
+			predictedInfoTable.getColumnModel().getColumn(3).setPreferredWidth(40);
+			predictedInfoTable.getColumnModel().getColumn(4).setPreferredWidth(40);
+			predictedInfoTable.getColumnModel().getColumn(5).setPreferredWidth(50);
+			predictedInfoTable.getColumnModel().getColumn(6).setPreferredWidth(60);
 			
 			predictedInfoTable.setFont(Font.decode("Sans-9"));
 			predictedInfoTable.setRowHeight(12);
@@ -129,21 +233,24 @@ public class LeftPane extends JPanel {
 			predictedInfoTable.getTableHeader().setReorderingAllowed(false);
 			predictedInfoTable.getTableHeader().setResizingAllowed(false);
 			
-			Dimension spSize = predictedInfoTable.getPreferredSize();
-			spSize.width = 290;
-			predictedInfoTable.setMinimumSize(spSize);
-			predictedInfoTable.setMaximumSize(spSize);
+			// predictedInfoTable.setFillsViewportHeight(true);
 			
-			Dimension hSize = predictedInfoTable.getTableHeader().getMinimumSize();
-			hSize.width = 290;
-			JTableHeader h = predictedInfoTable.getTableHeader();
-			h.setMaximumSize(hSize);
+			predictedInfoTable.setMinimumSize(predictedInfoTable.getPreferredSize());
 			
-			add(h);
-			add(predictedInfoTable);
+			JScrollPane scrollPane = new JScrollPane(predictedInfoTable);
+			scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			scrollPane.setWheelScrollingEnabled(true);
 			
-			pausingItems.add(h);
-			pausingItems.add(predictedInfoTable);
+			pausingItems.add(scrollPane);
+			
+			Dimension spSize = new Dimension(400, 80);
+			scrollPane.setMinimumSize(spSize);
+			scrollPane.setPreferredSize(spSize);
+			scrollPane.setMaximumSize(spSize);
+			
+			add(scrollPane);
+			
+			pausingItems.add(scrollPane);
 		}
 	}
 	
@@ -154,13 +261,19 @@ public class LeftPane extends JPanel {
 		public Object getValueAt(int row, int col) {
 			switch(col) {
 			case 0:
-				return "Current worth:";
+				return "Current";
 			case 1:
-				return myCurrentInfo.getBottles();
+				return "worth:";
 			case 2:
-				return myCurrentInfo.getPennies();
+				return "";
 			case 3:
-				return myCurrentInfo.getTotal();
+				return Math.abs(myCurrentInfo.getBottles());
+			case 4:
+				return Math.abs(myCurrentInfo.getPennies());
+			case 5:
+				return Math.abs(myCurrentInfo.getTotal());
+			case 6:
+				return "";
 			default:
 				return "";
 			}
@@ -188,18 +301,148 @@ public class LeftPane extends JPanel {
 		@Override
 		public Class getColumnClass(int col) {
 			switch(col) {
-			case 0:
-				return String.class;
-			case 1:
-			case 2:
 			case 3:
+			case 4:
+			case 5:
 				return Integer.class;
 			default:
 				return String.class;
 			}
 		}
 		
-		private String[] columnNames = {"", "Bottles", "Pennies", "Est. Total"};
+		private String[] columnNames = {"Current", "Worth", "", "Bottles", "Pennies", "Est. Total", ""};
+	};
+	
+	protected AbstractTableModel myPastTradesModel = new AbstractTableModel() {
+
+		private static final long serialVersionUID = 487825269459522891L;
+
+		@Override
+		public Object getValueAt(int row, int col) {
+			switch(col) {
+			case 0:
+				return pastTrades.get(row).getFromName();
+			case 1:
+				return pastTrades.get(row).getToName();
+			case 2:
+				return pastTrades.get(row).getType() == ClosedQuote.TYPE_BUY ? LABEL_BUYING : LABEL_SELLING;
+			case 3:
+				return Math.abs(pastTrades.get(row).getBottles());
+			case 4:
+				return Math.abs(pastTrades.get(row).getPennies());
+			case 5:
+				return Math.abs(pastTrades.get(row).getValue());
+			case 6:
+				DateFormat df = DateFormat.getTimeInstance();
+				return df.format(pastTrades.get(row).getTime());
+			default:
+				return "";
+			}
+		}
+		
+		@Override
+		public int getRowCount() {
+			return pastTrades.size();
+		}
+		
+		@Override
+		public int getColumnCount() {
+			return columnNames.length;
+		}
+		
+		public String getColumnName(int col) {
+			return columnNames[col];
+		}
+		
+		public boolean isCellEditable(int row, int col) {
+			return false;
+		}
+		
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		@Override
+		public Class getColumnClass(int col) {
+			switch(col) {
+			case 0:
+			case 1:
+			case 2:
+			case 6:
+				return String.class;
+			case 3:
+			case 4:
+			case 5:
+				return Integer.class;
+			default:
+				return String.class;
+			}
+		}
+		
+		private String[] columnNames = {"From", "To", "Type", "Bottles", "PPB", "Total", "Time"};
+	};
+	
+	protected AbstractTableModel myCurrentQuotesModel = new AbstractTableModel() {
+
+		private static final long serialVersionUID = 2939739187727577540L;
+
+		@Override
+		public Object getValueAt(int row, int col) {
+			switch(col) {
+			case 0:
+				return "";
+			case 1:
+				return "";
+			case 2:
+				return myCurrentQuotes.get(row).getType() == OpenQuote.TYPE_BUY ? LABEL_BUYING : LABEL_SELLING;
+			case 3:
+				return Math.abs(myCurrentQuotes.get(row).getBottles());
+			case 4:
+				return Math.abs(myCurrentQuotes.get(row).getPennies());
+			case 5:
+				return Math.abs(myCurrentQuotes.get(row).getValue());
+			case 6:
+				DateFormat df = DateFormat.getTimeInstance();
+				return df.format(myCurrentQuotes.get(row).getTime());
+			default:
+				return "";
+			}
+		}
+		
+		@Override
+		public int getRowCount() {
+			return myCurrentQuotes.size();
+		}
+		
+		@Override
+		public int getColumnCount() {
+			return columnNames.length;
+		}
+		
+		public String getColumnName(int col) {
+			return columnNames[col];
+		}
+		
+		public boolean isCellEditable(int row, int col) {
+			return false;
+		}
+		
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		@Override
+		public Class getColumnClass(int col) {
+			switch(col) {
+			case 0:
+			case 1:
+			case 2:
+			case 6:
+				return String.class;
+			case 3:
+			case 4:
+			case 5:
+				return Integer.class;
+			default:
+				return String.class;
+			}
+		}
+		
+		private String[] columnNames = {"Current", "Quotes", "Type", "Bottles", "PPB", "Total", "Time"};
 	};
 	
 	protected AbstractTableModel myPredictedInfoModel = new AbstractTableModel() {
@@ -211,39 +454,57 @@ public class LeftPane extends JPanel {
 			case 0: // Predicted
 				switch(col) {
 				case 0:
-					return "Predicted worth:";
+					return "Predicted";
 				case 1:
-					return myPredictedInfo.getBottles();
+					return "Worth:";
 				case 2:
-					return myPredictedInfo.getPennies();
+					return "";
 				case 3:
-					return myPredictedInfo.getTotal();
+					return Math.abs(myPredictedInfo.getBottles());
+				case 4:
+					return Math.abs(myPredictedInfo.getPennies());
+				case 5:
+					return Math.abs(myPredictedInfo.getTotal());
+				case 6:
+					return "";
 				default:
 					return "";
 				}
 			case 1: // Predicted 1 (Most bottles)
 				switch(col) {
 				case 0:
-					return "... (most bottles):";
+					return "(Most";
 				case 1:
-					return myPredicted1Info.getBottles();
+					return "bottles)";
 				case 2:
-					return myPredicted1Info.getPennies();
+					return "...";
 				case 3:
-					return myPredicted1Info.getTotal();
+					return Math.abs(myPredicted1Info.getBottles());
+				case 4:
+					return Math.abs(myPredicted1Info.getPennies());
+				case 5:
+					return Math.abs(myPredicted1Info.getTotal());
+				case 6:
+					return "";
 				default:
 					return "";
 				}
 			case 2: // Predicted 2 (Most pennies)
 				switch(col) {
 				case 0:
-					return "... (most pennies):";
+					return "(Most";
 				case 1:
-					return myPredicted2Info.getBottles();
+					return "pennies)";
 				case 2:
-					return myPredicted2Info.getPennies();
+					return "...";
 				case 3:
-					return myPredicted2Info.getTotal();
+					return Math.abs(myPredicted2Info.getBottles());
+				case 4:
+					return Math.abs(myPredicted2Info.getPennies());
+				case 5:
+					return Math.abs(myPredicted2Info.getTotal());
+				case 6:
+					return "";
 				default:
 					return "";
 				}
@@ -274,25 +535,23 @@ public class LeftPane extends JPanel {
 		@Override
 		public Class getColumnClass(int col) {
 			switch(col) {
-			case 0:
-				return String.class;
-			case 1:
-			case 2:
 			case 3:
+			case 4:
+			case 5:
 				return Integer.class;
 			default:
 				return String.class;
 			}
 		}
 		
-		private String[] columnNames = {"", "Bottles", "Pennies", "Est. Total"};
+		private String[] columnNames = {"Predicted", "Worth", "", "Bottles", "Pennies", "Est. Total", ""};
 	};
 	
 	
 	protected PB myCurrentInfo = new PB(0, 0, 0), myPredictedInfo = new PB(0, 0, 0), myPredicted1Info = new PB(0, 0, 0), myPredicted2Info = new PB(0, 0, 0);
 	
 	
-	protected DefaultTableCellRenderer openQuotesRenderer = new DefaultTableCellRenderer() {
+	protected DefaultTableCellRenderer pastTradesRenderer = new DefaultTableCellRenderer() {
 
 		private static final long serialVersionUID = 3264586781621089278L;
 		
@@ -328,6 +587,23 @@ public class LeftPane extends JPanel {
 		worthGuess.setText(String.valueOf(myInfo.getEstimatedWorth()));
 	}
 	
+	protected LinkedList<ClosedQuote> pastTrades = new LinkedList<ClosedQuote>();
+	protected LinkedList<OpenQuote> myCurrentQuotes = new LinkedList<OpenQuote>();
+	
+	public void updateUserQuotes(MMyQuotesList quotes) {
+		pastTrades = quotes.getPastQuotes();
+		myCurrentQuotes = quotes.getCurrentQuotes();
+		myPastTradesModel.fireTableDataChanged();
+		myCurrentQuotesModel.fireTableDataChanged();
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			public void run() {
+				pastTradesScrollPane.getVerticalScrollBar().setValue(
+					pastTradesScrollPane.getVerticalScrollBar().getMaximum());
+			}
+		});
+	}
+	
 	protected ActionListener worthGuessSubmitClicked = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -344,5 +620,32 @@ public class LeftPane extends JPanel {
 			
 			serv.setWorthGuess(n);
 		}
+	};
+	
+	protected MouseListener currentQuotesClickListener = new MouseListener() {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			int row = currentQuotesTable.getSelectedRow();
+			OpenQuote quote = myCurrentQuotes.get(row);
+			if(quote == null) return;
+			
+			TimeoutDialog t = new TimeoutDialog(
+					parent,
+					"<html><p>Cancel quote with <b>" + Math.abs(quote.getBottles()) + "</b> bottles @ <b>" +
+					quote.getPennies() + "</b> ppb = <b>" + Math.abs(quote.getValue()) + "</b> pennies?</p></html>", "Cancel quote?", 20);
+			t.setVisible(true);
+			
+			if(t.isOk()) {
+				serv.cancelQuote(quote.getId());
+			}
+		}
+
+		@Override public void mouseEntered(MouseEvent e) { }
+
+		@Override public void mouseExited(MouseEvent e) { }
+
+		@Override public void mousePressed(MouseEvent e) { }
+
+		@Override public void mouseReleased(MouseEvent e) { }
 	};
 }

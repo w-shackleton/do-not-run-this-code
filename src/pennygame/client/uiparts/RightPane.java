@@ -40,8 +40,10 @@ public class RightPane extends JPanel {
 		this.serv = serv;
 
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		Box box = Box.createVerticalBox();
+		add(box);
 
-		setBorder(new EmptyBorder(10, 10, 10, 10));
+		setBorder(new EmptyBorder(10, 0, 10, 0));
 		
 		{ // Title
 			JPanel pan = new JPanel();
@@ -68,8 +70,8 @@ public class RightPane extends JPanel {
 			pan.add(changeMyName);
 			pausingItems.add(changeMyName);
 			
-			add(pan);
-			add(Box.createRigidArea(new Dimension(1, 10)));
+			box.add(pan);
+			box.add(Box.createRigidArea(new Dimension(1, 10)));
 		}
 
 		{ // Sell box
@@ -79,7 +81,8 @@ public class RightPane extends JPanel {
 			JLabel label = new JLabel("Sell ");
 			pan.add(label);
 
-			sellQBottles = new JTextField(3);
+			sellQBottles = new JTextField(4);
+			sellQBottles.setMaximumSize(sellQBottles.getPreferredSize());
 			sellQBottles.addKeyListener(new KeyListener() {
 				@Override
 				public void keyTyped(KeyEvent e) {
@@ -103,7 +106,8 @@ public class RightPane extends JPanel {
 			label = new JLabel(" bottles at ");
 			pan.add(label);
 
-			sellQPennies = new JTextField(3);
+			sellQPennies = new JTextField(4);
+			sellQPennies.setMaximumSize(sellQPennies.getPreferredSize());
 			sellQPennies.addKeyListener(new KeyListener() {
 				@Override
 				public void keyTyped(KeyEvent e) {
@@ -128,13 +132,13 @@ public class RightPane extends JPanel {
 			label = new JLabel(" ppb.");
 			pan.add(label);
 
-			add(pan);
+			box.add(pan);
 		}
 
 		{ // Sell button
 			JButton sellQButton = new JButton("Offer to SELL");
 			sellQButton.addActionListener(onSell);
-			add(sellQButton);
+			box.add(sellQButton);
 			pausingItems.add(sellQButton);
 		}
 
@@ -147,7 +151,8 @@ public class RightPane extends JPanel {
 			JLabel label = new JLabel("Buy ");
 			pan.add(label);
 
-			buyQBottles = new JTextField(3);
+			buyQBottles = new JTextField(4);
+			buyQBottles.setMaximumSize(buyQBottles.getPreferredSize());
 			buyQBottles.addKeyListener(new KeyListener() {
 				@Override
 				public void keyTyped(KeyEvent e) {
@@ -171,7 +176,8 @@ public class RightPane extends JPanel {
 			label = new JLabel(" bottles at ");
 			pan.add(label);
 
-			buyQPennies = new JTextField(3);
+			buyQPennies = new JTextField(4);
+			buyQPennies.setMaximumSize(buyQPennies.getPreferredSize());
 			buyQPennies.addKeyListener(new KeyListener() {
 				@Override
 				public void keyTyped(KeyEvent e) {
@@ -196,15 +202,17 @@ public class RightPane extends JPanel {
 			label = new JLabel(" ppb.");
 			pan.add(label);
 
-			add(pan);
+			box.add(pan);
 		}
 
 		{ // Buy button
 			JButton buyQButton = new JButton("Offer to BUY");
 			buyQButton.addActionListener(onBuy);
-			add(buyQButton);
+			box.add(buyQButton);
 			pausingItems.add(buyQButton);
 		}
+		
+		box.add(Box.createVerticalGlue());
 		
 		setPreferredSize(getPreferredSize());
 		setMinimumSize(getPreferredSize());
