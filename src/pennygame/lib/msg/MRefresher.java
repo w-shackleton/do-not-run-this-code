@@ -14,4 +14,5 @@ public class MRefresher extends PennyMessage {
 	public static final int REF_USERLIST = 1;
 	public static final int REF_OPENQUOTELIST = 2;
 	public static final int REF_MYINFO = 3;
+	public static final int REF_MYQUOTES = 4;
 }

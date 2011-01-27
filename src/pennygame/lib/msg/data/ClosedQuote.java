@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 
 public class ClosedQuote implements Serializable {
 
-	private static final long serialVersionUID = 4313397036003309588L;
+	private static final long serialVersionUID = -5323649194093314637L;
 	
 	public static final int TYPE_BUY = 1;
 	public static final int TYPE_SELL = 2;
@@ -20,15 +20,15 @@ public class ClosedQuote implements Serializable {
 	private final int pennies, bottles, value;
 	
 	private final String fromName;
-	private final int idFrom;
+	private final String toName;
 	
 	private final Timestamp time;
 	
-	public ClosedQuote(int id, int type, String fromName, int idfrom, int pennies, int bottles, Timestamp time) {
+	public ClosedQuote(int id, int type, String fromName, String toName, int pennies, int bottles, Timestamp time) {
 		this.id = id;
 		this.type = type;
 		this.fromName = fromName;
-		this.idFrom = idfrom;
+		this.toName = toName;
 		this.time = time;
 		this.pennies = pennies;
 		this.bottles = bottles;
@@ -63,7 +63,7 @@ public class ClosedQuote implements Serializable {
 		return time;
 	}
 
-	public int getIdFrom() {
-		return idFrom;
+	public String getToName() {
+		return toName;
 	}
 }

@@ -42,16 +42,19 @@ public class TimeoutDialog extends JDialog implements ActionListener {
 
 		JLabel label = new JLabel(message);
 		label.setBorder(new EmptyBorder(10, 10, 10, 10));
+		label.setMinimumSize(label.getPreferredSize());
 
 		Container cont = getContentPane();
 		cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
 		cont.add(label);
 		hBox.add(Box.createGlue());
 		hBox.add(yesButton);
+		hBox.add(Box.createHorizontalStrut(10));
 		hBox.add(noButton);
 		cont.add(hBox);
 
 		pack();
+		setLocationRelativeTo(frame);
 		thread = new Thread(r);
 		thread.start();
 	}
