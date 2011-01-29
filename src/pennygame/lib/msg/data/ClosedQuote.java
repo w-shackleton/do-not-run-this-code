@@ -9,6 +9,10 @@ public class ClosedQuote implements Serializable {
 	
 	public static final int TYPE_BUY = 1;
 	public static final int TYPE_SELL = 2;
+	
+	public static final int FINISH_CLOSED = 1;
+	public static final int FINISH_CANCELLED = 2;
+	public static final int FINISH_TIMEOUTED = 3;
 
 	private final int id;
 	
@@ -22,17 +26,33 @@ public class ClosedQuote implements Serializable {
 	private final String fromName;
 	private final String toName;
 	
-	private final Timestamp time;
+	private final Timestamp timeAccepted, timeCreated;
+	private final int finishReason;
 	
 	public ClosedQuote(int id, int type, String fromName, String toName, int pennies, int bottles, Timestamp time) {
 		this.id = id;
 		this.type = type;
 		this.fromName = fromName;
 		this.toName = toName;
-		this.time = time;
+		this.timeAccepted = time;
+		timeCreated = time;
 		this.pennies = pennies;
 		this.bottles = bottles;
 		this.value = pennies * bottles;
+		finishReason = FINISH_CLOSED;
+	}
+
+	public ClosedQuote(int id, int type, String fromName, String toName, int pennies, int bottles, Timestamp timeAccepted, Timestamp timeCreated, int finishReason) {
+		this.id = id;
+		this.type = type;
+		this.fromName = fromName;
+		this.toName = toName;
+		this.timeAccepted = timeAccepted;
+		this.timeCreated = timeCreated;
+		this.pennies = pennies;
+		this.bottles = bottles;
+		this.value = pennies * bottles;
+		this.finishReason = finishReason;
 	}
 
 	public int getId() {
@@ -60,10 +80,26 @@ public class ClosedQuote implements Serializable {
 	}
 
 	public Timestamp getTime() {
-		return time;
+		return timeAccepted;
+	}
+	
+	/**
+	 * Synonymous to {@link #getTime()}
+	 * @return
+	 */
+	public Timestamp getTimeAccepted() {
+		return timeAccepted;
 	}
 
 	public String getToName() {
 		return toName;
+	}
+
+	public Timestamp getTimeCreated() {
+		return timeCreated;
+	}
+
+	public int getFinishReason() {
+		return finishReason;
 	}
 }

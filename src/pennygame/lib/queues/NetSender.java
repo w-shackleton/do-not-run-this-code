@@ -39,7 +39,7 @@ public class NetSender<T extends MainThread> extends MessageConsumer<T> {
 		// Check type
 		if(PennyMessage.class.isAssignableFrom(msg.getClass())) // If it is a pennymessage
 		{
-			System.out.println("Sending");
+			// System.out.println("Sending");
 			try {
 				Serialiser.encode((PennyMessage) msg, outStream);
 			} catch (IOException e) {
