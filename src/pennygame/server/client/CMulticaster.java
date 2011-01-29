@@ -7,6 +7,7 @@ import java.util.Iterator;
 import pennygame.lib.ext.Serialiser;
 import pennygame.lib.msg.PennyMessage;
 import pennygame.lib.queues.MessageProducer;
+import pennygame.server.projector.ProjectionServer;
 
 /**
  * Sends messages out to all connected clients; inherits MessageProducer for its
@@ -19,6 +20,7 @@ import pennygame.lib.queues.MessageProducer;
 public class CMulticaster extends MessageProducer {
 
 	private Clients clients = null;
+	private ProjectionServer projector = null;
 
 	public CMulticaster() {
 		super("Multicaster");
@@ -113,5 +115,14 @@ public class CMulticaster extends MessageProducer {
 				CConn client = it.next();
 				client.stopConnection();
 			}
+	}
+	
+	public void refreshProjectorTradeGraph() {
+		if(projector == null) return; // Not set yet
+		projector.refreshTradeGraph();
+	}
+
+	public void setProjector(ProjectionServer projector) {
+		this.projector = projector;
 	}
 }

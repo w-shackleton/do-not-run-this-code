@@ -11,12 +11,14 @@ public final class SettingsLoader {
 	private static String listenAddress = "0.0.0.0";
 	private static int listenPort = GlobalPreferences.getPort();
 	private static int adminListenPort = GlobalPreferences.getAdminport();
+	private static int projectorListenPort = GlobalPreferences.getProjectorPort();
 	private static String mySqlAddress;
 	private static String mySqlDatabase;
 	private static String mySqlUsername;
 	private static String mySqlPassword;
 	
 	private static String adminEncryptedPassword;
+	private static String projectorEncryptedPassword;
 	
 	public static final void loadSettings(String filename) throws IOException {
 		FileReader fr = new FileReader(filename);
@@ -33,6 +35,8 @@ public final class SettingsLoader {
 				setListenPort(Integer.valueOf(params[1]));
 			} else if(params[0].equals("adminListenPort")) {
 				setAdminListenPort(Integer.valueOf(params[1]));
+			} else if(params[0].equals("projectorListenPort")) {
+				setProjectorListenPort(Integer.valueOf(params[1]));
 			} else if(params[0].equals("mySqlAddress")) {
 				setMySqlAddress(params[1]);
 			} else if(params[0].equals("mySqlDatabase")) {
@@ -43,6 +47,8 @@ public final class SettingsLoader {
 				setMySqlPassword(params[1]);
 			} else if(params[0].equals("adminEncryptedPassword")) {
 				setAdminEncryptedPassword(params[1]);
+			} else if(params[0].equals("projectorEncryptedPassword")) {
+				setProjectorEncryptedPassword(params[1]);
 			}
 		}
 		f.close();
@@ -111,5 +117,21 @@ public final class SettingsLoader {
 
 	public static int getAdminListenPort() {
 		return adminListenPort;
+	}
+
+	protected static void setProjectorListenPort(int projectorListenPort) {
+		SettingsLoader.projectorListenPort = projectorListenPort;
+	}
+
+	public static int getProjectorListenPort() {
+		return projectorListenPort;
+	}
+
+	protected static void setProjectorEncryptedPassword(String projectorEncryptedPassword) {
+		SettingsLoader.projectorEncryptedPassword = projectorEncryptedPassword;
+	}
+
+	public static String getProjectorEncryptedPassword() {
+		return projectorEncryptedPassword;
 	}
 }

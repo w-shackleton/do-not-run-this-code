@@ -10,11 +10,13 @@ import pennygame.server.client.CMulticaster;
 import pennygame.server.client.Clients;
 import pennygame.server.db.DBManager;
 import pennygame.server.db.GameUtils;
+import pennygame.server.projector.ProjectionServer;
 
 
 public class PennyServer {
 	static Clients clients;
 	static AdminServer admin;
+	static ProjectionServer projector;
 	static DBManager db;
 	static CMulticaster multicast;
 	
@@ -54,7 +56,7 @@ public class PennyServer {
 		System.out.println("Game Utils...");
 		GameUtils gameUtils = null;
 		try {
-			gameUtils = new GameUtils(db.getConnection(), db.getQuoteAcceptingConnection(), multicast);
+			gameUtils = new GameUtils(db.getConnection(), db.getQuoteAcceptingConnection(), db.getMiscDataConnection(), multicast);
 		} catch (SQLException e2) {
 			e2.printStackTrace();
 		}
@@ -87,6 +89,19 @@ public class PennyServer {
 		admin.start();
 		System.out.println("Admin started");
 		
+		System.out.println("Projector...");
+		try {
+			projector = new ProjectionServer(gameUtils, SettingsLoader.getListenAddress(), SettingsLoader.getProjectorListenPort(), SettingsLoader.getProjectorEncryptedPassword());
+		} catch (IOException e1) {
+			System.out.println("Couldn't create projector socket. Bye!!");
+			e1.printStackTrace();
+			System.exit(2);
+		}
+		System.out.println("Projector initialised");
+		projector.start();
+		multicast.setProjector(projector);
+		System.out.println("Projector started");
+		
 		System.out.println("Ready to go...");
 		
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -108,6 +123,7 @@ public class PennyServer {
 		multicast.beginStopping();
 		clients.beginStopping();
 		admin.beginStopping();
+		projector.beginStopping();
 		db.beginStopping();
 	}
 }

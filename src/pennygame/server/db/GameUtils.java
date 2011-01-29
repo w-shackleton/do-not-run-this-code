@@ -16,10 +16,10 @@ public class GameUtils {
 	
 	private boolean gamePaused = false;
 	
-	public GameUtils(Connection conn, Connection quoteAcceptingConn, CMulticaster multicast) throws SQLException {
+	public GameUtils(Connection conn, Connection quoteAcceptingConn, Connection miscDataConn, CMulticaster multicast) throws SQLException {
 		this.conn = conn;
 		this.multicast = multicast;
-		this.quotes = new QuoteUtils(conn, quoteAcceptingConn, multicast);
+		this.quotes = new QuoteUtils(conn, quoteAcceptingConn, miscDataConn, multicast);
 		this.users = new UserUtils(conn, quotes);
 	}
 

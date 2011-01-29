@@ -10,7 +10,7 @@ import pennygame.lib.queues.LoopingThread;
 public class DBManager extends LoopingThread {
 	// TODO: Change to not a thread!
 	
-	private final Connection conn, quoteAcceptingConn;
+	private final Connection conn, quoteAcceptingConn, miscDataConn;
 
 	public DBManager(String server, String database, String username, String password) throws SQLException {
 		super("DB Mgmt");
@@ -29,6 +29,8 @@ public class DBManager extends LoopingThread {
 
 		conn = DriverManager.getConnection(dbUrl, username, password);
 		quoteAcceptingConn = DriverManager.getConnection(dbUrl, username, password);
+		miscDataConn = DriverManager.getConnection(dbUrl, username, password);
+		
 		quoteAcceptingConn.setAutoCommit(false); // Uses transactions
 		System.out.println("DB connected");
 		// conn.setAutoCommit(true);
@@ -106,6 +108,10 @@ public class DBManager extends LoopingThread {
 				"" +
 				"INDEX(userid)" +
 				") TYPE=INNODB;");
+		stat.executeUpdate(
+				"CREATE OR REPLACE VIEW tradehistory AS " +
+				"SELECT id, status, type, pennies, bottles, timecreated, timeaccepted FROM quotes " +
+				"WHERE status!='open'");
 	}
 
 	public Connection getConnection() {
@@ -114,5 +120,9 @@ public class DBManager extends LoopingThread {
 
 	public Connection getQuoteAcceptingConnection() {
 		return quoteAcceptingConn;
+	}
+
+	public Connection getMiscDataConnection() {
+		return miscDataConn;
 	}
 }

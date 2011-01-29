@@ -13,6 +13,7 @@ import pennygame.lib.msg.MMyInfo;
 import pennygame.lib.msg.MMyQuotesList;
 import pennygame.lib.msg.MOpenQuotesList;
 import pennygame.lib.msg.MPutQuote;
+import pennygame.lib.msg.MTradesList;
 import pennygame.lib.msg.data.ClosedQuote;
 import pennygame.lib.msg.data.OpenQuote;
 import pennygame.lib.msg.data.PB;
@@ -30,6 +31,7 @@ public final class QuoteUtils {
 	
 	private final PreparedStatement putQuoteStatement, getOpenQuotesStatement, getUserClosedTradesStatement, getUserOpenQuotesStatement, getUserMoneyStatement;
 	private final PreparedStatement getQuoteInfoStatement, requestQuoteLockStatement, acceptLockedQuoteStatement, declineLockedQuoteStatement, acceptLockQuoteUpdateMyMoney, acceptLockQuoteUpdateOtherMoney, cancelQuoteStatement;
+	private final PreparedStatement getTradeHistoryStatement, getTradeHistoryRangeStatement;
 	private final CMulticaster multicast;
 	
 	protected final QuotePurger quotePurger;
@@ -41,7 +43,7 @@ public final class QuoteUtils {
 	 */
 	protected final ConcurrentHashMap<Integer, Integer> userWorthGuesses;
 	
-	QuoteUtils(Connection conn, Connection quoteAcceptingConn, CMulticaster multicast) throws SQLException {
+	QuoteUtils(Connection conn, Connection quoteAcceptingConn, Connection miscDataGetConn, CMulticaster multicast) throws SQLException {
 		this.multicast = multicast;
 		this.quotePurger = new QuotePurger(conn);
 		this.quoteAcceptingConn = quoteAcceptingConn;
@@ -108,6 +110,11 @@ public final class QuoteUtils {
 				"UPDATE quotes SET lockid=NULL, timeaccepted=NULL WHERE id=? AND lockid=?;");
 		cancelQuoteStatement = conn.prepareStatement(
 				"UPDATE quotes SET status='cancelled', timeaccepted=NOW() WHERE id=? AND status='open' AND idfrom=? AND lockid IS NULL;");
+		
+		getTradeHistoryStatement = miscDataGetConn.prepareStatement("SELECT * FROM tradehistory;");
+		getTradeHistoryRangeStatement = miscDataGetConn.prepareStatement(
+				"SELECT MIN(timecreated) AS mintime, MAX(timeaccepted) AS maxtime, MIN(pennies) AS minpennies, MAX(pennies) AS maxpennies " +
+				"FROM quotes;");
 	}
 	
 	/**
@@ -319,7 +326,20 @@ public final class QuoteUtils {
 		return rows == 1;
 	}
 	
+	/**
+	 * Counts when to push the data to the projector, and pushes every x times a quote is accepted.
+	 */
+	private int projectorGraphPush = 0;
+	private static final int PROJECTOR_GRAPH_PUSH_AFTER_COUNT = 3;
 	
+	/**
+	 * Accepts a quote which has been locked by the user, making it either 'closed' or 'open'
+	 * @param userId
+	 * @param quoteId
+	 * @param accept
+	 * @return
+	 * @throws SQLException
+	 */
 	public synchronized int acceptLockedQuote(int userId, int quoteId, boolean accept) throws SQLException {
 		if(accept) {
 			OpenQuote q = getQuoteInfo(quoteId);
@@ -364,6 +384,8 @@ public final class QuoteUtils {
 			pushUserMoney(q.getIdFrom());
 			pushUserQuotes(userId);
 			pushUserQuotes(q.getIdFrom());
+			
+			projectorGraphPush++; // Something has happened
 		} else { // Reset quote
 			declineLockedQuoteStatement.setInt(1, quoteId);
 			declineLockedQuoteStatement.setInt(2, userId);
@@ -381,7 +403,59 @@ public final class QuoteUtils {
 		
 		if(num != 1) return MTCancelResponse.RESPONSE_ALREADY_TAKEN;
 		
+		pushOpenQuotes();
+		projectorGraphPush++;
+		
 		return MTCancelResponse.RESPONSE_OK;
+	}
+	
+	/**
+	 * Gets the history of trades for the projector graph
+	 * @return An {@link MTradesList} containing the complete list of trades
+	 * @throws SQLException
+	 */
+	public synchronized MTradesList getTradeHistory() throws SQLException {
+		
+		long minTime, maxTime;
+		int minPennies, maxPennies;
+		ResultSet range = getTradeHistoryRangeStatement.executeQuery();
+		if(!range.next()) {
+			minTime = 1296208819 * 1000; // Just blank values to stop graph going weird.
+			maxTime = 1296208919 * 1000;
+			minPennies = 100;
+			maxPennies = 200;
+		} else {
+			minPennies = range.getInt("minpennies");
+			maxPennies = range.getInt("maxpennies");
+			try {
+				minTime = range.getTimestamp("mintime").getTime();
+				maxTime = range.getTimestamp("maxtime").getTime();
+			} catch(NullPointerException e) { // No rows
+				minTime = 1296208819 * 1000; // Just blank values to stop graph going weird.
+				maxTime = 1296208919 * 1000;
+				minPennies = 100;
+				maxPennies = 200;
+			}
+		}
+		
+		LinkedList<ClosedQuote> trades = new LinkedList<ClosedQuote>();
+		ResultSet rs = getTradeHistoryStatement.executeQuery();
+		while(rs.next()) {
+			int type = rs.getString("type").equals("buy") ? ClosedQuote.TYPE_BUY : ClosedQuote.TYPE_SELL;
+			
+			int finishReason = ClosedQuote.FINISH_CLOSED;
+			String status = rs.getString("status");
+			if(status.equals("closed")) finishReason = ClosedQuote.FINISH_CLOSED;
+			if(status.equals("cancelled")) finishReason = ClosedQuote.FINISH_CANCELLED;
+			if(status.equals("timeout")) finishReason = ClosedQuote.FINISH_TIMEOUTED;
+			trades.add(new ClosedQuote(rs.getInt("id"), type, "", "", rs.getInt("pennies"), rs.getInt("bottles"), rs.getTimestamp("timeaccepted"), rs.getTimestamp("timecreated"), finishReason));
+		}
+		
+		return new MTradesList(trades, minTime, maxTime, minPennies, maxPennies);
+	}
+	
+	public void pushTradeHistory() throws SQLException {
+		multicast.refreshProjectorTradeGraph(); // This is the one part of the game that doesn't need to be snappy, so send it from another thread!
 	}
 	
 	public synchronized int getQuoteTimeout() {
@@ -437,6 +511,7 @@ public final class QuoteUtils {
 				while(usersToNotify.next()) {
 					pushUserMoney(usersToNotify.getInt("userid"));
 					pushUserQuotes(usersToNotify.getInt("userid"));
+					projectorGraphPush++;
 				}
 				
 				if(numRows > 0) { // List has changed, resend
@@ -450,6 +525,15 @@ public final class QuoteUtils {
 				resetTimeoutedLockedQuotes.executeUpdate();
 			} catch (SQLException e) {
 				e.printStackTrace();
+			}
+			
+			if(projectorGraphPush >= PROJECTOR_GRAPH_PUSH_AFTER_COUNT) {
+				try {
+					pushTradeHistory();
+					projectorGraphPush -= PROJECTOR_GRAPH_PUSH_AFTER_COUNT;
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 			
 			synchronized(waitObject) {
