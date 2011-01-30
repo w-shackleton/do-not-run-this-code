@@ -43,6 +43,9 @@ public class AdminSConnPushHandler extends SConnPushHandler {
 				case MAGameSetting.WHAT_QUOTE_NUMBER:
 					frame.setQuoteNumber((Integer) s.getData());
 					break;
+				case MAGameSetting.WHAT_GRAPH_LENGTH_MINUTES:
+					frame.otherTab.setGraphLength((Integer) s.getData());
+					break;
 				}
 			}
 		}

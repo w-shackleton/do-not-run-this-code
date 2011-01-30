@@ -19,6 +19,12 @@ public class PennyAdmin extends LoginApplet<AdminSConn> {
 		return GlobalPreferences.getAdminport();
 	}
 	
+	@Override
+	public void init() {
+		super.init();
+		usernameField.setText("admin");
+	}
+	
 	AdminFrame adminFrame;
 
 	@Override

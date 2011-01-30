@@ -117,6 +117,15 @@ public class AdminSConn extends SConn<AdminSConnMainThread, AdminSConnPushHandle
 		sendMessage(new MAGameSetting(MAGameSetting.WHAT_QUOTE_NUMBER));
 	}
 	
+	public void setGraphLength(int minutes) {
+		minutes = Utils.trimMin(5, minutes);
+		sendMessage(new MAGameSetting(true, MAGameSetting.WHAT_GRAPH_LENGTH_MINUTES, minutes));
+	}
+	
+	public void getGraphLength() {
+		sendMessage(new MAGameSetting(MAGameSetting.WHAT_GRAPH_LENGTH_MINUTES));
+	}
+	
 	public void resetGame() {
 		sendMessage(new MAGameSetting(true, MAGameSetting.WHAT_RESET_GAME, null));
 	}

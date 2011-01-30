@@ -30,7 +30,7 @@ public final class AdminFrame extends JFrame implements WindowListener {
 	JTabbedPane tabs;
 	
 	public final UserTab userTab;
-	protected final OtherTab otherTab;
+	public final OtherTab otherTab;
 	
 	JTextField quoteTimeout, quoteNumber;
 
@@ -141,6 +141,7 @@ public final class AdminFrame extends JFrame implements WindowListener {
 		
 		serv.getQuoteTimeout();
 		serv.getQuoteNumber();
+		serv.getGraphLength();
 	}
 
 	@Override
