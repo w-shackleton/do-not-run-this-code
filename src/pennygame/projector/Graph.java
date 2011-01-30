@@ -69,7 +69,7 @@ public abstract class Graph extends JPanel {
 		
 		{ // Units
 			// Y
-			for(long i = top; i >= bottom; i += (bottom - top) / 4) {
+			for(long i = top; i >= bottom; i += Math.min((bottom - top) / 4, -10)) {
 				float gy = (float) graphToUserY(i);
 				
 				g.setPaint(LABEL);
@@ -83,7 +83,7 @@ public abstract class Graph extends JPanel {
 			
 			// Simply to only draw half of time values
 			int count = 0;
-			for(long j = left; j <= right; j += (long)(right - left) / 16) {
+			for(long j = left; j <= right; j += Math.max((long)(right - left) / 16, 10000)) {
 				float gx = (float) graphToUserX(j);
 				
 				if(count == 0 || count > 10) {
