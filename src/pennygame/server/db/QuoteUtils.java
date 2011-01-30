@@ -43,7 +43,16 @@ public final class QuoteUtils {
 	 */
 	protected final ConcurrentHashMap<Integer, Integer> userWorthGuesses;
 	
-	QuoteUtils(Connection conn, Connection quoteAcceptingConn, Connection miscDataGetConn, CMulticaster multicast) throws SQLException {
+	/**
+	 * 
+	 * @param conn
+	 * @param quoteAcceptingConn
+	 * @param miscDataGetConn
+	 * @param connPool A pool of 4 connections, just to spread server load
+	 * @param multicast
+	 * @throws SQLException
+	 */
+	QuoteUtils(Connection conn, Connection quoteAcceptingConn, Connection miscDataGetConn, Connection[] connPool, CMulticaster multicast) throws SQLException {
 		this.multicast = multicast;
 		this.quotePurger = new QuotePurger(conn);
 		this.quoteAcceptingConn = quoteAcceptingConn;
@@ -62,7 +71,7 @@ public final class QuoteUtils {
 		quotePurger.start();
 		
 		// TODO: Switch a lot of these to views?
-		putQuoteStatement = conn.prepareStatement("INSERT INTO quotes(type, idfrom, pennies, bottles) VALUES (?, ?, ?, ?);");
+		putQuoteStatement = connPool[0].prepareStatement("INSERT INTO quotes(type, idfrom, pennies, bottles) VALUES (?, ?, ?, ?);");
 		getOpenQuotesStatement = conn.prepareStatement( // TODO: get rid of 'value', as I think it isn't used
 				"SELECT * FROM " +
 				"((SELECT quotes.id, quotes.type, users.friendlyname AS fromname, quotes.idfrom, quotes.pennies, quotes.bottles, quotes.bottles * CAST(quotes.pennies AS SIGNED) AS value, quotes.timecreated AS time " +
@@ -71,7 +80,7 @@ public final class QuoteUtils {
 				" (SELECT quotes.id, quotes.type, users.friendlyname AS fromname, quotes.idfrom, quotes.pennies, quotes.bottles, quotes.bottles * CAST(quotes.pennies AS SIGNED) AS value, quotes.timecreated AS time " +
 				"FROM quotes, users WHERE status='open' AND type='buy'  AND quotes.idfrom = users.id ORDER BY pennies DESC LIMIT ?)) " +
 				"AS tbl ORDER BY tbl.pennies DESC;"); // This searches through all buy and sells, unions them and then sorts the result.
-		getUserClosedTradesStatement = conn.prepareStatement(
+		getUserClosedTradesStatement = connPool[3].prepareStatement(
 				"SELECT * FROM " +
 				"(SELECT quotes.id, type, u1.friendlyname AS fromname, u2.friendlyname AS toname, quotes.bottles, quotes.pennies, timeaccepted AS time " +
 				"FROM quotes " +
@@ -93,11 +102,11 @@ public final class QuoteUtils {
 				"AS q WHERE users.id=?;"
 				);
 		
-		getQuoteInfoStatement = conn.prepareStatement(
+		getQuoteInfoStatement = connPool[2].prepareStatement(
 				"SELECT quotes.id, quotes.type, users.friendlyname AS fromname, quotes.idfrom, quotes.pennies, " +
 				"quotes.bottles, quotes.bottles * CAST(quotes.pennies AS SIGNED) AS value, quotes.timecreated AS time " +
 				"FROM quotes, users WHERE quotes.idfrom = users.id AND quotes.id=?;");
-		requestQuoteLockStatement = conn.prepareStatement(
+		requestQuoteLockStatement = connPool[2].prepareStatement(
 				"UPDATE quotes SET lockid=?, timeaccepted=NOW() WHERE id=? AND status='open' AND lockid IS NULL;");
 		
 		acceptLockedQuoteStatement = quoteAcceptingConn.prepareStatement(
@@ -111,10 +120,10 @@ public final class QuoteUtils {
 		cancelQuoteStatement = conn.prepareStatement(
 				"UPDATE quotes SET status='cancelled', timeaccepted=NOW() WHERE id=? AND status='open' AND idfrom=? AND lockid IS NULL;");
 		
-		getTradeHistoryStatement = miscDataGetConn.prepareStatement("SELECT * FROM tradehistory;");
+		getTradeHistoryStatement = miscDataGetConn.prepareStatement("SELECT * FROM tradehistory WHERE timecreated > TIMESTAMPADD(MINUTE, ?, NOW());");
 		getTradeHistoryRangeStatement = miscDataGetConn.prepareStatement(
 				"SELECT MIN(timecreated) AS mintime, MAX(timeaccepted) AS maxtime, MIN(pennies) AS minpennies, MAX(pennies) AS maxpennies " +
-				"FROM quotes;");
+				"FROM quotes WHERE timecreated > TIMESTAMPADD(MINUTE, ?, NOW());");
 	}
 	
 	/**
@@ -409,6 +418,8 @@ public final class QuoteUtils {
 		return MTCancelResponse.RESPONSE_OK;
 	}
 	
+	private int tradeHistoryMinutes = 120;
+	
 	/**
 	 * Gets the history of trades for the projector graph
 	 * @return An {@link MTradesList} containing the complete list of trades
@@ -418,6 +429,7 @@ public final class QuoteUtils {
 		
 		long minTime, maxTime;
 		int minPennies, maxPennies;
+		getTradeHistoryRangeStatement.setInt(1, -tradeHistoryMinutes);
 		ResultSet range = getTradeHistoryRangeStatement.executeQuery();
 		if(!range.next()) {
 			minTime = 1296208819 * 1000; // Just blank values to stop graph going weird.
@@ -438,7 +450,15 @@ public final class QuoteUtils {
 			}
 		}
 		
+		if(maxPennies - minPennies < 10) { // This causes graph problems
+			maxPennies = minPennies + 10;
+		}
+		if(maxTime - minTime < 10000) {
+			maxTime = minTime + 10000;
+		}
+		
 		LinkedList<ClosedQuote> trades = new LinkedList<ClosedQuote>();
+		getTradeHistoryStatement.setInt(1, -tradeHistoryMinutes);
 		ResultSet rs = getTradeHistoryStatement.executeQuery();
 		while(rs.next()) {
 			int type = rs.getString("type").equals("buy") ? ClosedQuote.TYPE_BUY : ClosedQuote.TYPE_SELL;
@@ -456,6 +476,15 @@ public final class QuoteUtils {
 	
 	public void pushTradeHistory() throws SQLException {
 		multicast.refreshProjectorTradeGraph(); // This is the one part of the game that doesn't need to be snappy, so send it from another thread!
+	}
+	
+	public void setTradeHistoryMinutes(int minutes) throws SQLException {
+		tradeHistoryMinutes = minutes;
+		pushTradeHistory();
+	}
+	
+	public int getTradeHistoryMinutes() {
+		return tradeHistoryMinutes;
 	}
 	
 	public synchronized int getQuoteTimeout() {

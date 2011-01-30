@@ -89,6 +89,10 @@ public class AdminConnMainThread extends MainThread {
 		public void sendNumQuotes(int num) {
 			putMessage(new MAGameSetting(false, MAGameSetting.WHAT_QUOTE_NUMBER, num));
 		}
+		
+		public void sendTradeGraphMinutes(int minutes) {
+			putMessage(new MAGameSetting(false, MAGameSetting.WHAT_GRAPH_LENGTH_MINUTES, minutes));
+		}
 	}
 	
 	protected boolean loginCompleted = false;

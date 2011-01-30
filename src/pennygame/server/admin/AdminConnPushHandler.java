@@ -144,6 +144,16 @@ public class AdminConnPushHandler extends PushHandler {
 					e.printStackTrace();
 				}
 				break;
+			case MAGameSetting.WHAT_GRAPH_LENGTH_MINUTES:
+				if(s.setOrGet())
+					try {
+						gameUtils.quotes.setTradeHistoryMinutes((Integer) s.getData());
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				else
+					adminMsgBacks.sendTradeGraphMinutes(gameUtils.quotes.getTradeHistoryMinutes());
+				break;
 			}
 		}
 	}

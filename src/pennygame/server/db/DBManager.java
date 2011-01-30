@@ -11,6 +11,7 @@ public class DBManager extends LoopingThread {
 	// TODO: Change to not a thread!
 	
 	private final Connection conn, quoteAcceptingConn, miscDataConn;
+	private final Connection[] connectionPool;
 
 	public DBManager(String server, String database, String username, String password) throws SQLException {
 		super("DB Mgmt");
@@ -31,6 +32,13 @@ public class DBManager extends LoopingThread {
 		quoteAcceptingConn = DriverManager.getConnection(dbUrl, username, password);
 		miscDataConn = DriverManager.getConnection(dbUrl, username, password);
 		
+		connectionPool = new Connection[] {
+				DriverManager.getConnection(dbUrl, username, password),
+				DriverManager.getConnection(dbUrl, username, password),
+				DriverManager.getConnection(dbUrl, username, password),
+				DriverManager.getConnection(dbUrl, username, password)
+				};
+		
 		quoteAcceptingConn.setAutoCommit(false); // Uses transactions
 		System.out.println("DB connected");
 		// conn.setAutoCommit(true);
@@ -49,7 +57,28 @@ public class DBManager extends LoopingThread {
 
 	@Override
 	protected void loop() {
-
+		for(int i = 0; i < 240; i++) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			if(stopping) break;
+		}
+		Statement stat;
+		try {
+			stat = conn.createStatement();
+			stat.executeQuery("SELECT 0;"); // Keepalive
+			
+			stat = quoteAcceptingConn.createStatement();
+			stat.executeQuery("SELECT 0;"); // Keepalive
+			quoteAcceptingConn.commit();
+			
+			stat = miscDataConn.createStatement();
+			stat.executeQuery("SELECT 0;"); // Keepalive
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -124,5 +153,9 @@ public class DBManager extends LoopingThread {
 
 	public Connection getMiscDataConnection() {
 		return miscDataConn;
+	}
+
+	public Connection[] getConnectionPool() {
+		return connectionPool;
 	}
 }

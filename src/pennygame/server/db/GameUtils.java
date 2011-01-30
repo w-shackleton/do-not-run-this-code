@@ -16,10 +16,19 @@ public class GameUtils {
 	
 	private boolean gamePaused = false;
 	
-	public GameUtils(Connection conn, Connection quoteAcceptingConn, Connection miscDataConn, CMulticaster multicast) throws SQLException {
+	/**
+	 * 
+	 * @param conn
+	 * @param quoteAcceptingConn
+	 * @param miscDataConn
+	 * @param connPool A pool of 4 connections
+	 * @param multicast
+	 * @throws SQLException
+	 */
+	public GameUtils(Connection conn, Connection quoteAcceptingConn, Connection miscDataConn, Connection[] connPool, CMulticaster multicast) throws SQLException {
 		this.conn = conn;
 		this.multicast = multicast;
-		this.quotes = new QuoteUtils(conn, quoteAcceptingConn, miscDataConn, multicast);
+		this.quotes = new QuoteUtils(conn, quoteAcceptingConn, miscDataConn, connPool, multicast);
 		this.users = new UserUtils(conn, quotes);
 	}
 
