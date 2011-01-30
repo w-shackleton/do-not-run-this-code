@@ -121,6 +121,7 @@ public class LeftPane extends JPanel {
 			pastTradesScrollPane.setWheelScrollingEnabled(true);
 			
 			pausingItems.add(pastTradesScrollPane);
+			pausingItems.add(pastTradesTable);
 			
 			Dimension spSize = new Dimension(400, 100);
 			pastTradesScrollPane.setMinimumSize(spSize);
@@ -163,6 +164,7 @@ public class LeftPane extends JPanel {
 			scrollPane.setWheelScrollingEnabled(true);
 			
 			pausingItems.add(scrollPane);
+			pausingItems.add(currentInfoTable);
 			
 			Dimension spSize = new Dimension(400, 40);
 			scrollPane.setMinimumSize(spSize);
@@ -204,6 +206,7 @@ public class LeftPane extends JPanel {
 			scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 			
 			pausingItems.add(scrollPane);
+			pausingItems.add(currentQuotesTable);
 			
 			Dimension spSize = new Dimension(400, 100);
 			scrollPane.setMinimumSize(spSize);
@@ -242,6 +245,7 @@ public class LeftPane extends JPanel {
 			scrollPane.setWheelScrollingEnabled(true);
 			
 			pausingItems.add(scrollPane);
+			pausingItems.add(predictedInfoTable);
 			
 			Dimension spSize = new Dimension(400, 80);
 			scrollPane.setMinimumSize(spSize);
