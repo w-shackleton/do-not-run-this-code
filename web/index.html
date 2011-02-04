@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head profile="http://www.w3.org/2005/10/profile">
+
+		<title>
+			Pennybottle game
+		</title>
+
+		<meta http-equiv="content-type" content="application/xhtml+xml; charset=utf-8" />
+		<meta name="robots" content="index, follow" />
+
+
+		<meta name="description" content="Pennybottle game" />
+		<meta name="keywords" content="Pennybottle" />
+		<meta name="author" content="Will Shackleton" />
+
+		<link rel="shortcut icon" href="favicon.ico" />
+
+		<link href='http://fonts.googleapis.com/css?family=Droid+Serif:regular,bold' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Tinos' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="style.css" media="screen,projection" type="text/css" />
+
+	</head>
+
+	<body>
+		<div id="container">
+			<h1>Pennybottle game</h1>
+
+			<div id="lh">
+				<h2>Login</h2>
+				<script src="http://www.java.com/js/deployJava.js"></script>
+				<script> 
+					var attributes = { code:'pennygame.client.PennyClient', archive:'pennyclient.jar', width:200, height:200} ; 
+					var parameters = {jnlp_href: 'pennyclient.jnlp', server:'penny.ksa.uk.net'} ; 
+					deployJava.runApplet(attributes, parameters, '1.6'); 
+				</script>
+			</div>
+
+			<div id="info">
+				<h2>Info & Tutorial</h2>
+				<p>The asset which you will trade is a bottle of pennies that will appear in one of the class sessions. Although there is only one bottle, you may buy and sell many units each based on the value of this one bottle. The true value of this asset will be made known at the end of the game.</p>
+				
+				<h3>Checking your current wealth</h3>
+				<p>Initially everyone has a cash holding of £40000 and an asset holding of 100 units. As the game evolves, check your cash balance and current number of units held by clicking on the 'show my page' link (see below). Every time you buy from someone else, your account is debited with the appropriate amount of cash and your unit holdings increased by the amount you purchased. Every time you sell to someone else the reverse happens, your cash goes up and number of units held goes down. By establishing a price at which you could sell all your remaining units, you can estimate your total wealth by adding your estimated sale proceeds to your current cash balance, e.g. if you could sell all 100 units for 100p your total wealth would be your cash balance plus 10,000p (£100.00). At the end of the game when the exact price of a unit is known, this procedure will be used to determine who has the most cash and is therefore the winner. There may be a small prize for the winner but it will not reflect the amount of virtual money you have collected (all monetary amounts are strictly virtual)!</p>
+				
+				<h3>Posting buy quotes and sell quotes</h3>
+				<p>From your personal page, click on the 'make new quote' link and enter the necessary details on the form. This involves entering a prospective trade amount (e.g. 1 unit), trade price (e.g. 100 pence) and how long this quote will remain available before it expires. Any of your own quotes can be withdrawn manually at any time by clicking on your quote and either changing its details or deleting it. Once posted, if your quote is one of the best 10 available (lowest 5 sell quotes and highest 5 buy quotes) it will automatically appear on the 'list current quotes' page (see below). This does not guarantee a sale or purchase, this will only occur if another party accepts one of your quotes. You may post multiple quotes but the programme may show your best one or two or even none of them if other quotes are more competitive.</p>
+				
+				<h3>Accepting someone else's quote</h3>
+				<p>On the 'list current quotes' page, if you see a quote that you want to accept, simply click on that quote. It is up to you to decide which of competing quotes to accept, if any, although if you believe the price will rise you should try and buy units and if you think it will fall you should try and sell. If you click on a quote, you will be asked in a dialogue box to confirm that you really want to do what the quote described (clicking on a sell quote means you wish to purchase from the named counterparty and clicking on a buy quote means you wish to sell to them). Once you have accepted the trade, it cannot be cancelled and you will be able to confirm that your cash and unit details have been updated on your own details page. Once a quote has been accepted it will automatically disappear from the 'list current quotes' page allowing another competing quote onto the screen. The offeror can of course replace the quote with another should he or she wish to continue with their strategy.</p>
+				
+				<h3>Cash and short sale constraints</h3>
+				<p>You will be prevented from buying if you do not have sufficient cash to complete the purchase chosen. You will also be prevented from selling if you do not have sufficient units left in your inventory.</p>
+
+				<h3>Information</h3>
+				<p>At several points in the course, more information will be revealed about the penny bottle. Trading on the 'list current quotes' page is permitted at any time of day although trading is not permitted outside these penny market web pages since only trades completed here will be cleared through the accounts. You may post any items of interest on the webboard but it is the responsibility of each individual to verify the authenticity of all information.</p>
+				<p>Good luck and have fun!</p>
+				<p>Mark Shackleton</p>
+			</div>
+
+			<div id="footer">
+				<p>
+					<a href="admin.html">Admin</a>
+				</p>
+			</div>
+		</div>
+	</body>
+</html>

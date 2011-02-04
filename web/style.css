@@ -1,0 +1,123 @@
+* {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+
+/* END RESET */
+
+body {
+	margin: 10px auto 10px auto;
+	text-align: center;
+	font-family: 'Tinos', arial, serif;
+}
+
+a, a:link, a:visited, a:active {
+	color: #000080;
+	text-decoration: underline;
+}
+a:hover {
+	text-decoration: none;
+}
+
+h1 {
+	color: #361510;
+	font-family: 'Droid Serif', arial, serif;
+	font-size: 170%;
+	font-weight: bold;
+	margin: 20px 10px 10px 10px;
+	text-align: center;
+}
+
+#container {
+	width: 900px;
+	text-align: left;
+}
+
+#lh {
+	width: 300px;
+	float: left;
+	text-align: center;
+	padding: 100px 0 0 0;
+}
+
+#lh h2 {
+	color: #361510;
+	font-family: 'Droid Serif', arial, serif;
+	font-size: 120%;
+	margin: 0 0 10px 0;
+}
+
+#lh h3 {
+	color: #361510;
+	font-family: 'Droid Serif', arial, serif;
+	font-size: 110%;
+	margin: 0 0 10px 15px;
+	text-align: left;
+}
+
+#lh applet {
+	border: 1px black solid;
+	margin: 0 0 10px 0;
+}
+
+#loginform { /* Used on web admin page */
+	margin: 0 10px 0 10px;
+	padding: 20px 10px 20px 10px;
+	background-color: #EEEEEE;
+	text-align: left;
+}
+
+#loginform p, .submit {
+	margin: 5px 5px 5px 5px;
+}
+
+input {
+	padding: 1px;
+	margin: 0 0 0 5px;
+	border: 1px #361510 solid;
+}
+
+#loginform .wrongpassword {
+	padding: 0 0 0 80px;
+	color: #361510; 
+}
+
+#info {
+	width: 600px;
+	float: left;
+}
+
+#info h2 {
+	color: #361510;
+	font-family: 'Droid Serif', arial, serif;
+	font-size: 150%;
+	font-weight: bold;
+	margin: 10px 10px 5px 10px;
+}
+
+#info h3 {
+	color: #361510;
+	font-family: 'Droid Serif', arial, serif;
+	font-size: 130%;
+	margin: 1em 10px 5px 10px;
+}
+
+#info p {
+	font-family: 'Tinos', arial, serif;
+	line-height: 1.1em;
+	text-indent: 15px;
+	margin: 5px 0 0 0;
+}
+
+#footer {
+	clear: both;
+	font-family: 'Tinos', arial, serif;
+	width: 860px;
+	text-align: right;
+	margin: 0 20px 30px 20px;
+	padding: 20px 0 0 0;
+}
