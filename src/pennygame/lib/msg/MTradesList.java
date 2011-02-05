@@ -19,6 +19,10 @@ public class MTradesList extends PennyMessage {
 		this.minPennies = minPennies;
 		this.maxPennies = maxPennies;
 	}
+	
+	public MTradesList(LinkedList<ClosedQuote> trades) {
+		this(trades, 0, 0, 0, 0);
+	}
 
 	public LinkedList<ClosedQuote> getTrades() {
 		return trades;

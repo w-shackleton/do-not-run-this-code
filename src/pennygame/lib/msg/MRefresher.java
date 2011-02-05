@@ -17,7 +17,7 @@ public class MRefresher extends PennyMessage {
 	public static final int REF_MYQUOTES = 4;
 	
 	/**
-	 * Used by projector
+	 * Used by projector and the admin clients
 	 */
 	public static final int REF_PASTTRADES = 5;
 }
