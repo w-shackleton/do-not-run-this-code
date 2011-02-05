@@ -3,6 +3,7 @@ package pennygame.admin.queues;
 import pennygame.admin.AdminFrame;
 import pennygame.lib.clientutils.SConnMainThread.MsgBacks;
 import pennygame.lib.clientutils.SConnPushHandler;
+import pennygame.lib.msg.MTradesList;
 import pennygame.lib.msg.PennyMessage;
 import pennygame.lib.msg.adm.MAGameSetting;
 import pennygame.lib.msg.adm.MAUserList;
@@ -29,6 +30,11 @@ public class AdminSConnPushHandler extends SConnPushHandler {
 		if(cls.equals(MAUserList.class)) {
 			if(frame != null) {
 				frame.userTab.updateUserList(((MAUserList)msg).getUsers());
+			}
+		}
+		else if(cls.equals(MTradesList.class)) {
+			if(frame != null) {
+				frame.tradesTab.setPastTrades(((MTradesList)msg).getTrades());
 			}
 		}
 		

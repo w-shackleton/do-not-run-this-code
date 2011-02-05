@@ -20,6 +20,7 @@ import javax.swing.border.EmptyBorder;
 
 import pennygame.admin.queues.AdminSConn;
 import pennygame.admin.uiparts.OtherTab;
+import pennygame.admin.uiparts.PastTradesTab;
 import pennygame.admin.uiparts.UserTab;
 
 public final class AdminFrame extends JFrame implements WindowListener {
@@ -31,6 +32,7 @@ public final class AdminFrame extends JFrame implements WindowListener {
 	
 	public final UserTab userTab;
 	public final OtherTab otherTab;
+	public final PastTradesTab tradesTab;
 	
 	JTextField quoteTimeout, quoteNumber;
 
@@ -43,6 +45,7 @@ public final class AdminFrame extends JFrame implements WindowListener {
 		
 		userTab = new UserTab(this, serv);
 		otherTab = new OtherTab(this, serv);
+		tradesTab = new PastTradesTab(this, serv);
 		
 		serv.setParentFrame(this);
 		
@@ -134,6 +137,7 @@ public final class AdminFrame extends JFrame implements WindowListener {
 		// Initialise Tabs
 		tabs.addTab("Users", null, userTab, "Manage Users in the game");
 		tabs.addTab("Other", null, otherTab, "Other utilities");
+		tabs.addTab("Trade history", null, tradesTab, "Manage past trades");
 		
 		add(content);
 		

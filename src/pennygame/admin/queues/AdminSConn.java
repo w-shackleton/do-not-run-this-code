@@ -81,10 +81,15 @@ public class AdminSConn extends SConn<AdminSConnMainThread, AdminSConnPushHandle
 		this.frame = frame;
 		pushHandler.setParentFrame(frame);
 		mainThread.refreshUsers = true;
+		mainThread.refreshPastTrades = true;
 	}
 	
 	public void refreshUserList() {
 		mainThread.refreshUsers = true;
+	}
+	
+	public void refreshPastTrades() {
+		mainThread.refreshPastTrades = true;
 	}
 	
 	public void modifyUser(int userId, int action) {

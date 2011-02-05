@@ -16,7 +16,12 @@ public class AdminSConnMainThread extends SConnMainThread {
 			putMessage(new MRefresher(MRefresher.REF_USERLIST));
 			refreshUsers = false;
 		}
+		if(refreshPastTrades) {
+			putMessage(new MRefresher(MRefresher.REF_PASTTRADES));
+			refreshPastTrades = false;
+		}
 	}
 	
 	public boolean refreshUsers = false; // Request user list immediately
+	public boolean refreshPastTrades = false;
 }
