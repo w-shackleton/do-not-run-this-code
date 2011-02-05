@@ -113,6 +113,20 @@ input {
 	margin: 5px 0 0 0;
 }
 
+#info img {
+	margin: 15px auto 0 auto;
+	border: 1px #361510 solid;
+	text-align: center;
+	display: block;
+}
+
+#info .subtitle {
+	font-family: 'Tinos', arial, serif;
+	line-height: 1.1em;
+	text-align: center;
+	font-size: 80%;
+}
+
 #footer {
 	clear: both;
 	font-family: 'Tinos', arial, serif;
