@@ -37,7 +37,7 @@ h1 {
 }
 
 #container {
-	width: 900px;
+	width: 950px;
 	text-align: left;
 }
 
@@ -91,7 +91,7 @@ input {
 }
 
 #info {
-	width: 600px;
+	width: 500px;
 	float: left;
 }
 
@@ -129,6 +129,18 @@ input {
 	line-height: 1.1em;
 	text-align: center;
 	font-size: 80%;
+}
+
+#rh {
+	margin: 10px 0 0 50px;
+	width: 100px;
+	float: left;
+}
+
+#rh img {
+	display: block;
+	border: 0px;
+	margin: 5px 0 5px 0;
 }
 
 #footer {
