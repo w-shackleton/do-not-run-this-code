@@ -39,7 +39,7 @@ public class PasswordUtils {
 			int iters = GlobalPreferences.getSaltiterations();
 			for(int i = 0; i < iters; i++)
 			{
-				digest = md.digest(passwd);
+				digest = md.digest(digest);
 			}
 			System.out.println("Digested passwd, got " + Base64.encodeBytes(digest));
 			

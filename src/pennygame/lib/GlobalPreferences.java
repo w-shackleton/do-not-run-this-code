@@ -14,7 +14,7 @@ public final class GlobalPreferences {
 	private static final int keySize = 1024;
 	
 	private static final String salt = "FJDNnfjdjfduf789ud8ffkdnsfklDUOfn8dhfjkdnhs fdjsfhdsfuhdyf7d8hfjidH&y7fd8sy7fudnJFNsario78w4uy38hfnejknf4jn589234-4i9230iroempqjg8r9g07ur890gum890 h";
-	private static final int saltIterations = 200;
+	private static final int saltIterations = 100;
 	
 	private static final int quoteAcceptTimeout = 4;
 	

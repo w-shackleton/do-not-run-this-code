@@ -9,6 +9,7 @@ public class MTCancelResponse extends MTCancel {
 	 */
 	public static final int RESPONSE_OK = 0;
 	public static final int RESPONSE_ALREADY_TAKEN = 1;
+	public static final int RESPONSE_GAME_PAUSED = 2;
 	
 	private final int response;
 
