@@ -10,13 +10,13 @@ import pennygame.server.client.CMulticaster;
 import pennygame.server.client.Clients;
 import pennygame.server.db.DBManager;
 import pennygame.server.db.GameUtils;
-import pennygame.server.projector.ProjectionServer;
+import pennygame.server.projector.ProjectorServer;
 
 
 public class PennyServer {
 	static Clients clients;
 	static AdminServer admin;
-	static ProjectionServer projector;
+	static ProjectorServer projector;
 	static DBManager db;
 	static CMulticaster multicast;
 	
@@ -91,7 +91,7 @@ public class PennyServer {
 		
 		System.out.println("Projector...");
 		try {
-			projector = new ProjectionServer(gameUtils, SettingsLoader.getListenAddress(), SettingsLoader.getProjectorListenPort(), SettingsLoader.getProjectorEncryptedPassword());
+			projector = new ProjectorServer(gameUtils, SettingsLoader.getListenAddress(), SettingsLoader.getProjectorListenPort(), SettingsLoader.getProjectorEncryptedPassword());
 		} catch (IOException e1) {
 			System.out.println("Couldn't create projector socket. Bye!!");
 			e1.printStackTrace();

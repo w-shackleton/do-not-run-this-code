@@ -8,12 +8,12 @@ import pennygame.server.db.GameUtils;
 
 public class ProjectorConn extends
 		QueuePair<ProjectorConnMainThread, ProjectorConnPushHandler> {
-	final ProjectionServer parent;
+	final ProjectorServer parent;
 	final GameUtils gameUtils;
 	final String pass;
 
-	public ProjectorConn(Socket sock, ProjectionServer parent, GameUtils gameUtils, String projectorPass) {
-		super(sock, -1);
+	public ProjectorConn(Socket sock, ProjectorServer parent, int id, GameUtils gameUtils, String projectorPass) {
+		super(sock, id);
 		this.parent = parent;
 		this.gameUtils = gameUtils;
 		this.pass = projectorPass;
@@ -38,7 +38,7 @@ public class ProjectorConn extends
 	@Override
 	public synchronized void onConnectionLost() {
 		super.onConnectionLost();
-		parent.onSessionEnd(); // Tell parent to delete me (to be gc'd)!
+		parent.onClientEnd(this);
 	}
 	
 	public void refreshTradeGraph() {

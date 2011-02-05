@@ -50,7 +50,7 @@ public final class Clients extends Thread {
 					Socket sock = serv.accept();
 					
 					CConn client = new CConn(sock, this, topId, gameUtils);
-					clients.putIfAbsent(topId++, client);
+					clients.put(topId++, client);
 					client.start(); // Start!
 					System.out.println("Client connected, starting next...");
 					

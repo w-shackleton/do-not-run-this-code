@@ -12,8 +12,8 @@ public class AdminConn extends
 	final GameUtils gameUtils;
 	final String adminPass;
 
-	public AdminConn(Socket sock, AdminServer parent, GameUtils gameUtils, String adminPass) {
-		super(sock, -1);
+	public AdminConn(Socket sock, AdminServer parent, int id, GameUtils gameUtils, String adminPass) {
+		super(sock, id);
 		this.parent = parent;
 		this.gameUtils = gameUtils;
 		this.adminPass = adminPass;
@@ -38,6 +38,6 @@ public class AdminConn extends
 	@Override
 	public synchronized void onConnectionLost() {
 		super.onConnectionLost();
-		parent.onSessionEnd(); // Tell parent to delete me (to be gc'd)!
+		parent.onClientEnd(this);
 	}
 }
