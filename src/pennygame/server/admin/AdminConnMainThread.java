@@ -82,6 +82,14 @@ public class AdminConnMainThread extends MainThread {
 			}
 		}
 		
+		public void refreshPastTrades() {
+			try {
+				putMessage(gameUtils.quotes.getDetailedTradeHistory());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		public void sendQuoteTimeout(int timeout) {
 			putMessage(new MAGameSetting(false, MAGameSetting.WHAT_QUOTE_TIMEOUT, timeout));
 		}

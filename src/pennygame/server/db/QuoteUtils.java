@@ -31,7 +31,7 @@ public final class QuoteUtils {
 	
 	private final PreparedStatement putQuoteStatement, getOpenQuotesStatement, getUserClosedTradesStatement, getUserOpenQuotesStatement, getUserMoneyStatement;
 	private final PreparedStatement getQuoteInfoStatement, requestQuoteLockStatement, acceptLockedQuoteStatement, declineLockedQuoteStatement, acceptLockQuoteUpdateMyMoney, acceptLockQuoteUpdateOtherMoney, cancelQuoteStatement;
-	private final PreparedStatement getTradeHistoryStatement, getTradeHistoryRangeStatement;
+	private final PreparedStatement getTradeHistoryStatement, getAllTradeHistoryStatement, getDetailedTradeHistoryStatement, getTradeHistoryRangeStatement;
 	private final CMulticaster multicast;
 	
 	protected final QuotePurger quotePurger;
@@ -123,6 +123,8 @@ public final class QuoteUtils {
 		cancelQuoteStatement = conn.prepareStatement(
 				"UPDATE quotes SET status='cancelled', timeaccepted=NOW() WHERE id=? AND status='open' AND idfrom=? AND lockid IS NULL;");
 		
+		getDetailedTradeHistoryStatement = miscDataGetConn.prepareStatement("SELECT * FROM detailedtradehistory;");
+		getAllTradeHistoryStatement = miscDataGetConn.prepareStatement("SELECT * FROM tradehistory;");
 		getTradeHistoryStatement = miscDataGetConn.prepareStatement("SELECT * FROM tradehistory WHERE timecreated > TIMESTAMPADD(MINUTE, ?, NOW());");
 		getTradeHistoryRangeStatement = miscDataGetConn.prepareStatement(
 				"SELECT MIN(timecreated) AS mintime, MAX(timeaccepted) AS maxtime, MIN(pennies) AS minpennies, MAX(pennies) AS maxpennies " +
@@ -428,45 +430,63 @@ public final class QuoteUtils {
 	private int tradeHistoryMinutes = 120;
 	
 	/**
-	 * Gets the history of trades for the projector graph
-	 * @return An {@link MTradesList} containing the complete list of trades
+	 * Gets the history of trades for the projector graph and admin
+	 * @return An {@link MTradesList} containing the complete list of recent trades
 	 * @throws SQLException
 	 */
-	public synchronized MTradesList getTradeHistory() throws SQLException {
+	public MTradesList getTradeHistory() throws SQLException {
+		return getTradeHistory(false);
+	}
+	
+	/**
+	 * Gets the history of trades for the projector graph and admin
+	 * @param allTrades If true, returns all trades, otherwise just recent ones
+	 * @return An {@link MTradesList} containing the complete list of recent, or all trades
+	 * @throws SQLException
+	 */
+	public synchronized MTradesList getTradeHistory(final boolean allTrades) throws SQLException {
+		long minTime = 0, maxTime = 0;
+		int minPennies = 0, maxPennies = 0;
 		
-		long minTime, maxTime;
-		int minPennies, maxPennies;
-		getTradeHistoryRangeStatement.setInt(1, -tradeHistoryMinutes);
-		ResultSet range = getTradeHistoryRangeStatement.executeQuery();
-		if(!range.next()) {
-			minTime = 1296208819 * 1000; // Just blank values to stop graph going weird.
-			maxTime = 1296208919 * 1000;
-			minPennies = 100;
-			maxPennies = 200;
-		} else {
-			minPennies = range.getInt("minpennies");
-			maxPennies = range.getInt("maxpennies");
-			try {
-				minTime = range.getTimestamp("mintime").getTime();
-				maxTime = range.getTimestamp("maxtime").getTime();
-			} catch(NullPointerException e) { // No rows
+		if(!allTrades) {
+			getTradeHistoryRangeStatement.setInt(1, -tradeHistoryMinutes);
+			ResultSet range = getTradeHistoryRangeStatement.executeQuery();
+			if(!range.next()) {
 				minTime = 1296208819 * 1000; // Just blank values to stop graph going weird.
 				maxTime = 1296208919 * 1000;
 				minPennies = 100;
 				maxPennies = 200;
+			} else {
+				minPennies = range.getInt("minpennies");
+				maxPennies = range.getInt("maxpennies");
+				try {
+					minTime = range.getTimestamp("mintime").getTime();
+					maxTime = range.getTimestamp("maxtime").getTime();
+				} catch(NullPointerException e) { // No rows
+					minTime = 1296208819 * 1000; // Just blank values to stop graph going weird.
+					maxTime = 1296208919 * 1000;
+					minPennies = 100;
+					maxPennies = 200;
+				}
+			}
+			
+			if(maxPennies - minPennies < 10) { // This causes graph problems
+				maxPennies = minPennies + 10;
+			}
+			if(maxTime - minTime < 10000) {
+				maxTime = minTime + 10000;
 			}
 		}
 		
-		if(maxPennies - minPennies < 10) { // This causes graph problems
-			maxPennies = minPennies + 10;
-		}
-		if(maxTime - minTime < 10000) {
-			maxTime = minTime + 10000;
+		ResultSet rs;
+		if(allTrades) {
+			rs = getAllTradeHistoryStatement.executeQuery();
+		} else {
+			getTradeHistoryStatement.setInt(1, -tradeHistoryMinutes);
+			rs = getTradeHistoryStatement.executeQuery();
 		}
 		
 		LinkedList<ClosedQuote> trades = new LinkedList<ClosedQuote>();
-		getTradeHistoryStatement.setInt(1, -tradeHistoryMinutes);
-		ResultSet rs = getTradeHistoryStatement.executeQuery();
 		while(rs.next()) {
 			int type = rs.getString("type").equals("buy") ? ClosedQuote.TYPE_BUY : ClosedQuote.TYPE_SELL;
 			
@@ -479,6 +499,25 @@ public final class QuoteUtils {
 		}
 		
 		return new MTradesList(trades, minTime, maxTime, minPennies, maxPennies);
+	}
+	
+	public MTradesList getDetailedTradeHistory() throws SQLException {
+		ResultSet rs;
+		rs = getDetailedTradeHistoryStatement.executeQuery();
+		
+		LinkedList<ClosedQuote> trades = new LinkedList<ClosedQuote>();
+		while(rs.next()) {
+			int type = rs.getString("type").equals("buy") ? ClosedQuote.TYPE_BUY : ClosedQuote.TYPE_SELL;
+			
+			int finishReason = ClosedQuote.FINISH_CLOSED;
+			String status = rs.getString("status");
+			if(status.equals("closed")) finishReason = ClosedQuote.FINISH_CLOSED;
+			if(status.equals("cancelled")) finishReason = ClosedQuote.FINISH_CANCELLED;
+			if(status.equals("timeout")) finishReason = ClosedQuote.FINISH_TIMEOUTED;
+			trades.add(new ClosedQuote(rs.getInt("id"), type, rs.getString("fromname"), rs.getString("toname"), rs.getInt("pennies"), rs.getInt("bottles"), rs.getTimestamp("timeaccepted"), rs.getTimestamp("timecreated"), finishReason));
+		}
+		
+		return new MTradesList(trades);
 	}
 	
 	public void pushTradeHistory() throws SQLException {

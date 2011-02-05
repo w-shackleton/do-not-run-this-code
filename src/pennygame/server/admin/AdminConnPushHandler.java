@@ -71,10 +71,8 @@ public class AdminConnPushHandler extends PushHandler {
 			byte[] hashText = PasswordUtils.decryptPassword(adminMsgBacks.getPrivateKey(), usrReq.newPassword);
 
 			try {
-				System.out.println("222");
 				gameUtils.users.createUser(usrReq.user.getUsername(), hashText, usrReq.user.getPennies(),
 						usrReq.user.getBottles());
-				System.out.println("222");
 			} catch (SQLException e) {
 				System.out.println("Couldn't create user!");
 				e.printStackTrace();
@@ -86,6 +84,9 @@ public class AdminConnPushHandler extends PushHandler {
 			switch (what) {
 			case MRefresher.REF_USERLIST:
 				adminMsgBacks.refreshUserList();
+				break;
+			case MRefresher.REF_PASTTRADES:
+				adminMsgBacks.refreshPastTrades();
 				break;
 			}
 		} else if (cls.equals(MAUserModifyRequest.class)) {

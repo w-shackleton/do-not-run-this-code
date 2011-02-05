@@ -95,6 +95,7 @@ public class DBManager extends LoopingThread {
 		Statement stat = conn.createStatement();
 		stat.executeUpdate("drop table if exists users;");
 		stat.executeUpdate("drop table if exists quotes;");
+		stat.executeUpdate("drop table if exists worthguess;");
 
 		initialiseDB();
 	}
@@ -141,6 +142,10 @@ public class DBManager extends LoopingThread {
 				"CREATE OR REPLACE VIEW tradehistory AS " +
 				"SELECT id, status, type, pennies, bottles, timecreated, timeaccepted FROM quotes " +
 				"WHERE status!='open'");
+		stat.executeUpdate(
+				"CREATE OR REPLACE VIEW detailedtradehistory AS " +
+				"SELECT quotes.id AS id, quotes.status, quotes.type, userfrom.friendlyname AS fromname, userto.friendlyname AS toname, quotes.pennies, quotes.bottles, timecreated, timeaccepted FROM quotes " +
+				"LEFT JOIN users AS userfrom ON idfrom=userfrom.id LEFT JOIN users AS userto ON idto=userto.id WHERE quotes.status='closed' ORDER BY quotes.id;");
 	}
 
 	public Connection getConnection() {
