@@ -83,12 +83,18 @@ public class CSConnPushHandler extends SConnPushHandler {
 			case MTAcceptResponse.ACCEPT_QUOTE_NOMONEY:
 				frame.notifyUserOfError("Not enough money to accept quote");
 				break;
+			case MTAcceptResponse.ACCEPT_QUOTE_GAME_PAUSED:
+				frame.notifyUserOfError("Game paused");
+				break;
 			}
 		}
 		else if(cls.equals(MTCancelResponse.class)) {
 			MTCancelResponse cMsg = (MTCancelResponse) msg;
 			if(cMsg.getResponse() == MTCancelResponse.RESPONSE_ALREADY_TAKEN) {
 				frame.notifyUserOfError("Quote already taken whilst trying to cancel");
+			}
+			else if(cMsg.getResponse() == MTCancelResponse.RESPONSE_GAME_PAUSED) {
+				frame.notifyUserOfError("Game Paused");
 			}
 		}
 	}

@@ -59,7 +59,7 @@ public class RightPane extends JPanel {
 			changeMyName.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					String newName = JOptionPane.showInputDialog(RightPane.this.parent, "Please enter a new name", userInfo.getFriendlyname());
+					String newName = JOptionPane.showInputDialog(RightPane.this.parent, "Please enter a new name", userInfo.getFriendlyname()).replaceAll(" ", "");
 					if(newName.length() > 3) {
 						RightPane.this.serv.changeMyName(newName); // Change my new name, this will trigger the quote list to refresh
 						myName.setText(FRIENDLYNAME_TEXT + newName);
