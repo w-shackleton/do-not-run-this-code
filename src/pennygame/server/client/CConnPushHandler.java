@@ -133,8 +133,7 @@ public class CConnPushHandler extends PushHandler {
 			case MTAcceptResponse.ACCEPT_QUOTE_SUCCESS:
 				break;
 			case MTAcceptResponse.ACCEPT_QUOTE_FAIL:
-				cConnMsgBacks.sendQuoteAcceptResponse(tMsg.getQuoteId(), retVal);
-				break;
+			case MTAcceptResponse.ACCEPT_QUOTE_GAME_PAUSED:
 			case MTAcceptResponse.ACCEPT_QUOTE_NOMONEY:
 				cConnMsgBacks.sendQuoteAcceptResponse(tMsg.getQuoteId(), retVal);
 				break;
@@ -153,6 +152,9 @@ public class CConnPushHandler extends PushHandler {
 			try {
 				int status = gameUtils.quotes.cancelOpenQuote(user.getId(), ((MTCancel)msg).getQuoteId());
 				if(status == MTCancelResponse.RESPONSE_ALREADY_TAKEN) {
+					cConnMsgBacks.sendQuoteCancelFailResponse(((MTCancel)msg).getQuoteId(), status);
+				}
+				else if(status == MTCancelResponse.RESPONSE_GAME_PAUSED) {
 					cConnMsgBacks.sendQuoteCancelFailResponse(((MTCancel)msg).getQuoteId(), status);
 				}
 				else {

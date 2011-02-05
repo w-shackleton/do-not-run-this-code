@@ -28,7 +28,7 @@ public class GameUtils {
 	public GameUtils(Connection conn, Connection quoteAcceptingConn, Connection miscDataConn, Connection[] connPool, CMulticaster multicast) throws SQLException {
 		this.conn = conn;
 		this.multicast = multicast;
-		this.quotes = new QuoteUtils(conn, quoteAcceptingConn, miscDataConn, connPool, multicast);
+		this.quotes = new QuoteUtils(conn, quoteAcceptingConn, miscDataConn, connPool, multicast, this);
 		this.users = new UserUtils(conn, quotes);
 	}
 

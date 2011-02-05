@@ -38,6 +38,8 @@ public final class QuoteUtils {
 	
 	private final Connection quoteAcceptingConn;
 	
+	private final GameUtils gameUtils;
+	
 	/**
 	 * A map of users' guesses at the bottle's worth. This is also stored in the DB, and is stored here for ease of access
 	 */
@@ -52,10 +54,11 @@ public final class QuoteUtils {
 	 * @param multicast
 	 * @throws SQLException
 	 */
-	QuoteUtils(Connection conn, Connection quoteAcceptingConn, Connection miscDataGetConn, Connection[] connPool, CMulticaster multicast) throws SQLException {
+	QuoteUtils(Connection conn, Connection quoteAcceptingConn, Connection miscDataGetConn, Connection[] connPool, CMulticaster multicast, GameUtils gameUtils) throws SQLException {
 		this.multicast = multicast;
 		this.quotePurger = new QuotePurger(conn);
 		this.quoteAcceptingConn = quoteAcceptingConn;
+		this.gameUtils = gameUtils;
 		
 		{
 			userWorthGuesses = new ConcurrentHashMap<Integer, Integer>();
@@ -136,6 +139,7 @@ public final class QuoteUtils {
 	 * @return true if succesful, false if not
 	 */
 	public synchronized boolean putQuote(int type, int userId, int pennies, int bottles) throws SQLException {
+		if(gameUtils.isGamePaused()) return false;
 		LinkedList<PB> money = getUserMoney(userId); // Estimated worth doesn't matter here
 		// We want items 2 and 3 (potential money)
 		
@@ -351,6 +355,7 @@ public final class QuoteUtils {
 	 */
 	public synchronized int acceptLockedQuote(int userId, int quoteId, boolean accept) throws SQLException {
 		if(accept) {
+			if(gameUtils.isGamePaused()) return MTAcceptResponse.ACCEPT_QUOTE_GAME_PAUSED;
 			OpenQuote q = getQuoteInfo(quoteId);
 			if(q == null) return MTAcceptResponse.ACCEPT_QUOTE_FAIL; // Get info about quote
 			
@@ -405,6 +410,8 @@ public final class QuoteUtils {
 	}
 	
 	public synchronized int cancelOpenQuote(int userId, int quoteId) throws SQLException {
+		if(gameUtils.isGamePaused()) return MTCancelResponse.RESPONSE_GAME_PAUSED;
+		
 		cancelQuoteStatement.setInt(1, quoteId);
 		cancelQuoteStatement.setInt(2, userId);
 		
