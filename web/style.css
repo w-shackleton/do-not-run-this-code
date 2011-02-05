@@ -13,6 +13,10 @@ body {
 	margin: 10px auto 10px auto;
 	text-align: center;
 	font-family: 'Tinos', arial, serif;
+
+	/* background-image: url('images/1phfaded.png');
+	background-repeat: no-repeat;
+	background-position: right top; */
 }
 
 a, a:link, a:visited, a:active {
