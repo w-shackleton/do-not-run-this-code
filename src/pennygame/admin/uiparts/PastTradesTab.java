@@ -5,12 +5,15 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.text.DateFormat;
 import java.util.LinkedList;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -78,7 +81,7 @@ public class PastTradesTab extends JPanel {
 			pastTradesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			
 			pastTradesTable.setFillsViewportHeight(true);
-			// pastTradesTable.addMouseListener(openQuotesClickListener);
+			pastTradesTable.addMouseListener(pastTradesClickListener);
 			
 			pastTradesTable.setMinimumSize(pastTradesTable.getPreferredSize());
 			
@@ -190,6 +193,26 @@ public class PastTradesTab extends JPanel {
 			}
 			
 			return c;
+		}
+	};
+	
+	protected MouseListener pastTradesClickListener = new MouseListener() {
+		@Override public void mouseReleased(MouseEvent e) { }
+		@Override public void mousePressed(MouseEvent e) { }
+		@Override public void mouseExited(MouseEvent e) { }
+		@Override public void mouseEntered(MouseEvent e) { }
+		
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			int row = pastTradesTable.getSelectedRow();
+			ClosedQuote quote = pastTrades.get(row);
+			if(quote == null) return;
+			
+			if(JOptionPane.showConfirmDialog(parent, "<html><p>Undo quote with <b>" + Math.abs(quote.getBottles()) + "</b> bottles @ <b>" +
+					quote.getPennies() + "</b> ppb = <b>" + Math.abs(quote.getValue()) + "</b> pennies,</p>" +
+							"<p>From <b>" + quote.getFromName() + "</b> to <b>" + quote.getToName() + "</b>?</p></html>", "Confirm undo?", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+				serv.undoTrade(quote.getId());
+			}
 		}
 	};
 	

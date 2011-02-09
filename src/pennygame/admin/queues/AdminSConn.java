@@ -7,6 +7,7 @@ import pennygame.lib.clientutils.SConn;
 import pennygame.lib.ext.PasswordUtils;
 import pennygame.lib.msg.adm.MAGamePause;
 import pennygame.lib.msg.adm.MAGameSetting;
+import pennygame.lib.msg.adm.MAUndoTrade;
 import pennygame.lib.msg.adm.MAUserAdd;
 import pennygame.lib.msg.adm.MAUserModifyRequest;
 import pennygame.lib.msg.data.User;
@@ -133,5 +134,13 @@ public class AdminSConn extends SConn<AdminSConnMainThread, AdminSConnPushHandle
 	
 	public void resetGame() {
 		sendMessage(new MAGameSetting(true, MAGameSetting.WHAT_RESET_GAME, null));
+	}
+	
+	/**
+	 * Reverses a trade (undoes it).
+	 * @param tradeId
+	 */
+	public void undoTrade(int tradeId) {
+		sendMessage(new MAUndoTrade(tradeId));
 	}
 }
