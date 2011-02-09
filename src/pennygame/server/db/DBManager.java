@@ -16,7 +16,7 @@ public class DBManager extends LoopingThread {
 	public DBManager(String server, String database, String username, String password) throws SQLException {
 		super("DB Mgmt");
 		
-		String dbUrl = "jdbc:mysql://" + server + "/" + database;
+		String dbUrl = "jdbc:mysql://" + server + "/" + database + "?autoReconnect=true";
 		
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -76,6 +76,11 @@ public class DBManager extends LoopingThread {
 			
 			stat = miscDataConn.createStatement();
 			stat.executeQuery("SELECT 0;"); // Keepalive
+			
+			for(Connection c : connectionPool) {
+				stat = c.createStatement();
+				stat.executeQuery("SELECT 0;"); // Keepalive
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
