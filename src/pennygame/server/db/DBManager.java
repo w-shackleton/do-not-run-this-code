@@ -119,7 +119,7 @@ public class DBManager extends LoopingThread {
 				") TYPE=INNODB;");
 		stat.executeUpdate("CREATE TABLE IF NOT EXISTS quotes (" +
 				"id INT(32) UNSIGNED PRIMARY KEY AUTO_INCREMENT," +
-				"status ENUM('open', 'closed', 'cancelled', 'timeout') NOT NULL DEFAULT 'open'," +
+				"status ENUM('open', 'closed', 'cancelled', 'timeout', 'undone') NOT NULL DEFAULT 'open'," +
 				"type ENUM('buy', 'sell') NOT NULL," +
 				"idfrom INT(16) UNSIGNED NOT NULL," +
 				"idto   INT(16) NULL," +

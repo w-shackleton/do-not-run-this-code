@@ -9,6 +9,7 @@ import pennygame.lib.msg.MRefresher;
 import pennygame.lib.msg.PennyMessage;
 import pennygame.lib.msg.adm.MAGamePause;
 import pennygame.lib.msg.adm.MAGameSetting;
+import pennygame.lib.msg.adm.MAUndoTrade;
 import pennygame.lib.msg.adm.MAUserAdd;
 import pennygame.lib.msg.adm.MAUserModifyRequest;
 import pennygame.lib.queues.NetReceiver;
@@ -155,6 +156,14 @@ public class AdminConnPushHandler extends PushHandler {
 				else
 					adminMsgBacks.sendTradeGraphMinutes(gameUtils.quotes.getTradeHistoryMinutes());
 				break;
+			}
+		} else if(cls.equals(MAUndoTrade.class)) {
+			try {
+				gameUtils.quotes.undoClosedTrade(((MAUndoTrade)msg).getTradeId());
+				adminMsgBacks.refreshPastTrades();
+				adminMsgBacks.refreshUserList();
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 		}
 	}

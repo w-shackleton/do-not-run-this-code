@@ -30,8 +30,9 @@ import pennygame.server.client.CMulticaster;
 public final class QuoteUtils {
 	
 	private final PreparedStatement putQuoteStatement, getOpenQuotesStatement, getUserClosedTradesStatement, getUserOpenQuotesStatement, getUserMoneyStatement;
-	private final PreparedStatement getQuoteInfoStatement, requestQuoteLockStatement, acceptLockedQuoteStatement, declineLockedQuoteStatement, acceptLockQuoteUpdateMyMoney, acceptLockQuoteUpdateOtherMoney, cancelQuoteStatement;
+	private final PreparedStatement getQuoteInfoStatement, getTradeInfoStatement, requestQuoteLockStatement, acceptLockedQuoteStatement, declineLockedQuoteStatement, acceptLockQuoteUpdateMyMoney, acceptLockQuoteUpdateOtherMoney, cancelQuoteStatement;
 	private final PreparedStatement getTradeHistoryStatement, getAllTradeHistoryStatement, getDetailedTradeHistoryStatement, getTradeHistoryRangeStatement;
+	private final PreparedStatement undoTradeStatement, undoTradeUpdateUserToStatement, undoTradeUpdateUserFromStatement, undoTradeGetInfoStatement;
 	private final CMulticaster multicast;
 	
 	protected final QuotePurger quotePurger;
@@ -109,6 +110,9 @@ public final class QuoteUtils {
 				"SELECT quotes.id, quotes.type, users.friendlyname AS fromname, quotes.idfrom, quotes.pennies, " +
 				"quotes.bottles, quotes.bottles * CAST(quotes.pennies AS SIGNED) AS value, quotes.timecreated AS time " +
 				"FROM quotes, users WHERE quotes.idfrom = users.id AND quotes.id=?;");
+		getTradeInfoStatement = connPool[2].prepareStatement(
+				"SELECT * FROM detailedtradehistory WHERE id=?;");
+		
 		requestQuoteLockStatement = connPool[2].prepareStatement(
 				"UPDATE quotes SET lockid=?, timeaccepted=NOW() WHERE id=? AND status='open' AND lockid IS NULL;");
 		
@@ -129,6 +133,13 @@ public final class QuoteUtils {
 		getTradeHistoryRangeStatement = miscDataGetConn.prepareStatement(
 				"SELECT MIN(timecreated) AS mintime, MAX(timeaccepted) AS maxtime, MIN(pennies) AS minpennies, MAX(pennies) AS maxpennies " +
 				"FROM quotes WHERE timecreated > TIMESTAMPADD(MINUTE, ?, NOW());");
+		
+		undoTradeStatement = connPool[1].prepareStatement("UPDATE quotes SET status='undone' WHERE id=?");
+		undoTradeUpdateUserFromStatement = connPool[1].prepareStatement(
+				"UPDATE users SET bottles=bottles - ?, pennies=pennies + ? WHERE id=?;");
+		undoTradeUpdateUserToStatement = connPool[1].prepareStatement(
+				"UPDATE users SET bottles=bottles + ?, pennies=pennies - ? WHERE id=?;");
+		undoTradeGetInfoStatement = connPool[1].prepareStatement("SELECT idfrom, idto, bottles, pennies FROM quotes WHERE id=?;");
 	}
 	
 	/**
@@ -233,6 +244,18 @@ public final class QuoteUtils {
 		ResultSet rs = getQuoteInfoStatement.executeQuery();
 		while(rs.next()) {
 			return new OpenQuote(id, rs.getString("type").equals("buy") ? OpenQuote.TYPE_BUY : OpenQuote.TYPE_SELL, rs.getString("fromname"), rs.getInt("idfrom"), rs.getInt("pennies"), rs.getInt("bottles"), rs.getTimestamp("time"));
+		}
+		return null;
+	}
+	
+	public synchronized ClosedQuote getTradeInfo(int id) throws SQLException {
+		getTradeInfoStatement.setInt(1, id);
+		ResultSet rs = getQuoteInfoStatement.executeQuery();
+		while(rs.next()) {
+			int t = 0;
+			if(rs.getString("type").equals("buy")) t = ClosedQuote.TYPE_BUY;
+			else t = ClosedQuote.TYPE_SELL;
+			return new ClosedQuote(rs.getInt("id"), t, rs.getString("fromname"), rs.getString("toname"), rs.getInt("pennies"), rs.getInt("bottles"), rs.getTimestamp("time"));
 		}
 		return null;
 	}
@@ -425,6 +448,30 @@ public final class QuoteUtils {
 		projectorGraphPush++;
 		
 		return MTCancelResponse.RESPONSE_OK;
+	}
+	
+	public synchronized void undoClosedTrade(int tradeId) throws SQLException {
+		undoTradeGetInfoStatement.setInt(1, tradeId);
+		ResultSet rs = undoTradeGetInfoStatement.executeQuery();
+		if(rs.next()) {
+			int idfrom = rs.getInt("idfrom");
+			int idto = rs.getInt("idto");
+			int bottles = rs.getInt("bottles");
+			int value = bottles * rs.getInt("pennies");
+			
+			undoTradeStatement.setInt(1, tradeId); // Update trade
+			undoTradeStatement.executeUpdate();
+			
+			undoTradeUpdateUserFromStatement.setInt(1, bottles); // Update user 1
+			undoTradeUpdateUserFromStatement.setInt(2, value);
+			undoTradeUpdateUserFromStatement.setInt(3, idfrom);
+			undoTradeUpdateUserFromStatement.executeUpdate();
+			
+			undoTradeUpdateUserToStatement.setInt(1, bottles); // Update user 2
+			undoTradeUpdateUserToStatement.setInt(2, value);
+			undoTradeUpdateUserToStatement.setInt(3, idto);
+			undoTradeUpdateUserToStatement.executeUpdate();
+		}
 	}
 	
 	private int tradeHistoryMinutes = 120;
