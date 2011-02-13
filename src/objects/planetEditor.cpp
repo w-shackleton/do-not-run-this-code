@@ -22,9 +22,10 @@ END_EVENT_TABLE()
 
 #define BUTTON_ID_START (wxID_HIGHEST + 10)
 
-PlanetEditor::PlanetEditor(wxWindow* parent, int &type) :
+PlanetEditor::PlanetEditor(wxWindow* parent) :
 	wxDialog(parent, -1, _("Edit Planet")),
-	type(type)
+	type(0),
+	tempType(0)
 {
 	planetShadow = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("planet-s.png"));
 	if(planetShadow == NULL)
@@ -43,7 +44,7 @@ PlanetEditor::PlanetEditor(wxWindow* parent, int &type) :
 	// This is the list in planet.hpp
 	for(int i = 0; i < planetTypes.size(); i++)
 	{
-		wxBitmapButton *b1 = new wxBitmapButton(this, BUTTON_ID_START + planetTypes[i].id, createPlanetBitmap(planetTypes[i].filename, planetTypes[i].density, planetTypes[i].bounciness, planetTypes[i].bgCol));
+		wxBitmapButton *b1 = new wxBitmapButton(this, BUTTON_ID_START + i, createPlanetBitmap(planetTypes[i].filename, planetTypes[i].density, planetTypes[i].bounciness, planetTypes[i].bgCol));
 
 		b1->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PlanetEditor::OnPlanetSelect));
 
@@ -51,6 +52,17 @@ PlanetEditor::PlanetEditor(wxWindow* parent, int &type) :
 	}
 
 	vsizer->Add(grid);
+
+	// Current planet selection
+	wxBoxSizer *pSizer = new wxBoxSizer(wxHORIZONTAL);
+
+//	wxStaticText *pText = new wxStaticText(this, -1, _("Current planet:"));
+//	pSizer->Add(pText, 0, wxEXPAND | wxALIGN_CENTRE_VERTICAL);
+
+//	ppanel = new PlanetPanel(this, GetBackgroundColour()); // Not working, so don't use
+//	ppanel->SetPlanet(planetTypes[0].id);
+//	pSizer->Add(ppanel);
+	vsizer->Add(pSizer, 0, wxALL, 5);
 
 	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
 	hsizer->Add(new wxButton(this, ID_Cancel_click, _("&Cancel")), 1, wxEXPAND);
@@ -69,17 +81,18 @@ void PlanetEditor::OnCancel(wxCommandEvent& event)
 
 void PlanetEditor::OnOk(wxCommandEvent& event)
 {
-	type = tempType;
+	cout << type << "THISTHIS2" << endl;
+	// type = tempType;
 	EndModal(0);
 }
 
 void PlanetEditor::OnPlanetSelect(wxCommandEvent& event)
 {
+//	ppanel->SetPlanet(event.GetId() - BUTTON_ID_START);
 //	tempType = planetTypes[event.GetId() - BUTTON_ID_START].id;
-//	for(int i = 0; i < bitmaps.size(); i++)
-		//bitmaps[i].select(false); // Deselect all previous
-
-//	((PlanetBitmap *)event.GetEventObject())->select();
+	tempType = event.GetId() - BUTTON_ID_START;
+	type = event.GetId() - BUTTON_ID_START;
+	cout << type << "THISTHIS" << endl;
 }
 
 wxBitmap PlanetEditor::createPlanetBitmap(std::string picture, double density, double bounciness, Misc::Colour&col, int width, int height)
@@ -168,5 +181,46 @@ wxBitmap PlanetEditor::createPlanetBitmap(std::string picture, double density, d
 
 	// This goes cairo->data->wxImage->wxBitmap->wxMemoryDC->wxBitmap! (memory efficient much!)
 	return wxBitmap(wxImage(width, height, data));
+}
+
+PlanetPanel::PlanetPanel(wxWindow *window, wxColour bgCol) :
+	CairoPanel(window, wxSize(100, 100)),
+	bgCol(bgCol)
+{
+	shadow = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("planet-s.png"));
+}
+
+void PlanetPanel::SetPlanet(int id)
+{
+//	wxSize sz;
+//	wxSizeEvent evt(sz);
+//	sizeEvent(evt); // clear?
+	cout << Misc::Data::getFilePath(planetTypes.begin()->filename) << "LOLOL" <<  endl;
+	imgFName = string(Misc::Data::getFilePath(string(planetTypes.begin()->filename)));
+
+	for(vector<PlanetType>::iterator it = planetTypes.begin(); it != planetTypes.end(); it++)
+		if(it->id == id)
+		{
+			imgFName = Misc::Data::getFilePath(it->filename);
+		}
+	redraw();
+}
+
+void PlanetPanel::redraw_draw()
+{
+	cr->set_source_rgb(bgCol.Red() / 256.0, bgCol.Green() / 256.0, bgCol.Blue() / 256.0); 
+	cr->paint();
+	Cairo::RefPtr<Cairo::ImageSurface> img = Cairo::ImageSurface::create_from_png(imgFName);
+	int imgWidth = img->get_width(); int imgHeight = img->get_height();
+
+	int width, height;
+	GetSize(&width, &height);
+
+	cr->scale((double)width / (double)imgWidth, (double)height / (double)imgHeight);
+	cr->set_source(img, 0, 0);
+	cr->paint();
+
+	cr->set_source(shadow, 0, 0);
+	cr->paint();
 }
 

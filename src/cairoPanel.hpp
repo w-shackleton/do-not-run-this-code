@@ -14,7 +14,7 @@
 class CairoPanel : public wxPanel
 {
 	public:
-		CairoPanel(wxWindow* parent);
+		CairoPanel(wxWindow* parent, wxSize size = wxDefaultSize);
 
 		void redraw();
 
@@ -29,7 +29,6 @@ class CairoPanel : public wxPanel
 	private:
 		void paintNow();
 		void paintEvent(wxPaintEvent& evt);
-		void sizeEvent(wxSizeEvent& evt);
 
 		void render(wxDC& dc);
 
@@ -37,6 +36,8 @@ class CairoPanel : public wxPanel
 		int invdataSize;
 		int cairoWidth, cairoHeight;
 	protected:
+		void sizeEvent(wxSizeEvent& evt); // Used to reset panel
+
 		Cairo::RefPtr<Cairo::ImageSurface> surface;
 		Cairo::RefPtr<Cairo::Context> cr;
 

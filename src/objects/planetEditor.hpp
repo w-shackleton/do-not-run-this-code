@@ -6,6 +6,7 @@
 
 #include "planet.hpp"
 #include "../misc/geometry.hpp"
+#include "../cairoPanel.hpp"
 
 #include <cairomm/surface.h>
 #include <cairomm/context.h>
@@ -18,28 +19,43 @@ namespace Objects
 {
 	namespace Helpers
 	{
+		class PlanetPanel;
 		class PlanetEditor : public wxDialog
 		{
 			public:
-				PlanetEditor(wxWindow* parent, int &type);
+				PlanetEditor(wxWindow* parent);
 				DECLARE_EVENT_TABLE();
+			public:
+				int type;
 			protected:
 
-				int &type;
 				int tempType;
 
 				enum
 				{
-					ID_Cancel_click = wxID_CANCEL,
-					ID_Ok_click = wxID_OK,
+					ID_Cancel_click = wxID_HIGHEST + 1,
+					ID_Ok_click
 				};
 
 				void OnCancel(wxCommandEvent& event);
 				void OnOk(wxCommandEvent& event);
 				void OnPlanetSelect(wxCommandEvent& event);
 
+				PlanetPanel *ppanel;
+
 				Cairo::RefPtr<Cairo::ImageSurface> planetShadow, bounceicon, densityicon;
 				wxBitmap createPlanetBitmap(std::string picture, double density, double bounciness, Misc::Colour& col, int width = PLANETEDITOR_IMG_X, int height = PLANETEDITOR_IMG_Y);
+		};
+		class PlanetPanel : public CairoPanel
+		{
+			public:
+				PlanetPanel(wxWindow *window, wxColour bgCol);
+				void SetPlanet(int id);
+			protected:
+				virtual void redraw_draw();
+				Cairo::RefPtr<Cairo::ImageSurface> shadow;
+				std::string imgFName;
+				wxColour bgCol;
 		};
 	}
 }

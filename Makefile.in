@@ -245,6 +245,7 @@ tinyxml_LIBS = @tinyxml_LIBS@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+AM_MAKEFLAGS = --no-print-directory
 SUBDIRS = data src
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
