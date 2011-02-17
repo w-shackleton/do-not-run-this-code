@@ -112,6 +112,10 @@ public class PennyFrame extends JFrame implements WindowListener {
 		}
 	}
 	
+	/**
+	 * Displays a general error message in this frame
+	 * @param error
+	 */
 	public void notifyUserOfError(final String error) {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
@@ -126,6 +130,12 @@ public class PennyFrame extends JFrame implements WindowListener {
 		}
 	}
 	
+	/**
+	 * <p>Displays a dialogue asking if the user would like to accept a clicked quote, after its availability has been confirmed by the server.</p>
+	 * 
+	 * <p>If the user accepts, sends an accept request to the server. This method doesn't block.</p>
+	 * @param quote
+	 */
 	public void askIfQuoteAccept(final OpenQuote quote) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override

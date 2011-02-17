@@ -4,7 +4,7 @@ import pennygame.client.PennyFrame;
 import pennygame.lib.clientutils.SConn;
 import pennygame.lib.msg.MChangeMyName;
 import pennygame.lib.msg.MPutQuote;
-import pennygame.lib.msg.MUpdateGWorth;
+import pennygame.lib.msg.MUpdateGWealth;
 import pennygame.lib.msg.data.User;
 import pennygame.lib.msg.tr.MTAccept;
 import pennygame.lib.msg.tr.MTCancel;
@@ -14,6 +14,11 @@ import pennygame.lib.queues.handlers.OnConnectionListener;
 import pennygame.lib.queues.handlers.OnLoginHandler;
 
 
+/**
+ * The genral connection between this Client and the Server
+ * @author william
+ *
+ */
 public class CSConn extends SConn<CSConnMainThread, CSConnPushHandler> {
 	protected final OnLoginHandler loginHandler;
 	protected final OnConnectionListener connectionListener;
@@ -75,6 +80,10 @@ public class CSConn extends SConn<CSConnMainThread, CSConnPushHandler> {
 		sendMessage(new MPutQuote(type, pennies, bottles));
 	}
 	
+	/**
+	 * Changes this user's friendly name.
+	 * @param newName
+	 */
 	public void changeMyName(String newName) {
 		sendMessage(new MChangeMyName(newName));
 	}
@@ -95,11 +104,16 @@ public class CSConn extends SConn<CSConnMainThread, CSConnPushHandler> {
 		sendMessage(new MTCancel(id));
 	}
 	
+	/**
+	 * Confirms that a locked quote should be completed.
+	 * @param id
+	 * @param accept
+	 */
 	public void confirmAcceptQuote(int id, boolean accept) {
 		sendMessage(new MTAccept(id, accept));
 	}
 	
 	public void setWorthGuess(int guess) {
-		sendMessage(new MUpdateGWorth(guess));
+		sendMessage(new MUpdateGWealth(guess));
 	}
 }

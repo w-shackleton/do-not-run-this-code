@@ -37,6 +37,11 @@ import pennygame.lib.msg.data.ClosedQuote;
 import pennygame.lib.msg.data.OpenQuote;
 import pennygame.lib.msg.data.PB;
 
+/**
+ * The left hand pane of the Client interface
+ * @author william
+ *
+ */
 public class LeftPane extends JPanel {
 
 	private static final long serialVersionUID = -4174173086819726643L;

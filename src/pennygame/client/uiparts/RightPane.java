@@ -23,6 +23,11 @@ import pennygame.client.queues.CSConn;
 import pennygame.lib.msg.MPutQuote;
 import pennygame.lib.msg.data.User;
 
+/**
+ * The right hand pane of the Client interface
+ * @author william
+ *
+ */
 public class RightPane extends JPanel {
 
 	private static final long serialVersionUID = 7005036371205867048L;
@@ -219,6 +224,9 @@ public class RightPane extends JPanel {
 		setMaximumSize(getPreferredSize());
 	}
 
+	/**
+	 * Invoked when the sell button is clicked.
+	 */
 	protected ActionListener onSell = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
@@ -231,7 +239,9 @@ public class RightPane extends JPanel {
 			}
 		}
 	};
-
+	/**
+	 * Invoked when the buy button is clicked.
+	 */
 	protected ActionListener onBuy = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {

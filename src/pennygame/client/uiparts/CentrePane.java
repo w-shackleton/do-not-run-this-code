@@ -24,6 +24,11 @@ import pennygame.client.PennyFrame;
 import pennygame.client.queues.CSConn;
 import pennygame.lib.msg.data.OpenQuote;
 
+/**
+ * The central pane of the client interface.
+ * @author william
+ *
+ */
 public class CentrePane extends JPanel {
 
 	private static final long serialVersionUID = -6688129680757955374L;
@@ -171,6 +176,10 @@ public class CentrePane extends JPanel {
 		// }
 	};
 	
+	/**
+	 * Gets the amount to shift the list down the table to centre it in the table.
+	 * @return
+	 */
 	private int getShiftLevel() {
 		return (openQuoteListTotal - openQuoteList.size()) / 2;
 	}

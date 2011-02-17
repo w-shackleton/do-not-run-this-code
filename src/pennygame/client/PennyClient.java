@@ -5,6 +5,11 @@ import pennygame.lib.GlobalPreferences;
 import pennygame.lib.clientutils.LoginApplet;
 import pennygame.lib.msg.data.User;
 
+/**
+ * The login applet of the client
+ * @author william
+ *
+ */
 public class PennyClient extends LoginApplet<CSConn> {
 
 	private static final long serialVersionUID = -8605228048232940061L;

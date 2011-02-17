@@ -3,6 +3,11 @@ package pennygame.client.queues;
 import pennygame.lib.clientutils.SConnMainThread;
 import pennygame.lib.msg.MRefresher;
 
+/**
+ * Outgoing connection handler from this Client to the Server
+ * @author william
+ *
+ */
 public class CSConnMainThread extends SConnMainThread {
 
 	public CSConnMainThread(String username, String pass, String threadID) {
@@ -28,7 +33,17 @@ public class CSConnMainThread extends SConnMainThread {
 		}
 	}
 	
+	/**
+	 * When true, will refresh the list of open quotes.
+	 */
 	protected boolean refreshOpenQuoteList = false;
+	/**
+	 * When true, will refresh this user's info.
+	 */
 	protected boolean refreshMyInfo = false;
+	/**
+	 * When true, will refresh this user's quotes.
+	 */
+	// TODO: Combine this into refreshMyInfo?
 	protected boolean refreshMyQuotes = false;
 }

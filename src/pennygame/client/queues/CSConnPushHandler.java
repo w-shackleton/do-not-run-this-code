@@ -16,6 +16,11 @@ import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.QueuePair.ConnectionEnder;
 import pennygame.lib.queues.handlers.OnLoginHandler;
 
+/**
+ * Incoming connection handler from the Server to this Client
+ * @author william
+ *
+ */
 public class CSConnPushHandler extends SConnPushHandler {
 	PennyFrame frame;
 
