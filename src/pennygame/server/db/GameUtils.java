@@ -7,6 +7,11 @@ import java.sql.Statement;
 import pennygame.lib.msg.MPauseGame;
 import pennygame.server.client.CMulticaster;
 
+/**
+ * Utilities for managing the game.
+ * @author william
+ *
+ */
 public class GameUtils {
 	protected final Connection conn;
 	
@@ -50,6 +55,10 @@ public class GameUtils {
 		quotes.beginStopping();
 	}
 	
+	/**
+	 * Resets the entire game. Use with caution!
+	 * @throws SQLException
+	 */
 	public synchronized void resetGame() throws SQLException {
 		multicast.stopAllClients();
 		try {

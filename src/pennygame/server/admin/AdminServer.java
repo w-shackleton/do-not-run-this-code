@@ -13,6 +13,11 @@ import pennygame.lib.GlobalPreferences;
 import pennygame.lib.queues.LoopingThread;
 import pennygame.server.db.GameUtils;
 
+/**
+ * Manages connections to admins, and listens for new ones
+ * @author william
+ *
+ */
 public class AdminServer extends LoopingThread {
 	final ConcurrentHashMap<Integer, AdminConn> admins;
 	int topId = 0;

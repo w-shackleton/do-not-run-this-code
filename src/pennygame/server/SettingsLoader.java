@@ -6,6 +6,11 @@ import java.io.IOException;
 
 import pennygame.lib.GlobalPreferences;
 
+/**
+ * Loads the server settings from a settings file and allows them to be accessed.
+ * @author william
+ *
+ */
 public final class SettingsLoader {
 	
 	private static String listenAddress = "0.0.0.0";

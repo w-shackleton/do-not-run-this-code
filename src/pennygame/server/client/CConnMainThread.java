@@ -20,6 +20,11 @@ import pennygame.lib.msg.tr.MTRequestResponse;
 import pennygame.lib.queues.MainThread;
 import pennygame.server.db.GameUtils;
 
+/**
+ * Outgoing connection handler from this Server to a Client
+ * @author william
+ *
+ */
 public class CConnMainThread extends MainThread {
 	KeyPair keys;
 	final GameUtils gameUtils;

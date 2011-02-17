@@ -6,6 +6,11 @@ import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.QueuePair;
 import pennygame.server.db.GameUtils;
 
+/**
+ * A connection to a client
+ * @author william
+ *
+ */
 public class CConn extends QueuePair<CConnMainThread, CConnPushHandler> {
 	protected Clients parent;
 	
@@ -49,6 +54,10 @@ public class CConn extends QueuePair<CConnMainThread, CConnPushHandler> {
 		// Not used
 	}
 	
+	/**
+	 * Sends a message to the client which has already been serialised
+	 * @param msg
+	 */
 	public void sendSerialisedMessage(String msg) {
 		mainThread.sendSerialisedMessage(msg);
 	}

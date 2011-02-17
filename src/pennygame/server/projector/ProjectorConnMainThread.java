@@ -13,6 +13,11 @@ import pennygame.lib.msg.MLoginInitiate;
 import pennygame.lib.queues.MainThread;
 import pennygame.server.db.GameUtils;
 
+/**
+ * Outgoing connection handler from this Server to a Projector
+ * @author william
+ *
+ */
 public class ProjectorConnMainThread extends MainThread {
 	KeyPair keys;
 	

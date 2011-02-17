@@ -17,6 +17,11 @@ import pennygame.lib.queues.PushHandler;
 import pennygame.lib.queues.QueuePair.ConnectionEnder;
 import pennygame.server.db.GameUtils;
 
+/**
+ * Incoming connection handler from an Admin to this Server
+ * @author william
+ *
+ */
 public class AdminConnPushHandler extends PushHandler {
 	final AdminConnMainThread.AdminMsgBacks adminMsgBacks;
 

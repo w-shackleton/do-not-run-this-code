@@ -10,6 +10,11 @@ import pennygame.lib.queues.PushHandler;
 import pennygame.lib.queues.QueuePair.ConnectionEnder;
 import pennygame.server.db.GameUtils;
 
+/**
+ * Incoming connection handler from a Projector to this Server
+ * @author william
+ *
+ */
 public class ProjectorConnPushHandler extends PushHandler {
 	final ProjectorConnMainThread.ProjectorMsgBacks projectorMsgBacks;
 

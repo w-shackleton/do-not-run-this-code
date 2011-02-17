@@ -195,10 +195,18 @@ public final class QuoteUtils {
 		numberOfQuotes = number;
 	}
 	
+	/**
+	 * Gets the number of EACH quote to show
+	 * @return
+	 */
 	public int getNumQuotes() {
 		return numberOfQuotes;
 	}
 	
+	/**
+	 * Gets the TOTAL number of quotes to show
+	 * @return
+	 */
 	public int getTotalNumQuotes() {
 		return numberOfQuotes * 2;
 	}
@@ -226,6 +234,9 @@ public final class QuoteUtils {
 		return list;
 	}
 	
+	/**
+	 * Multicasts (with {@link CMulticaster}) the new quote list to all connected clients.
+	 */
 	public synchronized void pushOpenQuotes() {
 		try {
 			multicast.multicastMessage(new MOpenQuotesList(getOpenQuotes(), getTotalNumQuotes()));
@@ -235,6 +246,7 @@ public final class QuoteUtils {
 	}
 	
 	/**
+	 * Gets the information about an open quote.
 	 * @param id
 	 * @return An {@link OpenQuote} describing the given id, or null
 	 * @throws SQLException
@@ -248,6 +260,12 @@ public final class QuoteUtils {
 		return null;
 	}
 	
+	/**
+	 * Gets the information about a past trade.
+	 * @param id
+	 * @return
+	 * @throws SQLException
+	 */
 	public synchronized ClosedQuote getTradeInfo(int id) throws SQLException {
 		getTradeInfoStatement.setInt(1, id);
 		ResultSet rs = getQuoteInfoStatement.executeQuery();
@@ -286,6 +304,12 @@ public final class QuoteUtils {
 		return nums;
 	}
 	
+	/**
+	 * Gets a {@link MMyInfo} containing the specified user's wealth
+	 * @param id
+	 * @return A new {@link MMyInfo}
+	 * @throws SQLException
+	 */
 	public MMyInfo getUserMoneyMessage(int id) throws SQLException {
 		LinkedList<PB> nums = getUserMoney(id);
 		
@@ -295,6 +319,11 @@ public final class QuoteUtils {
 		return new MMyInfo(nums.get(0), nums.get(1), nums.get(2), nums.get(3), estWorth);
 	}
 	
+	/**
+	 * Pushes a user's new wealth to them.
+	 * @param id
+	 * @throws SQLException
+	 */
 	public synchronized void pushUserMoney(int id) throws SQLException {
 		LinkedList<PB> nums = getUserMoney(id);
 		
@@ -323,7 +352,7 @@ public final class QuoteUtils {
 		return quotes;
 	}
 	
-	public synchronized LinkedList<ClosedQuote> getUserClosedQuotes(int id) throws SQLException {
+	public synchronized LinkedList<ClosedQuote> getUserClosedTrades(int id) throws SQLException {
 		LinkedList<ClosedQuote> quotes = new LinkedList<ClosedQuote>();
 		
 		getUserClosedTradesStatement.setInt(1, id);
@@ -341,10 +370,20 @@ public final class QuoteUtils {
 		return quotes;
 	}
 	
+	/**
+	 * Gets the specified user's total list of quotes.
+	 * @param id
+	 * @throws SQLException
+	 */
 	public MMyQuotesList getUserQuotes(int id) throws SQLException {
-		return new MMyQuotesList(getUserOpenQuotes(id), getUserClosedQuotes(id));
+		return new MMyQuotesList(getUserOpenQuotes(id), getUserClosedTrades(id));
 	}
 	
+	/**
+	 * Pushes a user's quotes to them.
+	 * @param id
+	 * @throws SQLException
+	 */
 	public void pushUserQuotes(int id) throws SQLException {
 		multicast.sendMessageToClient(id, getUserQuotes(id));
 	}
@@ -434,6 +473,13 @@ public final class QuoteUtils {
 		return MTAcceptResponse.ACCEPT_QUOTE_SUCCESS;
 	}
 	
+	/**
+	 * Cancels a user's quote, from their 'open quotes' list.
+	 * @param userId
+	 * @param quoteId
+	 * @return
+	 * @throws SQLException
+	 */
 	public synchronized int cancelOpenQuote(int userId, int quoteId) throws SQLException {
 		if(gameUtils.isGamePaused()) return MTCancelResponse.RESPONSE_GAME_PAUSED;
 		
@@ -450,6 +496,11 @@ public final class QuoteUtils {
 		return MTCancelResponse.RESPONSE_OK;
 	}
 	
+	/**
+	 * 'Undoes' a past trade. Used by the admin interface.
+	 * @param tradeId
+	 * @throws SQLException
+	 */
 	public synchronized void undoClosedTrade(int tradeId) throws SQLException {
 		undoTradeGetInfoStatement.setInt(1, tradeId);
 		ResultSet rs = undoTradeGetInfoStatement.executeQuery();
@@ -548,6 +599,11 @@ public final class QuoteUtils {
 		return new MTradesList(trades, minTime, maxTime, minPennies, maxPennies);
 	}
 	
+	/**
+	 * 
+	 * @return The complete trade history for all users, used by the admin interface.
+	 * @throws SQLException
+	 */
 	public MTradesList getDetailedTradeHistory() throws SQLException {
 		ResultSet rs;
 		rs = getDetailedTradeHistoryStatement.executeQuery();
@@ -567,6 +623,10 @@ public final class QuoteUtils {
 		return new MTradesList(trades);
 	}
 	
+	/**
+	 * Refreshes the trade history graph on any connected projectors.
+	 * @throws SQLException
+	 */
 	public void pushTradeHistory() throws SQLException {
 		multicast.refreshProjectorTradeGraph(); // This is the one part of the game that doesn't need to be snappy, so send it from another thread!
 	}

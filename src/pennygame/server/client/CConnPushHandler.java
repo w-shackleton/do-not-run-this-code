@@ -7,7 +7,7 @@ import pennygame.lib.msg.MChangeMyName;
 import pennygame.lib.msg.MLoginRequest;
 import pennygame.lib.msg.MPutQuote;
 import pennygame.lib.msg.MRefresher;
-import pennygame.lib.msg.MUpdateGWorth;
+import pennygame.lib.msg.MUpdateGWealth;
 import pennygame.lib.msg.PennyMessage;
 import pennygame.lib.msg.data.User;
 import pennygame.lib.msg.tr.MTAccept;
@@ -21,7 +21,8 @@ import pennygame.lib.queues.QueuePair.ConnectionEnder;
 import pennygame.server.db.GameUtils;
 
 /**
- * Perhaps this should be made non-threaded, and pass its messages to the other main thread (too many...)
+ * <p>Incoming connection handler from a Client to this Server</p>
+ * <p>Perhaps this should be made non-threaded, and pass its messages to the other main thread (too many...)</p>
  * @author william
  *
  */
@@ -139,8 +140,8 @@ public class CConnPushHandler extends PushHandler {
 				break;
 			}
 		}
-		else if(cls.equals(MUpdateGWorth.class)) {
-			MUpdateGWorth uMsg = (MUpdateGWorth) msg;
+		else if(cls.equals(MUpdateGWealth.class)) {
+			MUpdateGWealth uMsg = (MUpdateGWealth) msg;
 			try {
 				gameUtils.users.updateGuessedWorth(user.getId(), uMsg.getgWorth());
 			} catch (SQLException e) {

@@ -6,6 +6,11 @@ import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.QueuePair;
 import pennygame.server.db.GameUtils;
 
+/**
+ * The server side of the connection between this Server and an Admin
+ * @author william
+ *
+ */
 public class AdminConn extends
 		QueuePair<AdminConnMainThread, AdminConnPushHandler> {
 	final AdminServer parent;

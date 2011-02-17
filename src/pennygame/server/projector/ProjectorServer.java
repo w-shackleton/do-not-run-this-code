@@ -13,6 +13,11 @@ import pennygame.lib.GlobalPreferences;
 import pennygame.lib.queues.LoopingThread;
 import pennygame.server.db.GameUtils;
 
+/**
+ * Manages connections to projectors, and listens for new ones.
+ * @author william
+ *
+ */
 public class ProjectorServer extends LoopingThread {
 	final ConcurrentHashMap<Integer, ProjectorConn> projectors;
 	int topId = 0;
@@ -84,6 +89,9 @@ public class ProjectorServer extends LoopingThread {
 		}
 	}
 	
+	/**
+	 * Resends past trade data to all connected projectors
+	 */
 	public void refreshTradeGraph() {
 		Iterator<ProjectorConn> it = projectors.values().iterator();
 		

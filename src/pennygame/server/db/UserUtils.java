@@ -11,7 +11,7 @@ import pennygame.lib.ext.Base64;
 import pennygame.lib.msg.data.User;
 
 /**
- * Utilities for managing users. Only for the admin
+ * Utilities for managing users. Only for the admin.
  * 
  * @author william
  * 
@@ -34,6 +34,14 @@ public class UserUtils {
 		updateWorthGuessStatement = conn.prepareStatement("INSERT INTO worthguess(userid, guess) VALUES (?, ?);");
 	}
 
+	/**
+	 * Creates a user with the specified details.
+	 * @param username
+	 * @param hashPass Hashed password
+	 * @param pennies
+	 * @param bottles
+	 * @throws SQLException
+	 */
 	public synchronized void createUser(String username, byte[] hashPass, int pennies, int bottles) throws SQLException {
 		System.out.println("Added new user");
 		newUserStatement.setString(1, username.toLowerCase());
@@ -47,6 +55,11 @@ public class UserUtils {
 
 	private LinkedList<User> userList;
 
+	/**
+	 * 
+	 * @return A complete list of users, except for their passwords!
+	 * @throws SQLException
+	 */
 	public synchronized LinkedList<User> getUsers() throws SQLException {
 		if (userList == null)
 			userList = new LinkedList<User>();
@@ -83,17 +96,34 @@ public class UserUtils {
 		return new User(rs.getInt("id"), username, rs.getString("friendlyname"));
 	}
 
+	/**
+	 * Deletes a user.
+	 * @param userId
+	 * @throws SQLException
+	 */
 	public synchronized void deleteUser(int userId) throws SQLException {
 		deleteUserStatement.setInt(1, userId);
 		deleteUserStatement.executeUpdate();
 	}
 
+	/**
+	 * Changes a user's password.
+	 * @param userId
+	 * @param hashPass
+	 * @throws SQLException
+	 */
 	public synchronized void changePassword(int userId, byte[] hashPass) throws SQLException {
 		changePasswordStatement.setString(1, Base64.encodeBytes(hashPass));
 		changePasswordStatement.setInt(2, userId);
 		changePasswordStatement.executeUpdate();
 	}
 
+	/**
+	 * Changes a user's friendly name.
+	 * @param userId
+	 * @param friendlyName
+	 * @throws SQLException
+	 */
 	public synchronized void changeFriendlyName(int userId, String friendlyName) throws SQLException {
 		changeFriendlyNameStatement.setString(1, friendlyName);
 		changeFriendlyNameStatement.setInt(2, userId);
@@ -102,6 +132,12 @@ public class UserUtils {
 		quotes.pushOpenQuotes(); // Refresh users
 	}
 	
+	/**
+	 * Updates a user's guessed bottle price. Used by clients to update how much they think a bottle is worth.
+	 * @param userId
+	 * @param guess
+	 * @throws SQLException
+	 */
 	public synchronized void updateGuessedWorth(int userId, int guess) throws SQLException {
 		updateWorthGuessStatement.setInt(1, userId);
 		updateWorthGuessStatement.setInt(2, guess);

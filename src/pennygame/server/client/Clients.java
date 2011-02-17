@@ -13,6 +13,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import pennygame.lib.GlobalPreferences;
 import pennygame.server.db.GameUtils;
 
+/**
+ * Manages client connections, and listens for new ones
+ * @author william
+ *
+ */
 public final class Clients extends Thread {
 	final ConcurrentHashMap<Integer, CConn> clients;
 	

@@ -15,6 +15,11 @@ import pennygame.lib.msg.adm.MAUserList;
 import pennygame.lib.queues.MainThread;
 import pennygame.server.db.GameUtils;
 
+/**
+ * Outgoing connection handler from this Server to an Admin
+ * @author william
+ *
+ */
 public class AdminConnMainThread extends MainThread {
 	KeyPair keys;
 	

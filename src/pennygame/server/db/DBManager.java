@@ -7,6 +7,11 @@ import java.sql.Statement;
 
 import pennygame.lib.queues.LoopingThread;
 
+/**
+ * Manages the connection to the MySQL database
+ * @author william
+ *
+ */
 public class DBManager extends LoopingThread {
 	// TODO: Change to not a thread!
 	
@@ -96,6 +101,10 @@ public class DBManager extends LoopingThread {
 		System.out.println("Database closed");
 	}
 
+	/**
+	 * Resets the entire Database (by dropping all tables and recreating them. This isn't how the game is reset.
+	 * @throws SQLException
+	 */
 	public void resetDB() throws SQLException {
 		Statement stat = conn.createStatement();
 		stat.executeUpdate("drop table if exists users;");
@@ -105,6 +114,10 @@ public class DBManager extends LoopingThread {
 		initialiseDB();
 	}
 
+	/**
+	 * Creates the needed tables if they don't exist already.
+	 * @throws SQLException
+	 */
 	protected void initialiseDB() throws SQLException {
 		Statement stat = conn.createStatement();
 		stat.executeUpdate("create table if not exists users (" +
@@ -165,6 +178,10 @@ public class DBManager extends LoopingThread {
 		return miscDataConn;
 	}
 
+	/**
+	 * Gets a pool of 4 connections for general use.
+	 * @return
+	 */
 	public Connection[] getConnectionPool() {
 		return connectionPool;
 	}

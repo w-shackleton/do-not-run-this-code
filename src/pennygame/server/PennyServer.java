@@ -12,7 +12,9 @@ import pennygame.server.db.DBManager;
 import pennygame.server.db.GameUtils;
 import pennygame.server.projector.ProjectorServer;
 
-
+/**
+ * Application entry-point
+ */
 public class PennyServer {
 	static Clients clients;
 	static AdminServer admin;

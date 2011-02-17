@@ -6,6 +6,11 @@ import pennygame.lib.queues.NetReceiver;
 import pennygame.lib.queues.QueuePair;
 import pennygame.server.db.GameUtils;
 
+/**
+ * A connection to a Projector.
+ * @author william
+ *
+ */
 public class ProjectorConn extends
 		QueuePair<ProjectorConnMainThread, ProjectorConnPushHandler> {
 	final ProjectorServer parent;
