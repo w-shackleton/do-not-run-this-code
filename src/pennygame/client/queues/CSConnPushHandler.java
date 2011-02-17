@@ -35,7 +35,6 @@ public class CSConnPushHandler extends SConnPushHandler {
 		Class<? extends PennyMessage> cls = msg.getClass();
 		
 		if(cls.equals(MOpenQuotesList.class)) {
-			System.out.println("New open quote list received");
 			MOpenQuotesList q = (MOpenQuotesList) msg;
 			frame.cp.updateOpenQuoteList(q.getList(), q.getTotal());
 		}
@@ -44,11 +43,9 @@ public class CSConnPushHandler extends SConnPushHandler {
 			frame.pauseGame(((MPauseGame)msg).isPaused());
 		}
 		else if(cls.equals(MMyInfo.class)) {
-			System.out.println("Refreshing user info");
 			frame.lp.updateUserInfo((MMyInfo) msg);
 		}
 		else if(cls.equals(MMyQuotesList.class)) {
-			System.out.println("Refreshing user quotes");
 			frame.lp.updateUserQuotes((MMyQuotesList) msg);
 		}
 		else if(cls.equals(MOSMessage.class)) {

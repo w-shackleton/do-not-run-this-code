@@ -66,7 +66,7 @@ public class LeftPane extends JPanel {
 		{ // Worth guess
 			Box hBox = Box.createHorizontalBox();
 			hBox.add(Box.createGlue());
-			JLabel label = new JLabel("My worth estimate: ");
+			JLabel label = new JLabel("My bottle price estimate: ");
 			hBox.add(label);
 			
 			worthGuess = new JTextField("1", 3);
@@ -267,7 +267,7 @@ public class LeftPane extends JPanel {
 			case 0:
 				return "Current";
 			case 1:
-				return "worth:";
+				return "wealth:";
 			case 2:
 				return "";
 			case 3:
@@ -314,7 +314,7 @@ public class LeftPane extends JPanel {
 			}
 		}
 		
-		private String[] columnNames = {"Current", "Worth", "", "Bottles", "Pennies", "Est. Total", ""};
+		private String[] columnNames = {"Current", "Wealth", "", "Bottles", "Pennies", "Est. Total", ""};
 	};
 	
 	protected AbstractTableModel myPastTradesModel = new AbstractTableModel() {
@@ -460,7 +460,7 @@ public class LeftPane extends JPanel {
 				case 0:
 					return "Predicted";
 				case 1:
-					return "Worth:";
+					return "Wealth:";
 				case 2:
 					return "";
 				case 3:
@@ -548,7 +548,7 @@ public class LeftPane extends JPanel {
 			}
 		}
 		
-		private String[] columnNames = {"Predicted", "Worth", "", "Bottles", "Pennies", "Est. Total", ""};
+		private String[] columnNames = {"Predicted", "Wealth", "", "Bottles", "Pennies", "Est. Total", ""};
 	};
 	
 	
