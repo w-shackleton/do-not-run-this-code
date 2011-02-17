@@ -3,6 +3,11 @@ package pennygame.lib.msg.data;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+/**
+ * A quote which is currently open, and can be accepted by a user.
+ * @author william
+ *
+ */
 public class OpenQuote implements Serializable {
 
 	private static final long serialVersionUID = 4313397036003309588L;

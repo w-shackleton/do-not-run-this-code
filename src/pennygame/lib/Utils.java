@@ -1,5 +1,10 @@
 package pennygame.lib;
 
+/**
+ * Generic utility things. Perhaps get rid of in future?
+ * @author william
+ *
+ */
 public final class Utils {
 	
 	public static final int trimMinMax(int num, int min, int max) {

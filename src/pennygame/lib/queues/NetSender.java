@@ -7,6 +7,12 @@ import pennygame.lib.ext.Serialiser;
 import pennygame.lib.msg.PennyMessage;
 import pennygame.lib.queues.handlers.OnConnectionListener;
 
+/**
+ * A {@link MessageConsumer} which takes messages from the queue, serialises them, and sends them over the network.
+ * @author william
+ *
+ * @param <T>
+ */
 public class NetSender<T extends MainThread> extends MessageConsumer<T> {
 	protected final Writer outStream;
 	protected final OnConnectionListener connectionLostListener;

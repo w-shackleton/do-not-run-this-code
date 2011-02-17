@@ -6,6 +6,11 @@ import java.io.Reader;
 import pennygame.lib.ext.Serialiser;
 import pennygame.lib.queues.handlers.OnConnectionListener;
 
+/**
+ * A {@link MessageProducer} which waits for messages from the network, deserialises them, and adds them to the queue.
+ * @author william
+ *
+ */
 public class NetReceiver extends MessageProducer {
 	protected final Reader inStream;
 	protected final OnConnectionListener connectionLostListener;

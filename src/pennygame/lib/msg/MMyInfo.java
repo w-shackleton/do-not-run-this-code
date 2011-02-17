@@ -2,6 +2,11 @@ package pennygame.lib.msg;
 
 import pennygame.lib.msg.data.PB;
 
+/**
+ * A {@link PennyMessage} containing the user's wealth and potential wealth.
+ * @author william
+ *
+ */
 public class MMyInfo extends PennyMessage {
 
 	private static final long serialVersionUID = -361006050829383407L;

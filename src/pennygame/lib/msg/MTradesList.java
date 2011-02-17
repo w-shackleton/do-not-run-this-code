@@ -4,6 +4,11 @@ import java.util.LinkedList;
 
 import pennygame.lib.msg.data.ClosedQuote;
 
+/**
+ * The complete list of trades, used by the admin to allow quotes to be 'undone'.
+ * @author william
+ *
+ */
 public class MTradesList extends PennyMessage {
 
 	private static final long serialVersionUID = -1964663222173942989L;

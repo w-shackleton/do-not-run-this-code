@@ -1,5 +1,10 @@
 package pennygame.lib.msg.tr;
 
+/**
+ * The response to the client, saying if a quote completion was successful.
+ * @author william
+ *
+ */
 public class MTAcceptResponse extends MTAccept {
 	
 	public static final int ACCEPT_QUOTE_SUCCESS = 0;

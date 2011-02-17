@@ -2,6 +2,11 @@ package pennygame.lib.msg.tr;
 
 import pennygame.lib.msg.PennyMessage;
 
+/**
+ * A message from a client to accept an open quote, once it has been locked.
+ * @author william
+ *
+ */
 public class MTAccept extends PennyMessage {
 
 	private static final long serialVersionUID = -7725108250334478474L;

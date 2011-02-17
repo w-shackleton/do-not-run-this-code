@@ -8,6 +8,11 @@ import java.io.Writer;
 import pennygame.lib.msg.PennyMessage;
 import pennygame.lib.queues.NetReceiver;
 
+/**
+ * Utilities to serialise messages & prepare them for sending over the network
+ * @author william
+ *
+ */
 public final class Serialiser {
 	/**
 	 * The character with which each encoded message should begin

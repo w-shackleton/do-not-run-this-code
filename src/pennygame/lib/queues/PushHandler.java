@@ -2,6 +2,12 @@ package pennygame.lib.queues;
 
 import pennygame.lib.msg.PennyMessage;
 
+/**
+ * A {@link MessageConsumer} which pulls messages from the queue and calls {@link #processMessage(PennyMessage)} with each new message, hence processing it.
+ * This class should be overridden to receive messages.
+ * @author william
+ *
+ */
 public abstract class PushHandler extends MessageConsumer<NetReceiver> {
 
 	public PushHandler(NetReceiver producer, String threadID) {

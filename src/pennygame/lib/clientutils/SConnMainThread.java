@@ -7,6 +7,11 @@ import pennygame.lib.msg.MLoginRequest;
 import pennygame.lib.msg.PennyMessage;
 import pennygame.lib.queues.MainThread;
 
+/**
+ * Outgoing connection handler from Something to the Server
+ * @author william
+ *
+ */
 public class SConnMainThread extends MainThread {
 	
 	final String pass, username;

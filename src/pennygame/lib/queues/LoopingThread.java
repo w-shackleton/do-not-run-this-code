@@ -1,5 +1,10 @@
 package pennygame.lib.queues;
 
+/**
+ * A thread which loops until {@link #beginStopping()} is called, and calls {@link #loop()} on each loop.
+ * @author william
+ *
+ */
 public abstract class LoopingThread extends Thread {
 	/**
 	 * This defines how long this thread should pause in between loops, to stop

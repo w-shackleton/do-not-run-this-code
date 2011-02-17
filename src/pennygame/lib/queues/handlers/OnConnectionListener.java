@@ -1,5 +1,10 @@
 package pennygame.lib.queues.handlers;
 
+/**
+ * An interface to notify something that a connection has been established or lost.
+ * @author william
+ *
+ */
 public interface OnConnectionListener {
 	
 	/**

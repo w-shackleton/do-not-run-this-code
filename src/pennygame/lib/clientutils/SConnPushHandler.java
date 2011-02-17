@@ -9,6 +9,11 @@ import pennygame.lib.queues.PushHandler;
 import pennygame.lib.queues.QueuePair.ConnectionEnder;
 import pennygame.lib.queues.handlers.OnLoginHandler;
 
+/**
+ * Incoming connection handler from the Server to something.
+ * @author william
+ *
+ */
 public class SConnPushHandler extends PushHandler {
 	protected final OnLoginHandler loginHandler;
 	

@@ -20,6 +20,12 @@ import pennygame.lib.msg.data.User;
 import pennygame.lib.queues.handlers.OnConnectionListener;
 import pennygame.lib.queues.handlers.OnLoginHandler;
 
+/**
+ * An abstract {@link JApplet} containing a login form.
+ * @author william
+ *
+ * @param <T>
+ */
 public abstract class LoginApplet<T extends SConn<? extends SConnMainThread, ? extends SConnPushHandler>> extends JApplet {
 
 	/**
@@ -145,6 +151,9 @@ public abstract class LoginApplet<T extends SConn<? extends SConnMainThread, ? e
 		// content.setBackground(Color.white);
 	}
 
+	/**
+	 * Loads the applet's parameters, which are currently just the server address and the port (if different to the default).
+	 */
 	protected void loadAppletParameters() {
 		String at = getParameter("server");
 		server = (at != null) ? at : "ksa.uk.net";
@@ -167,6 +176,9 @@ public abstract class LoginApplet<T extends SConn<? extends SConnMainThread, ? e
 
 	T serverConnection;
 
+	/**
+	 * Called when a connection to the server is made or lost.
+	 */
 	protected final OnConnectionListener connectionListener = new OnConnectionListener() {
 
 		@Override
@@ -227,6 +239,9 @@ public abstract class LoginApplet<T extends SConn<? extends SConnMainThread, ? e
 	 */
 	protected abstract void startMainWindow(T serverConnection, User userInfo, boolean paused);
 	
+	/**
+	 * Closes the main window
+	 */
 	protected abstract void closeMainWindow();
 
 	protected ActionListener onLoginButtonPressed = new ActionListener() {

@@ -2,6 +2,11 @@ package pennygame.lib.msg.data;
 
 import java.io.Serializable;
 
+/**
+ * A general container for a number of pennies and bottles.
+ * @author william
+ *
+ */
 public class PB implements Serializable {
 
 	private static final long serialVersionUID = -4457712869685528411L;

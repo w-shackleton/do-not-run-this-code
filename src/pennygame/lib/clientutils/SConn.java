@@ -9,7 +9,7 @@ import pennygame.lib.queues.QueuePair;
 import pennygame.lib.queues.handlers.OnLoginHandler;
 
 /**
- * This is a connection to the server; it should be implemented over by the client, admin interface and fullscreen viewer
+ * This is a connection to the server; it should be implemented over by the client, admin interface, projector and any other game parts
  * @author william
  *
  */

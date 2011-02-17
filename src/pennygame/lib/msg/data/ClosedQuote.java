@@ -3,6 +3,16 @@ package pennygame.lib.msg.data;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+/**
+ * A quote which has been:
+ * <ul>
+ * 	<li>Closed ({@link #FINISH_CLOSED})</li>
+ * 	<li>Cancelled ({@link #FINISH_CANCELLED})</li>
+ * 	<li>Timeout'd ({@link #FINISH_TIMEOUTED})</li>
+ * </ul>
+ * @author william
+ *
+ */
 public class ClosedQuote implements Serializable {
 
 	private static final long serialVersionUID = -5323649194093314637L;

@@ -2,6 +2,11 @@ package pennygame.lib.msg.tr;
 
 import pennygame.lib.msg.PennyMessage;
 
+/**
+ * Tells the Server to cancel a quote.
+ * @author william
+ *
+ */
 public class MTCancel extends PennyMessage {
 	
 	private static final long serialVersionUID = 2846923108551396000L;

@@ -1,5 +1,10 @@
 package pennygame.lib.msg;
 
+/**
+ * A {@link PennyMessage} from a client / admin / projector to request that something is refreshed.
+ * @author william
+ *
+ */
 public class MRefresher extends PennyMessage {
 
 	private static final long serialVersionUID = 5823779687536371422L;

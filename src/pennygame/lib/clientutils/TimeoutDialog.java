@@ -14,6 +14,9 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 // http://www.coderanch.com/t/341814/GUI/java/JOptionPane-Timeout :D
+/**
+ * A message dialogue which timeouts after a set time
+ */
 public class TimeoutDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 8475338949913343386L;

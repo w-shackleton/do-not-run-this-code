@@ -5,6 +5,12 @@ import java.util.Queue;
 
 import pennygame.lib.msg.PennyMessage;
 
+/**
+ * <p>An abstract class, conceptualising the 'producer' part of a message queue.</p>
+ * <p>This class also contains the queue, and functions to safely add and remove from it.</p>
+ * @author william
+ *
+ */
 public abstract class MessageProducer extends LoopingThread {
 	private static final int MAXQUEUE = 200; // Should never get this high anyway
 	
