@@ -16,6 +16,11 @@ import javax.swing.border.EmptyBorder;
 
 import pennygame.admin.CommInterfaces.CreateNewUser;
 
+/**
+ * A JDialog to change the user's password
+ * @author william
+ *
+ */
 public class ChangePasswordDialog extends JDialog {
 
 	JPasswordField password;

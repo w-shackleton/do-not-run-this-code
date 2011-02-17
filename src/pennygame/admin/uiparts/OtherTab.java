@@ -17,6 +17,11 @@ import javax.swing.border.EmptyBorder;
 import pennygame.admin.AdminFrame;
 import pennygame.admin.queues.AdminSConn;
 
+/**
+ * Tab on the admin panel containing general options & other things that shouldn't be anywhere else
+ * @author william
+ *
+ */
 public class OtherTab extends JPanel {
 
 	private static final long serialVersionUID = -4225767893441384749L;
@@ -80,6 +85,10 @@ public class OtherTab extends JPanel {
 		}
 	};
 	
+	/**
+	 * Updates the displayed minutes to show on the graph
+	 * @param minutes
+	 */
 	public void setGraphLength(final int minutes) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override

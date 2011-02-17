@@ -5,6 +5,11 @@ import pennygame.lib.GlobalPreferences;
 import pennygame.lib.clientutils.LoginApplet;
 import pennygame.lib.msg.data.User;
 
+/**
+ * The main login applet for the Admin
+ * @author william
+ *
+ */
 public class PennyAdmin extends LoginApplet<AdminSConn> {
 
 	private static final long serialVersionUID = -3220289641005857212L;

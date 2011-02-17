@@ -19,6 +19,11 @@ import javax.swing.border.EmptyBorder;
 import pennygame.admin.CommInterfaces.CreateNewUser;
 import pennygame.lib.Utils;
 
+/**
+ * A {@link JDialog} to create a new user
+ * @author william
+ *
+ */
 public class NewUserDialog extends JDialog {
 
 	JPasswordField password;
@@ -29,6 +34,13 @@ public class NewUserDialog extends JDialog {
 
 	private static final long serialVersionUID = -7829422924343861065L;
 
+	/**
+	 * Constructs a new {@link NewUserDialog}
+	 * @param parent The parent frame
+	 * @param creator the {@link CreateNewUser} to call when a user is created
+	 * @param pennyNum The number of pennies to show by default.
+	 * @param bottleNum The number of bottles to show by default.
+	 */
 	public NewUserDialog(JFrame parent, CreateNewUser creator,
 			final int pennyNum, final int bottleNum) {
 		super(parent, "Create new user");

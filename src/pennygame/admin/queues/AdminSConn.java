@@ -85,31 +85,59 @@ public class AdminSConn extends SConn<AdminSConnMainThread, AdminSConnPushHandle
 		mainThread.refreshPastTrades = true;
 	}
 	
+	/**
+	 * Mark the user list to be refreshed
+	 */
 	public void refreshUserList() {
 		mainThread.refreshUsers = true;
 	}
 	
+	/**
+	 * Mark the past trades list to be refreshed
+	 */
 	public void refreshPastTrades() {
 		mainThread.refreshPastTrades = true;
 	}
 	
+	/**
+	 * Sends a new {@link MAUserModifyRequest} with no data
+	 * @param userId
+	 * @param action
+	 */
 	public void modifyUser(int userId, int action) {
 		sendMessage(new MAUserModifyRequest(userId, action));
 	}
 	
+	/**
+	 * Sends a new {@link MAUserModifyRequest} with data
+	 * @param userId
+	 * @param action
+	 * @param data
+	 */
 	public void modifyUser(int userId, int action, Object data) {
 		sendMessage(new MAUserModifyRequest(userId, action, data));
 	}
 	
+	/**
+	 * Globally pauses or unpauses the game
+	 * @param pause Pauses the game if <code>true</code>, unpauses if <code>false</code>.
+	 */
 	public void pause(boolean pause) {
 		sendMessage(new MAGamePause(pause));
 	}
 	
+	/**
+	 * Change how long quotes take to timeout
+	 * @param timeout
+	 */
 	public void setQuoteTimeout(int timeout) {
 		timeout = Utils.trimMin(timeout, 10);
 		sendMessage(new MAGameSetting(true, MAGameSetting.WHAT_QUOTE_TIMEOUT, timeout));
 	}
 	
+	/**
+	 * Get how long quotes take to timeout
+	 */
 	public void getQuoteTimeout() {
 		sendMessage(new MAGameSetting(MAGameSetting.WHAT_QUOTE_TIMEOUT));
 	}
@@ -132,6 +160,9 @@ public class AdminSConn extends SConn<AdminSConnMainThread, AdminSConnPushHandle
 		sendMessage(new MAGameSetting(MAGameSetting.WHAT_GRAPH_LENGTH_MINUTES));
 	}
 	
+	/**
+	 * Resets the entire game. Use with caution!
+	 */
 	public void resetGame() {
 		sendMessage(new MAGameSetting(true, MAGameSetting.WHAT_RESET_GAME, null));
 	}

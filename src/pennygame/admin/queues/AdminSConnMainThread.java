@@ -3,6 +3,11 @@ package pennygame.admin.queues;
 import pennygame.lib.clientutils.SConnMainThread;
 import pennygame.lib.msg.MRefresher;
 
+/**
+ * Outgoing connection handler from this Admin to the Server
+ * @author william
+ *
+ */
 public class AdminSConnMainThread extends SConnMainThread {
 
 	public AdminSConnMainThread(String username, String pass, String threadID) {
@@ -22,6 +27,12 @@ public class AdminSConnMainThread extends SConnMainThread {
 		}
 	}
 	
-	public boolean refreshUsers = false; // Request user list immediately
+	/**
+	 * When <code>true</code>, the users list will be resent
+	 */
+	public boolean refreshUsers = false;
+	/**
+	 * When <code>true</code>, the past trades list will be resent
+	 */
 	public boolean refreshPastTrades = false;
 }

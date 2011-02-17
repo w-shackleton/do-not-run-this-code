@@ -40,6 +40,9 @@ public class UserTab extends JPanel {
 	
 	protected final AdminSConn serv;
 	
+	/**
+	 * Scroller containing this table
+	 */
 	protected JScrollPane scrollPane;
 	protected JTable userTable;
 	
@@ -112,6 +115,9 @@ public class UserTab extends JPanel {
 		}
 	};
 	
+	/**
+	 * Model for table userlist
+	 */
 	protected AbstractTableModel userTableModel = new AbstractTableModel() {
 		
 		private static final long serialVersionUID = -7372554700154555522L;
@@ -134,7 +140,6 @@ public class UserTab extends JPanel {
 		
 		@Override
 		public void setValueAt(Object value, int row, int col) {
-			System.out.println("Change!!");
 			if(col == 1) { // Friendly name
 				{
 					userList.get(row).setFriendlyname((String) value);
@@ -185,6 +190,10 @@ public class UserTab extends JPanel {
 	
 	protected LinkedList<User> userList = new LinkedList<User>();
 	
+	/**
+	 * Updates the list of users with <code>users</code>
+	 * @param users New userlist
+	 */
 	public synchronized void updateUserList(LinkedList<User> users) {
 		userList = users;
 		userTableModel.fireTableDataChanged();

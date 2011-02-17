@@ -23,6 +23,11 @@ import pennygame.admin.uiparts.OtherTab;
 import pennygame.admin.uiparts.PastTradesTab;
 import pennygame.admin.uiparts.UserTab;
 
+/**
+ * The main {@link JFrame} of the admin interface
+ * @author william
+ *
+ */
 public final class AdminFrame extends JFrame implements WindowListener {
 	
 	protected final AdminSConn serv;
@@ -156,6 +161,9 @@ public final class AdminFrame extends JFrame implements WindowListener {
 		
 	}
 
+	/**
+	 * Notifies the frame that it is closing, and asks the user to confirm this
+	 */
 	@Override
 	public void windowClosing(WindowEvent arg0) { 
 		int n = JOptionPane.showConfirmDialog(this, "Do you really want to close?", "Close Penny Admin?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
