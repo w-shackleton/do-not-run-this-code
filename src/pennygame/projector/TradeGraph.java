@@ -12,6 +12,11 @@ import pennygame.lib.msg.MTradesList;
 import pennygame.lib.msg.data.ClosedQuote;
 import pennygame.projector.queues.PSConn;
 
+/**
+ * A {@link Graph} showing the past trades from a set amount of time in the game.
+ * @author william
+ *
+ */
 public class TradeGraph extends Graph {
 
 	private static final long serialVersionUID = 6637015494732464967L;
@@ -89,6 +94,10 @@ public class TradeGraph extends Graph {
 		}
 	}
 	
+	/**
+	 * Sets the data to display
+	 * @param trades
+	 */
 	public void setData(MTradesList trades) {
 		this.trades = trades.getTrades();
 		

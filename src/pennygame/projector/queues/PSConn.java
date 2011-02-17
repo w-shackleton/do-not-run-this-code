@@ -3,7 +3,7 @@ package pennygame.projector.queues;
 import pennygame.lib.clientutils.SConn;
 import pennygame.lib.msg.MChangeMyName;
 import pennygame.lib.msg.MPutQuote;
-import pennygame.lib.msg.MUpdateGWorth;
+import pennygame.lib.msg.MUpdateGWealth;
 import pennygame.lib.msg.data.User;
 import pennygame.lib.msg.tr.MTAccept;
 import pennygame.lib.msg.tr.MTCancel;
@@ -14,6 +14,11 @@ import pennygame.lib.queues.handlers.OnLoginHandler;
 import pennygame.projector.ProjectorFrame;
 
 
+/**
+ * The connection to the Server from this Projector
+ * @author william
+ *
+ */
 public class PSConn extends SConn<PSConnMainThread, PSConnPushHandler> {
 	protected final OnLoginHandler loginHandler;
 	protected final OnConnectionListener connectionListener;
@@ -98,6 +103,6 @@ public class PSConn extends SConn<PSConnMainThread, PSConnPushHandler> {
 	}
 	
 	public void setWorthGuess(int guess) {
-		sendMessage(new MUpdateGWorth(guess));
+		sendMessage(new MUpdateGWealth(guess));
 	}
 }

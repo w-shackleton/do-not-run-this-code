@@ -12,6 +12,11 @@ import javax.swing.JPanel;
 
 import pennygame.projector.queues.PSConn;
 
+/**
+ * A log-graph to draw something to the screen. This class draws the scales, axes and labels.
+ * @author william
+ *
+ */
 public abstract class Graph extends JPanel {
 
 	private static final long serialVersionUID = 2433949872026867217L;

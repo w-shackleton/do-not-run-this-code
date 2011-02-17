@@ -9,6 +9,11 @@ import pennygame.lib.queues.QueuePair.ConnectionEnder;
 import pennygame.lib.queues.handlers.OnLoginHandler;
 import pennygame.projector.ProjectorFrame;
 
+/**
+ * Incoming connection handler from the Server to this Projector
+ * @author william
+ *
+ */
 public class PSConnPushHandler extends SConnPushHandler {
 	ProjectorFrame frame;
 

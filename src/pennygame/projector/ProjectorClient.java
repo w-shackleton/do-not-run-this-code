@@ -5,6 +5,11 @@ import pennygame.lib.clientutils.LoginApplet;
 import pennygame.lib.msg.data.User;
 import pennygame.projector.queues.PSConn;
 
+/**
+ * The login applet for the projector screen.
+ * @author william
+ *
+ */
 public class ProjectorClient extends LoginApplet<PSConn> {
 
 	private static final long serialVersionUID = -8605228048232940061L;
