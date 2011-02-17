@@ -15,6 +15,11 @@ import javax.crypto.NoSuchPaddingException;
 
 import pennygame.lib.GlobalPreferences;
 
+/**
+ * Utilities to digest and encrypt, and decrypt passwords.
+ * @author william
+ *
+ */
 public class PasswordUtils {
 	
 	/**
@@ -24,7 +29,6 @@ public class PasswordUtils {
 	 * @return
 	 */
 	public static byte[] encryptPassword(PublicKey rsaKey, String pass) {
-			System.out.println("Starting password processing");
 			MessageDigest md = null;
 			try {
 				md = MessageDigest.getInstance("SHA");
@@ -41,7 +45,6 @@ public class PasswordUtils {
 			{
 				digest = md.digest(digest);
 			}
-			System.out.println("Digested passwd, got " + Base64.encodeBytes(digest));
 			
 			Cipher cipher = null;
 			try {
@@ -76,8 +79,6 @@ public class PasswordUtils {
 	 * @return
 	 */
 	public static final byte[] decryptPassword(PrivateKey key, byte[] cipherText) {
-			System.out.println("Password received, processing");
-			// Hard coded usrname + pass check. yep.
 			
 			Cipher cipher = null;
 			try {
@@ -102,6 +103,7 @@ public class PasswordUtils {
 			} catch (BadPaddingException e) {
 				e.printStackTrace();
 			}
+			System.out.println("Decrypted passwd");
 			return hashText;
 	}
 }
