@@ -127,7 +127,6 @@ public class DBManager extends LoopingThread {
 				"friendlyname VARCHAR(20) NOT NULL," +
 				"pennies INT(32) NOT NULL," +
 				"bottles INT(32) NOT NULL," +
-				"INDEX(id)," +
 				"INDEX(username(10), password)" +
 				") TYPE=INNODB;");
 		stat.executeUpdate("CREATE TABLE IF NOT EXISTS quotes (" +

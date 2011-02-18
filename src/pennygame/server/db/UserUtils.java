@@ -20,11 +20,14 @@ public class UserUtils {
 
 	private final Connection conn;
 	private final QuoteUtils quotes;
-	private final PreparedStatement newUserStatement, checkUserStatement, deleteUserStatement, changePasswordStatement, changeFriendlyNameStatement, updateWorthGuessStatement;
+	private final PreparedStatement newUserStatement, checkUserStatement, deleteUserStatement, changePasswordStatement, changeFriendlyNameStatement, changePenniesStatement, changeBottlesStatement, updateWorthGuessStatement;
+	
+	private final GameUtils parent;
 
-	UserUtils(Connection conn, QuoteUtils quotes) throws SQLException {
+	UserUtils(Connection conn, GameUtils parent, QuoteUtils quotes) throws SQLException {
 		this.conn = conn;
 		this.quotes = quotes;
+		this.parent = parent;
 		newUserStatement = conn
 				.prepareStatement("INSERT INTO users(username, password, pennies, bottles, friendlyname) VALUES (?, ?, ?, ?, ?);");
 		checkUserStatement = conn.prepareStatement("SELECT id, friendlyname FROM users WHERE username=? AND password=?;");
@@ -32,6 +35,9 @@ public class UserUtils {
 		changePasswordStatement = conn.prepareStatement("UPDATE users SET password=? WHERE id=?");
 		changeFriendlyNameStatement = conn.prepareStatement("UPDATE users SET friendlyname=? WHERE id=?");
 		updateWorthGuessStatement = conn.prepareStatement("INSERT INTO worthguess(userid, guess) VALUES (?, ?);");
+		
+		changePenniesStatement = conn.prepareStatement("UPDATE users SET pennies=? WHERE id=?");
+		changeBottlesStatement = conn.prepareStatement("UPDATE users SET bottles=? WHERE id=?");
 	}
 
 	/**
@@ -67,10 +73,10 @@ public class UserUtils {
 
 		Statement statement = conn.createStatement();
 
-		ResultSet rs = statement.executeQuery("SELECT id, username, friendlyname, pennies, bottles FROM users;");
+		ResultSet rs = statement.executeQuery("SELECT id, username, friendlyname, pennies, bottles, bottles * " + parent.getBottleValue() + " + pennies AS wealth FROM users;");
 		while (rs.next()) {
 			userList.add(new User(rs.getInt("id"), rs.getString("username"), rs.getString("friendlyname"),
-					rs.getInt("pennies"), rs.getInt("bottles")));
+					rs.getInt("pennies"), rs.getInt("bottles"), rs.getInt("wealth")));
 		}
 		rs.close();
 		statement.close();
@@ -133,8 +139,36 @@ public class UserUtils {
 	}
 	
 	/**
-	 * Updates a user's guessed bottle price. Used by clients to update how much they think a bottle is worth.
+	 * Changes a user's number of pennies
 	 * @param userId
+	 * @param pennies
+	 * @throws SQLException
+	 */
+	public synchronized void changePennies(int userId, int pennies) throws SQLException {
+		changePenniesStatement.setInt(1, pennies);
+		changePenniesStatement.setInt(2, userId);
+		changePenniesStatement.executeUpdate();
+		
+		quotes.pushUserMoney(userId);
+	}
+	
+	/**
+	 * Changes a user's number of bottles
+	 * @param userId
+	 * @param bottles
+	 * @throws SQLException
+	 */
+	public synchronized void changeBottles(int userId, int bottles) throws SQLException {
+		changeBottlesStatement.setInt(1, bottles);
+		changeBottlesStatement.setInt(2, userId);
+		changeBottlesStatement.executeUpdate();
+		
+		quotes.pushUserMoney(userId);
+	}
+	
+	/**
+	 * Updates a user's guessed bottle price. Used by clients to update how much they think a bottle is worth.
+	 * @param userIdid
 	 * @param guess
 	 * @throws SQLException
 	 */

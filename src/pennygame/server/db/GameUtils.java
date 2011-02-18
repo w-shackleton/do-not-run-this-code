@@ -21,6 +21,8 @@ public class GameUtils {
 	
 	private boolean gamePaused = false;
 	
+	private int bottleValue = 1;
+	
 	/**
 	 * 
 	 * @param conn
@@ -34,7 +36,7 @@ public class GameUtils {
 		this.conn = conn;
 		this.multicast = multicast;
 		this.quotes = new QuoteUtils(conn, quoteAcceptingConn, miscDataConn, connPool, multicast, this);
-		this.users = new UserUtils(conn, quotes);
+		this.users = new UserUtils(conn, this, quotes);
 	}
 
 	/**
@@ -72,5 +74,17 @@ public class GameUtils {
 		stat.executeUpdate("DELETE FROM users;");
 		conn.commit();
 		conn.setAutoCommit(true);
+	}
+	
+	/**
+	 * Sets the TRUE value of the bottle
+	 * @param pennies
+	 */
+	public synchronized void setBottleValue(int pennies) {
+		bottleValue = pennies;
+	}
+	
+	public int getBottleValue() {
+		return bottleValue;
 	}
 }

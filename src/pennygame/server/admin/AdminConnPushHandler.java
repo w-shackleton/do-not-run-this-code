@@ -123,6 +123,22 @@ public class AdminConnPushHandler extends PushHandler {
 					e.printStackTrace();
 				}
 				break;
+			case MAUserModifyRequest.CHANGE_PENNIES:
+				try {
+					gameUtils.users.changePennies(usrReq.getId(), (Integer) usrReq.getData());
+					adminMsgBacks.refreshUserList();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				break;
+			case MAUserModifyRequest.CHANGE_BOTTLES:
+				try {
+					gameUtils.users.changeBottles(usrReq.getId(), (Integer) usrReq.getData());
+					adminMsgBacks.refreshUserList();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				break;
 			}
 		} else if (cls.equals(MAGamePause.class)) {
 			gameUtils.pauseGame(((MAGamePause) msg).shouldPause());
@@ -160,6 +176,10 @@ public class AdminConnPushHandler extends PushHandler {
 					}
 				else
 					adminMsgBacks.sendTradeGraphMinutes(gameUtils.quotes.getTradeHistoryMinutes());
+				break;
+			case MAGameSetting.WHAT_BOTTLE_VALUE:
+				gameUtils.setBottleValue((Integer) s.getData());
+				adminMsgBacks.refreshUserList();
 				break;
 			}
 		} else if(cls.equals(MAUndoTrade.class)) {
