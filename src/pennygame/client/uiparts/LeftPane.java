@@ -463,7 +463,7 @@ public class LeftPane extends JPanel {
 			case 0: // Predicted
 				switch(col) {
 				case 0:
-					return "Predicted";
+					return "Potential";
 				case 1:
 					return "Wealth:";
 				case 2:
@@ -553,7 +553,7 @@ public class LeftPane extends JPanel {
 			}
 		}
 		
-		private String[] columnNames = {"Predicted", "Wealth", "", "Bottles", "Pennies", "Est. Total", ""};
+		private String[] columnNames = {"Potential", "Wealth", "", "Bottles", "Pennies", "Est. Total", ""};
 	};
 	
 	
