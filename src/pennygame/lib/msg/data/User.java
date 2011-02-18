@@ -13,7 +13,7 @@ public class User implements Serializable {
 	
 	private final int id;
 	private String username, friendlyname;
-	private int pennies, bottles;
+	private int pennies, bottles, wealth;
 	
 	public User(String username, int pennies, int bottles) {
 		setUsername(username);
@@ -21,6 +21,15 @@ public class User implements Serializable {
 		setPennies(pennies);
 		setBottles(bottles);
 		id = 0;
+	}
+	
+	public User(int id, String username, String friendlyname, int pennies, int bottles, int wealth) {
+		setUsername(username);
+		setFriendlyname(friendlyname);
+		setPennies(pennies);
+		setBottles(bottles);
+		this.id = id;
+		this.setWealth(wealth);
 	}
 	
 	public User(int id, String username, String friendlyname, int pennies, int bottles) {
@@ -71,5 +80,13 @@ public class User implements Serializable {
 
 	public String getFriendlyname() {
 		return friendlyname;
+	}
+
+	public void setWealth(int wealth) {
+		this.wealth = wealth;
+	}
+
+	public int getWealth() {
+		return wealth;
 	}
 }

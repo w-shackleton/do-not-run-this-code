@@ -23,6 +23,16 @@ public class MAUserModifyRequest extends PennyMessage {
 	 */
 	public static final int CHANGE_FRIENDLYNAME = 3;
 	
+	/**
+	 * Change a user's number of pennies
+	 */
+	public static final int CHANGE_PENNIES = 4;
+	
+	/**
+	 * Change a user's number of bottles
+	 */
+	public static final int CHANGE_BOTTLES = 5;
+	
 	private final int id;
 	private final int action;
 	

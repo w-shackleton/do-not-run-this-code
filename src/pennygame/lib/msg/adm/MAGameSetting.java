@@ -16,6 +16,7 @@ public class MAGameSetting extends PennyMessage {
 	public static final int WHAT_QUOTE_NUMBER = 2;
 	public static final int WHAT_RESET_GAME = 3;
 	public static final int WHAT_GRAPH_LENGTH_MINUTES = 4;
+	public static final int WHAT_BOTTLE_VALUE = 5;
 
 	private final boolean set;
 	
