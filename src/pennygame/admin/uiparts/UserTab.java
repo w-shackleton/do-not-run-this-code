@@ -7,11 +7,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -47,8 +50,13 @@ public class UserTab extends JPanel {
 	protected JTable userTable;
 	
 	protected JPopupMenu userTableContextMenu;
+	
+	/**
+	 * The TRUE value of a bottle
+	 */
+	protected final JPasswordField bottleValue;
 
-	public UserTab(AdminFrame parent, AdminSConn serv) {
+	public UserTab(final AdminFrame parent, final AdminSConn serv) {
 		super(); 
 		
 		this.serv = serv;
@@ -90,6 +98,18 @@ public class UserTab extends JPanel {
 		changePassword.addActionListener(userListRightClickChangePasswordListener);
 		userTableContextMenu.add(changePassword);
 		
+		JMenuItem changeFriendlyName = new JMenuItem("Change Friendly Name");
+		changeFriendlyName.addActionListener(userListRightClickChangeFriendlyNameListener);
+		userTableContextMenu.add(changeFriendlyName);
+		
+		JMenuItem changePennies = new JMenuItem("Change Pennies");
+		changePennies.addActionListener(userListRightClickChangePenniesListener);
+		userTableContextMenu.add(changePennies);
+		
+		JMenuItem changeBottles = new JMenuItem("Change Bottles");
+		changeBottles.addActionListener(userListRightClickChangeBottlesListener);
+		userTableContextMenu.add(changeBottles);
+		
 		scrollPane = new JScrollPane(userTable);
 		scrollPane.setPreferredSize(new Dimension(380, 300));
 		userTable.setFillsViewportHeight(true);
@@ -97,6 +117,30 @@ public class UserTab extends JPanel {
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		add(scrollPane);
+		
+		{ // Bottom bar
+			Box box = Box.createHorizontalBox();
+			
+			JLabel label = new JLabel("Set true bottle:");
+			add(label);
+			
+			bottleValue = new JPasswordField(5);
+			bottleValue.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					Integer value;
+					try {
+						value = Integer.valueOf(String.valueOf(bottleValue.getPassword()));
+					} catch(NumberFormatException e) {
+						JOptionPane.showMessageDialog(parent, "Entered value wasn't a number", "Number error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					serv.setBottleValue(value);
+				}
+			});
+			
+			add(box);
+		}
 	}
 	
 	protected ActionListener addUserListener = new ActionListener() {
@@ -243,4 +287,68 @@ public class UserTab extends JPanel {
 			passwordDialog.setVisible(true);
 		}
 	};
+	
+	protected ActionListener userListRightClickChangeFriendlyNameListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			User user;
+			try {
+			user = userList.get(userTable.getSelectedRow());
+			} catch(IndexOutOfBoundsException e1) {
+				return;
+			}
+			
+			String newFriendlyName = JOptionPane.showInputDialog(parent, "New Username", "New Username", JOptionPane.OK_CANCEL_OPTION);
+			
+			serv.modifyUser(user.getId(), MAUserModifyRequest.CHANGE_FRIENDLYNAME, newFriendlyName);
+		}
+	};
+	
+	protected ActionListener userListRightClickChangePenniesListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			User user;
+			try {
+			user = userList.get(userTable.getSelectedRow());
+			} catch(IndexOutOfBoundsException e1) {
+				return;
+			}
+			
+			Integer pennies;
+			try {
+			pennies = Integer.valueOf(JOptionPane.showInputDialog(parent, "New number of pennies", "Change pennies", JOptionPane.OK_CANCEL_OPTION));
+			} catch(NumberFormatException e) {
+				JOptionPane.showMessageDialog(parent, "Entered value wasn't a number", "Number error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			serv.modifyUser(user.getId(), MAUserModifyRequest.CHANGE_PENNIES, pennies);
+		}
+	};
+	
+	protected ActionListener userListRightClickChangeBottlesListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			User user;
+			try {
+			user = userList.get(userTable.getSelectedRow());
+			} catch(IndexOutOfBoundsException e1) {
+				return;
+			}
+			
+			Integer bottles;
+			try {
+			bottles = Integer.valueOf(JOptionPane.showInputDialog(parent, "New number of bottles", "Change bottles", JOptionPane.OK_CANCEL_OPTION));
+			} catch(NumberFormatException e) {
+				JOptionPane.showMessageDialog(parent, "Entered value wasn't a number", "Number error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			serv.modifyUser(user.getId(), MAUserModifyRequest.CHANGE_BOTTLES, bottles);
+		}
+	};
+	
+	public synchronized void setBottleValue(int pennies) {
+		bottleValue.setText("" + pennies);
+	}
 }

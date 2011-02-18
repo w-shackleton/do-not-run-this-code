@@ -161,6 +161,18 @@ public class AdminSConn extends SConn<AdminSConnMainThread, AdminSConnPushHandle
 	}
 	
 	/**
+	 * Sets the TRUE value of the bottle, to show rankings
+	 * @param pennies
+	 */
+	public void setBottleValue(int pennies) {
+		sendMessage(new MAGameSetting(true, MAGameSetting.WHAT_BOTTLE_VALUE, pennies));
+	}
+	
+	public void getBottleValue() {
+		sendMessage(new MAGameSetting(MAGameSetting.WHAT_BOTTLE_VALUE));
+	}
+	
+	/**
 	 * Resets the entire game. Use with caution!
 	 */
 	public void resetGame() {
