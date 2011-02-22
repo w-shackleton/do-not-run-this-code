@@ -15,6 +15,7 @@
 using namespace std;
 using namespace Objects;
 using namespace Objects::Helpers;
+using namespace Misc;
 
 BEGIN_EVENT_TABLE(PlanetEditor, wxDialog)
 	EVT_BUTTON(ID_Cancel_click, PlanetEditor::OnCancel)
@@ -32,6 +33,8 @@ PlanetEditor::PlanetEditor(wxWindow* parent) :
 
 	wxBoxSizer *vsizer = new wxBoxSizer(wxVERTICAL);
 
+	wxBoxSizer *pSizer = new wxBoxSizer(wxHORIZONTAL);
+
 	wxArrayString planetList;
 	// This is the list in planet.hpp
 	for(int i = 0; i < planetTypes.size(); i++)
@@ -41,17 +44,13 @@ PlanetEditor::PlanetEditor(wxWindow* parent) :
 
 	wxRadioBox *planets = new wxRadioBox(this, ID_Radiobox, _("Choose planet"), wxDefaultPosition, wxDefaultSize, planetList);
 
-	vsizer->Add(planets);
-
-	// Current planet selection
-	wxBoxSizer *pSizer = new wxBoxSizer(wxHORIZONTAL);
+	pSizer->Add(planets, 1, wxALL, 5);
 
 //	wxStaticText *pText = new wxStaticText(this, -1, _("Current planet:"));
 //	pSizer->Add(pText, 0, wxEXPAND | wxALIGN_CENTRE_VERTICAL);
 
-//	ppanel = new PlanetPanel(this, GetBackgroundColour()); // Not working, so don't use
-//	ppanel->SetPlanet(planetTypes[0].id);
-//	pSizer->Add(ppanel);
+	ppanel = new PlanetPanel(this, 200, 200); // Not working, so don't use
+	pSizer->Add(ppanel, 0, wxALL, 5);
 	vsizer->Add(pSizer, 0, wxALL, 5);
 
 	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
@@ -71,7 +70,6 @@ void PlanetEditor::OnCancel(wxCommandEvent& event)
 
 void PlanetEditor::OnOk(wxCommandEvent& event)
 {
-	cout << type << "THISTHIS2" << endl;
 	// type = tempType;
 	EndModal(0);
 }
@@ -83,14 +81,15 @@ void PlanetEditor::OnPlanetSelect(wxCommandEvent& event)
 //	tempType = event.GetId() - BUTTON_ID_START;
 //	type = event.GetId() - BUTTON_ID_START;
 	type = event.GetInt();
-	cout << type << "THISTHIS" << endl;
+	ppanel->SetPlanet(type);
 }
 
-PlanetPanel::PlanetPanel(wxWindow *window, double density, double bounciness, Misc::Colour& col, int width, int height) :
-	CairoPanel(window, wxSize(100, 100)),
-	density(density),
-	bounciness(bounciness),
-	col(col),
+PlanetPanel::PlanetPanel(wxWindow *window, int width, int height) :
+	CairoPanel(window, wxSize(width, height)),
+	col(true),
+//	density(density),
+//	bounciness(bounciness),
+//	col(col),
 	width(width),height(height)
 {
 	shadow = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("planet-s.png"));
@@ -103,18 +102,18 @@ PlanetPanel::PlanetPanel(wxWindow *window, double density, double bounciness, Mi
 	densityicon = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("densityicon.png"));
 	if(densityicon == NULL)
 		cout << "ERROR: density icon not found!" << endl;
+
+	SetPlanet(0);
 }
 
-void PlanetPanel::SetPlanet(int id)
+void PlanetPanel::SetPlanet(int position)
 {
-	imgFName = string(Misc::Data::getFilePath(string(planetTypes.begin()->filename)));
+	imgFName = Misc::Data::getFilePath(planetTypes[position].filename);
+	density = planetTypes[position].density;
+	bounciness = planetTypes[position].bounciness;
+	col = planetTypes[position].bgCol;
 
-	for(vector<PlanetType>::iterator it = planetTypes.begin(); it != planetTypes.end(); it++)
-		if(it->id == id)
-		{
-			imgFName = Misc::Data::getFilePath(it->filename);
-		}
-	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath(imgFName));
+	img = Cairo::ImageSurface::create_from_png(imgFName);
 
 	if(img == NULL)
 		cout << "ERROR: Could not load image " << imgFName << "." << endl;
@@ -125,17 +124,16 @@ void PlanetPanel::redraw_draw()
 {
 	int imgWidth = img->get_width(); int imgHeight = img->get_height();
 
-	Cairo::RefPtr<Cairo::ImageSurface> surface = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, width, height);
-	Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(surface);
+//	Cairo::RefPtr<Cairo::ImageSurface> surface = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, width, height);
+//	Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(surface);
 
 	cr->set_source_rgb(0, 0, 0);
 	cr->paint();
 
 	// DRAW HERE
-	cr->set_source_rgb(col.r / 256, col.g / 256, col.b / 256); // These are 0 anyway if invalid, so no need to add 'if' no bg
+	cr->set_source_rgb(col.r, col.g, col.b); // These are 0 anyway if invalid, so no need to add 'if' no bg
 	cr->arc(width / 2, height / 2, width / 2, 0, 2.0 * M_PI);
 	cr->fill();
-//	cout << "W: " << width << "," << imgWidth << ";" << height << "," << imgHeight << endl;
 	cr->scale((double)width / (double)imgWidth, (double)height / (double)imgHeight);
 //	cr->scale(img->get_width() / width, img->get_height() / height);
 

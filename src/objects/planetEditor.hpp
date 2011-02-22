@@ -48,8 +48,8 @@ namespace Objects
 		class PlanetPanel : public CairoPanel
 		{
 			public:
-				PlanetPanel(wxWindow *window, double density, double bounciness, Misc::Colour& col, int width = PLANETEDITOR_IMG_X, int height = PLANETEDITOR_IMG_Y);
-				void SetPlanet(int id);
+				PlanetPanel(wxWindow *window, int width = PLANETEDITOR_IMG_X, int height = PLANETEDITOR_IMG_Y);
+				void SetPlanet(int position);
 			protected:
 				Cairo::RefPtr<Cairo::ImageSurface> planetShadow, bounceicon, densityicon;
 				virtual void redraw_draw();
@@ -59,7 +59,7 @@ namespace Objects
 
 				double density;
 				double bounciness;
-				Misc::Colour& col;
+				Misc::Colour col;
 				int width, height;
 		};
 	}

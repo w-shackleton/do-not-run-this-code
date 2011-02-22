@@ -25,16 +25,17 @@ namespace Objects
 
 			PlanetType(int id, std::string filename, std::string planetName, double bounciness, double density, int minSize, int maxSize, Misc::Colour bgCol);
 
-			double bounciness;
-			double density;
 			int minSize, maxSize;
-
-			Misc::Colour bgCol;
 		public:
 			std::string filename;
 			std::string planetName;
 
 			int id;
+
+			double bounciness;
+			double density;
+
+			Misc::Colour bgCol;
 
 			PlanetType();
 	};
