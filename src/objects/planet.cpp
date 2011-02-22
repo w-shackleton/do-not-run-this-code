@@ -11,14 +11,23 @@ using namespace std;
 #define PLANET_MIN 30
 #define PLANET_MAX 200
 
+#define IMG_RADIUS 150
+
+#include "../misc/data.hpp"
+
 Planet::Planet(int type, double sx, double sy, double sradius) :
 	Spherical(sx, sy, sradius, PLANET_MIN, PLANET_MAX),
 	type(type)
 {
-	planetType = planetTypes[0];
-	for(vector<PlanetType>::iterator it = planetTypes.begin(); it != planetTypes.end(); it++)
-		if(it->id == type)
-			planetType = *it;
+	planetType = planetTypes[type];
+	cout << "Type of new planet: " << type << endl;
+//	planetType = planetTypes[0];
+//	for(vector<PlanetType>::iterator it = planetTypes.begin(); it != planetTypes.end(); it++)
+//		if(it->id == type)
+//			planetType = *it;
+
+	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath(planetType.filename));
+	shadow = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("planet-s.png"));
 }
 
 Planet::Planet(TiXmlElement &item) :
@@ -35,18 +44,34 @@ void Planet::saveXMLChild(TiXmlElement* item)
 
 void Planet::draw(Cairo::RefPtr<Cairo::Context> &cr)
 {
-	cr->set_source_rgb(0.1, 0.9, 0.1);
-	cr->arc(x, y, radius, -1, 2 * M_PI);
+	cr->translate(x, y);
+//	cr->rotate(rotation);
+	cr->scale(radius / IMG_RADIUS, radius / IMG_RADIUS);
+
+	if(!planetType.bgCol.noColour)
+	{
+		cr->set_source_rgb(planetType.bgCol.r, planetType.bgCol.g, planetType.bgCol.b);
+		cr->arc(0, 0, IMG_RADIUS, 0, M_PI * 2);
+		cr->fill();
+	}
+
+	cr->set_source(img, -IMG_RADIUS, -IMG_RADIUS);
+	cr->rectangle(-IMG_RADIUS, -IMG_RADIUS, IMG_RADIUS * 2, IMG_RADIUS * 2);
 	cr->fill();
 
-	cr->set_source_rgb(0, 0, 0);
-	cr->arc(x, y, radius, 0, 2 * M_PI);
-	cr->stroke();
+	cr->set_source(shadow, -IMG_RADIUS, -IMG_RADIUS);
+	cr->rectangle(-IMG_RADIUS, -IMG_RADIUS, IMG_RADIUS * 2, IMG_RADIUS * 2);
+	cr->fill();
+
+	cr->scale(IMG_RADIUS / radius, IMG_RADIUS / radius);
+//	cr->rotate(-rotation);
+	cr->translate(-x, -y);
 }
 
-PlanetType::PlanetType(int id, std::string filename, double bounciness, double density, int minSize, int maxSize, Colour bgCol) :
+PlanetType::PlanetType(int id, std::string filename, std::string planetName, double bounciness, double density, int minSize, int maxSize, Colour bgCol) :
 	id(id),
 	filename(filename),
+	planetName(planetName),
 	bounciness(bounciness),
 	density(density),
 	minSize(minSize),
@@ -63,13 +88,13 @@ PlanetTypes::PlanetTypes() :
 	vector<PlanetType>()
 {
 	// Bounciness & density from 0 - 1.5?
-			//   ID			Filename		bn   dn   min max col
-	push_back(PlanetType(PLANET_nobounce1,	"planet1.png",		0.2, 0.5, 30, 250, Colour(true)));
-	push_back(PlanetType(PLANET_sticky1,	"planet5.png",		0,   0.9, 40, 250, Colour(255, 128, 0)));
-	push_back(PlanetType(PLANET_bounce2,	"planet2.png",		1,   0.1, 20, 200, Colour(100, 100, 255)));
-	push_back(PlanetType(PLANET_n1,		"planet3.png",		0.6, 0.6, 20, 200, Colour(0, 100, 200)));
-	push_back(PlanetType(PLANET_n2,		"planet4.png",		0.7, 0.7, 20, 200, Colour(0, 100, 200)));
-	push_back(PlanetType(PLANET_n3,		"planet6.png",		0.8, 0.8, 20, 200, Colour(50, 60, 60)));
-	push_back(PlanetType(PLANET_bounce1,	"planetbouncy.png",	1.3, 0.8, 20, 150, Colour(true)));
+			//   ID			Filename	Name			bn   dn   min max col
+	push_back(PlanetType(PLANET_nobounce1,	"planet1.png",	"Gas planet",		0.2, 0.5, 30, 250, Colour(true)));
+	push_back(PlanetType(PLANET_sticky1,	"planet5.png",	"Sticky",		0,   0.9, 40, 250, Colour(255, 128, 0)));
+	push_back(PlanetType(PLANET_bounce2,	"planet2.png",	"Slightly Bouncy",	1,   0.1, 20, 200, Colour(100, 100, 255)));
+	push_back(PlanetType(PLANET_n1,		"planet3.png",	"Normal type 1",	0.6, 0.6, 20, 200, Colour(0, 100, 200)));
+	push_back(PlanetType(PLANET_n2,		"planet4.png",	"Normal type 2",	0.7, 0.7, 20, 200, Colour(0, 100, 200)));
+	push_back(PlanetType(PLANET_n3,		"planet6.png",	"Normal type 3",	0.8, 0.8, 20, 200, Colour(50, 60, 60)));
+	push_back(PlanetType(PLANET_bounce1,	"planetbouncy.png","Bouncy",		1.3, 0.8, 20, 150, Colour(true)));
 }
 

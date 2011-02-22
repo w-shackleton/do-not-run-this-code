@@ -23,17 +23,19 @@ namespace Objects
 			friend class Planet;
 			friend class Objects::Helpers::PlanetEditor;
 
-			PlanetType(int id, std::string filename, double bounciness, double density, int minSize, int maxSize, Misc::Colour bgCol);
+			PlanetType(int id, std::string filename, std::string planetName, double bounciness, double density, int minSize, int maxSize, Misc::Colour bgCol);
 
-			int id;
-
-			std::string filename;
 			double bounciness;
 			double density;
 			int minSize, maxSize;
 
 			Misc::Colour bgCol;
 		public:
+			std::string filename;
+			std::string planetName;
+
+			int id;
+
 			PlanetType();
 	};
 
@@ -65,6 +67,7 @@ namespace Objects
 
 //			static std::vector<Type> types = {Type(1, .5, "planet1.jpg")};
 			
+			Cairo::RefPtr<Cairo::ImageSurface> img, shadow;
 
 			int type;
 			PlanetType planetType;

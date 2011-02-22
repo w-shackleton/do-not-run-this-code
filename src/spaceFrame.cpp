@@ -274,10 +274,13 @@ void SpaceFrame::OnCreatePlanet(wxCommandEvent& event)
 {
 	wxSize pos = spacePanel->getMovedPos() + spacePanel->GetSize() / 2;
 
-	int type = 3; // TODO: Implement type
-	Objects::Helpers::PlanetEditor editor(this, type);
+	int type = 3;
+	Objects::Helpers::PlanetEditor editor(this);
+	cout << type << "Part 1" << endl;
 	if(editor.ShowModal() == 0)
 	{
+		type = editor.type;
+		cout << type << "Part 2" << endl;
 		lmanager.objs.push_back(new Objects::Planet(type, pos.GetWidth(), pos.GetHeight(), 50)); // Default radius
 	}
 	spacePanel->redraw();

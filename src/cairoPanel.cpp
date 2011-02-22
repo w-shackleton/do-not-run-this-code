@@ -9,8 +9,8 @@ BEGIN_EVENT_TABLE(CairoPanel, wxPanel)
 	EVT_SIZE(CairoPanel::sizeEvent)
 END_EVENT_TABLE()
 
-CairoPanel::CairoPanel(wxWindow* parent)
-	: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxFULL_REPAINT_ON_RESIZE)
+CairoPanel::CairoPanel(wxWindow* parent, wxSize size)
+	: wxPanel(parent, wxID_ANY, wxDefaultPosition, size, wxTAB_TRAVERSAL | wxFULL_REPAINT_ON_RESIZE)
 {
 	SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 	wxSize pSize = GetSize();
