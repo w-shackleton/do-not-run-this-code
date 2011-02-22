@@ -23,18 +23,17 @@ namespace Objects
 		class PlanetEditor : public wxDialog
 		{
 			public:
-				PlanetEditor(wxWindow* parent);
+				PlanetEditor(wxWindow* parent, int typePosition = 0);
 				DECLARE_EVENT_TABLE();
 			public:
 				int type;
 			protected:
 
-				int tempType;
-
 				enum
 				{
 					ID_Cancel_click = wxID_HIGHEST + 1,
-					ID_Ok_click
+					ID_Ok_click,
+					ID_Radiobox,
 				};
 
 				void OnCancel(wxCommandEvent& event);
@@ -43,19 +42,23 @@ namespace Objects
 
 				PlanetPanel *ppanel;
 
-				Cairo::RefPtr<Cairo::ImageSurface> planetShadow, bounceicon, densityicon;
-				wxBitmap createPlanetBitmap(std::string picture, double density, double bounciness, Misc::Colour& col, int width = PLANETEDITOR_IMG_X, int height = PLANETEDITOR_IMG_Y);
 		};
 		class PlanetPanel : public CairoPanel
 		{
 			public:
-				PlanetPanel(wxWindow *window, wxColour bgCol);
-				void SetPlanet(int id);
+				PlanetPanel(wxWindow *window, int type, int width = PLANETEDITOR_IMG_X, int height = PLANETEDITOR_IMG_Y);
+				void SetPlanet(int position);
 			protected:
+				Cairo::RefPtr<Cairo::ImageSurface> planetShadow, bounceicon, densityicon;
 				virtual void redraw_draw();
 				Cairo::RefPtr<Cairo::ImageSurface> shadow;
+				Cairo::RefPtr<Cairo::ImageSurface> img;
 				std::string imgFName;
-				wxColour bgCol;
+
+				double density;
+				double bounciness;
+				Misc::Colour col;
+				int width, height;
 		};
 	}
 }

@@ -23,17 +23,19 @@ namespace Objects
 			friend class Planet;
 			friend class Objects::Helpers::PlanetEditor;
 
-			PlanetType(int id, std::string filename, double bounciness, double density, int minSize, int maxSize, Misc::Colour bgCol);
+			PlanetType(int id, std::string filename, std::string planetName, double bounciness, double density, int minSize, int maxSize, Misc::Colour bgCol);
+
+			int minSize, maxSize;
+		public:
+			std::string filename;
+			std::string planetName;
+
+			int id;
 
 			double bounciness;
 			double density;
-			int minSize, maxSize;
 
 			Misc::Colour bgCol;
-		public:
-			std::string filename;
-
-			int id;
 
 			PlanetType();
 	};
@@ -73,6 +75,8 @@ namespace Objects
 		public:
 			Planet(int type, double sx, double sy, double sradius);
 			Planet(TiXmlElement &item);
+			void onCMenuItemClick(int id);
+
 			void draw(Cairo::RefPtr<Cairo::Context> &cr);
 	};
 };
