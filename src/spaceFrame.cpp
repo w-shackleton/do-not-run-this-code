@@ -97,6 +97,7 @@ SpaceFrame::SpaceFrame()
 
 	hcontainer = new wxBoxSizer(wxHORIZONTAL);
 	spacePanel = new SpacePanel(this, lmanager);
+	lmanager.setEditorCallbacks(spacePanel);
 	hcontainer->Add(spacePanel, 1, wxEXPAND);
 
 	SetSizer(hcontainer);
@@ -281,7 +282,7 @@ void SpaceFrame::OnCreatePlanet(wxCommandEvent& event)
 	{
 		type = editor.type;
 		cout << type << "Part 2" << endl;
-		lmanager.objs.push_back(new Objects::Planet(type, pos.GetWidth(), pos.GetHeight(), 50)); // Default radius
+		lmanager.objs.push_back(new Objects::Planet(*spacePanel, type, pos.GetWidth(), pos.GetHeight(), 50)); // Default radius
 	}
 	spacePanel->redraw();
 }
@@ -296,7 +297,7 @@ void SpaceFrame::OnCreateInfoBox(wxCommandEvent& event)
 	Objects::Helpers::InfoBoxEditor ibCreator(this, text, initialShow);
 	if(ibCreator.ShowModal() == 0) // If user clicked 'OK' - only want to create then
 	{
-		lmanager.objs.push_back(new Objects::InfoBox(pos.GetWidth(), pos.GetHeight(), 0, text, initialShow));
+		lmanager.objs.push_back(new Objects::InfoBox(*spacePanel, pos.GetWidth(), pos.GetHeight(), 0, text, initialShow));
 	}
 	spacePanel->redraw();
 }
@@ -304,21 +305,21 @@ void SpaceFrame::OnCreateInfoBox(wxCommandEvent& event)
 void SpaceFrame::OnCreateWall(wxCommandEvent& event)
 {
 	wxSize pos = spacePanel->getMovedPos() + spacePanel->GetSize() / 2;
-	lmanager.objs.push_back(new Objects::Wall(pos.GetWidth(), pos.GetHeight(), 100, 0));
+	lmanager.objs.push_back(new Objects::Wall(*spacePanel, pos.GetWidth(), pos.GetHeight(), 100, 0));
 	spacePanel->redraw();
 }
 
 void SpaceFrame::OnCreateVortex(wxCommandEvent& event)
 {
 	wxSize pos = spacePanel->getMovedPos() + spacePanel->GetSize() / 2;
-	lmanager.objs.push_back(new Objects::Vortex(pos.GetWidth(), pos.GetHeight(), 100, 100, 0));
+	lmanager.objs.push_back(new Objects::Vortex(*spacePanel, pos.GetWidth(), pos.GetHeight(), 100, 100, 0));
 	spacePanel->redraw();
 }
 
 void SpaceFrame::OnCreateBlackHole(wxCommandEvent& event)
 {
 	wxSize pos = spacePanel->getMovedPos() + spacePanel->GetSize() / 2;
-	lmanager.objs.push_back(new Objects::BlackHole(pos.GetWidth(), pos.GetHeight()));
+	lmanager.objs.push_back(new Objects::BlackHole(*spacePanel, pos.GetWidth(), pos.GetHeight()));
 	spacePanel->redraw();
 }
 

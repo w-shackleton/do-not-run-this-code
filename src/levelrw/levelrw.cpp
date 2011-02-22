@@ -157,15 +157,15 @@ bool LevelReader::open(const std::string &filename, std::list<Objects::SpaceItem
 		{
 			string itemName = item->ValueStr();
 			/**/ if(itemName == "infobox")
-				objs->push_back(new Objects::InfoBox(*item));
+				objs->push_back(new Objects::InfoBox(*callbacks, *item));
 			else if(itemName == "planet")
-				objs->push_back(new Objects::Planet(*item));
+				objs->push_back(new Objects::Planet(*callbacks, *item));
 			else if(itemName == "blackhole")
-				objs->push_back(new Objects::BlackHole(*item));
+				objs->push_back(new Objects::BlackHole(*callbacks, *item));
 			else if(itemName == "gravity")
-				objs->push_back(new Objects::Vortex(*item));
+				objs->push_back(new Objects::Vortex(*callbacks, *item));
 			else if(itemName == "wall")
-				objs->push_back(new Objects::Wall(*item));
+				objs->push_back(new Objects::Wall(*callbacks, *item));
 
 			item = item->NextSiblingElement();
 			cout << "Loaded item" << endl;
@@ -176,3 +176,9 @@ bool LevelReader::open(const std::string &filename, std::list<Objects::SpaceItem
 
 	return true;
 }
+
+void LevelReader::setEditorCallbacks(EditorCallbacks *callbacks)
+{
+	this->callbacks = callbacks;
+}
+

@@ -1,6 +1,8 @@
 #ifndef O_SPACEITEM_H
 #define O_SPACEITEM_H
 
+#include "../editorCallbacks.hpp"
+
 //#include <cairomm/surface.h>
 #include <cairomm/context.h>
 #include <tinyxml.h>
@@ -20,13 +22,15 @@ namespace Objects
 
 			virtual std::string getName() = 0;
 
+			EditorCallbacks &callbacks;
+
 			wxMenu *contextMenu;
 			int contextMenuNextAvailableSlot;
 
 			double x, y;
 		public:
-			SpaceItem(double sx, double sy);
-			SpaceItem(TiXmlElement &item);
+			SpaceItem(EditorCallbacks &callbacks, double sx, double sy);
+			SpaceItem(EditorCallbacks &callbacks, TiXmlElement &item);
 			~SpaceItem();
 
 			virtual void draw(Cairo::RefPtr<Cairo::Context> &cr) = 0;

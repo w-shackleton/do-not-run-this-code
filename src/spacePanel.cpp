@@ -261,7 +261,12 @@ void SpacePanel::contextMenu(wxContextMenuEvent& event)
 void SpacePanel::cMenuClick(wxCommandEvent& evt)
 {
 	selectedItem->onCMenuItemClick(evt.GetId());
-	Refresh();
+}
+
+void SpacePanel::onRefresh()
+{
+//	Refresh();
+	redraw();
 }
 
 wxRealPoint operator-(const wxMouseEvent& lhs, const wxMouseEvent& rhs)

@@ -13,8 +13,8 @@ using namespace Objects::Helpers;
 #include <iostream>
 using namespace std;
 
-InfoBox::InfoBox(double x, double y, double rotation, std::string text, bool initialShow) :
-	Rectangular(x, y, INFOBOX_SIZE_X, INFOBOX_SIZE_Y, rotation, Misc::Point(INFOBOX_SIZE_X, INFOBOX_SIZE_Y), Misc::Point(INFOBOX_SIZE_X, INFOBOX_SIZE_Y)),
+InfoBox::InfoBox(EditorCallbacks &callbacks, double x, double y, double rotation, std::string text, bool initialShow) :
+	Rectangular(callbacks, x, y, INFOBOX_SIZE_X, INFOBOX_SIZE_Y, rotation, Misc::Point(INFOBOX_SIZE_X, INFOBOX_SIZE_Y), Misc::Point(INFOBOX_SIZE_X, INFOBOX_SIZE_Y)),
 	text(text),
 	initialShow(initialShow)
 {
@@ -22,8 +22,8 @@ InfoBox::InfoBox(double x, double y, double rotation, std::string text, bool ini
 	contextMenu->Append(contextMenuNextAvailableSlot++, _("&Edit"));
 }
 
-InfoBox::InfoBox(TiXmlElement &item) :
-	Rectangular(item, Misc::Point(INFOBOX_SIZE_X, INFOBOX_SIZE_Y), Misc::Point(INFOBOX_SIZE_X, INFOBOX_SIZE_Y))
+InfoBox::InfoBox(EditorCallbacks &callbacks, TiXmlElement &item) :
+	Rectangular(callbacks, item, Misc::Point(INFOBOX_SIZE_X, INFOBOX_SIZE_Y), Misc::Point(INFOBOX_SIZE_X, INFOBOX_SIZE_Y))
 {
 	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("message.png"));
 	contextMenu->Append(contextMenuNextAvailableSlot++, _("&Edit"));

@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "../objects/spaceItem.hpp"
+#include "../editorCallbacks.hpp"
 
 namespace Levels
 {
@@ -35,7 +36,9 @@ namespace Levels
 					double &px, double &py,
 					double &ssx, double &ssy,
 					double &bx, double &by);
+			void setEditorCallbacks(EditorCallbacks *callbacks);
 		protected:
+			EditorCallbacks *callbacks;
 	};
 };
 

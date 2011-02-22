@@ -5,6 +5,7 @@
 #include "cairoPanel.hpp"
 
 #include "objects/spaceItem.hpp"
+#include "editorCallbacks.hpp"
 
 #include <list>
 
@@ -13,11 +14,14 @@
 #define PHONE_SCREEN_X 480
 #define PHONE_SCREEN_Y 320
 
-class SpacePanel : public CairoPanel
+class SpacePanel : public CairoPanel, public EditorCallbacks
 {
 	public:
 		SpacePanel(wxWindow *parent, Levels::LevelManager &lmanager);
 		~SpacePanel();
+
+		// Callbacks
+		void onRefresh();
 
 		DECLARE_EVENT_TABLE();
 	protected:

@@ -11,8 +11,8 @@ namespace Objects
 			inline std::string getName() { return "blackhole"; }
 			void saveXMLChild(TiXmlElement* item);
 		public:
-			BlackHole(double sx, double sy);
-			BlackHole(TiXmlElement &item);
+			BlackHole(EditorCallbacks &callbacks, double sx, double sy);
+			BlackHole(EditorCallbacks &callbacks, TiXmlElement &item);
 			void draw(Cairo::RefPtr<Cairo::Context> &cr);
 
 			Cairo::RefPtr<Cairo::ImageSurface> img;

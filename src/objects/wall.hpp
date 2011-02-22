@@ -8,8 +8,8 @@ namespace Objects
 	class Wall : public Rectangular
 	{
 		public:
-			Wall(double x, double y, double sx, double rotation);
-			Wall(TiXmlElement &item);
+			Wall(EditorCallbacks &callbacks, double x, double y, double sx, double rotation);
+			Wall(EditorCallbacks &callbacks, TiXmlElement &item);
 			void draw(Cairo::RefPtr<Cairo::Context> &cr);
 		protected:
 			inline std::string getName() { return "wall"; }

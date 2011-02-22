@@ -5,8 +5,8 @@ using namespace Objects;
 #include <cmath>
 using namespace std;
 
-Rectangular::Rectangular(double x, double y, double sx, double sy, double rotation, Misc::Point min, Misc::Point max) :
-	SpaceItem(x, y),
+Rectangular::Rectangular(EditorCallbacks &callbacks, double x, double y, double sx, double sy, double rotation, Misc::Point min, Misc::Point max) :
+	SpaceItem(callbacks, x, y),
 	sx(abs(sx)),
 	sy(abs(sy)),
 	rotation(rotation),
@@ -16,8 +16,8 @@ Rectangular::Rectangular(double x, double y, double sx, double sy, double rotati
 	cornerMatrix = Cairo::identity_matrix();
 }
 
-Rectangular::Rectangular(TiXmlElement &item, Misc::Point min, Misc::Point max) :
-	SpaceItem(item),
+Rectangular::Rectangular(EditorCallbacks &callbacks, TiXmlElement &item, Misc::Point min, Misc::Point max) :
+	SpaceItem(callbacks, item),
 	min(min),
 	max(max)
 {

@@ -10,15 +10,15 @@ using namespace Objects;
 
 #include "../misc/data.hpp"
 
-Wall::Wall(double x, double y, double sx, double rotation) :
-	Rectangular(x, y, sx, RECT_SIZE_Y, rotation, Misc::Point(RECT_MIN_X, RECT_SIZE_Y), Misc::Point(RECT_MAX_X, RECT_SIZE_Y))
+Wall::Wall(EditorCallbacks &callbacks, double x, double y, double sx, double rotation) :
+	Rectangular(callbacks, x, y, sx, RECT_SIZE_Y, rotation, Misc::Point(RECT_MIN_X, RECT_SIZE_Y), Misc::Point(RECT_MAX_X, RECT_SIZE_Y))
 {
 	wallside = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("wallside.png"));
 	wall= Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("wall.png"));
 }
 
-Wall::Wall(TiXmlElement &item) :
-	Rectangular(item, Misc::Point(RECT_MIN_X, RECT_SIZE_Y), Misc::Point(RECT_MAX_X, RECT_SIZE_Y))
+Wall::Wall(EditorCallbacks &callbacks, TiXmlElement &item) :
+	Rectangular(callbacks, item, Misc::Point(RECT_MIN_X, RECT_SIZE_Y), Misc::Point(RECT_MAX_X, RECT_SIZE_Y))
 {
 	sy = RECT_SIZE_Y;
 	wallside = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("wallside.png"));

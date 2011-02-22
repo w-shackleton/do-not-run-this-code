@@ -11,14 +11,14 @@ using namespace Objects;
 #define BLACKHOLE_RADIUS 70
 #define IMG_RADIUS 250
 
-BlackHole::BlackHole(double sx, double sy) :
-	Spherical(sx, sy, BLACKHOLE_RADIUS, BLACKHOLE_RADIUS, BLACKHOLE_RADIUS)
+BlackHole::BlackHole(EditorCallbacks &callbacks, double sx, double sy) :
+	Spherical(callbacks, sx, sy, BLACKHOLE_RADIUS, BLACKHOLE_RADIUS, BLACKHOLE_RADIUS)
 {
 	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("bh.png"));
 }
 
-BlackHole::BlackHole(TiXmlElement &item) :
-	Spherical(item, BLACKHOLE_RADIUS, BLACKHOLE_RADIUS)
+BlackHole::BlackHole(EditorCallbacks &callbacks, TiXmlElement &item) :
+	Spherical(callbacks, item, BLACKHOLE_RADIUS, BLACKHOLE_RADIUS)
 {
 	radius = BLACKHOLE_RADIUS;
 	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("bh.png"));

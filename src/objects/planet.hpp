@@ -73,8 +73,8 @@ namespace Objects
 			int type;
 			PlanetType planetType;
 		public:
-			Planet(int type, double sx, double sy, double sradius);
-			Planet(TiXmlElement &item);
+			Planet(EditorCallbacks &callbacks, int type, double sx, double sy, double sradius);
+			Planet(EditorCallbacks &callbacks, TiXmlElement &item);
 			void onCMenuItemClick(int id);
 
 			void draw(Cairo::RefPtr<Cairo::Context> &cr);

@@ -17,8 +17,8 @@ using namespace std;
 #include "../misc/data.hpp"
 #include "planetEditor.hpp"
 
-Planet::Planet(int type, double sx, double sy, double sradius) :
-	Spherical(sx, sy, sradius, PLANET_MIN, PLANET_MAX),
+Planet::Planet(EditorCallbacks &callbacks, int type, double sx, double sy, double sradius) :
+	Spherical(callbacks, sx, sy, sradius, PLANET_MIN, PLANET_MAX),
 	type(type)
 {
 	planetType = planetTypes[type];
@@ -34,16 +34,28 @@ Planet::Planet(int type, double sx, double sy, double sradius) :
 	contextMenu->Append(contextMenuNextAvailableSlot++, _("&Edit"));
 }
 
-Planet::Planet(TiXmlElement &item) :
-	Spherical(item, PLANET_MIN, PLANET_MAX)
+Planet::Planet(EditorCallbacks &callbacks, TiXmlElement &item) :
+	Spherical(callbacks, item, PLANET_MIN, PLANET_MAX)
 {
-	item.QueryIntAttribute("type", &type);
+	int typeId;
+	item.QueryIntAttribute("type", &typeId);
+	planetType = planetTypes[0];
+	int typeNum = 0;
+	for(vector<PlanetType>::iterator it = planetTypes.begin(); it != planetTypes.end(); it++)
+	{
+		if(it->id == typeId)
+		{
+			planetType = *it;
+			type = typeNum;
+		}
+		typeNum++;
+	}
 }
 
 void Planet::saveXMLChild(TiXmlElement* item)
 {
 	Spherical::saveXMLChild(item);
-	item->SetAttribute("type", type);
+	item->SetAttribute("type", planetType.id);
 }
 
 void Planet::draw(Cairo::RefPtr<Cairo::Context> &cr)
@@ -85,6 +97,7 @@ void Planet::onCMenuItemClick(int id)
 				type = editor.type;
 				planetType = planetTypes[type];
 				img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath(planetType.filename));
+				callbacks.onRefresh();
 			}
 			return;
 	}

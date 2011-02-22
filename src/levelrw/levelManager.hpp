@@ -30,6 +30,8 @@ namespace Levels
 			bool levelChanged;
 			void cleanObjs();
 
+			void setEditorCallbacks(EditorCallbacks *callbacks);
+
 			std::list<Objects::SpaceItem *>& objs;
 
 			std::string levelName;

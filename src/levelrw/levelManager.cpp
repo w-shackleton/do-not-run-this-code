@@ -72,3 +72,8 @@ void LevelManager::cleanObjs()
 	}
 	objs.clear();
 }
+
+void LevelManager::setEditorCallbacks(EditorCallbacks *callbacks)
+{
+	reader.setEditorCallbacks(callbacks);
+}

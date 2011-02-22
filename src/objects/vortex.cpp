@@ -19,16 +19,16 @@ using namespace std;
 #define IMG_SIZE_Y 400
 #define IMG_NAME "vortex.png"
 
-Vortex::Vortex(double x, double y, double sx, double sy, double rotation) :
-	Rectangular(x, y, sx, sy, rotation, Misc::Point(VORTEX_MIN_X, VORTEX_MIN_Y), Misc::Point(VORTEX_MAX_X, VORTEX_MAX_Y)),
+Vortex::Vortex(EditorCallbacks &callbacks, double x, double y, double sx, double sy, double rotation) :
+	Rectangular(callbacks, x, y, sx, sy, rotation, Misc::Point(VORTEX_MIN_X, VORTEX_MIN_Y), Misc::Point(VORTEX_MAX_X, VORTEX_MAX_Y)),
 	power(1)
 {
 	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath(IMG_NAME));
 	contextMenu->Append(contextMenuNextAvailableSlot++, _("&Change power"));
 }
 
-Vortex::Vortex(TiXmlElement &item) :
-	Rectangular(item, Misc::Point(VORTEX_MIN_X, VORTEX_MIN_Y), Misc::Point(VORTEX_MAX_X, VORTEX_MAX_Y)),
+Vortex::Vortex(EditorCallbacks &callbacks, TiXmlElement &item) :
+	Rectangular(callbacks, item, Misc::Point(VORTEX_MIN_X, VORTEX_MIN_Y), Misc::Point(VORTEX_MAX_X, VORTEX_MAX_Y)),
 	power(1)
 {
 	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath(IMG_NAME));

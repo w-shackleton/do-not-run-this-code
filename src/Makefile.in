@@ -50,6 +50,7 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_spaceedit_OBJECTS = spaceedit-levelInfoEditor.$(OBJEXT) \
 	spaceedit-matrixHelper.$(OBJEXT) \
+	spaceedit-editorCallbacks.$(OBJEXT) \
 	spaceedit-spacePanel.$(OBJEXT) spaceedit-cairoPanel.$(OBJEXT) \
 	spaceedit-spaceFrame.$(OBJEXT) spaceedit-spaceApp.$(OBJEXT)
 spaceedit_OBJECTS = $(am_spaceedit_OBJECTS)
@@ -288,6 +289,7 @@ SUBDIRS = misc objects levelrw
 spaceedit_SOURCES = \
 		levelInfoEditor.cpp	levelInfoEditor.hpp	\
 		matrixHelper.cpp	matrixHelper.hpp	\
+		editorCallbacks.cpp	editorCallbacks.hpp	\
 		spacePanel.cpp		spacePanel.hpp		\
 		cairoPanel.cpp		cairoPanel.hpp		\
 		spaceFrame.cpp		spaceFrame.hpp		\
@@ -387,6 +389,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-cairoPanel.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-editorCallbacks.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-levelInfoEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-matrixHelper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-spaceApp.Po@am__quote@
@@ -448,6 +451,22 @@ spaceedit-matrixHelper.obj: matrixHelper.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='matrixHelper.cpp' object='spaceedit-matrixHelper.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -c -o spaceedit-matrixHelper.obj `if test -f 'matrixHelper.cpp'; then $(CYGPATH_W) 'matrixHelper.cpp'; else $(CYGPATH_W) '$(srcdir)/matrixHelper.cpp'; fi`
+
+spaceedit-editorCallbacks.o: editorCallbacks.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -MT spaceedit-editorCallbacks.o -MD -MP -MF $(DEPDIR)/spaceedit-editorCallbacks.Tpo -c -o spaceedit-editorCallbacks.o `test -f 'editorCallbacks.cpp' || echo '$(srcdir)/'`editorCallbacks.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/spaceedit-editorCallbacks.Tpo $(DEPDIR)/spaceedit-editorCallbacks.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='editorCallbacks.cpp' object='spaceedit-editorCallbacks.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -c -o spaceedit-editorCallbacks.o `test -f 'editorCallbacks.cpp' || echo '$(srcdir)/'`editorCallbacks.cpp
+
+spaceedit-editorCallbacks.obj: editorCallbacks.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -MT spaceedit-editorCallbacks.obj -MD -MP -MF $(DEPDIR)/spaceedit-editorCallbacks.Tpo -c -o spaceedit-editorCallbacks.obj `if test -f 'editorCallbacks.cpp'; then $(CYGPATH_W) 'editorCallbacks.cpp'; else $(CYGPATH_W) '$(srcdir)/editorCallbacks.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/spaceedit-editorCallbacks.Tpo $(DEPDIR)/spaceedit-editorCallbacks.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='editorCallbacks.cpp' object='spaceedit-editorCallbacks.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -c -o spaceedit-editorCallbacks.obj `if test -f 'editorCallbacks.cpp'; then $(CYGPATH_W) 'editorCallbacks.cpp'; else $(CYGPATH_W) '$(srcdir)/editorCallbacks.cpp'; fi`
 
 spaceedit-spacePanel.o: spacePanel.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -MT spaceedit-spacePanel.o -MD -MP -MF $(DEPDIR)/spaceedit-spacePanel.Tpo -c -o spaceedit-spacePanel.o `test -f 'spacePanel.cpp' || echo '$(srcdir)/'`spacePanel.cpp

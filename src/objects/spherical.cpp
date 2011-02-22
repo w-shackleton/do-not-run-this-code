@@ -8,16 +8,16 @@ using namespace Objects;
 using namespace std;
 
 // TODO: Implement optional resize (like in rectangular.cpp)
-Spherical::Spherical(double sx, double sy, double sradius, double min, double max) :
-	SpaceItem(sx, sy),
+Spherical::Spherical(EditorCallbacks &callbacks, double sx, double sy, double sradius, double min, double max) :
+	SpaceItem(callbacks, sx, sy),
 	radius(sradius),
 	min(min),
 	max(max)
 {
 }
 
-Spherical::Spherical(TiXmlElement &item, double min, double max) :
-	SpaceItem(item),
+Spherical::Spherical(EditorCallbacks &callbacks, TiXmlElement &item, double min, double max) :
+	SpaceItem(callbacks, item),
 	min(min),
 	max(max)
 {

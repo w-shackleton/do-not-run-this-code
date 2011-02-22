@@ -3,7 +3,8 @@
 using namespace Objects;
 using namespace std;
 
-SpaceItem::SpaceItem(double sx, double sy) :
+SpaceItem::SpaceItem(EditorCallbacks &callbacks, double sx, double sy) :
+	callbacks(callbacks),
 	x(sx),
 	y(sy),
 	recycle(false),
@@ -13,7 +14,8 @@ SpaceItem::SpaceItem(double sx, double sy) :
 	contextMenu->Append(contextMenuNextAvailableSlot++, _("&Delete"));
 }
 
-SpaceItem::SpaceItem(TiXmlElement &item) :
+SpaceItem::SpaceItem(EditorCallbacks &callbacks, TiXmlElement &item) :
+	callbacks(callbacks),
 	recycle(false),
 	contextMenuNextAvailableSlot(ID_CMenu_1)
 {
@@ -56,6 +58,7 @@ void SpaceItem::onCMenuItemClick(int id)
 	{
 		case ID_CMenu_1:
 			recycle = true;
+//			callbacks.onRefresh();
 			return;
 	}
 }

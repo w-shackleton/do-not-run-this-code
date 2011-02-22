@@ -20,8 +20,8 @@ namespace Objects
 			 */
 			double power;
 		public:
-			Vortex(double x, double y, double sx, double sy, double rotation);
-			Vortex(TiXmlElement &item);
+			Vortex(EditorCallbacks &callbacks, double x, double y, double sx, double sy, double rotation);
+			Vortex(EditorCallbacks &callbacks, TiXmlElement &item);
 			void draw(Cairo::RefPtr<Cairo::Context> &cr);
 
 			void onCMenuItemClick(int id);
