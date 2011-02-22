@@ -48,6 +48,13 @@ void Planet::draw(Cairo::RefPtr<Cairo::Context> &cr)
 //	cr->rotate(rotation);
 	cr->scale(radius / IMG_RADIUS, radius / IMG_RADIUS);
 
+	if(!planetType.bgCol.noColour)
+	{
+		cr->set_source_rgb(planetType.bgCol.r, planetType.bgCol.g, planetType.bgCol.b);
+		cr->arc(0, 0, IMG_RADIUS, 0, M_PI * 2);
+		cr->fill();
+	}
+
 	cr->set_source(img, -IMG_RADIUS, -IMG_RADIUS);
 	cr->rectangle(-IMG_RADIUS, -IMG_RADIUS, IMG_RADIUS * 2, IMG_RADIUS * 2);
 	cr->fill();
@@ -61,9 +68,10 @@ void Planet::draw(Cairo::RefPtr<Cairo::Context> &cr)
 	cr->translate(-x, -y);
 }
 
-PlanetType::PlanetType(int id, std::string filename, double bounciness, double density, int minSize, int maxSize, Colour bgCol) :
+PlanetType::PlanetType(int id, std::string filename, std::string planetName, double bounciness, double density, int minSize, int maxSize, Colour bgCol) :
 	id(id),
 	filename(filename),
+	planetName(planetName),
 	bounciness(bounciness),
 	density(density),
 	minSize(minSize),
@@ -80,13 +88,13 @@ PlanetTypes::PlanetTypes() :
 	vector<PlanetType>()
 {
 	// Bounciness & density from 0 - 1.5?
-			//   ID			Filename		bn   dn   min max col
-	push_back(PlanetType(PLANET_nobounce1,	"planet1.png",		0.2, 0.5, 30, 250, Colour(true)));
-	push_back(PlanetType(PLANET_sticky1,	"planet5.png",		0,   0.9, 40, 250, Colour(255, 128, 0)));
-	push_back(PlanetType(PLANET_bounce2,	"planet2.png",		1,   0.1, 20, 200, Colour(100, 100, 255)));
-	push_back(PlanetType(PLANET_n1,		"planet3.png",		0.6, 0.6, 20, 200, Colour(0, 100, 200)));
-	push_back(PlanetType(PLANET_n2,		"planet4.png",		0.7, 0.7, 20, 200, Colour(0, 100, 200)));
-	push_back(PlanetType(PLANET_n3,		"planet6.png",		0.8, 0.8, 20, 200, Colour(50, 60, 60)));
-	push_back(PlanetType(PLANET_bounce1,	"planetbouncy.png",	1.3, 0.8, 20, 150, Colour(true)));
+			//   ID			Filename	Name			bn   dn   min max col
+	push_back(PlanetType(PLANET_nobounce1,	"planet1.png",	"Gas planet",		0.2, 0.5, 30, 250, Colour(true)));
+	push_back(PlanetType(PLANET_sticky1,	"planet5.png",	"Sticky",		0,   0.9, 40, 250, Colour(255, 128, 0)));
+	push_back(PlanetType(PLANET_bounce2,	"planet2.png",	"Slightly Bouncy",	1,   0.1, 20, 200, Colour(100, 100, 255)));
+	push_back(PlanetType(PLANET_n1,		"planet3.png",	"Normal type 1",	0.6, 0.6, 20, 200, Colour(0, 100, 200)));
+	push_back(PlanetType(PLANET_n2,		"planet4.png",	"Normal type 2",	0.7, 0.7, 20, 200, Colour(0, 100, 200)));
+	push_back(PlanetType(PLANET_n3,		"planet6.png",	"Normal type 3",	0.8, 0.8, 20, 200, Colour(50, 60, 60)));
+	push_back(PlanetType(PLANET_bounce1,	"planetbouncy.png","Bouncy",		1.3, 0.8, 20, 150, Colour(true)));
 }
 
