@@ -3,9 +3,17 @@
 #include <fstream>
 #include <vector>
 
+#include <wx/stdpaths.h>
+#include <wx/textfile.h>
+#include <wx/tokenzr.h>
+
 using namespace std;
 
 std::string Misc::Data::datadir = "";
+std::string Misc::Data::saveLocation = "";
+std::string Misc::Data::confLocation = "";
+
+#define CONF_FILE "spacegame.conf"
 
 bool Misc::Data::initialise()
 {
@@ -35,6 +43,38 @@ bool Misc::Data::initialise()
 		cout << "ERROR: Could not find data!" << endl;
 		return false;
 	}
+
+	confLocation = wxStandardPaths::Get().GetUserDataDir().mb_str();
+	wxMkdir(wxString(confLocation.c_str(), wxConvUTF8));
+
+	wxTextFile config(wxString(confLocation.c_str(), wxConvUTF8) + wxT("/") + wxT(CONF_FILE));
+	if(config.Open())
+	{ // Process config file
+		for(wxString line = config.GetFirstLine(); !config.Eof(); line = config.GetNextLine())
+		{
+			wxStringTokenizer tkz(line, wxT(":"));
+			if(!tkz.HasMoreTokens()) continue; // Malformed line
+			wxString key = tkz.GetNextToken();
+
+			if(!tkz.HasMoreTokens()) continue; // Malformed line
+			wxString value = tkz.GetNextToken();
+
+			if(key.Cmp(wxT("savelocation")) == 0)
+			{
+				saveLocation = string(value.mb_str());
+			}
+		}
+		config.Close();
+	}
+	else
+	{
+		saveLocation = string(wxStandardPaths::Get().GetDocumentsDir().mb_str()) + "/Space Hopper Levels";
+		cout << "Save location set to " << saveLocation << endl;
+		config.Create();
+		cout << "Created new config file." << endl;
+		savePreferences();
+	}
+
 	return true;
 }
 
@@ -47,6 +87,22 @@ string Misc::Data::getFilePath(string file)
 //{
 	//return wxString(getFilePath(file.c_str()), wxConvUTF8);
 //}
+
+void Misc::Data::savePreferences()
+{
+	wxTextFile config(wxString(confLocation.c_str(), wxConvUTF8) + wxT("/") + wxT(CONF_FILE));
+	if(config.Open())
+	{
+		config.Clear();
+		config.AddLine(wxT("savelocation:") + wxString(saveLocation.c_str(), wxConvUTF8));
+
+		config.Write();
+
+		wxMkdir(wxString(saveLocation.c_str(), wxConvUTF8));
+	}
+	else
+		cout << "ERROR: Couldn't save configuration to file!" << endl;
+}
 
 string Misc::stringToUpper(string strToConvert)
 {

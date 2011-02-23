@@ -10,6 +10,8 @@ BEGIN_EVENT_TABLE(SpaceFrame, wxFrame)
 
 	EVT_MENU(SpaceFrame::ID_Level_Change, SpaceFrame::OnLevelInfoChange)
 
+	EVT_MENU(SpaceFrame::ID_Tools_Preferences, SpaceFrame::OnPreferencesOpen)
+
 	EVT_MENU(SpaceFrame::ID_Help_Help, SpaceFrame::OnHelpHelp)
 	EVT_MENU(SpaceFrame::ID_Help_About, SpaceFrame::OnHelpAbout)
 
@@ -36,6 +38,7 @@ using namespace std;
 #include "objects/planetEditor.hpp"
 
 #include "levelInfoEditor.hpp"
+#include "preferences.hpp"
 
 #ifdef __WXMSW__
 #define _FRAME_ICON "icon.xpm"
@@ -52,6 +55,7 @@ SpaceFrame::SpaceFrame()
 	SetIcon(wxIcon(wxString(Misc::Data::getFilePath(_FRAME_ICON).c_str(), wxConvUTF8), wxBITMAP_TYPE_XPM));
 
 	menuFile = new wxMenu;
+	menuEdit = new wxMenu;
 	menuLevel = new wxMenu;
 	menuCreate = new wxMenu;
 	menuAbout = new wxMenu;
@@ -61,6 +65,8 @@ SpaceFrame::SpaceFrame()
 	menuFile->Append(ID_File_Save, _("&Save\tCtrl-S"));
 	menuFile->Append(ID_File_SaveAs, _("Save &As"));
 	menuFile->Append(ID_File_Quit, _("E&xit\tCtrl-Q"));
+
+	menuEdit->Append(ID_Tools_Preferences, _("&Preferences\tCtrl-P"));
 
 	menuLevel->Append(ID_Level_Change, _("Edit &Level Info\tCtrl-L"));
 
@@ -75,6 +81,7 @@ SpaceFrame::SpaceFrame()
 
 	menuBar = new wxMenuBar;
 	menuBar->Append(menuFile, _("&File"));
+	menuBar->Append(menuEdit, _("&Edit"));
 	menuBar->Append(menuLevel, _("&Level"));
 	menuBar->Append(menuCreate, _("&Create"));
 	menuBar->Append(menuAbout, _("&Help"));
@@ -259,6 +266,12 @@ void SpaceFrame::OnLevelInfoChange(wxCommandEvent& event)
 	LevelInfoEditor editor(lmanager);
 	editor.ShowModal();
 	SetTitle(_(FRAME_TITLE) + wxString((" - " + lmanager.levelName).c_str(), wxConvUTF8));
+}
+
+void SpaceFrame::OnPreferencesOpen(wxCommandEvent& event)
+{
+	Preferences prefDialog;
+	prefDialog.ShowModal();
 }
 
 void SpaceFrame::OnHelpHelp(wxCommandEvent& event)

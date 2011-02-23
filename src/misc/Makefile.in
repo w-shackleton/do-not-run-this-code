@@ -67,14 +67,14 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
-libmisc_la_LIBADD =
-am_libmisc_la_OBJECTS = geometry.lo data.lo
+libmisc_la_DEPENDENCIES =
+am_libmisc_la_OBJECTS = libmisc_la-geometry.lo libmisc_la-data.lo
 libmisc_la_OBJECTS = $(am_libmisc_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
 libmisc_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(libmisc_la_CXXFLAGS) \
 	$(CXXFLAGS) $(libmisc_la_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -266,9 +266,8 @@ libmisc_la_SOURCES = \
 		geometry.cpp	geometry.hpp	\
 		data.cpp	data.hpp
 
-
-#libmisc_la_LIBADD = @WX_LIBS@
-#libmisc_la_CXXFLAGS = @WXCPPFLAGS@
+libmisc_la_LIBADD = @WX_LIBS@
+libmisc_la_CXXFLAGS = @WXCPPFLAGS@
 libmisc_la_LDFLAGS = -no-undefined -version-info 0:0:0
 AM_CPPFLAGS = -DPREFIX='"$(prefix)"'
 all: all-am
@@ -345,8 +344,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/data.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/geometry.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmisc_la-data.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmisc_la-geometry.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -371,6 +370,22 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
+
+libmisc_la-geometry.lo: geometry.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmisc_la_CXXFLAGS) $(CXXFLAGS) -MT libmisc_la-geometry.lo -MD -MP -MF $(DEPDIR)/libmisc_la-geometry.Tpo -c -o libmisc_la-geometry.lo `test -f 'geometry.cpp' || echo '$(srcdir)/'`geometry.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmisc_la-geometry.Tpo $(DEPDIR)/libmisc_la-geometry.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='geometry.cpp' object='libmisc_la-geometry.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmisc_la_CXXFLAGS) $(CXXFLAGS) -c -o libmisc_la-geometry.lo `test -f 'geometry.cpp' || echo '$(srcdir)/'`geometry.cpp
+
+libmisc_la-data.lo: data.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmisc_la_CXXFLAGS) $(CXXFLAGS) -MT libmisc_la-data.lo -MD -MP -MF $(DEPDIR)/libmisc_la-data.Tpo -c -o libmisc_la-data.lo `test -f 'data.cpp' || echo '$(srcdir)/'`data.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmisc_la-data.Tpo $(DEPDIR)/libmisc_la-data.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='data.cpp' object='libmisc_la-data.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmisc_la_CXXFLAGS) $(CXXFLAGS) -c -o libmisc_la-data.lo `test -f 'data.cpp' || echo '$(srcdir)/'`data.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

@@ -3,6 +3,7 @@ bin_PROGRAMS = spaceedit
 
 spaceedit_SOURCES = \
 		levelInfoEditor.cpp	levelInfoEditor.hpp	\
+		preferences.cpp		preferences.hpp		\
 		matrixHelper.cpp	matrixHelper.hpp	\
 		editorCallbacks.cpp	editorCallbacks.hpp	\
 		spacePanel.cpp		spacePanel.hpp		\
