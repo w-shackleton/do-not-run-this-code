@@ -15,8 +15,13 @@ spaceedit_CXXFLAGS = @WXCPPFLAGS@ @Cairomm_CFLAGS@ @tinyxml_CFLAGS@ -Iobjects -I
 
 if WIN32
 
+# http://www.gnu.org/software/hello/manual/automake/Options.html
+pkg_verbose = $(pkg_verbose_$(V))
+pkg_verbose_ = $(pkg_verbose_$(AM_DEFAULT_VERBOSITY))
+pkg_verbose_0 = @echo "  CXX    $@";
+
 spaceedit.res: spaceedit.rc
-	i586-mingw32msvc-windres spaceedit.rc -O coff -o spaceedit.res
+	$(pkg_verbose)i586-mingw32msvc-windres spaceedit.rc -O coff -o spaceedit.res
 
 spaceedit_LDADD += spaceedit.res
 endif

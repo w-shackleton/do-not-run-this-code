@@ -15,7 +15,7 @@ BEGIN_EVENT_TABLE(LevelInfoEditor, wxDialog)
 END_EVENT_TABLE()                                          
 
 LevelInfoEditor::LevelInfoEditor(LevelManager &lmanager, bool newLevel) :
-	wxDialog(NULL, -1, newLevel ? _("Edit Level Info") : _("Create New Level")),
+	wxDialog(NULL, -1, wxString(newLevel ? _("Edit Level Info") : _("Create New Level"))),
 	lmanager(lmanager)
 {
 	wxBoxSizer* vsizer = new wxBoxSizer(wxVERTICAL);
