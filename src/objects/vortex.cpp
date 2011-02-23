@@ -28,16 +28,17 @@ Vortex::Vortex(EditorCallbacks &callbacks, double x, double y, double sx, double
 }
 
 Vortex::Vortex(EditorCallbacks &callbacks, TiXmlElement &item) :
-	Rectangular(callbacks, item, Misc::Point(VORTEX_MIN_X, VORTEX_MIN_Y), Misc::Point(VORTEX_MAX_X, VORTEX_MAX_Y)),
-	power(1)
+	Rectangular(callbacks, item, Misc::Point(VORTEX_MIN_X, VORTEX_MIN_Y), Misc::Point(VORTEX_MAX_X, VORTEX_MAX_Y))
 {
 	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath(IMG_NAME));
 	contextMenu->Append(contextMenuNextAvailableSlot++, _("&Change power"));
+	item.QueryDoubleAttribute("power", &power);
 }
 
 void Vortex::saveXMLChild(TiXmlElement* item)
 {
 	Rectangular::saveXMLChild(item);
+	item->SetDoubleAttribute("power", power);
 }
 
 void Vortex::draw(Cairo::RefPtr<Cairo::Context> &cr)
