@@ -1,3 +1,0 @@
-#!/bin/sh
-
-./configure --host=amd64-mingw32msvc --disable-shared --with-wx-prefix=/usr/amd64-mingw32msvc "$@"

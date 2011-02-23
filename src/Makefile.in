@@ -299,6 +299,11 @@ spaceedit_LDADD = @WX_LIBS@ @Cairomm_LIBS@ @tinyxml_LIBS@ \
 	objects/libobjects.la misc/libmisc.la levelrw/liblevelrw.la \
 	$(am__append_1)
 spaceedit_CXXFLAGS = @WXCPPFLAGS@ @Cairomm_CFLAGS@ @tinyxml_CFLAGS@ -Iobjects -Imisc
+
+# http://www.gnu.org/software/hello/manual/automake/Options.html
+@WIN32_TRUE@pkg_verbose = $(pkg_verbose_$(V))
+@WIN32_TRUE@pkg_verbose_ = $(pkg_verbose_$(AM_DEFAULT_VERBOSITY))
+@WIN32_TRUE@pkg_verbose_0 = @echo "  CXX    $@";
 EXTRA_DIST = spaceedit.rc
 CLEANFILES = spaceedit.res
 all: all-recursive
@@ -856,7 +861,7 @@ uninstall-am: uninstall-binPROGRAMS
 
 
 @WIN32_TRUE@spaceedit.res: spaceedit.rc
-@WIN32_TRUE@	i586-mingw32msvc-windres spaceedit.rc -O coff -o spaceedit.res
+@WIN32_TRUE@	$(pkg_verbose)i586-mingw32msvc-windres spaceedit.rc -O coff -o spaceedit.res
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

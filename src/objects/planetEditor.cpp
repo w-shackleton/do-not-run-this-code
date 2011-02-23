@@ -24,7 +24,7 @@ BEGIN_EVENT_TABLE(PlanetEditor, wxDialog)
 END_EVENT_TABLE()
 
 PlanetEditor::PlanetEditor(wxWindow* parent, int typePosition) :
-	wxDialog(parent, -1, _("Edit Planet")),
+	wxDialog(parent, -1, wxString(_("Edit Planet"))),
 	type(typePosition)
 {
 
@@ -39,7 +39,7 @@ PlanetEditor::PlanetEditor(wxWindow* parent, int typePosition) :
 		planetList.Add(wxString(planetTypes[i].planetName.c_str(), wxConvUTF8));
 	}
 
-	wxRadioBox *planets = new wxRadioBox(this, ID_Radiobox, _("Choose planet"), wxDefaultPosition, wxDefaultSize, planetList);
+	wxRadioBox *planets = new wxRadioBox(this, ID_Radiobox, _("Choose planet"), wxDefaultPosition, wxDefaultSize, planetList, 1, wxRA_SPECIFY_COLS);
 
 	pSizer->Add(planets, 1, wxALL, 5);
 
@@ -82,13 +82,13 @@ PlanetPanel::PlanetPanel(wxWindow *window, int type, int width, int height) :
 {
 	shadow = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("planet-s.png"));
 	planetShadow = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("planet-s.png"));
-	if(planetShadow == NULL)
+	if(!planetShadow)
 		cout << "ERROR: planet shadow image not found!" << endl;
 	bounceicon = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("bounceicon.png"));
-	if(bounceicon == NULL)
+	if(!bounceicon)
 		cout << "ERROR: bounce icon not found!" << endl;
 	densityicon = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("densityicon.png"));
-	if(densityicon == NULL)
+	if(!densityicon)
 		cout << "ERROR: density icon not found!" << endl;
 
 	SetPlanet(type);
@@ -103,7 +103,7 @@ void PlanetPanel::SetPlanet(int position)
 
 	img = Cairo::ImageSurface::create_from_png(imgFName);
 
-	if(img == NULL)
+	if(!img)
 		cout << "ERROR: Could not load image " << imgFName << "." << endl;
 	redraw();
 }

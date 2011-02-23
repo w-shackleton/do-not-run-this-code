@@ -12,7 +12,7 @@ BEGIN_EVENT_TABLE(InfoBoxEditor, wxDialog)
 END_EVENT_TABLE()
 
 InfoBoxEditor::InfoBoxEditor(wxWindow* parent, std::string &text, bool &initialShow) :
-	wxDialog(parent, -1, _("Edit Message box")),
+	wxDialog(parent, -1, wxString(_("Edit Message box"))),
 	text(text),
 	initialShow(initialShow)
 {

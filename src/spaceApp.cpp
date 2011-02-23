@@ -14,7 +14,9 @@ IMPLEMENT_APP(SpaceApp)
 
 bool SpaceApp::OnInit()
 {
+#ifndef __WXMSW__
 	setenv("UBUNTU_MENUPROXY", "0", 1); // Ubuntu 10.10 fix
+#endif
 	if(!Misc::Data::initialise())
 	{
 		wxMessageDialog(NULL, _("Could not find application data,\npossibly because application was installed incorrectly?"), _("Error finding data"), wxOK | wxICON_EXCLAMATION).ShowModal();
