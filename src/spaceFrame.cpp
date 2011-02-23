@@ -39,6 +39,7 @@ using namespace std;
 
 #include "levelInfoEditor.hpp"
 #include "preferences.hpp"
+#include "openLevelList.hpp"
 
 #ifdef __WXMSW__
 #define _FRAME_ICON "icon.xpm"
@@ -48,8 +49,19 @@ using namespace std;
 
 #define FRAME_TITLE "Space Hopper Level Editor"
 
-SpaceFrame::SpaceFrame()
-	: wxFrame(NULL, -1, _(FRAME_TITLE), wxDefaultPosition, wxSize(640, 480))
+SpaceFrame::SpaceFrame(OpenLevelList &parent)
+	: wxFrame(NULL, -1, _(FRAME_TITLE), wxDefaultPosition, wxSize(640, 480)),
+	parent(parent)
+{
+	init();
+
+	LevelInfoEditor editor(lmanager);
+	editor.ShowModal();
+
+	SetTitle(_(FRAME_TITLE) + wxString((" - " + lmanager.levelName).c_str(), wxConvUTF8));
+}
+
+void SpaceFrame::init()
 {
 	cout << "Loading!" << endl;
 	SetIcon(wxIcon(wxString(Misc::Data::getFilePath(_FRAME_ICON).c_str(), wxConvUTF8), wxBITMAP_TYPE_XPM));
@@ -74,7 +86,7 @@ SpaceFrame::SpaceFrame()
 	menuCreate->Append(ID_tb_c_infobox, _("Create Info Box"));
 	menuCreate->Append(ID_tb_c_wall, _("Create Wall"));
 	menuCreate->Append(ID_tb_c_vortex, _("Create Vortex"));
-	menuCreate->Append(ID_tb_c_blackhole, _("Create Black Hole"));
+	menuCreate->Append(ID_tb_c_blackhole, _("Create Bdestroylack Hole"));
 
 	menuAbout->Append(ID_Help_Help, _("&Help\tCtrl-H"));
 	menuAbout->Append(ID_Help_About, _("&About"));
@@ -110,10 +122,11 @@ SpaceFrame::SpaceFrame()
 	SetSizer(hcontainer);
 	SetAutoLayout(true);
 
-	LevelInfoEditor editor(lmanager);
-	editor.ShowModal();
+}
 
-	SetTitle(_(FRAME_TITLE) + wxString((" - " + lmanager.levelName).c_str(), wxConvUTF8));
+SpaceFrame::~SpaceFrame()
+{
+	parent.removeFromList(this);
 }
 
 bool SpaceFrame::save()

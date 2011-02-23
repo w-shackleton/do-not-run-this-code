@@ -51,9 +51,12 @@ PROGRAMS = $(bin_PROGRAMS)
 am_spaceedit_OBJECTS = spaceedit-levelInfoEditor.$(OBJEXT) \
 	spaceedit-preferences.$(OBJEXT) \
 	spaceedit-matrixHelper.$(OBJEXT) \
+	spaceedit-openLevelList.$(OBJEXT) \
 	spaceedit-editorCallbacks.$(OBJEXT) \
 	spaceedit-spacePanel.$(OBJEXT) spaceedit-cairoPanel.$(OBJEXT) \
-	spaceedit-spaceFrame.$(OBJEXT) spaceedit-spaceApp.$(OBJEXT)
+	spaceedit-spaceFrame.$(OBJEXT) \
+	spaceedit-levelSetManager.$(OBJEXT) \
+	spaceedit-spaceApp.$(OBJEXT)
 spaceedit_OBJECTS = $(am_spaceedit_OBJECTS)
 spaceedit_DEPENDENCIES = objects/libobjects.la misc/libmisc.la \
 	levelrw/liblevelrw.la $(am__append_1)
@@ -291,10 +294,12 @@ spaceedit_SOURCES = \
 		levelInfoEditor.cpp	levelInfoEditor.hpp	\
 		preferences.cpp		preferences.hpp		\
 		matrixHelper.cpp	matrixHelper.hpp	\
+		openLevelList.cpp	openLevelList.hpp	\
 		editorCallbacks.cpp	editorCallbacks.hpp	\
 		spacePanel.cpp		spacePanel.hpp		\
 		cairoPanel.cpp		cairoPanel.hpp		\
 		spaceFrame.cpp		spaceFrame.hpp		\
+		levelSetManager.cpp	levelSetManager.hpp	\
 		spaceApp.cpp		spaceApp.hpp
 
 spaceedit_LDADD = @WX_LIBS@ @Cairomm_LIBS@ @tinyxml_LIBS@ \
@@ -398,7 +403,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-cairoPanel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-editorCallbacks.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-levelInfoEditor.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-levelSetManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-matrixHelper.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-openLevelList.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-preferences.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-spaceApp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-spaceFrame.Po@am__quote@
@@ -476,6 +483,22 @@ spaceedit-matrixHelper.obj: matrixHelper.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -c -o spaceedit-matrixHelper.obj `if test -f 'matrixHelper.cpp'; then $(CYGPATH_W) 'matrixHelper.cpp'; else $(CYGPATH_W) '$(srcdir)/matrixHelper.cpp'; fi`
 
+spaceedit-openLevelList.o: openLevelList.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -MT spaceedit-openLevelList.o -MD -MP -MF $(DEPDIR)/spaceedit-openLevelList.Tpo -c -o spaceedit-openLevelList.o `test -f 'openLevelList.cpp' || echo '$(srcdir)/'`openLevelList.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/spaceedit-openLevelList.Tpo $(DEPDIR)/spaceedit-openLevelList.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='openLevelList.cpp' object='spaceedit-openLevelList.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -c -o spaceedit-openLevelList.o `test -f 'openLevelList.cpp' || echo '$(srcdir)/'`openLevelList.cpp
+
+spaceedit-openLevelList.obj: openLevelList.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -MT spaceedit-openLevelList.obj -MD -MP -MF $(DEPDIR)/spaceedit-openLevelList.Tpo -c -o spaceedit-openLevelList.obj `if test -f 'openLevelList.cpp'; then $(CYGPATH_W) 'openLevelList.cpp'; else $(CYGPATH_W) '$(srcdir)/openLevelList.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/spaceedit-openLevelList.Tpo $(DEPDIR)/spaceedit-openLevelList.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='openLevelList.cpp' object='spaceedit-openLevelList.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -c -o spaceedit-openLevelList.obj `if test -f 'openLevelList.cpp'; then $(CYGPATH_W) 'openLevelList.cpp'; else $(CYGPATH_W) '$(srcdir)/openLevelList.cpp'; fi`
+
 spaceedit-editorCallbacks.o: editorCallbacks.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -MT spaceedit-editorCallbacks.o -MD -MP -MF $(DEPDIR)/spaceedit-editorCallbacks.Tpo -c -o spaceedit-editorCallbacks.o `test -f 'editorCallbacks.cpp' || echo '$(srcdir)/'`editorCallbacks.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/spaceedit-editorCallbacks.Tpo $(DEPDIR)/spaceedit-editorCallbacks.Po
@@ -539,6 +562,22 @@ spaceedit-spaceFrame.obj: spaceFrame.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='spaceFrame.cpp' object='spaceedit-spaceFrame.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -c -o spaceedit-spaceFrame.obj `if test -f 'spaceFrame.cpp'; then $(CYGPATH_W) 'spaceFrame.cpp'; else $(CYGPATH_W) '$(srcdir)/spaceFrame.cpp'; fi`
+
+spaceedit-levelSetManager.o: levelSetManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -MT spaceedit-levelSetManager.o -MD -MP -MF $(DEPDIR)/spaceedit-levelSetManager.Tpo -c -o spaceedit-levelSetManager.o `test -f 'levelSetManager.cpp' || echo '$(srcdir)/'`levelSetManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/spaceedit-levelSetManager.Tpo $(DEPDIR)/spaceedit-levelSetManager.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='levelSetManager.cpp' object='spaceedit-levelSetManager.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -c -o spaceedit-levelSetManager.o `test -f 'levelSetManager.cpp' || echo '$(srcdir)/'`levelSetManager.cpp
+
+spaceedit-levelSetManager.obj: levelSetManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -MT spaceedit-levelSetManager.obj -MD -MP -MF $(DEPDIR)/spaceedit-levelSetManager.Tpo -c -o spaceedit-levelSetManager.obj `if test -f 'levelSetManager.cpp'; then $(CYGPATH_W) 'levelSetManager.cpp'; else $(CYGPATH_W) '$(srcdir)/levelSetManager.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/spaceedit-levelSetManager.Tpo $(DEPDIR)/spaceedit-levelSetManager.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='levelSetManager.cpp' object='spaceedit-levelSetManager.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -c -o spaceedit-levelSetManager.obj `if test -f 'levelSetManager.cpp'; then $(CYGPATH_W) 'levelSetManager.cpp'; else $(CYGPATH_W) '$(srcdir)/levelSetManager.cpp'; fi`
 
 spaceedit-spaceApp.o: spaceApp.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -MT spaceedit-spaceApp.o -MD -MP -MF $(DEPDIR)/spaceedit-spaceApp.Tpo -c -o spaceedit-spaceApp.o `test -f 'spaceApp.cpp' || echo '$(srcdir)/'`spaceApp.cpp

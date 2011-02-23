@@ -5,10 +5,12 @@ spaceedit_SOURCES = \
 		levelInfoEditor.cpp	levelInfoEditor.hpp	\
 		preferences.cpp		preferences.hpp		\
 		matrixHelper.cpp	matrixHelper.hpp	\
+		openLevelList.cpp	openLevelList.hpp	\
 		editorCallbacks.cpp	editorCallbacks.hpp	\
 		spacePanel.cpp		spacePanel.hpp		\
 		cairoPanel.cpp		cairoPanel.hpp		\
 		spaceFrame.cpp		spaceFrame.hpp		\
+		levelSetManager.cpp	levelSetManager.hpp	\
 		spaceApp.cpp		spaceApp.hpp
 
 spaceedit_LDADD = @WX_LIBS@ @Cairomm_LIBS@ @tinyxml_LIBS@ objects/libobjects.la misc/libmisc.la levelrw/liblevelrw.la

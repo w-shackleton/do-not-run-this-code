@@ -6,10 +6,12 @@
 
 #include <levelrw/levelManager.hpp>
 
+class OpenLevelList;
 class SpaceFrame: public wxFrame
 {
 	public:
-		SpaceFrame();
+		SpaceFrame(OpenLevelList &parent);
+		~SpaceFrame();
 		DECLARE_EVENT_TABLE()
 	protected:
 		wxMenu *menuFile, *menuLevel, *menuAbout, *menuCreate, *menuEdit;
@@ -72,6 +74,10 @@ class SpaceFrame: public wxFrame
 		bool checkForSave();
 
 		Levels::LevelManager lmanager;
+		OpenLevelList &parent;
+		
+	private:
+		void init();
 };
 
 #endif

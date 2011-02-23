@@ -1,6 +1,6 @@
 #include "spaceApp.hpp"
 
-#include "spaceFrame.hpp"
+#include "levelSetManager.hpp"
 #include <wx/xrc/xmlres.h>
 #include <wx/log.h>
 
@@ -32,7 +32,7 @@ bool SpaceApp::OnInit()
 		wxMessageDialog(NULL, _("Could not find application data,\npossibly because application was installed incorrectly?"), _("Error finding data"), wxOK | wxICON_EXCLAMATION).ShowModal();
 		return false;
 	}
-	SpaceFrame *frame = new SpaceFrame;
+	LevelSetManager *frame = new LevelSetManager;
 	frame->Show(true);
 	SetTopWindow(frame);
 	return true;
