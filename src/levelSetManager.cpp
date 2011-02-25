@@ -13,6 +13,11 @@ BEGIN_EVENT_TABLE(LevelSetManager, wxFrame)
 	EVT_BUTTON(LevelSetManager::ID_Refresh, LevelSetManager::OnRefreshLists)
 
 	EVT_LISTBOX(LevelSetManager::ID_LevelSet_list, LevelSetManager::OnLevelSetItemSelected)
+	EVT_LISTBOX(LevelSetManager::ID_Level_list, LevelSetManager::OnLevelItemSelected)
+	EVT_LISTBOX_DCLICK(LevelSetManager::ID_Level_list, LevelSetManager::OnLevelItemDblClicked)
+
+	EVT_BUTTON(LevelSetManager::ID_Level_name_set, LevelSetManager::OnLevelNameSet)
+	EVT_BUTTON(LevelSetManager::ID_Level_set_name_set, LevelSetManager::OnLevelSetNameSet)
 END_EVENT_TABLE()
 
 #include <iostream>
@@ -20,11 +25,17 @@ using namespace std;
 
 #include <wx/icon.h>
 #include <wx/msgdlg.h>
+#include <wx/stattext.h>
+#include <wx/textctrl.h>
+#include <wx/textfile.h>
+#include <wx/tokenzr.h>
+#include <wx/filename.h>
 
 #include "misc/data.hpp"
 
 #include "levelInfoEditor.hpp"
 #include "preferences.hpp"
+#include "levelrw/levelrw.hpp"
 
 #ifdef __WXMSW__
 #define _FRAME_ICON "icon.xpm"
@@ -33,6 +44,8 @@ using namespace std;
 #endif
 
 #define FRAME_TITLE "Space Hopper Level Editor - Level Set Manager"
+
+#define LEVELSET_META_NAME "info.lvlset"
 
 LevelSetManager::LevelSetManager()
 	: wxFrame(NULL, -1, _(FRAME_TITLE), wxDefaultPosition, wxSize(640, 480))
@@ -61,15 +74,63 @@ LevelSetManager::LevelSetManager()
 	hcontainer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *lh = new wxBoxSizer(wxVERTICAL);
 
+	lh->Add(new wxStaticText(this, -1, _("Level Sets")), 0, wxALL, 5);
 	lh->Add(new wxButton(this, ID_Refresh, _("Refresh")), 0, wxALL, 5);
-	lh->Add(new wxListBox(this, ID_LevelSet_list), 1, wxALL, 5);
+
+	wxBoxSizer *lhTop = new wxBoxSizer(wxHORIZONTAL);
+	lh->Add(lhTop);
+	lhTop->Add(new wxStaticText(this, -1, _("Level Set Name:")), 0, wxTOP, 9);
+	levelSetName = new wxTextCtrl(this, ID_Level_set_name);
+	levelSetName->Disable();
+	lhTop->Add(levelSetName, 1, wxEXPAND | wxALL, 3);
+	lhTop->Add(new wxStaticText(this, -1, _("Creator:")), 0, wxTOP, 9);
+	levelSetCreator = new wxTextCtrl(this, ID_Level_set_creator);
+	levelSetCreator->Disable();
+	lhTop->Add(levelSetCreator, 1, wxEXPAND | wxALL, 3);
+	levelSetDataSet = new wxButton(this, ID_Level_set_name_set, _("Save"));
+	levelSetDataSet->Disable();
+	lhTop->Add(levelSetDataSet, 0, wxALL, 3);
+
+	levelSetList = new wxListBox(this, ID_LevelSet_list);
+	lh->Add(levelSetList, 1, wxALL | wxEXPAND, 5);
 
 	wxBoxSizer *rh = new wxBoxSizer(wxVERTICAL);
-	hcontainer->Add(lh, 1);
-	hcontainer->Add(rh, 1);
+
+	rh->Add(new wxStaticText(this, -1, _("Levels in the same series must be completed sequentially")), 0, wxALL, 5);
+
+	wxBoxSizer *rhTop = new wxBoxSizer(wxHORIZONTAL);
+	rh->Add(rhTop);
+	rhTop->Add(new wxStaticText(this, -1, _("Series:")), 0, wxTOP, 9);
+	levelSeries = new wxTextCtrl(this, ID_Level_series);
+	levelSeries->Disable();
+	rhTop->Add(levelSeries, 1, wxEXPAND | wxALL, 3);
+	rhTop->Add(new wxStaticText(this, -1, _(", level:")), 0, wxTOP, 9);
+	levelNumber = new wxTextCtrl(this, ID_Level_number);
+	levelNumber->Disable();
+	rhTop->Add(levelNumber, 1, wxEXPAND | wxALL, 3);
+	levelDataSet = new wxButton(this, ID_Level_name_set, _("Save"));
+	levelDataSet->Disable();
+	rhTop->Add(levelDataSet, 0, wxALL, 3);
+
+	levelList = new wxListBox(this, ID_Level_list);
+	levelList->Disable();
+	rh->Add(levelList, 1, wxALL | wxEXPAND, 5);
+
+	hcontainer->Add(lh, 1, wxEXPAND);
+
+	wxBoxSizer *centerLabelContainer = new wxBoxSizer(wxVERTICAL);
+	centerLabelContainer->Add(new wxStaticText(this, -1, wxT("->")), 1, wxTOP, 150);
+	hcontainer->Add(centerLabelContainer, 0, wxEXPAND);
+
+	hcontainer->Add(rh, 1, wxEXPAND);
 
 	SetSizer(hcontainer);
 	SetAutoLayout(true);
+	Layout();
+	Fit();
+	wxSize sz = GetSize();
+	sz.SetHeight(400);
+	SetSize(sz);
 
 	refreshLists();
 }
@@ -78,17 +139,45 @@ void LevelSetManager::refreshLists()
 {
 	wxDir dir(wxString(Misc::Data::saveLocation.c_str(), wxConvUTF8));
 	dir.Traverse(*this);
+	syncListsToScreen();
+}
+
+void LevelSetManager::syncListsToScreen()
+{
+	levelSetList->Clear();
+	for(map<wxString, LevelSetMetadata>::iterator iter = levelSets.begin(); iter != levelSets.end(); iter++)
+	{
+		levelSetList->Append(iter->second.setName);
+	}
 }
 
 wxDirTraverseResult LevelSetManager::OnFile(const wxString& filename)
 {
-	cout << "File found: " << string(filename.mb_str()) << endl;
+	wxFileName fn = wxFileName::FileName(filename);
+	wxString filext = fn.GetExt();
+	wxString dir = fn.GetDirs().Last();
+
+	if(filext.CmpNoCase(wxT("slv")) != 0)
+	{
+		return wxDIR_CONTINUE; // Not a level file
+	}
+
+	for(map<wxString, LevelSetMetadata>::iterator iter = levelSets.begin(); iter != levelSets.end(); iter++)
+	{
+		if(iter->first == dir) // Find directory and add to it
+		{
+			iter->second.levels.push_back(LevelMetadata(filename));
+		}
+	}
+
 	return wxDIR_CONTINUE;
 }
 
 wxDirTraverseResult LevelSetManager::OnDir(const wxString& dirname)
 {
-	cout << "Dir found: " << string(dirname.mb_str()) << endl;
+	wxString dir = wxFileName::DirName(dirname).GetDirs().Last();
+	cout << "Dir found: " << dir.mb_str() << endl;
+	levelSets.insert(pair<wxString, LevelSetMetadata>(dir, LevelSetMetadata(dir)));
 	return wxDIR_CONTINUE;
 }
 
@@ -134,4 +223,294 @@ void LevelSetManager::OnRefreshLists(wxCommandEvent& event)
 
 void LevelSetManager::OnLevelSetItemSelected(wxCommandEvent& event)
 {
+	if(levelSetList->GetSelection() == -1) // Disable RH selector
+	{
+		levelList->Disable();
+
+		levelSetName->Disable();
+		levelSetCreator->Disable();
+		levelSetName->SetValue(wxT(""));
+		levelSetCreator->SetValue(wxT(""));
+		levelSetDataSet->Disable();
+
+		levelSeries->Disable();
+		levelNumber->Disable();
+		levelDataSet->Disable();
+		levelSeries->SetValue(wxT(""));
+		levelNumber->SetValue(wxT(""));
+	}
+	else
+	{
+		levelList->Enable();
+		levelList->Clear();
+
+		levelSetName->Enable();
+		levelSetCreator->Enable();
+		levelSetDataSet->Enable();
+
+		map<wxString, LevelSetMetadata>::iterator iter = levelSets.begin();
+		for( // Move iterator to correct element
+				int i = 0;
+				(i < levelSetList->GetSelection()) && iter != levelSets.end();
+				(i++, iter++));
+		cout << "Level set: " << iter->second.setName.mb_str() << endl;
+
+		currentLevels = &iter->second.levels;
+		currentLevelSet = &iter->second;
+		currentLevels->sort(sortCurrentLevels);
+		levelSetName->SetValue(currentLevelSet->setName);
+		levelSetCreator->SetValue(currentLevelSet->creatorName);
+
+		for(list<LevelMetadata>::iterator iter = currentLevels->begin(); iter != currentLevels->end(); iter++)
+		{
+			wxString fileName = wxFileName::FileName(iter->levelFileName).GetName();
+
+			bool resave = false;
+			if(!fileName.Contains(wxT(" ")))
+			{
+				fileName += wxT(" 1");
+				resave = true;
+			}
+
+			int pos = fileName.Find(' ', true);
+
+			wxString series = fileName.Mid(0, pos);
+			wxString number = fileName.Mid(pos + 1);
+
+			long tmpNum;
+			wxCommandEvent tmpEvt;
+			if(!number.ToLong(&tmpNum))
+			{
+				number = wxT("1");
+				OnLevelNameSet(tmpEvt); // Save new level name
+			}
+			if(resave)
+				OnLevelNameSet(tmpEvt);
+			levelList->Append(series + wxT(" - ") + number + wxT(" - ") + (iter->levelName != wxT("") ? iter->levelName : wxString(_("Untitled"))));
+		}
+	}
 }
+
+void LevelSetManager::OnLevelItemSelected(wxCommandEvent& event)
+{
+	if(event.GetSelection() == -1) // Disable RH selector
+	{
+		levelSeries->Disable();
+		levelNumber->Disable();
+		levelDataSet->Disable();
+		levelSeries->SetValue(wxT(""));
+		levelNumber->SetValue(wxT(""));
+	}
+	else
+	{
+		list<LevelMetadata>::iterator iter = currentLevels->begin();
+		for( // Move iterator to correct element
+				int i = 0;
+				(i < event.GetSelection()) && iter != currentLevels->end();
+				(i++, iter++));
+
+		currentLevel = &*iter;
+
+		if(!openLevels.isOpen(iter->levelFileName))
+		{
+			levelSeries->Enable();
+			levelNumber->Enable();
+			levelDataSet->Enable();
+
+			wxString fileName = wxFileName::FileName(iter->levelFileName).GetName();
+
+			bool resave = false;
+			if(!fileName.Contains(wxT(" ")))
+			{
+				fileName += wxT(" 1");
+				resave = true;
+			}
+
+			int pos = fileName.Find(' ', true);
+
+			wxString series = fileName.Mid(0, pos);
+			wxString number = fileName.Mid(pos + 1);
+
+			long tmpNum;
+			wxCommandEvent tmpEvt;
+			if(!number.ToLong(&tmpNum))
+			{
+				number = wxT("1");
+				OnLevelNameSet(tmpEvt); // Save new level name
+			}
+			if(resave)
+				OnLevelNameSet(tmpEvt);
+
+			levelSeries->SetValue(series);
+			levelNumber->SetValue(number);
+		}
+		else
+		{
+			levelSeries->Disable();
+			levelNumber->Disable();
+			levelDataSet->Disable();
+			levelSeries->SetValue(wxT(""));
+			levelNumber->SetValue(wxT(""));
+		}
+	}
+}
+
+void LevelSetManager::OnLevelItemDblClicked(wxCommandEvent& event)
+{
+	if(event.GetSelection() == -1) // Disable RH selector
+	{
+		levelSeries->Disable();
+		levelNumber->Disable();
+		levelDataSet->Disable();
+		levelSeries->SetValue(wxT(""));
+		levelNumber->SetValue(wxT(""));
+	}
+	else
+	{
+		list<LevelMetadata>::iterator iter = currentLevels->begin();
+		for( // Move iterator to correct element
+				int i = 0;
+				(i < event.GetSelection()) && iter != currentLevels->end();
+				(i++, iter++));
+
+		currentLevel = &*iter;
+
+		if(!openLevels.isOpen(iter->levelFileName))
+		{
+			openLevels.openLevel(currentLevelSet->setName, currentLevel->levelFileName);
+		}
+		else
+		{
+			levelSeries->Disable();
+			levelNumber->Disable();
+			levelDataSet->Disable();
+			levelSeries->SetValue(wxT(""));
+			levelNumber->SetValue(wxT(""));
+			wxMessageDialog(this, _("Level already open"), _("Level already open")).ShowModal();
+		}
+	}
+}
+
+void LevelSetManager::OnLevelNameSet(wxCommandEvent& WXUNUSED(event))
+{
+	long tmpNum;
+	if(!levelNumber->GetValue().ToLong(&tmpNum))
+	{
+		wxMessageDialog(this, _("Incorrect number specified in series"), _("Incorrect number")).ShowModal();
+		return;
+	}
+	if(levelSeries->IsEmpty())
+	{
+		wxMessageDialog(this, _("Please enter a level series"), _("Please enter a series")).ShowModal();
+		return;
+	}
+
+	wxFileName newName(currentLevel->levelFileName);
+	newName.SetName(levelSeries->GetValue() + wxT(" ") + levelNumber->GetValue());
+	if(wxFileExists(newName.GetFullPath()))
+	{
+		wxMessageDialog(this, _("This level already exists"), _("Level already exists")).ShowModal();
+		return;
+	}
+	wxRenameFile(currentLevel->levelFileName, newName.GetFullPath(), false);
+	currentLevel->levelFileName = newName.GetFullPath();
+
+	// Refresh
+	wxCommandEvent tmpEvt;
+	OnLevelSetItemSelected(tmpEvt); // Retrigger event to regenerate list. Probably could be done better
+}
+
+void LevelSetManager::OnLevelSetNameSet(wxCommandEvent& event)
+{
+	if(levelSetName->IsEmpty())
+	{
+		wxMessageDialog(this, _("Please enter a level set name"), _("Please enter a name")).ShowModal();
+		return;
+	}
+	if(levelSetCreator->IsEmpty())
+	{
+		wxMessageDialog(this, _("Please enter a level set creator"), _("Please enter a set creator")).ShowModal();
+		return;
+	}
+
+	currentLevelSet->setName = levelSetName->GetValue();
+	currentLevelSet->creatorName = levelSetCreator->GetValue();
+	currentLevelSet->saveMetadata();
+	syncListsToScreen();
+}
+
+bool LevelSetManager::sortCurrentLevels(LevelMetadata first, LevelMetadata second)
+{
+	return first.levelFileName < second.levelFileName;
+}
+
+
+LevelSetMetadata::LevelSetMetadata(wxString folderName) :
+	folderName(folderName),
+	metaFileName(wxString(Misc::Data::saveLocation.c_str(), wxConvUTF8) + wxT("/") + folderName + wxT("/") + wxT(LEVELSET_META_NAME))
+{
+	wxMkdir(wxString(Misc::Data::saveLocation.c_str(), wxConvUTF8) + wxT("/") + folderName);
+
+	wxTextFile config(metaFileName);
+	if(config.Open())
+	{ // Process config file
+		for(wxString line = config.GetFirstLine(); !config.Eof(); line = config.GetNextLine())
+		{
+			wxStringTokenizer tkz(line, wxT(":"));
+			if(!tkz.HasMoreTokens()) continue; // Malformed line
+			wxString key = tkz.GetNextToken();
+
+			if(!tkz.HasMoreTokens()) continue; // Malformed line
+			wxString value = tkz.GetNextToken();
+
+			if(key.Cmp(wxT("setname")) == 0)
+			{
+				setName = value;
+			}
+			if(key.Cmp(wxT("authour")) == 0)
+			{
+				creatorName = value;
+			}
+		}
+		config.Close();
+	}
+	else
+	{
+		config.Create();
+		setName = _("New Level Set");
+		creatorName = _("Me");
+		saveMetadata();
+	}
+
+}
+
+void LevelSetMetadata::saveMetadata()
+{
+	wxTextFile config(metaFileName);
+	if(config.Open())
+	{
+		config.Clear();
+		config.AddLine(wxT("setname:") + setName);
+		config.AddLine(wxT("authour:") + creatorName);
+
+		config.Write();
+	}
+	else
+		cout << "ERROR: Couldn't save configuration to file!" << endl;
+
+}
+
+LevelMetadata::LevelMetadata()
+{}
+
+LevelMetadata::LevelMetadata(wxString levelFileName) :
+	levelFileName(levelFileName)
+{
+	Levels::LevelReader reader;
+	string sLevelName, sCreatorName;
+	if(!reader.open(string(levelFileName.mb_str()), sLevelName, sCreatorName))
+		cout << "Couldn't load " << levelFileName << "!" << endl;
+	levelName = wxString(sLevelName.c_str(), wxConvUTF8);
+	creatorName = wxString(sLevelName.c_str(), wxConvUTF8);
+}
+

@@ -27,7 +27,7 @@ InfoBox::InfoBox(EditorCallbacks &callbacks, TiXmlElement &item) :
 {
 	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("message.png"));
 	contextMenu->Append(contextMenuNextAvailableSlot++, _("&Edit"));
-	text = item.GetText();
+	text = item.GetText() == NULL ? "" : item.GetText();
 	initialShow = item.Attribute("initialshow") == "true";
 	sx = INFOBOX_SIZE_X;
 	sy = INFOBOX_SIZE_Y;

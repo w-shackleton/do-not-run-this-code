@@ -15,6 +15,8 @@ class OpenLevelList
 		{
 			return editors.empty();
 		}
+
+		bool isOpen(wxString filename);
 	protected:
 		std::list<SpaceFrame*> editors;
 };

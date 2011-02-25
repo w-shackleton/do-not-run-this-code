@@ -10,21 +10,23 @@ class OpenLevelList;
 class SpaceFrame: public wxFrame
 {
 	public:
-		SpaceFrame(OpenLevelList &parent);
+		SpaceFrame(OpenLevelList &parent, wxString& levelSetName, std::string filename);
 		~SpaceFrame();
 		DECLARE_EVENT_TABLE()
+
+	public:
+		Levels::LevelManager lmanager;
 	protected:
 		wxMenu *menuFile, *menuLevel, *menuAbout, *menuCreate, *menuEdit;
 		wxMenuBar *menuBar;
 
 		std::list<wxButton *> tbButtons;
 
+		wxString levelSetName;
+
 		enum
 		{
-			ID_File_New = wxID_HIGHEST + 1,
-			ID_File_Open,
-			ID_File_Save,
-			ID_File_SaveAs,
+			ID_File_Save = wxID_HIGHEST + 1,
 			ID_File_Quit,
 
 			ID_Level_Change,
@@ -46,8 +48,6 @@ class SpaceFrame: public wxFrame
 
 		/* Returns true if level saved successfully */
 		bool save();
-		bool saveAs();
-		bool open();
 
 		void OnQuit(wxCloseEvent& event);
 
@@ -73,11 +73,10 @@ class SpaceFrame: public wxFrame
 		/* Returns false if action should be cancelled */
 		bool checkForSave();
 
-		Levels::LevelManager lmanager;
 		OpenLevelList &parent;
 		
 	private:
-		void init();
+		void init(std::string filename);
 };
 
 #endif

@@ -21,10 +21,8 @@ namespace Levels
 			LevelManager();
 			~LevelManager();
 
-			void newLevel();
 			bool openLevel(std::string filename);
 			bool save();
-			void saveLevel(std::string filename);
 
 			void change();
 			bool levelChanged;
@@ -34,16 +32,19 @@ namespace Levels
 
 			std::list<Objects::SpaceItem *>& objs;
 
+			std::string levelPath;
+
 			std::string levelName;
 			std::string creator;
 		protected:
 			friend class LevelInfoEditor;
 
+			void newLevel(std::string filename = "");
+			void saveLevel(std::string filename);
+
 			LevelWriter writer;
 			LevelReader reader;
 			std::list<Objects::SpaceItem *> _objs;
-
-			std::string levelPath;
 
 			Misc::Point position, speed, border;
 

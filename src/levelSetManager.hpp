@@ -4,11 +4,31 @@
 #include <wx/frame.h>
 #include <wx/menu.h>
 #include <list>
+#include <map>
 #include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/dir.h>
 
 #include "openLevelList.hpp"
+
+class LevelMetadata
+{
+	public:
+		LevelMetadata();
+		LevelMetadata(wxString levelFileName);
+		wxString levelName, creatorName, levelFileName;
+};
+
+class LevelSetMetadata
+{
+	public:
+		LevelSetMetadata(wxString metaFileName);
+		wxString setName, creatorName, metaFileName, folderName;
+
+		std::list<LevelMetadata> levels;
+
+		void saveMetadata();
+};
 
 class LevelSetManager: public wxFrame, private wxDirTraverser
 {
@@ -33,9 +53,22 @@ class LevelSetManager: public wxFrame, private wxDirTraverser
 			ID_Refresh,
 			ID_LevelSet_list,
 			ID_Level_list,
+
+			ID_Level_series,
+			ID_Level_number,
+			ID_Level_name_set,
+
+			ID_Level_set_name,
+			ID_Level_set_creator,
+			ID_Level_set_name_set,
 		};
 
 		wxBoxSizer *hcontainer;
+
+		wxListBox *levelSetList, *levelList;
+		wxTextCtrl *levelSeries, *levelNumber;
+		wxTextCtrl *levelSetName, *levelSetCreator;
+		wxButton *levelDataSet, *levelSetDataSet;
 
 		void OnQuit(wxCloseEvent& event);
 
@@ -49,12 +82,26 @@ class LevelSetManager: public wxFrame, private wxDirTraverser
 
 		void OnRefreshLists(wxCommandEvent& WXUNUSED(event));
 		void OnLevelSetItemSelected(wxCommandEvent& event);
+		void OnLevelItemSelected(wxCommandEvent& event);
+		void OnLevelItemDblClicked(wxCommandEvent& event);
+
+		void OnLevelNameSet(wxCommandEvent& WXUNUSED(event));
+		void OnLevelSetNameSet(wxCommandEvent& WXUNUSED(event));
 
 		OpenLevelList openLevels;
+		LevelSetMetadata *currentLevelSet;
+		std::list<LevelMetadata> *currentLevels;
+		LevelMetadata *currentLevel;
+
+		std::map<wxString, LevelSetMetadata> levelSets;
+
+		void syncListsToScreen();
 
 	private:
 		virtual wxDirTraverseResult OnFile(const wxString& filename);
 		virtual wxDirTraverseResult OnDir(const wxString& dirname);
+
+		static bool sortCurrentLevels(LevelMetadata first, LevelMetadata second);
 };
 
 #endif

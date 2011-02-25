@@ -19,7 +19,7 @@ LevelManager::~LevelManager()
 	cleanObjs();
 }
 
-void LevelManager::newLevel()
+void LevelManager::newLevel(std::string filename)
 {
 	cleanObjs();
 
@@ -32,17 +32,19 @@ void LevelManager::newLevel()
 
 bool LevelManager::openLevel(std::string filename)
 {
+	levelPath = filename;
 	cleanObjs();
 
 	if(!ifstream(filename.c_str()))
-		return false;
+	{
+		newLevel(filename);
+		return true;
+	}
 	return reader.open(filename, &objs, levelName, creator, position.x, position.y, speed.x, speed.y, border.x, border.y);
 }
 
 bool LevelManager::save()
 {
-	if(levelPath == "")
-		return false;
 	saveLevel(levelPath);
 	return true;
 }
