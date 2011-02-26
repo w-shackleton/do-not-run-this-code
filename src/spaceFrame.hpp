@@ -10,7 +10,7 @@ class OpenLevelList;
 class SpaceFrame: public wxFrame
 {
 	public:
-		SpaceFrame(OpenLevelList &parent, wxString& levelSetName, std::string filename);
+		SpaceFrame(OpenLevelList &parent, wxString& levelSetName, std::string filename, bool newLevel = false);
 		~SpaceFrame();
 		DECLARE_EVENT_TABLE()
 
@@ -76,7 +76,7 @@ class SpaceFrame: public wxFrame
 		OpenLevelList &parent;
 		
 	private:
-		void init(std::string filename);
+		void init(std::string filename, bool newLevel = false);
 };
 
 #endif

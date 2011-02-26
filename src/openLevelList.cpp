@@ -6,6 +6,15 @@ OpenLevelList::OpenLevelList()
 {
 }
 
+void OpenLevelList::newLevel(wxString levelSetName, wxString fileName)
+{
+	SpaceFrame *sf = new SpaceFrame(*this, levelSetName, string(fileName.mb_str()), true);
+	editors.push_back(sf);
+	sf->Show();
+
+	cout << "Level created" << endl;
+}
+
 void OpenLevelList::openLevel(wxString levelSetName, wxString fileName)
 {
 	SpaceFrame *sf = new SpaceFrame(*this, levelSetName, string(fileName.mb_str()));

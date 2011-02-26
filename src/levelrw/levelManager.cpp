@@ -4,14 +4,11 @@ using namespace Levels;
 using namespace std;
 using namespace Misc;
 
-#include "spaceItems.hpp"
-
 #include <fstream>
 
 LevelManager::LevelManager() :
 	objs(_objs)
 {
-	newLevel();
 }
 
 LevelManager::~LevelManager()
@@ -26,8 +23,10 @@ void LevelManager::newLevel(std::string filename)
 	border = Point(500, 500);
 	position = Point(0, 0);
 	speed = Point(0, 0);
-	levelPath = "";
+	levelPath = filename;
 	levelChanged = true;
+
+	save();
 }
 
 bool LevelManager::openLevel(std::string filename)

@@ -22,6 +22,7 @@ namespace Levels
 			~LevelManager();
 
 			bool openLevel(std::string filename);
+			void newLevel(std::string filename = "");
 			bool save();
 
 			void change();
@@ -39,7 +40,6 @@ namespace Levels
 		protected:
 			friend class LevelInfoEditor;
 
-			void newLevel(std::string filename = "");
 			void saveLevel(std::string filename);
 
 			LevelWriter writer;

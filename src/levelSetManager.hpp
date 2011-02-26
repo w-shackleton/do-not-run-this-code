@@ -17,6 +17,8 @@ class LevelMetadata
 		LevelMetadata();
 		LevelMetadata(wxString levelFileName);
 		wxString levelName, creatorName, levelFileName;
+
+		bool operator ==(const LevelMetadata& b);
 };
 
 class LevelSetMetadata
@@ -54,6 +56,9 @@ class LevelSetManager: public wxFrame, private wxDirTraverser
 			ID_Refresh,
 			ID_New_levelset,
 			ID_Delete_levelset,
+			ID_New_level,
+			ID_Delete_level,
+
 			ID_LevelSet_list,
 			ID_Level_list,
 
@@ -72,11 +77,16 @@ class LevelSetManager: public wxFrame, private wxDirTraverser
 		wxTextCtrl *levelSeries, *levelNumber;
 		wxTextCtrl *levelSetName, *levelSetCreator;
 		wxButton *levelDataSet, *levelSetDataSet, *deleteLevelSetButton;
+		wxButton *newLevelButton, *deleteLevelButton;
 
 		void OnQuit(wxCloseEvent& event);
 
 		void OnFileNew(wxCommandEvent& event);
 		void OnDeleteLevelSet(wxCommandEvent& event);
+
+		void OnNewLevel(wxCommandEvent& event);
+		void OnDeleteLevel(wxCommandEvent& event);
+
 		void OnFileQuit(wxCommandEvent& event);
 
 		void OnPreferencesOpen(wxCommandEvent& event);

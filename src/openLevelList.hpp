@@ -9,6 +9,7 @@ class OpenLevelList
 	public:
 		OpenLevelList();
 
+		void newLevel(wxString levelSetName, wxString fileName);
 		void openLevel(wxString levelSetName, wxString fileName);
 		void removeFromList(SpaceFrame *item);
 		inline bool isEmpty()

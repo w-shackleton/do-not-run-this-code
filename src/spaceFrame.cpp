@@ -46,17 +46,23 @@ using namespace std;
 
 #define FRAME_TITLE "Space Hopper Level Editor"
 
-SpaceFrame::SpaceFrame(OpenLevelList &parent, wxString& levelSetName, std::string filename)
+SpaceFrame::SpaceFrame(OpenLevelList &parent, wxString& levelSetName, std::string filename, bool newLevel)
 	: wxFrame(NULL, -1, _(FRAME_TITLE), wxDefaultPosition, wxSize(640, 480)),
 	levelSetName(levelSetName),
 	parent(parent)
 {
-	init(filename);
+	if(newLevel)
+	{
+		LevelInfoEditor editor(lmanager);
+		editor.ShowModal();
+	}
+
+	init(filename, newLevel);
 
 	SetTitle(_(FRAME_TITLE) + wxString(wxT(" - ")) + levelSetName + wxString((" - " + lmanager.levelName).c_str(), wxConvUTF8));
 }
 
-void SpaceFrame::init(string filename)
+void SpaceFrame::init(string filename, bool newLevel)
 {
 	cout << "Loading!" << endl;
 	SetIcon(wxIcon(wxString(Misc::Data::getFilePath(_FRAME_ICON).c_str(), wxConvUTF8), wxBITMAP_TYPE_XPM));
@@ -109,7 +115,12 @@ void SpaceFrame::init(string filename)
 	hcontainer = new wxBoxSizer(wxHORIZONTAL);
 	spacePanel = new SpacePanel(this, lmanager);
 	lmanager.setEditorCallbacks(spacePanel);
-	lmanager.openLevel(filename);
+
+	if(newLevel)
+		lmanager.newLevel(filename);
+	else
+		lmanager.openLevel(filename);
+
 	hcontainer->Add(spacePanel, 1, wxEXPAND);
 
 	SetSizer(hcontainer);

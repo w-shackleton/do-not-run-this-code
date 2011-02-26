@@ -14,6 +14,9 @@ BEGIN_EVENT_TABLE(LevelSetManager, wxFrame)
 	EVT_BUTTON(LevelSetManager::ID_Delete_levelset, LevelSetManager::OnDeleteLevelSet)
 	EVT_BUTTON(LevelSetManager::ID_New_levelset, LevelSetManager::OnFileNew)
 
+	EVT_BUTTON(LevelSetManager::ID_Delete_level, LevelSetManager::OnDeleteLevel)
+	EVT_BUTTON(LevelSetManager::ID_New_level, LevelSetManager::OnNewLevel)
+
 	EVT_LISTBOX(LevelSetManager::ID_LevelSet_list, LevelSetManager::OnLevelSetItemSelected)
 	EVT_LISTBOX(LevelSetManager::ID_Level_list, LevelSetManager::OnLevelItemSelected)
 	EVT_LISTBOX_DCLICK(LevelSetManager::ID_Level_list, LevelSetManager::OnLevelItemDblClicked)
@@ -60,7 +63,7 @@ LevelSetManager::LevelSetManager()
 	menuEdit = new wxMenu;
 	menuAbout = new wxMenu;
 
-	menuFile->Append(ID_File_New, _("&New\tCtrl-N"));
+	menuFile->Append(ID_File_New, _("&New Level Set\tCtrl-N"));
 	menuFile->Append(ID_File_Quit, _("E&xit\tCtrl-Q"));
 
 	menuEdit->Append(ID_Tools_Preferences, _("&Preferences\tCtrl-P"));
@@ -106,6 +109,15 @@ LevelSetManager::LevelSetManager()
 	wxBoxSizer *rh = new wxBoxSizer(wxVERTICAL);
 
 	rh->Add(new wxStaticText(this, -1, _("Levels in the same series must be completed sequentially")), 0, wxALL, 5);
+
+	wxBoxSizer *rhButtonTop = new wxBoxSizer(wxHORIZONTAL);
+	rh->Add(rhButtonTop);
+	newLevelButton = new wxButton(this, ID_New_level, _("New"));
+	newLevelButton->Disable();
+	rhButtonTop->Add(newLevelButton, 0, wxALL, 5);
+	deleteLevelButton = new wxButton(this, ID_Delete_level, _("Delete"));
+	deleteLevelButton->Disable();
+	rhButtonTop->Add(deleteLevelButton, 0, wxALL, 5);
 
 	wxBoxSizer *rhTop = new wxBoxSizer(wxHORIZONTAL);
 	rh->Add(rhTop);
@@ -251,6 +263,72 @@ void LevelSetManager::OnDeleteLevelSet(wxCommandEvent& event)
 	}
 }
 
+void LevelSetManager::OnNewLevel(wxCommandEvent& event)
+{
+	wxFileName fn;
+	if(currentLevels->empty())
+	{
+		fn = wxFileName::FileName(wxString(Misc::Data::saveLocation.c_str(), wxConvUTF8) + wxT("/") + currentLevelSet->folderName + wxT("/Level 0.slv"));
+		cout << "Using dummy level " << fn.GetFullPath().mb_str() << " as starting point for new level name" << endl;
+	}
+	else
+	{
+		if(levelList->GetSelection() == -1)
+		{
+			currentLevel = &*currentLevels->rbegin(); // Choose end level as starting point if no level selected
+		}
+		cout << "Using level " << currentLevel->levelFileName<< " as starting point for new level name" << endl;
+		fn = wxFileName::FileName(currentLevel->levelFileName);
+	}
+	wxString fileName = fn.GetName();
+
+	if(!fileName.Contains(wxT(" ")))
+	{
+		fileName += wxT(" 1");
+	}
+
+	int pos = fileName.Find(' ', true);
+
+	wxString series = fileName.Mid(0, pos);
+	long number =  0;
+	fileName.Mid(pos + 1).ToLong(&number); // Doesn't matter if not a number, just use 0
+
+	while(true)
+	{
+		fn.SetName(series + wxString::Format(wxT(" %d"), ++number));
+		if(!fn.FileExists()) // Next empty file, can continue
+		{
+			cout << "New level name decided to be " << fn.GetFullPath().mb_str() << "." << endl;
+			openLevels.newLevel(currentLevelSet->setName, fn.GetFullPath());
+
+			currentLevels->push_back(LevelMetadata(fn.GetFullPath()));
+
+			// Refresh
+			wxCommandEvent tmpEvt;
+			OnLevelSetItemSelected(tmpEvt); // Retrigger event to regenerate list. Probably could be done better
+			break;
+		}
+	}
+}
+
+void LevelSetManager::OnDeleteLevel(wxCommandEvent& event)
+{
+	wxMessageDialog dlg(this, _("Delete this level?"), _("Delete level?"), wxOK | wxCANCEL);
+	if(dlg.ShowModal() != wxID_OK) return;
+	
+	if(!wxRemoveFile(currentLevel->levelFileName))
+	{
+		wxMessageDialog dlg(this, _("Couldn't delete level!"), _(""));
+		dlg.ShowModal();
+		return;
+	}
+	currentLevels->remove(*currentLevel);
+
+	// Refresh
+	wxCommandEvent tmpEvt;
+	OnLevelSetItemSelected(tmpEvt); // Retrigger event to regenerate list. Probably could be done better
+}
+
 void LevelSetManager::OnFileQuit(wxCommandEvent& event)
 {
 	Close(TRUE);
@@ -288,6 +366,8 @@ void LevelSetManager::OnLevelSetItemSelected(wxCommandEvent& event)
 		levelSetName->SetValue(wxT(""));
 		levelSetCreator->SetValue(wxT(""));
 		levelSetDataSet->Disable();
+		newLevelButton->Disable();
+		deleteLevelButton->Disable();
 
 		deleteLevelSetButton->Disable();
 
@@ -305,6 +385,8 @@ void LevelSetManager::OnLevelSetItemSelected(wxCommandEvent& event)
 		levelSetName->Enable();
 		levelSetCreator->Enable();
 		levelSetDataSet->Enable();
+
+		newLevelButton->Enable();
 
 		deleteLevelSetButton->Enable();
 
@@ -360,6 +442,8 @@ void LevelSetManager::OnLevelItemSelected(wxCommandEvent& event)
 		levelDataSet->Disable();
 		levelSeries->SetValue(wxT(""));
 		levelNumber->SetValue(wxT(""));
+
+		deleteLevelButton->Disable();
 	}
 	else
 	{
@@ -376,6 +460,7 @@ void LevelSetManager::OnLevelItemSelected(wxCommandEvent& event)
 			levelSeries->Enable();
 			levelNumber->Enable();
 			levelDataSet->Enable();
+			deleteLevelButton->Enable();
 
 			wxString fileName = wxFileName::FileName(iter->levelFileName).GetName();
 
@@ -409,6 +494,7 @@ void LevelSetManager::OnLevelItemSelected(wxCommandEvent& event)
 			levelSeries->Disable();
 			levelNumber->Disable();
 			levelDataSet->Disable();
+			deleteLevelButton->Disable();
 			levelSeries->SetValue(wxT(""));
 			levelNumber->SetValue(wxT(""));
 		}
@@ -438,12 +524,14 @@ void LevelSetManager::OnLevelItemDblClicked(wxCommandEvent& event)
 		if(!openLevels.isOpen(iter->levelFileName))
 		{
 			openLevels.openLevel(currentLevelSet->setName, currentLevel->levelFileName);
+			deleteLevelButton->Disable();
 		}
 		else
 		{
 			levelSeries->Disable();
 			levelNumber->Disable();
 			levelDataSet->Disable();
+			deleteLevelButton->Disable();
 			levelSeries->SetValue(wxT(""));
 			levelNumber->SetValue(wxT(""));
 			wxMessageDialog(this, _("Level already open"), _("Level already open")).ShowModal();
@@ -587,3 +675,7 @@ LevelMetadata::LevelMetadata(wxString levelFileName) :
 	creatorName = wxString(sLevelName.c_str(), wxConvUTF8);
 }
 
+bool LevelMetadata::operator ==(const LevelMetadata& b)
+{
+	return levelFileName == b.levelFileName;
+}
