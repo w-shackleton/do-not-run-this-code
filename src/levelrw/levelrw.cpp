@@ -151,7 +151,6 @@ bool LevelReader::open(const std::string &filename, std::list<Objects::SpaceItem
 	TiXmlElement *items = level->FirstChildElement("items");
 	if(items)
 	{
-		cout << "Items valid" << endl;
 		TiXmlElement *item = items->FirstChildElement();
 		while(item)
 		{
@@ -181,8 +180,6 @@ bool LevelReader::open(const std::string &filename, std::string &levelName, std:
 {
 	TiXmlDocument doc(filename);
 	if(!doc.LoadFile()) return false;
-
-	cout << "Loading level..." << endl;
 
 	TiXmlElement *level = doc.FirstChildElement("level");
 
