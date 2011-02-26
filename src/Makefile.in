@@ -53,6 +53,7 @@ am_spaceedit_OBJECTS = spaceedit-levelInfoEditor.$(OBJEXT) \
 	spaceedit-matrixHelper.$(OBJEXT) \
 	spaceedit-openLevelList.$(OBJEXT) \
 	spaceedit-editorCallbacks.$(OBJEXT) \
+	spaceedit-newLevelDialog.$(OBJEXT) \
 	spaceedit-spacePanel.$(OBJEXT) spaceedit-cairoPanel.$(OBJEXT) \
 	spaceedit-spaceFrame.$(OBJEXT) \
 	spaceedit-levelSetManager.$(OBJEXT) \
@@ -296,6 +297,7 @@ spaceedit_SOURCES = \
 		matrixHelper.cpp	matrixHelper.hpp	\
 		openLevelList.cpp	openLevelList.hpp	\
 		editorCallbacks.cpp	editorCallbacks.hpp	\
+		newLevelDialog.cpp	newLevelDialog.hpp	\
 		spacePanel.cpp		spacePanel.hpp		\
 		cairoPanel.cpp		cairoPanel.hpp		\
 		spaceFrame.cpp		spaceFrame.hpp		\
@@ -405,6 +407,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-levelInfoEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-levelSetManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-matrixHelper.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-newLevelDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-openLevelList.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-preferences.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spaceedit-spaceApp.Po@am__quote@
@@ -514,6 +517,22 @@ spaceedit-editorCallbacks.obj: editorCallbacks.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='editorCallbacks.cpp' object='spaceedit-editorCallbacks.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -c -o spaceedit-editorCallbacks.obj `if test -f 'editorCallbacks.cpp'; then $(CYGPATH_W) 'editorCallbacks.cpp'; else $(CYGPATH_W) '$(srcdir)/editorCallbacks.cpp'; fi`
+
+spaceedit-newLevelDialog.o: newLevelDialog.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -MT spaceedit-newLevelDialog.o -MD -MP -MF $(DEPDIR)/spaceedit-newLevelDialog.Tpo -c -o spaceedit-newLevelDialog.o `test -f 'newLevelDialog.cpp' || echo '$(srcdir)/'`newLevelDialog.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/spaceedit-newLevelDialog.Tpo $(DEPDIR)/spaceedit-newLevelDialog.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='newLevelDialog.cpp' object='spaceedit-newLevelDialog.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -c -o spaceedit-newLevelDialog.o `test -f 'newLevelDialog.cpp' || echo '$(srcdir)/'`newLevelDialog.cpp
+
+spaceedit-newLevelDialog.obj: newLevelDialog.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -MT spaceedit-newLevelDialog.obj -MD -MP -MF $(DEPDIR)/spaceedit-newLevelDialog.Tpo -c -o spaceedit-newLevelDialog.obj `if test -f 'newLevelDialog.cpp'; then $(CYGPATH_W) 'newLevelDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/newLevelDialog.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/spaceedit-newLevelDialog.Tpo $(DEPDIR)/spaceedit-newLevelDialog.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='newLevelDialog.cpp' object='spaceedit-newLevelDialog.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -c -o spaceedit-newLevelDialog.obj `if test -f 'newLevelDialog.cpp'; then $(CYGPATH_W) 'newLevelDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/newLevelDialog.cpp'; fi`
 
 spaceedit-spacePanel.o: spacePanel.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spaceedit_CXXFLAGS) $(CXXFLAGS) -MT spaceedit-spacePanel.o -MD -MP -MF $(DEPDIR)/spaceedit-spacePanel.Tpo -c -o spaceedit-spacePanel.o `test -f 'spacePanel.cpp' || echo '$(srcdir)/'`spacePanel.cpp

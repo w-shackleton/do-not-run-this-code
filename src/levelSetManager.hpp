@@ -22,7 +22,8 @@ class LevelMetadata
 class LevelSetMetadata
 {
 	public:
-		LevelSetMetadata(wxString metaFileName);
+		LevelSetMetadata(wxString folderName);
+		LevelSetMetadata(wxString folderName, wxString setName, wxString creatorName);
 		wxString setName, creatorName, metaFileName, folderName;
 
 		std::list<LevelMetadata> levels;
@@ -51,6 +52,8 @@ class LevelSetManager: public wxFrame, private wxDirTraverser
 			ID_Help_About,
 
 			ID_Refresh,
+			ID_New_levelset,
+			ID_Delete_levelset,
 			ID_LevelSet_list,
 			ID_Level_list,
 
@@ -68,11 +71,12 @@ class LevelSetManager: public wxFrame, private wxDirTraverser
 		wxListBox *levelSetList, *levelList;
 		wxTextCtrl *levelSeries, *levelNumber;
 		wxTextCtrl *levelSetName, *levelSetCreator;
-		wxButton *levelDataSet, *levelSetDataSet;
+		wxButton *levelDataSet, *levelSetDataSet, *deleteLevelSetButton;
 
 		void OnQuit(wxCloseEvent& event);
 
 		void OnFileNew(wxCommandEvent& event);
+		void OnDeleteLevelSet(wxCommandEvent& event);
 		void OnFileQuit(wxCommandEvent& event);
 
 		void OnPreferencesOpen(wxCommandEvent& event);

@@ -11,6 +11,8 @@ BEGIN_EVENT_TABLE(LevelSetManager, wxFrame)
 	EVT_MENU(LevelSetManager::ID_Help_About, LevelSetManager::OnHelpAbout)
 
 	EVT_BUTTON(LevelSetManager::ID_Refresh, LevelSetManager::OnRefreshLists)
+	EVT_BUTTON(LevelSetManager::ID_Delete_levelset, LevelSetManager::OnDeleteLevelSet)
+	EVT_BUTTON(LevelSetManager::ID_New_levelset, LevelSetManager::OnFileNew)
 
 	EVT_LISTBOX(LevelSetManager::ID_LevelSet_list, LevelSetManager::OnLevelSetItemSelected)
 	EVT_LISTBOX(LevelSetManager::ID_Level_list, LevelSetManager::OnLevelItemSelected)
@@ -33,6 +35,7 @@ using namespace std;
 
 #include "misc/data.hpp"
 
+#include "newLevelDialog.hpp"
 #include "levelInfoEditor.hpp"
 #include "preferences.hpp"
 #include "levelrw/levelrw.hpp"
@@ -75,7 +78,13 @@ LevelSetManager::LevelSetManager()
 	wxBoxSizer *lh = new wxBoxSizer(wxVERTICAL);
 
 	lh->Add(new wxStaticText(this, -1, _("Level Sets")), 0, wxALL, 5);
-	lh->Add(new wxButton(this, ID_Refresh, _("Refresh")), 0, wxALL, 5);
+	wxBoxSizer *lhButtonTop = new wxBoxSizer(wxHORIZONTAL);
+	lh->Add(lhButtonTop);
+	lhButtonTop->Add(new wxButton(this, ID_Refresh, _("Refresh")), 0, wxALL, 5);
+	lhButtonTop->Add(new wxButton(this, ID_New_levelset, _("New")), 0, wxALL, 5);
+	deleteLevelSetButton = new wxButton(this, ID_Delete_levelset, _("Delete"));
+	deleteLevelSetButton->Disable();
+	lhButtonTop->Add(deleteLevelSetButton, 0, wxALL, 5);
 
 	wxBoxSizer *lhTop = new wxBoxSizer(wxHORIZONTAL);
 	lh->Add(lhTop);
@@ -137,6 +146,8 @@ LevelSetManager::LevelSetManager()
 
 void LevelSetManager::refreshLists()
 {
+	levelSets.clear();
+
 	wxDir dir(wxString(Misc::Data::saveLocation.c_str(), wxConvUTF8));
 	dir.Traverse(*this);
 	syncListsToScreen();
@@ -186,6 +197,7 @@ void LevelSetManager::OnQuit(wxCloseEvent& event)
 	if(!openLevels.isEmpty())
 	{
 		wxMessageDialog dialog(this, _("There are still open levels"));
+		dialog.ShowModal();
 		return;
 	}
 	Destroy();
@@ -193,6 +205,50 @@ void LevelSetManager::OnQuit(wxCloseEvent& event)
 
 void LevelSetManager::OnFileNew(wxCommandEvent& event)
 {
+	NewLevelDialog newLvl;
+	if(newLvl.ShowModal() == 0)
+	{
+		levelSets.insert(pair<wxString, LevelSetMetadata>(newLvl.levelTitle, LevelSetMetadata(newLvl.levelTitle, newLvl.levelTitle, newLvl.levelCreator)));
+	}
+
+	syncListsToScreen();
+}
+
+void LevelSetManager::OnDeleteLevelSet(wxCommandEvent& event)
+{
+	for(list<LevelMetadata>::iterator iter = currentLevels->begin(); iter != currentLevels->end(); iter++)
+	{
+		if(openLevels.isOpen(iter->levelFileName))
+		{
+			wxMessageDialog dlg(this, _("Some levels are still open in this level set"), _("Levels still open"));
+			dlg.ShowModal();
+			return;
+		}
+	}
+
+	wxMessageDialog dlg(this, _("Do you want to delete this level set?"), _("Delete level set?"), wxOK | wxCANCEL);
+	if(dlg.ShowModal() == wxID_OK)
+	{
+		wxString dir = wxString(Misc::Data::saveLocation.c_str(), wxConvUTF8) + wxT("/") + currentLevelSet->folderName;
+
+		cout << "Deleting level set " << dir << endl;
+
+		wxArrayString files;
+		wxDir::GetAllFiles(dir, &files, wxEmptyString, wxDIR_FILES | wxDIR_HIDDEN);
+		for(wxArrayString::iterator iter = files.begin(); iter != files.end(); iter++)
+		{
+			wxRemoveFile(*iter);
+		}
+		
+		if(!wxRmdir(dir))
+		{
+			wxMessageDialog dlg(this, _("Failed to delete level set"), _("Couldn't delete level set"));
+			dlg.ShowModal();
+			return;
+		}
+
+		refreshLists();
+	}
 }
 
 void LevelSetManager::OnFileQuit(wxCommandEvent& event)
@@ -233,6 +289,8 @@ void LevelSetManager::OnLevelSetItemSelected(wxCommandEvent& event)
 		levelSetCreator->SetValue(wxT(""));
 		levelSetDataSet->Disable();
 
+		deleteLevelSetButton->Disable();
+
 		levelSeries->Disable();
 		levelNumber->Disable();
 		levelDataSet->Disable();
@@ -247,6 +305,8 @@ void LevelSetManager::OnLevelSetItemSelected(wxCommandEvent& event)
 		levelSetName->Enable();
 		levelSetCreator->Enable();
 		levelSetDataSet->Enable();
+
+		deleteLevelSetButton->Enable();
 
 		map<wxString, LevelSetMetadata>::iterator iter = levelSets.begin();
 		for( // Move iterator to correct element
@@ -482,6 +542,19 @@ LevelSetMetadata::LevelSetMetadata(wxString folderName) :
 		saveMetadata();
 	}
 
+}
+
+LevelSetMetadata::LevelSetMetadata(wxString folderName, wxString setName, wxString creatorName) :
+	folderName(folderName),
+	setName(setName),
+	creatorName(creatorName),
+	metaFileName(wxString(Misc::Data::saveLocation.c_str(), wxConvUTF8) + wxT("/") + folderName + wxT("/") + wxT(LEVELSET_META_NAME))
+{
+	wxMkdir(wxString(Misc::Data::saveLocation.c_str(), wxConvUTF8) + wxT("/") + folderName);
+
+	wxTextFile config(metaFileName);
+	config.Create();
+	saveMetadata();
 }
 
 void LevelSetMetadata::saveMetadata()

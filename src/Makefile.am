@@ -7,6 +7,7 @@ spaceedit_SOURCES = \
 		matrixHelper.cpp	matrixHelper.hpp	\
 		openLevelList.cpp	openLevelList.hpp	\
 		editorCallbacks.cpp	editorCallbacks.hpp	\
+		newLevelDialog.cpp	newLevelDialog.hpp	\
 		spacePanel.cpp		spacePanel.hpp		\
 		cairoPanel.cpp		cairoPanel.hpp		\
 		spaceFrame.cpp		spaceFrame.hpp		\
