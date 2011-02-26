@@ -28,6 +28,7 @@ spaceedit.res: spaceedit.rc
 	$(pkg_verbose)i586-mingw32msvc-windres spaceedit.rc -O coff -o spaceedit.res
 
 spaceedit_LDADD += spaceedit.res
+spaceedit_LDFLAGS = -Wl,--enable-auto-import
 endif
 
 EXTRA_DIST = spaceedit.rc

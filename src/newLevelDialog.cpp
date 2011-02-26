@@ -15,7 +15,7 @@ BEGIN_EVENT_TABLE(NewLevelDialog , wxDialog)
 END_EVENT_TABLE()                                          
 
 NewLevelDialog::NewLevelDialog() :
-	wxDialog(NULL, -1, _("Create New Level Set"))
+	wxDialog(NULL, -1, wxString(_("Create New Level Set")))
 {
 	wxBoxSizer* vsizer = new wxBoxSizer(wxVERTICAL);
 

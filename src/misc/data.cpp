@@ -52,7 +52,7 @@ bool Misc::Data::initialise()
 	{ // Process config file
 		for(wxString line = config.GetFirstLine(); !config.Eof(); line = config.GetNextLine())
 		{
-			wxStringTokenizer tkz(line, wxT(":"));
+			wxStringTokenizer tkz(line, wxT(";"));
 			if(!tkz.HasMoreTokens()) continue; // Malformed line
 			wxString key = tkz.GetNextToken();
 
@@ -94,7 +94,7 @@ void Misc::Data::savePreferences()
 	if(config.Open())
 	{
 		config.Clear();
-		config.AddLine(wxT("savelocation:") + wxString(saveLocation.c_str(), wxConvUTF8));
+		config.AddLine(wxT("savelocation;") + wxString(saveLocation.c_str(), wxConvUTF8));
 
 		config.Write();
 
