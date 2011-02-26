@@ -66,7 +66,7 @@ am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
 spaceedit_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(spaceedit_CXXFLAGS) \
-	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+	$(CXXFLAGS) $(spaceedit_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -313,6 +313,7 @@ spaceedit_CXXFLAGS = @WXCPPFLAGS@ @Cairomm_CFLAGS@ @tinyxml_CFLAGS@ -Iobjects -I
 @WIN32_TRUE@pkg_verbose = $(pkg_verbose_$(V))
 @WIN32_TRUE@pkg_verbose_ = $(pkg_verbose_$(AM_DEFAULT_VERBOSITY))
 @WIN32_TRUE@pkg_verbose_0 = @echo "  CXX    $@";
+@WIN32_TRUE@spaceedit_LDFLAGS = -Wl,--enable-auto-import
 EXTRA_DIST = spaceedit.rc
 CLEANFILES = spaceedit.res
 all: all-recursive

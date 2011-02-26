@@ -168,6 +168,12 @@ void LevelSetManager::refreshLists()
 void LevelSetManager::syncListsToScreen()
 {
 	levelSetList->Clear();
+	levelSetList->SetSelection(wxNOT_FOUND);
+
+	// Refresh
+	wxCommandEvent tmpEvt;
+	OnLevelSetItemSelected(tmpEvt); // Retrigger event to disable various buttons. wxMSW hack.
+
 	for(map<wxString, LevelSetMetadata>::iterator iter = levelSets.begin(); iter != levelSets.end(); iter++)
 	{
 		levelSetList->Append(iter->second.setName);
