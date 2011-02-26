@@ -177,6 +177,35 @@ bool LevelReader::open(const std::string &filename, std::list<Objects::SpaceItem
 	return true;
 }
 
+bool LevelReader::open(const std::string &filename, std::string &levelName, std::string &levelCreator)
+{
+	TiXmlDocument doc(filename);
+	if(!doc.LoadFile()) return false;
+
+	cout << "Loading level..." << endl;
+
+	TiXmlElement *level = doc.FirstChildElement("level");
+
+	TiXmlElement *name = level->FirstChildElement("name");
+	if(name)
+	{
+		if(const char *n = name->GetText())
+			levelName = n;
+		else
+			levelName = "";
+	}
+
+	TiXmlElement *creator = level->FirstChildElement("creator");
+	if(creator)
+	{
+		if(const char *n = creator->GetText())
+			levelCreator = n;
+		else
+			levelCreator = "";
+	}
+	return true;
+}
+
 void LevelReader::setEditorCallbacks(EditorCallbacks *callbacks)
 {
 	this->callbacks = callbacks;

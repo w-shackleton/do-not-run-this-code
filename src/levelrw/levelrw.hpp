@@ -36,6 +36,7 @@ namespace Levels
 					double &px, double &py,
 					double &ssx, double &ssy,
 					double &bx, double &by);
+			bool open(const std::string &filename, std::string &levelName, std::string &levelCreator);
 			void setEditorCallbacks(EditorCallbacks *callbacks);
 		protected:
 			EditorCallbacks *callbacks;

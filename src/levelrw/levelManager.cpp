@@ -4,14 +4,11 @@ using namespace Levels;
 using namespace std;
 using namespace Misc;
 
-#include "spaceItems.hpp"
-
 #include <fstream>
 
 LevelManager::LevelManager() :
 	objs(_objs)
 {
-	newLevel();
 }
 
 LevelManager::~LevelManager()
@@ -19,30 +16,34 @@ LevelManager::~LevelManager()
 	cleanObjs();
 }
 
-void LevelManager::newLevel()
+void LevelManager::newLevel(std::string filename)
 {
 	cleanObjs();
 
 	border = Point(500, 500);
 	position = Point(0, 0);
 	speed = Point(0, 0);
-	levelPath = "";
+	levelPath = filename;
 	levelChanged = true;
+
+	save();
 }
 
 bool LevelManager::openLevel(std::string filename)
 {
+	levelPath = filename;
 	cleanObjs();
 
 	if(!ifstream(filename.c_str()))
-		return false;
+	{
+		newLevel(filename);
+		return true;
+	}
 	return reader.open(filename, &objs, levelName, creator, position.x, position.y, speed.x, speed.y, border.x, border.y);
 }
 
 bool LevelManager::save()
 {
-	if(levelPath == "")
-		return false;
 	saveLevel(levelPath);
 	return true;
 }

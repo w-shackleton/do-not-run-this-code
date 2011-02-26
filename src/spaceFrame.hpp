@@ -6,26 +6,32 @@
 
 #include <levelrw/levelManager.hpp>
 
+class OpenLevelList;
 class SpaceFrame: public wxFrame
 {
 	public:
-		SpaceFrame();
+		SpaceFrame(OpenLevelList &parent, wxString& levelSetName, std::string filename, bool newLevel = false);
+		~SpaceFrame();
 		DECLARE_EVENT_TABLE()
+
+	public:
+		Levels::LevelManager lmanager;
 	protected:
-		wxMenu *menuFile, *menuLevel, *menuAbout, *menuCreate;
+		wxMenu *menuFile, *menuLevel, *menuAbout, *menuCreate, *menuEdit;
 		wxMenuBar *menuBar;
 
 		std::list<wxButton *> tbButtons;
 
+		wxString levelSetName;
+
 		enum
 		{
-			ID_File_New = wxID_HIGHEST + 1,
-			ID_File_Open,
-			ID_File_Save,
-			ID_File_SaveAs,
+			ID_File_Save = wxID_HIGHEST + 1,
 			ID_File_Quit,
 
 			ID_Level_Change,
+
+			ID_Tools_Preferences,
 
 			ID_Help_Help,
 			ID_Help_About,
@@ -42,8 +48,6 @@ class SpaceFrame: public wxFrame
 
 		/* Returns true if level saved successfully */
 		bool save();
-		bool saveAs();
-		bool open();
 
 		void OnQuit(wxCloseEvent& event);
 
@@ -54,6 +58,8 @@ class SpaceFrame: public wxFrame
 		void OnFileQuit(wxCommandEvent& event);
 
 		void OnLevelInfoChange(wxCommandEvent& event);
+
+		void OnPreferencesOpen(wxCommandEvent& event);
 
 		void OnHelpAbout(wxCommandEvent& event);
 		void OnHelpHelp(wxCommandEvent& event);
@@ -67,7 +73,10 @@ class SpaceFrame: public wxFrame
 		/* Returns false if action should be cancelled */
 		bool checkForSave();
 
-		Levels::LevelManager lmanager;
+		OpenLevelList &parent;
+		
+	private:
+		void init(std::string filename, bool newLevel = false);
 };
 
 #endif

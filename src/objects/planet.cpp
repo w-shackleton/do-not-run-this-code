@@ -17,6 +17,7 @@ using namespace std;
 #include "../misc/data.hpp"
 #include "planetEditor.hpp"
 
+// Type HERE is array pos, not ID
 Planet::Planet(EditorCallbacks &callbacks, int type, double sx, double sy, double sradius) :
 	Spherical(callbacks, sx, sy, sradius, PLANET_MIN, PLANET_MAX),
 	type(type)
@@ -34,6 +35,7 @@ Planet::Planet(EditorCallbacks &callbacks, int type, double sx, double sy, doubl
 	contextMenu->Append(contextMenuNextAvailableSlot++, _("&Edit"));
 }
 
+// Type HERE is ID, not simple array pos
 Planet::Planet(EditorCallbacks &callbacks, TiXmlElement &item) :
 	Spherical(callbacks, item, PLANET_MIN, PLANET_MAX)
 {
@@ -50,6 +52,11 @@ Planet::Planet(EditorCallbacks &callbacks, TiXmlElement &item) :
 		}
 		typeNum++;
 	}
+
+	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath(planetType.filename));
+	shadow = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("planet-s.png"));
+
+	contextMenu->Append(contextMenuNextAvailableSlot++, _("&Edit"));
 }
 
 void Planet::saveXMLChild(TiXmlElement* item)

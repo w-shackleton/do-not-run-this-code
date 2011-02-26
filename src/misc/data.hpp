@@ -17,6 +17,11 @@ namespace Misc
 			static std::string datadir;
 			static std::string getFilePath(std::string file);
 			//static wxString getFilePath(wxString file);
+
+			static std::string saveLocation;
+			static void savePreferences();
+		protected:
+			static std::string confLocation;
 		private:
 			Data(); // To stop initialising static class
 
