@@ -2,11 +2,14 @@
 #define LEVELMANAGER_H
 
 #include <list>
+#include <memory>
 
 #include "levelrw.hpp"
 
 #include "geometry.hpp"
 #include "data.hpp"
+
+#include "../objects/levelBounds.hpp"
 
 #define LEVEL_MIN 200
 #define LEVEL_MAX 2000
@@ -32,6 +35,7 @@ namespace Levels
 			void setEditorCallbacks(EditorCallbacks *callbacks);
 
 			std::list<Objects::SpaceItem *>& objs;
+			std::auto_ptr<Objects::LevelBounds> levelBounds;
 
 			std::string levelPath;
 
@@ -46,7 +50,9 @@ namespace Levels
 			LevelReader reader;
 			std::list<Objects::SpaceItem *> _objs;
 
-			Misc::Point position, speed, border;
+			EditorCallbacks *callbacks;
+
+			Misc::Point position, speed;
 
 			double borderMin, borderMax;
 	};

@@ -76,6 +76,9 @@ void SpacePanel::redraw_draw()
 
 	cr->set_line_width(2);
 
+	if(lmanager.levelBounds.get())
+		lmanager.levelBounds->draw(cr);
+
 	// Draw objects (and check for deletions)
 	for(list<Objects::SpaceItem *>::iterator it = lmanager.objs.begin(); it != lmanager.objs.end(); it++)
 	{
@@ -119,8 +122,18 @@ int SpacePanel::getClickedObject(double x, double y, bool useBorder)
 	matrix.get_inverse_matrix().transform_point(tx, ty);
 
 	selectedItem = NULL;
+	selectedItemIsSpecial = false;
 	int ret = CLICKED_None;
-	for(list<Objects::SpaceItem *>::iterator it = lmanager.objs.begin(); it != lmanager.objs.end(); it++)
+
+	if(lmanager.levelBounds->isBorderClicked(tx, ty))
+	{
+		// Object border is clicked.
+		selectedItem = lmanager.levelBounds.get();
+		ret = CLICKED_Border;
+		selectedItemIsSpecial = true;
+	}
+
+	for(list<Objects::SpaceItem *>::iterator it = lmanager.objs.begin(); (it != lmanager.objs.end()) | !selectedItem; it++)
 	{
 		if(useBorder)
 			if((*it)->isBorderClicked(tx, ty))
@@ -237,19 +250,7 @@ void SpacePanel::contextMenu(wxContextMenuEvent& event)
 	wxPoint point = ScreenToClient(event.GetPosition());
 	if(getClickedObject(point.x, point.y, false) == CLICKED_Inner)
 	{
-//		wxMenuItemList& items = objectMenu->GetMenuItems();
-//		wxMenuItemList::iterator iter = items.begin();
-//
-//		iter++;
-//		iter++; // Ignore first 2 items
-//
-//		for(; iter != items.end(); iter++)
-//		{
-//			wxMenuItem* i = *iter;
-//			items.erase(iter);
-//			delete i;
-//		}
-
+		if(selectedItemIsSpecial) return; // no context menu
 		PopupMenu(selectedItem->getContextMenu());
 	}
 	else

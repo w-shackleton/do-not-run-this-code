@@ -11,9 +11,6 @@ namespace Objects
 	class Rectangular : public SpaceItem
 	{
 		protected:
-			double sx, sy;
-			double rotation;
-
 			Cairo::Matrix cornerMatrix;
 			void updateCornerMatrix();
 
@@ -34,13 +31,16 @@ namespace Objects
 		public:
 			Rectangular(EditorCallbacks &callbacks, double x, double y, double sx, double sy, double rotation, Misc::Point min, Misc::Point max);
 			Rectangular(EditorCallbacks &callbacks, TiXmlElement &item, Misc::Point min, Misc::Point max);
-			bool isClicked(int cx, int cy);
-			bool isBorderClicked(int cx, int cy);
+			virtual bool isClicked(int cx, int cy);
+			virtual bool isBorderClicked(int cx, int cy);
 
 			void moveBorder(int dx, int dy);
 
 			void scale(int r);
 			void rotate(double r); // In RADIANS
+			
+			double sx, sy;
+			double rotation;
 	};
 };
 

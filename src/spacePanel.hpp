@@ -66,6 +66,7 @@ class SpacePanel : public CairoPanel, public EditorCallbacks
 		   */
 		int sel;
 		Objects::SpaceItem *selectedItem;
+		bool selectedItemIsSpecial;
 
 		std::vector<wxPoint> stars;
 

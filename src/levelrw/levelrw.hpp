@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "../objects/spaceItem.hpp"
+#include "../objects/levelBounds.hpp"
 #include "../editorCallbacks.hpp"
 
 namespace Levels
@@ -17,7 +18,7 @@ namespace Levels
 			void write(std::string filename, std::list<Objects::SpaceItem *>* objs, std::string levelName, std::string creator,
 					double px, double py,
 					double ssx, double ssy,
-					double bx, double by);
+					Objects::LevelBounds &bounds);
 		protected:
 			void cleanup();
 			TiXmlDocument doc;
@@ -35,7 +36,7 @@ namespace Levels
 			bool open(const std::string &filename, std::list<Objects::SpaceItem *>* objs, std::string &levelName, std::string &levelCreator,
 					double &px, double &py,
 					double &ssx, double &ssy,
-					double &bx, double &by);
+					Objects::LevelBounds &bounds);
 			bool open(const std::string &filename, std::string &levelName, std::string &levelCreator);
 			void setEditorCallbacks(EditorCallbacks *callbacks);
 		protected:
