@@ -187,6 +187,8 @@ bool Rectangular::insideBounds(double sx, double sy)
 {
 	updateCornerPoints();
 
+	bool colliding = false;
+
 	for(int i = 0; i < cornerPoints.size(); i++)
 	{
 		if(abs(cornerPoints[i].x) > sx / 2)
@@ -199,7 +201,7 @@ bool Rectangular::insideBounds(double sx, double sy)
 			{
 				x += -sx / 2 - cornerPoints[i].x;
 			}
-			return true;
+			colliding = true;
 		}
 		if(abs(cornerPoints[i].y) > sy / 2)
 		{
@@ -211,9 +213,9 @@ bool Rectangular::insideBounds(double sx, double sy)
 			{
 				y += -sy / 2 - cornerPoints[i].y;
 			}
-			return true;
+			colliding = true;
 		}
 	}
-	return false;
+	return colliding;
 }
 
