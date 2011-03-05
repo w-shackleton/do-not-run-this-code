@@ -2,8 +2,8 @@
 
 using namespace Objects;
 
-#define RECT_MIN 400
-#define RECT_MAX 4000
+#define RECT_MIN 1000
+#define RECT_MAX 2000
 
 LevelBounds::LevelBounds(EditorCallbacks &callbacks, double sx, double sy) :
 	Rectangular(callbacks, 0, 0, sx, sy, rotation, Misc::Point(RECT_MIN, RECT_MIN), Misc::Point(RECT_MAX, RECT_MAX))
@@ -27,10 +27,10 @@ void LevelBounds::draw(Cairo::RefPtr<Cairo::Context> &cr)
 //	cr->scale(.5, .5);
 
 	double oldLw = cr->get_line_width();
-	cr->set_line_width(5);
+	cr->set_line_width(6);
 
 	cr->set_source_rgb(1, 1, 1);
-	cr->rectangle(-sx, -sy, sx * 2, sy * 2);
+	cr->rectangle(-sx / 2, -sy / 2, sx, sy);
 	cr->stroke();
 
 	cr->set_line_width(oldLw);

@@ -15,6 +15,8 @@ LevelManager::LevelManager() :
 LevelManager::~LevelManager()
 {
 	cleanObjs();
+	// Release pointer early as to avoid grumbles in spacePanel.cpp
+	levelBounds.release();
 }
 
 void LevelManager::newLevel(std::string filename)

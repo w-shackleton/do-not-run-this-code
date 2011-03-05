@@ -26,12 +26,12 @@ namespace Objects
 
 			wxMenu *contextMenu;
 			int contextMenuNextAvailableSlot;
-
-			double x, y;
 		public:
 			SpaceItem(EditorCallbacks &callbacks, double sx, double sy);
 			SpaceItem(EditorCallbacks &callbacks, TiXmlElement &item);
 			~SpaceItem();
+
+			double x, y;
 
 			virtual void draw(Cairo::RefPtr<Cairo::Context> &cr) = 0;
 			virtual bool isClicked(int cx, int cy) = 0;

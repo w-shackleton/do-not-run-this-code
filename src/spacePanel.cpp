@@ -61,6 +61,17 @@ void SpacePanel::redraw_draw()
 	cr->set_source_rgb(0, 0, 0);
 	cr->paint();
 
+	// Clip world outside
+	if(lmanager.levelBounds.get())
+	{
+		cr->rectangle(
+				lmanager.levelBounds->x - lmanager.levelBounds->sx / 2 - 3,
+				lmanager.levelBounds->y - lmanager.levelBounds->sy / 2 - 3,
+				lmanager.levelBounds->sx + 6,
+				lmanager.levelBounds->sy + 6);
+		cr->clip();
+	}
+
 	// Draw stars
 	cr->translate(-matrix.tx / 1.5, -matrix.ty / 1.5); // Give feeling of stars in background
 
@@ -76,9 +87,6 @@ void SpacePanel::redraw_draw()
 
 	cr->set_line_width(2);
 
-	if(lmanager.levelBounds.get())
-		lmanager.levelBounds->draw(cr);
-
 	// Draw objects (and check for deletions)
 	for(list<Objects::SpaceItem *>::iterator it = lmanager.objs.begin(); it != lmanager.objs.end(); it++)
 	{
@@ -92,6 +100,11 @@ void SpacePanel::redraw_draw()
 		}
 		else (*it)->draw(cr);
 	}
+
+	if(lmanager.levelBounds.get())
+		lmanager.levelBounds->draw(cr);
+
+	cr->reset_clip();
 
 	cr->translate(-matrix.tx / matrix.sx, -matrix.ty / matrix.sy);
 
@@ -133,24 +146,25 @@ int SpacePanel::getClickedObject(double x, double y, bool useBorder)
 		selectedItemIsSpecial = true;
 	}
 
-	for(list<Objects::SpaceItem *>::iterator it = lmanager.objs.begin(); (it != lmanager.objs.end()) | !selectedItem; it++)
-	{
-		if(useBorder)
-			if((*it)->isBorderClicked(tx, ty))
+	if(!selectedItem)
+		for(list<Objects::SpaceItem *>::iterator it = lmanager.objs.begin(); (it != lmanager.objs.end()); it++)
 		{
-			// Object border is clicked.
-			selectedItem = *it;
-			ret = CLICKED_Border;
-			continue;
+			if(useBorder)
+				if((*it)->isBorderClicked(tx, ty))
+			{
+				// Object border is clicked.
+				selectedItem = *it;
+				ret = CLICKED_Border;
+				continue;
+			}
+			if((*it)->isClicked(tx, ty))
+			{
+				// Object is clicked.
+				selectedItem = *it;
+				ret = CLICKED_Inner;
+				continue;
+			}
 		}
-		if((*it)->isClicked(tx, ty))
-		{
-			// Object is clicked.
-			selectedItem = *it;
-			ret = CLICKED_Inner;
-			continue;
-		}
-	}
 	return ret;
 }
 
