@@ -5,6 +5,7 @@ using namespace Objects;
 #include "../misc/geometry.hpp"
 
 #include <iostream>
+#include <cmath>
 using namespace std;
 
 // TODO: Implement optional resize (like in rectangular.cpp)
@@ -66,3 +67,30 @@ void Spherical::scale(int r)
 		radius /= 1.1;
 	Misc::trimMinMax(radius, min, max);
 }
+
+bool Spherical::intersects(SpaceItem& second)
+{
+	Spherical* comp = dynamic_cast<Spherical*>(&second);
+	if(comp)
+	{
+		return *this - *comp < radius + comp->radius; // Works out dist, then checks if less than critical dist
+	}
+
+	return false;
+}
+
+bool Spherical::insideBounds(double sx, double sy)
+{
+	if(abs(x) + radius > sx / 2)
+	{
+		Misc::trimMinMax(x, -sx / 2 + radius, sx / 2 - radius);
+		return true;
+	}
+	if(abs(y) + radius > sy / 2)
+	{
+		Misc::trimMinMax(y, -sy / 2 + radius, sy / 2 - radius);
+		return true;
+	}
+	return false;
+}
+

@@ -42,6 +42,9 @@ class SpacePanel : public CairoPanel, public EditorCallbacks
 
 		void contextMenu(wxContextMenuEvent& event);
 
+		void checkCollisions();
+		bool checkBoundsCollision(Objects::SpaceItem *item);
+
 		wxMouseEvent mousePrevPos;
 		Levels::LevelManager &lmanager;
 
@@ -73,6 +76,8 @@ class SpacePanel : public CairoPanel, public EditorCallbacks
 		wxMenu *bgMenu;
 
 		void cMenuClick(wxCommandEvent& evt);
+
+		bool currentIntersections;
 };
 
 // Some useful operators

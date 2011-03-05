@@ -21,6 +21,9 @@ namespace Objects
 			void moveBorder(int dx, int dy);
 			void rotate(double r); // In RADIANS
 			void scale(int r);
+
+			bool intersects(SpaceItem& second);
+			bool insideBounds(double sx, double sy);
 	};
 };
 #endif

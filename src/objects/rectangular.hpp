@@ -38,6 +38,9 @@ namespace Objects
 
 			void scale(int r);
 			void rotate(double r); // In RADIANS
+
+			bool insideBounds(double sx, double sy);
+			bool intersects(SpaceItem& second);
 			
 			double sx, sy;
 			double rotation;

@@ -12,6 +12,11 @@ namespace Misc
 			double x, y;
 			Point(double x, double y);
 			Point();
+
+			Point operator -(Point& second);
+
+			// Converts to a hypotenuse
+			operator double() const;
 	};
 
 	bool pointInPolygon(const std::vector<Point> points, const Point point);
@@ -25,6 +30,11 @@ namespace Misc
 	{
 		if(num < min) num = min;
 		if(num > max) num = max;
+	}
+
+	static inline double distance(double x1, double y1, double x2, double y2)
+	{
+		return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 	}
 
 	/*

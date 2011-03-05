@@ -28,6 +28,7 @@ END_EVENT_TABLE()
 
 using namespace std;
 using namespace Levels;
+using namespace Objects;
 
 // TODO: Add a whole stack of documentation to this!
 
@@ -37,7 +38,8 @@ using namespace Levels;
 SpacePanel::SpacePanel(wxWindow *parent, LevelManager &lmanager) :
 	CairoPanel(parent),
 	mousePrevPos(wxEVT_MOTION),
-	lmanager(lmanager)
+	lmanager(lmanager),
+	currentIntersections(false)
 {
 	for(int i = 0; i < STARFIELD_STARS; i++)
 	{
@@ -210,6 +212,7 @@ void SpacePanel::mouseMoved(wxMouseEvent& event)
 			distMoved.x /= matrix.sx;
 			distMoved.y /= matrix.sy;
 			selectedItem->move(distMoved.x, distMoved.y);
+			checkBoundsCollision(selectedItem);
 			redraw(true, true);
 			break;
 		case SEL_Item_border_move:
@@ -229,6 +232,49 @@ void SpacePanel::mouseMoved(wxMouseEvent& event)
 void SpacePanel::mouseReleased(wxMouseEvent& event) // Used for several buttons on the mouse
 {
 	sel= SEL_None;
+
+	if(!selectedItemIsSpecial && selectedItem)
+	{
+		// Check collisions
+		if(event.Button(wxMOUSE_BTN_LEFT))
+		{
+			checkBoundsCollision(selectedItem);
+//			checkCollisions();
+		}
+	}
+}
+
+// Should this be used at all?
+void SpacePanel::checkCollisions()
+{
+	bool oldCI = currentIntersections;
+	currentIntersections = false;
+
+	for(list<Objects::SpaceItem *>::iterator it = lmanager.objs.begin(); it != lmanager.objs.end(); it++)
+	{
+		(*it)->isIntersecting = false; // Reset all objects
+	}
+
+	for(list<Objects::SpaceItem *>::iterator it = lmanager.objs.begin(); it != lmanager.objs.end(); it++)
+	{
+		for(list<Objects::SpaceItem *>::iterator it2 = it; it2 != lmanager.objs.end(); it2++) // Start from last pos
+		{
+			if(*it == *it2) continue;
+			if((*it)->intersects(**it2))
+			{
+				(*it)->isIntersecting = true;
+				(*it2)->isIntersecting = true;
+				currentIntersections = true; // Indicates that level can't be saved in current state
+			}
+		}
+	}
+
+	if(currentIntersections || oldCI) redraw();
+}
+
+bool SpacePanel::checkBoundsCollision(SpaceItem* item)
+{
+	return item->insideBounds(lmanager.levelBounds->sx, lmanager.levelBounds->sy);
 }
 
 void SpacePanel::mouseWheelMoved(wxMouseEvent& event)
