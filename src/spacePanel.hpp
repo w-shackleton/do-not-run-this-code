@@ -42,6 +42,9 @@ class SpacePanel : public CairoPanel, public EditorCallbacks
 
 		void contextMenu(wxContextMenuEvent& event);
 
+		void checkCollisions();
+		bool checkBoundsCollision(Objects::SpaceItem *item);
+
 		wxMouseEvent mousePrevPos;
 		Levels::LevelManager &lmanager;
 
@@ -66,12 +69,15 @@ class SpacePanel : public CairoPanel, public EditorCallbacks
 		   */
 		int sel;
 		Objects::SpaceItem *selectedItem;
+		bool selectedItemIsSpecial;
 
 		std::vector<wxPoint> stars;
 
 		wxMenu *bgMenu;
 
 		void cMenuClick(wxCommandEvent& evt);
+
+		bool currentIntersections;
 };
 
 // Some useful operators

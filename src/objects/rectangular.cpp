@@ -177,3 +177,45 @@ void Rectangular::rotate(double r)
 {
 	rotation += r * ROTATION_MULTIPLIER;
 }
+
+bool Rectangular::intersects(SpaceItem& second)
+{
+	return false;
+}
+
+bool Rectangular::insideBounds(double sx, double sy)
+{
+	updateCornerPoints();
+
+	bool colliding = false;
+
+	for(int i = 0; i < cornerPoints.size(); i++)
+	{
+		if(abs(cornerPoints[i].x) > sx / 2)
+		{
+			if(cornerPoints[i].x > 0)
+			{
+				x += sx / 2 - cornerPoints[i].x;
+			}
+			else
+			{
+				x += -sx / 2 - cornerPoints[i].x;
+			}
+			colliding = true;
+		}
+		if(abs(cornerPoints[i].y) > sy / 2)
+		{
+			if(cornerPoints[i].y > 0)
+			{
+				y += sy / 2 - cornerPoints[i].y;
+			}
+			else
+			{
+				y += -sy / 2 - cornerPoints[i].y;
+			}
+			colliding = true;
+		}
+	}
+	return colliding;
+}
+

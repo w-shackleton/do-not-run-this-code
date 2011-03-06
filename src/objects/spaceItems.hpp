@@ -10,4 +10,7 @@
 #include<wall.hpp>
 #include<blackhole.hpp>
 
+// Other similar things
+#include<levelBounds.hpp>
+
 #endif

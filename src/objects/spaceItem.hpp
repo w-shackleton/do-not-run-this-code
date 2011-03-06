@@ -2,6 +2,7 @@
 #define O_SPACEITEM_H
 
 #include "../editorCallbacks.hpp"
+#include "../misc/geometry.hpp"
 
 //#include <cairomm/surface.h>
 #include <cairomm/context.h>
@@ -15,7 +16,7 @@
 
 namespace Objects
 {
-	class SpaceItem
+	class SpaceItem : public Misc::Point
 	{
 		protected:
 			virtual void saveXMLChild(TiXmlElement* item);
@@ -26,8 +27,6 @@ namespace Objects
 
 			wxMenu *contextMenu;
 			int contextMenuNextAvailableSlot;
-
-			double x, y;
 		public:
 			SpaceItem(EditorCallbacks &callbacks, double sx, double sy);
 			SpaceItem(EditorCallbacks &callbacks, TiXmlElement &item);
@@ -49,8 +48,12 @@ namespace Objects
 				return contextMenu;
 			}
 			bool recycle;
+			bool isIntersecting;
 
 			virtual void onCMenuItemClick(int id);
+
+			virtual bool intersects(SpaceItem& second) = 0;
+			virtual bool insideBounds(double sx, double sy) = 0;
 	};
 	enum
 	{

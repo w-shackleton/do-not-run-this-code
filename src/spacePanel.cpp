@@ -28,6 +28,7 @@ END_EVENT_TABLE()
 
 using namespace std;
 using namespace Levels;
+using namespace Objects;
 
 // TODO: Add a whole stack of documentation to this!
 
@@ -37,7 +38,8 @@ using namespace Levels;
 SpacePanel::SpacePanel(wxWindow *parent, LevelManager &lmanager) :
 	CairoPanel(parent),
 	mousePrevPos(wxEVT_MOTION),
-	lmanager(lmanager)
+	lmanager(lmanager),
+	currentIntersections(false)
 {
 	for(int i = 0; i < STARFIELD_STARS; i++)
 	{
@@ -60,6 +62,17 @@ void SpacePanel::redraw_draw()
 	cr->save();
 	cr->set_source_rgb(0, 0, 0);
 	cr->paint();
+
+	// Clip world outside
+	if(lmanager.levelBounds.get())
+	{
+		cr->rectangle(
+				lmanager.levelBounds->x - lmanager.levelBounds->sx / 2 - 3,
+				lmanager.levelBounds->y - lmanager.levelBounds->sy / 2 - 3,
+				lmanager.levelBounds->sx + 6,
+				lmanager.levelBounds->sy + 6);
+		cr->clip();
+	}
 
 	// Draw stars
 	cr->translate(-matrix.tx / 1.5, -matrix.ty / 1.5); // Give feeling of stars in background
@@ -90,6 +103,11 @@ void SpacePanel::redraw_draw()
 		else (*it)->draw(cr);
 	}
 
+	if(lmanager.levelBounds.get())
+		lmanager.levelBounds->draw(cr);
+
+	cr->reset_clip();
+
 	cr->translate(-matrix.tx / matrix.sx, -matrix.ty / matrix.sy);
 
 	// Draw screen size hinter
@@ -119,25 +137,36 @@ int SpacePanel::getClickedObject(double x, double y, bool useBorder)
 	matrix.get_inverse_matrix().transform_point(tx, ty);
 
 	selectedItem = NULL;
+	selectedItemIsSpecial = false;
 	int ret = CLICKED_None;
-	for(list<Objects::SpaceItem *>::iterator it = lmanager.objs.begin(); it != lmanager.objs.end(); it++)
+
+	if(lmanager.levelBounds->isBorderClicked(tx, ty))
 	{
-		if(useBorder)
-			if((*it)->isBorderClicked(tx, ty))
-		{
-			// Object border is clicked.
-			selectedItem = *it;
-			ret = CLICKED_Border;
-			continue;
-		}
-		if((*it)->isClicked(tx, ty))
-		{
-			// Object is clicked.
-			selectedItem = *it;
-			ret = CLICKED_Inner;
-			continue;
-		}
+		// Object border is clicked.
+		selectedItem = lmanager.levelBounds.get();
+		ret = CLICKED_Border;
+		selectedItemIsSpecial = true;
 	}
+
+	if(!selectedItem)
+		for(list<Objects::SpaceItem *>::iterator it = lmanager.objs.begin(); (it != lmanager.objs.end()); it++)
+		{
+			if(useBorder)
+				if((*it)->isBorderClicked(tx, ty))
+			{
+				// Object border is clicked.
+				selectedItem = *it;
+				ret = CLICKED_Border;
+				continue;
+			}
+			if((*it)->isClicked(tx, ty))
+			{
+				// Object is clicked.
+				selectedItem = *it;
+				ret = CLICKED_Inner;
+				continue;
+			}
+		}
 	return ret;
 }
 
@@ -183,6 +212,7 @@ void SpacePanel::mouseMoved(wxMouseEvent& event)
 			distMoved.x /= matrix.sx;
 			distMoved.y /= matrix.sy;
 			selectedItem->move(distMoved.x, distMoved.y);
+			checkBoundsCollision(selectedItem);
 			redraw(true, true);
 			break;
 		case SEL_Item_border_move:
@@ -202,6 +232,49 @@ void SpacePanel::mouseMoved(wxMouseEvent& event)
 void SpacePanel::mouseReleased(wxMouseEvent& event) // Used for several buttons on the mouse
 {
 	sel= SEL_None;
+
+	if(!selectedItemIsSpecial && selectedItem)
+	{
+		// Check collisions
+		if(event.Button(wxMOUSE_BTN_LEFT))
+		{
+			checkBoundsCollision(selectedItem);
+//			checkCollisions();
+		}
+	}
+}
+
+// Should this be used at all?
+void SpacePanel::checkCollisions()
+{
+	bool oldCI = currentIntersections;
+	currentIntersections = false;
+
+	for(list<Objects::SpaceItem *>::iterator it = lmanager.objs.begin(); it != lmanager.objs.end(); it++)
+	{
+		(*it)->isIntersecting = false; // Reset all objects
+	}
+
+	for(list<Objects::SpaceItem *>::iterator it = lmanager.objs.begin(); it != lmanager.objs.end(); it++)
+	{
+		for(list<Objects::SpaceItem *>::iterator it2 = it; it2 != lmanager.objs.end(); it2++) // Start from last pos
+		{
+			if(*it == *it2) continue;
+			if((*it)->intersects(**it2))
+			{
+				(*it)->isIntersecting = true;
+				(*it2)->isIntersecting = true;
+				currentIntersections = true; // Indicates that level can't be saved in current state
+			}
+		}
+	}
+
+	if(currentIntersections || oldCI) redraw();
+}
+
+bool SpacePanel::checkBoundsCollision(SpaceItem* item)
+{
+	return item->insideBounds(lmanager.levelBounds->sx, lmanager.levelBounds->sy);
 }
 
 void SpacePanel::mouseWheelMoved(wxMouseEvent& event)
@@ -237,19 +310,7 @@ void SpacePanel::contextMenu(wxContextMenuEvent& event)
 	wxPoint point = ScreenToClient(event.GetPosition());
 	if(getClickedObject(point.x, point.y, false) == CLICKED_Inner)
 	{
-//		wxMenuItemList& items = objectMenu->GetMenuItems();
-//		wxMenuItemList::iterator iter = items.begin();
-//
-//		iter++;
-//		iter++; // Ignore first 2 items
-//
-//		for(; iter != items.end(); iter++)
-//		{
-//			wxMenuItem* i = *iter;
-//			items.erase(iter);
-//			delete i;
-//		}
-
+		if(selectedItemIsSpecial) return; // no context menu
 		PopupMenu(selectedItem->getContextMenu());
 	}
 	else

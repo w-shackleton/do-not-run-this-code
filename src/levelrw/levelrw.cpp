@@ -18,7 +18,7 @@ LevelWriter::LevelWriter()
 void LevelWriter::write(string filename, std::list<Objects::SpaceItem *>* objs, string levelName, string creator,
 		double px, double py,
 		double ssx, double ssy,
-		double bx, double by)
+		LevelBounds &bounds)
 {
 	cout << "Saving level" << endl;
 	this->objs = objs;
@@ -59,8 +59,8 @@ void LevelWriter::write(string filename, std::list<Objects::SpaceItem *>* objs, 
 	// Bounds
 	{
 		TiXmlElement *name = new TiXmlElement("bounds");
-		name->SetDoubleAttribute("x", bx);
-		name->SetDoubleAttribute("y", by);
+		name->SetDoubleAttribute("x", bounds.sx);
+		name->SetDoubleAttribute("y", bounds.sy);
 		level->LinkEndChild(name);
 	}
 
@@ -100,7 +100,7 @@ LevelReader::LevelReader()
 bool LevelReader::open(const std::string &filename, std::list<Objects::SpaceItem *>* objs, std::string &levelName, std::string &levelCreator,
 		double &px, double &py,
 		double &ssx, double &ssy,
-		double &bx, double &by)
+		LevelBounds &bounds)
 {
 	TiXmlDocument doc(filename);
 	if(!doc.LoadFile()) return false;
@@ -141,11 +141,11 @@ bool LevelReader::open(const std::string &filename, std::list<Objects::SpaceItem
 		startspeed->QueryDoubleAttribute("y", &ssy);
 	}
 
-	TiXmlElement *bounds = level->FirstChildElement("bounds");
-	if(bounds)
+	TiXmlElement *levelBounds = level->FirstChildElement("bounds");
+	if(levelBounds)
 	{
-		bounds->QueryDoubleAttribute("x", &bx);
-		bounds->QueryDoubleAttribute("y", &by);
+		levelBounds->QueryDoubleAttribute("x", &bounds.sx);
+		levelBounds->QueryDoubleAttribute("y", &bounds.sy);
 	}
 
 	TiXmlElement *items = level->FirstChildElement("items");

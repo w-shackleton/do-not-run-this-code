@@ -86,6 +86,14 @@ void Planet::draw(Cairo::RefPtr<Cairo::Context> &cr)
 	cr->rectangle(-IMG_RADIUS, -IMG_RADIUS, IMG_RADIUS * 2, IMG_RADIUS * 2);
 	cr->fill();
 
+	// Intersection draw thing
+	if(isIntersecting)
+	{
+		cr->set_source_rgba(1, 0, 0, 0.3);
+		cr->arc(0, 0, IMG_RADIUS, 0, M_PI * 2);
+		cr->fill();
+	}
+
 	cr->scale(IMG_RADIUS / radius, IMG_RADIUS / radius);
 //	cr->rotate(-rotation);
 	cr->translate(-x, -y);

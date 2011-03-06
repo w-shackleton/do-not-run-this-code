@@ -3,6 +3,7 @@
 using namespace Levels;
 using namespace std;
 using namespace Misc;
+using namespace Objects;
 
 #include <fstream>
 
@@ -14,13 +15,15 @@ LevelManager::LevelManager() :
 LevelManager::~LevelManager()
 {
 	cleanObjs();
+	// Release pointer early as to avoid grumbles in spacePanel.cpp
+	levelBounds.release();
 }
 
 void LevelManager::newLevel(std::string filename)
 {
 	cleanObjs();
 
-	border = Point(500, 500);
+	levelBounds.reset(new LevelBounds(*callbacks, 1000, 1000));
 	position = Point(0, 0);
 	speed = Point(0, 0);
 	levelPath = filename;
@@ -34,12 +37,14 @@ bool LevelManager::openLevel(std::string filename)
 	levelPath = filename;
 	cleanObjs();
 
+	levelBounds.reset(new LevelBounds(*callbacks, 1000, 1000));
+
 	if(!ifstream(filename.c_str()))
 	{
 		newLevel(filename);
 		return true;
 	}
-	return reader.open(filename, &objs, levelName, creator, position.x, position.y, speed.x, speed.y, border.x, border.y);
+	return reader.open(filename, &objs, levelName, creator, position.x, position.y, speed.x, speed.y, *levelBounds);
 }
 
 bool LevelManager::save()
@@ -55,7 +60,7 @@ void LevelManager::saveLevel(std::string filename)
 		filename += ".slv";
 	}
 	// INSERT FILENAME CHECK CODE
-	writer.write(filename, &objs, levelName, creator, position.x, position.y, speed.x, speed.y, border.x, border.y);
+	writer.write(filename, &objs, levelName, creator, position.x, position.y, speed.x, speed.y, *levelBounds);
 	levelChanged = false;
 	levelPath = filename;
 }
@@ -76,5 +81,6 @@ void LevelManager::cleanObjs()
 
 void LevelManager::setEditorCallbacks(EditorCallbacks *callbacks)
 {
+	this->callbacks = callbacks;
 	reader.setEditorCallbacks(callbacks);
 }

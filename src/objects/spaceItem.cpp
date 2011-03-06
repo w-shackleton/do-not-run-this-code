@@ -2,12 +2,13 @@
 
 using namespace Objects;
 using namespace std;
+using namespace Misc;
 
 SpaceItem::SpaceItem(EditorCallbacks &callbacks, double sx, double sy) :
+	Point(sx, sy),
 	callbacks(callbacks),
-	x(sx),
-	y(sy),
 	recycle(false),
+	isIntersecting(false),
 	contextMenuNextAvailableSlot(ID_CMenu_1)
 {
 	contextMenu = new wxMenu;

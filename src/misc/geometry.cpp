@@ -12,6 +12,16 @@ Point::Point()
 {
 }
 
+Point Point::operator -(Point& second)
+{
+	return Point(x - second.x, y - second.y);
+}
+
+Point::operator double() const
+{
+	return sqrt(x * x + y * y);
+}
+
 bool Misc::pointInPolygon(const std::vector<Point> points, const Misc::Point point)
 {
 	int i, j;
