@@ -108,7 +108,7 @@ void PlanetPanel::SetPlanet(int position)
 	redraw();
 }
 
-void PlanetPanel::redraw_draw()
+void PlanetPanel::render_draw()
 {
 	int imgWidth = img->get_width(); int imgHeight = img->get_height();
 

@@ -25,7 +25,7 @@ class SpacePanel : public CairoPanel, public EditorCallbacks
 
 		DECLARE_EVENT_TABLE();
 	protected:
-		void redraw_draw();
+		void render_draw();
 
 		int getClickedObject(double x, double y, bool useBorder);
 

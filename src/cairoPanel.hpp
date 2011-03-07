@@ -30,7 +30,12 @@ class CairoPanel : public wxPanel
 		void paintNow();
 		void paintEvent(wxPaintEvent& evt);
 
-		void render(wxDC& dc);
+		void cairoToScreen(wxDC& dc);
+
+		void render();
+		virtual void render_pre();
+		virtual void render_draw() = 0;
+		virtual void render_post();
 
 		unsigned char *invdata;
 		int invdataSize;
@@ -40,11 +45,6 @@ class CairoPanel : public wxPanel
 
 		Cairo::RefPtr<Cairo::ImageSurface> surface;
 		Cairo::RefPtr<Cairo::Context> cr;
-
-		void redraw(bool toCairo, bool toScreen);
-		virtual void redraw_pre();
-		virtual void redraw_draw() = 0;
-		virtual void redraw_post(bool toScreen);
 
 		MatrixHelper matrix;
 };
