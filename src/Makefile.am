@@ -14,8 +14,8 @@ spaceedit_SOURCES = \
 		levelSetManager.cpp	levelSetManager.hpp	\
 		spaceApp.cpp		spaceApp.hpp
 
-spaceedit_LDADD = @WX_LIBS@ @Cairomm_LIBS@ @tinyxml_LIBS@ objects/libobjects.la misc/libmisc.la levelrw/liblevelrw.la
-spaceedit_CXXFLAGS = @WXCPPFLAGS@ @Cairomm_CFLAGS@ @tinyxml_CFLAGS@ -Iobjects -Imisc
+spaceedit_LDADD = @WX_LIBS@ @gtk_LIBS@ @Cairomm_LIBS@ @tinyxml_LIBS@ objects/libobjects.la misc/libmisc.la levelrw/liblevelrw.la
+spaceedit_CXXFLAGS = @WXCPPFLAGS@ @gtk_CFLAGS@ @Cairomm_CFLAGS@ @tinyxml_CFLAGS@ -Iobjects -Imisc
 
 if WIN32
 
