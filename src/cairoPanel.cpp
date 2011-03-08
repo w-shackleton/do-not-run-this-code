@@ -4,6 +4,14 @@ using namespace std;
 
 #include <wx/brush.h>
 
+#ifdef __WXGTK__
+#define CAIRO_NATIVE_GTK
+#endif
+
+#ifdef CAIRO_NATIVE_GTK
+#include <gdk/gdk.h>
+#endif
+
 BEGIN_EVENT_TABLE(CairoPanel, wxPanel)
 	EVT_PAINT(CairoPanel::paintEvent)
 	EVT_SIZE(CairoPanel::sizeEvent)
@@ -13,6 +21,7 @@ CairoPanel::CairoPanel(wxWindow* parent, wxSize size)
 	: wxPanel(parent, wxID_ANY, wxDefaultPosition, size, wxTAB_TRAVERSAL | wxFULL_REPAINT_ON_RESIZE)
 {
 	SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+#ifndef CAIRO_NATIVE_GTK
 	wxSize pSize = GetSize();
 	surface = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, pSize.GetWidth(), pSize.GetHeight());
 	cr = Cairo::Context::create(surface);
@@ -22,25 +31,43 @@ CairoPanel::CairoPanel(wxWindow* parent, wxSize size)
 
 	invdata = new unsigned char[cairoWidth * cairoHeight * 3];
 	invdataSize = cairoWidth * cairoHeight * 3;
+#endif
 }
 
 void CairoPanel::paintEvent(wxPaintEvent& evt)
 {
-	//wxAutoBufferedPaintDC dc(this);
+#ifndef CAIRO_NATIVE_GTK
 	wxPaintDC dc(this);
-	render(dc);
+	render();
+	cairoToScreen(dc);
+#else
+	wxPaintDC dc(this);
+	cairo_t* cairo_image = gdk_cairo_create(dc.m_window);
+	gdk_drawable_get_size(dc.m_window, &cairoWidth, &cairoHeight);
+
+	Cairo::Context* context = new Cairo::Context(cairo_image);
+	cr = Cairo::RefPtr<Cairo::Context>(context);
+
+	render();
+#endif
+
 }
 
 void CairoPanel::paintNow()
 {
+#ifndef CAIRO_NATIVE_GTK
 	wxClientDC dc(this);
-	render(dc);
+	render();
+	cairoToScreen(dc);
+#else
+	Refresh();
+#endif
 }
 
 /**
-  Render this panel from the cairo object.
+  Render this panel from the cairo object. - Only for non-native rendering
   */
-void CairoPanel::render(wxDC& dc)
+void CairoPanel::cairoToScreen(wxDC& dc)
 {
 	unsigned char *data = surface->get_data();
 	
@@ -71,6 +98,7 @@ void CairoPanel::render(wxDC& dc)
 
 void CairoPanel::sizeEvent(wxSizeEvent& evt)
 {
+#ifndef CAIRO_NATIVE_GTK
 	surface.~RefPtr();
 	cr.~RefPtr();
 
@@ -84,34 +112,33 @@ void CairoPanel::sizeEvent(wxSizeEvent& evt)
 	delete[] invdata;
 	invdata = new unsigned char[cairoWidth * cairoHeight * 3];
 	invdataSize = cairoWidth * cairoHeight * 3;
-
-	redraw(true, true);
+#endif
 }
 
 void CairoPanel::redraw()
 {
-	redraw(true, true);
+	paintNow();
 }
 
-void CairoPanel::redraw(bool toCairo, bool toScreen)
+void CairoPanel::render()
 {
-	redraw_pre();
-	if(toCairo) redraw_draw();
-	redraw_post(toScreen);
+	render_pre();
+	render_draw();
+	render_post();
 }
 
-void CairoPanel::redraw_pre()
+void CairoPanel::render_pre()
 {
 	cr->set_matrix(matrix.get_matrix());
 }
 
-void CairoPanel::redraw_post(bool toScreen)
+void CairoPanel::render_post()
 {
-	if(toScreen)
-		paintNow();
+
 }
 
 ostream& operator<<(ostream& out, const Col& r)
 {
 	return out << "(" << (int)r.r << "," << (int)r.g << "," << (int)r.b << "," << (int)r.a << ")";
 }
+

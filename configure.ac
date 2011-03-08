@@ -54,6 +54,11 @@ AM_CONDITIONAL([WIN32], [test $win32 = "win32"])
 PKG_CHECK_MODULES([Cairomm], [cairomm-1.0 >= 1.8.0])
 PKG_CHECK_MODULES([tinyxml], [tinyxml >= 2.5.0])
 
+# GTK for faster linux rendering
+AS_IF([wx-config --basename | grep gtk], [
+          PKG_CHECK_MODULES([gtk], [gtk+-2.0])
+	  ])
+
 # Checks for header files.
 
 # Checks for typedefs, structures, and compiler characteristics.

@@ -48,14 +48,14 @@ SpacePanel::SpacePanel(wxWindow *parent, LevelManager &lmanager) :
 
 	bgMenu = new wxMenu;
 
-	redraw(true, true);
+	redraw();
 }
 
 SpacePanel::~SpacePanel()
 {
 }
 
-void SpacePanel::redraw_draw()
+void SpacePanel::render_draw()
 {
 	//cr->set_antialias(Cairo::ANTIALIAS_NONE);
 
@@ -206,24 +206,24 @@ void SpacePanel::mouseMoved(wxMouseEvent& event)
 	{
 		case SEL_Bg_move:
 			matrix.transform(distMoved);
-			redraw(true, true);
+			redraw();
 			break;
 		case SEL_Item_move:
 			distMoved.x /= matrix.sx;
 			distMoved.y /= matrix.sy;
 			selectedItem->move(distMoved.x, distMoved.y);
 			checkBoundsCollision(selectedItem);
-			redraw(true, true);
+			redraw();
 			break;
 		case SEL_Item_border_move:
 			matrix.get_inverse_matrix().transform_point(tx, ty);
 
 			selectedItem->moveBorder(tx, ty);
-			redraw(true, true);
+			redraw();
 			break;
 		case SEL_Item_rotate:
 			selectedItem->rotate(distMoved.y);
-			redraw(true, true);
+			redraw();
 			break;
 	}
 	mousePrevPos = event;
@@ -293,7 +293,7 @@ void SpacePanel::mouseWheelMoved(wxMouseEvent& event)
 		{
 			matrix.scale_rotation(-event.m_wheelRotation);
 		}
-		redraw(true, true);
+		redraw();
 	}
 }
 

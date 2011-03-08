@@ -50,7 +50,7 @@ namespace Objects
 				void SetPlanet(int position);
 			protected:
 				Cairo::RefPtr<Cairo::ImageSurface> planetShadow, bounceicon, densityicon;
-				virtual void redraw_draw();
+				virtual void render_draw();
 				Cairo::RefPtr<Cairo::ImageSurface> shadow;
 				Cairo::RefPtr<Cairo::ImageSurface> img;
 				std::string imgFName;
