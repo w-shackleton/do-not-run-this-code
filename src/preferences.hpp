@@ -3,6 +3,7 @@
 
 #include <wx/dialog.h>
 #include <wx/textctrl.h>
+#include <wx/checkbox.h>
 
 class Preferences : public wxDialog
 {
@@ -22,6 +23,7 @@ class Preferences : public wxDialog
 		void OnSetSaveLocation(wxCommandEvent& event);
 
 		wxTextCtrl *saveLocationText;
+		wxCheckBox *nativeRendering;
 };
 
 #endif

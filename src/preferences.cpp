@@ -8,6 +8,7 @@
 #include <wx/dirdlg.h>
 
 #include "misc/data.hpp"
+#include "cairoPanel.hpp" // For CAIRO_NATIVE
 
 using namespace std;
 
@@ -33,6 +34,14 @@ Preferences::Preferences() :
 
 	prefGrid->Add(holder, 1, wxALL | wxEXPAND, 5);
 
+	prefGrid->Add(new wxStaticText(this, -1, _("Use native rendering (sometimes faster)")), 0, wxALL | wxALIGN_CENTRE, 5);
+	nativeRendering = new wxCheckBox(this, -1, wxT(""));
+	nativeRendering->SetValue(Misc::Data::nativeRendering);
+#ifndef CAIRO_NATIVE
+	nativeRendering->Disable();
+#endif
+	prefGrid->Add(nativeRendering, 1, wxALL | wxEXPAND, 5);
+
 	vsizer->Add(prefGrid);
 	prefGrid->SetSizeHints(this);
 
@@ -55,6 +64,7 @@ void Preferences::OnCancel(wxCommandEvent& event)
 void Preferences::OnOk(wxCommandEvent& event)
 {
 	Misc::Data::saveLocation = saveLocationText->GetValue().mb_str();
+	Misc::Data::nativeRendering = nativeRendering->GetValue();
 	Misc::Data::savePreferences();
 	EndModal(0);
 }

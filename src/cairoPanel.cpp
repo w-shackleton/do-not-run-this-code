@@ -4,9 +4,7 @@ using namespace std;
 
 #include <wx/brush.h>
 
-#ifdef __WXGTK__
-#define CAIRO_NATIVE_GTK
-#endif
+#include "misc/data.hpp"
 
 #ifdef CAIRO_NATIVE_GTK
 #include <gdk/gdk.h>
@@ -18,50 +16,66 @@ BEGIN_EVENT_TABLE(CairoPanel, wxPanel)
 END_EVENT_TABLE()
 
 CairoPanel::CairoPanel(wxWindow* parent, wxSize size)
-	: wxPanel(parent, wxID_ANY, wxDefaultPosition, size, wxTAB_TRAVERSAL | wxFULL_REPAINT_ON_RESIZE)
+	: wxPanel(parent, wxID_ANY, wxDefaultPosition, size, wxTAB_TRAVERSAL | wxFULL_REPAINT_ON_RESIZE),
+	nativeRendering(Misc::Data::nativeRendering)
 {
 	SetBackgroundStyle(wxBG_STYLE_CUSTOM);
-#ifndef CAIRO_NATIVE_GTK
-	wxSize pSize = GetSize();
-	surface = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, pSize.GetWidth(), pSize.GetHeight());
-	cr = Cairo::Context::create(surface);
-
-	cairoWidth = surface->get_width();
-	cairoHeight = surface->get_height();
-
-	invdata = new unsigned char[cairoWidth * cairoHeight * 3];
-	invdataSize = cairoWidth * cairoHeight * 3;
+#ifndef CAIRO_NATIVE
+	this->nativeRendering = false;
+	nativeRendering = false;
 #endif
+	cout << (nativeRendering ? "Using native rendering" : "Not using native rendering") << endl;
+	if(!nativeRendering)
+	{
+		wxSize pSize = GetSize();
+		surface = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, pSize.GetWidth(), pSize.GetHeight());
+		cr = Cairo::Context::create(surface);
+
+		cairoWidth = surface->get_width();
+		cairoHeight = surface->get_height();
+
+		invdata = new unsigned char[cairoWidth * cairoHeight * 3];
+		invdataSize = cairoWidth * cairoHeight * 3;
+	}
 }
 
 void CairoPanel::paintEvent(wxPaintEvent& evt)
 {
-#ifndef CAIRO_NATIVE_GTK
-	wxPaintDC dc(this);
-	render();
-	cairoToScreen(dc);
-#else
-	wxPaintDC dc(this);
-	cairo_t* cairo_image = gdk_cairo_create(dc.m_window);
-	gdk_drawable_get_size(dc.m_window, &cairoWidth, &cairoHeight);
+	if(!nativeRendering)
+	{
+		wxPaintDC dc(this);
+		render();
+		cairoToScreen(dc);
+	}
+	else
+	{
+#ifdef CAIRO_NATIVE_GTK
+		wxPaintDC dc(this);
+		cairo_t* cairo_image = gdk_cairo_create(dc.m_window);
+		gdk_drawable_get_size(dc.m_window, &cairoWidth, &cairoHeight);
 
-	Cairo::Context* context = new Cairo::Context(cairo_image);
-	cr = Cairo::RefPtr<Cairo::Context>(context);
+		Cairo::Context* context = new Cairo::Context(cairo_image);
+		cr = Cairo::RefPtr<Cairo::Context>(context);
 
-	render();
+		render();
 #endif
-
+	}
 }
 
 void CairoPanel::paintNow()
 {
-#ifndef CAIRO_NATIVE_GTK
-	wxClientDC dc(this);
-	render();
-	cairoToScreen(dc);
-#else
-	Refresh();
+	if(!nativeRendering)
+	{
+		wxClientDC dc(this);
+		render();
+		cairoToScreen(dc);
+	}
+	else
+	{
+#ifdef CAIRO_NATIVE_GTK
+		Refresh();
 #endif
+	}
 }
 
 /**
@@ -98,21 +112,22 @@ void CairoPanel::cairoToScreen(wxDC& dc)
 
 void CairoPanel::sizeEvent(wxSizeEvent& evt)
 {
-#ifndef CAIRO_NATIVE_GTK
-	surface.~RefPtr();
-	cr.~RefPtr();
+	if(!nativeRendering)
+	{
+		surface.~RefPtr();
+		cr.~RefPtr();
 
-	wxSize pSize = GetSize();
-	surface = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, pSize.GetWidth(), pSize.GetHeight());
-	cr = Cairo::Context::create(surface);
+		wxSize pSize = GetSize();
+		surface = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, pSize.GetWidth(), pSize.GetHeight());
+		cr = Cairo::Context::create(surface);
 
-	cairoWidth = surface->get_width();
-	cairoHeight = surface->get_height();
+		cairoWidth = surface->get_width();
+		cairoHeight = surface->get_height();
 
-	delete[] invdata;
-	invdata = new unsigned char[cairoWidth * cairoHeight * 3];
-	invdataSize = cairoWidth * cairoHeight * 3;
-#endif
+		delete[] invdata;
+		invdata = new unsigned char[cairoWidth * cairoHeight * 3];
+		invdataSize = cairoWidth * cairoHeight * 3;
+	}
 }
 
 void CairoPanel::redraw()

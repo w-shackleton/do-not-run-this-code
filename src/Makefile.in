@@ -259,8 +259,8 @@ datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
-gtk_CFLAGS = @gtk_CFLAGS@
-gtk_LIBS = @gtk_LIBS@
+gdk_CFLAGS = @gdk_CFLAGS@
+gdk_LIBS = @gdk_LIBS@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
@@ -306,10 +306,10 @@ spaceedit_SOURCES = \
 		levelSetManager.cpp	levelSetManager.hpp	\
 		spaceApp.cpp		spaceApp.hpp
 
-spaceedit_LDADD = @WX_LIBS@ @gtk_LIBS@ @Cairomm_LIBS@ @tinyxml_LIBS@ \
+spaceedit_LDADD = @WX_LIBS@ @gdk_LIBS@ @Cairomm_LIBS@ @tinyxml_LIBS@ \
 	objects/libobjects.la misc/libmisc.la levelrw/liblevelrw.la \
 	$(am__append_1)
-spaceedit_CXXFLAGS = @WXCPPFLAGS@ @gtk_CFLAGS@ @Cairomm_CFLAGS@ @tinyxml_CFLAGS@ -Iobjects -Imisc
+spaceedit_CXXFLAGS = @WXCPPFLAGS@ @gdk_CFLAGS@ @Cairomm_CFLAGS@ @tinyxml_CFLAGS@ -Iobjects -Imisc
 
 # http://www.gnu.org/software/hello/manual/automake/Options.html
 @WIN32_TRUE@pkg_verbose = $(pkg_verbose_$(V))

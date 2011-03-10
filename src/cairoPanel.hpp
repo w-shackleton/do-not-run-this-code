@@ -11,6 +11,11 @@
 
 #define COL_SIZE 4
 
+#ifdef __WXGTK__
+#define CAIRO_NATIVE_GTK
+#define CAIRO_NATIVE
+#endif
+
 class CairoPanel : public wxPanel
 {
 	public:
@@ -40,6 +45,8 @@ class CairoPanel : public wxPanel
 		unsigned char *invdata;
 		int invdataSize;
 		int cairoWidth, cairoHeight;
+
+		bool nativeRendering;
 	protected:
 		void sizeEvent(wxSizeEvent& evt); // Used to reset panel
 

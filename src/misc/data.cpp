@@ -11,6 +11,7 @@ using namespace std;
 
 std::string Misc::Data::datadir = "";
 std::string Misc::Data::saveLocation = "";
+bool Misc::Data::nativeRendering = false;
 std::string Misc::Data::confLocation = "";
 
 #define CONF_FILE "spacegame.conf"
@@ -63,6 +64,10 @@ bool Misc::Data::initialise()
 			{
 				saveLocation = string(value.mb_str());
 			}
+			else if(key.Cmp(wxT("nativerendering")) == 0)
+			{
+				nativeRendering = value == wxT("1");
+			}
 		}
 		config.Close();
 	}
@@ -95,6 +100,7 @@ void Misc::Data::savePreferences()
 	{
 		config.Clear();
 		config.AddLine(wxT("savelocation;") + wxString(saveLocation.c_str(), wxConvUTF8));
+		config.AddLine(wxString(wxT("nativerendering;")) + (nativeRendering ? wxT("1") : wxT("0")));
 
 		config.Write();
 

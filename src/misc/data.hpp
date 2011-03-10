@@ -19,6 +19,7 @@ namespace Misc
 			//static wxString getFilePath(wxString file);
 
 			static std::string saveLocation;
+			static bool nativeRendering;
 			static void savePreferences();
 		protected:
 			static std::string confLocation;
