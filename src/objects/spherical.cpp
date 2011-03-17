@@ -81,16 +81,17 @@ bool Spherical::intersects(SpaceItem& second)
 
 bool Spherical::insideBounds(double sx, double sy)
 {
+	bool outside = false;
 	if(abs(x) + radius > sx / 2)
 	{
 		Misc::trimMinMax(x, -sx / 2 + radius, sx / 2 - radius);
-		return true;
+		outside = true;
 	}
 	if(abs(y) + radius > sy / 2)
 	{
 		Misc::trimMinMax(y, -sy / 2 + radius, sy / 2 - radius);
-		return true;
+		outside = true;
 	}
-	return false;
+	return outside;
 }
 

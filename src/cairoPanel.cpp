@@ -58,6 +58,8 @@ void CairoPanel::paintEvent(wxPaintEvent& evt)
 		cr = Cairo::RefPtr<Cairo::Context>(context);
 
 		render();
+
+		cairo_destroy(cairo_image);
 #endif
 	}
 }
