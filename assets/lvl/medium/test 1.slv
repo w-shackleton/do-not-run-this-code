@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<level>
+    <name></name>
+    <creator></creator>
+    <start x="0.000000" y="0.000000" />
+    <startspeed x="0.000000" y="0.000000" />
+    <bounds x="500.000000" y="500.000000" />
+    <items>
+        <planet x="-38.000000" y="-129.000000" radius="30.000000" type="4" />
+        <planet x="-260.000000" y="-151.000000" radius="50.000000" type="4" />
+        <blackhole x="-265.000000" y="-10.000000" radius="70.000000" />
+        <wall x="-120.000000" y="-65.000000" sx="408.000000" sy="16.000000" rotation="6.875494" />
+        <infobox x="42.000000" y="-101.000000" sx="50.000000" sy="40.000000" rotation="17.761692" initialshow="true">u</infobox>
+        <gravity x="338.000000" y="-72.000000" sx="225.598430" sy="220.266540" rotation="30.366763" power="1.000000" />
+        <planet x="-125.000000" y="48.000000" radius="66.753277" type="5" />
+        <planet x="6.000000" y="12.000000" radius="50.000000" type="3" />
+        <planet x="114.000000" y="140.000000" radius="83.408633" type="6" />
+        <planet x="202.000000" y="-14.000000" radius="82.975900" type="0" />
+        <planet x="325.000000" y="79.000000" radius="60.033324" type="1" />
+        <planet x="434.000000" y="35.000000" radius="50.000000" type="2" />
+        <blackhole x="259.000000" y="193.000000" radius="70.000000" />
+        <infobox x="-220.000000" y="77.000000" sx="50.000000" sy="40.000000" rotation="-13.750987" initialshow="true">Another message!</infobox>
+    </items>
+</level>

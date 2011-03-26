@@ -1,8 +1,9 @@
 package uk.digitalsquid.spacegame.levels;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import org.xml.sax.SAXException;
@@ -11,6 +12,7 @@ import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.content.res.Resources.NotFoundException;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -65,60 +67,102 @@ public class LevelManager
 		}
 	}
 
-	public static final String BUILTIN_PREFIX = "_sd_";
+	public static final String BUILTIN_PREFIX = "_def_";
 
 	protected void privateInitialise() throws IOException, NotFoundException,
 			IllegalArgumentException, SAXException, IllegalAccessException
 	{
-		Field[] fields = R.raw.class.getFields();
-
-		String resFilename;
-
 		LevelInfo lInfo = new LevelInfo();
 		LevelSetInfo lSetInfo = new LevelSetInfo();
-
-		for (Field field : fields)
-		{
-			if(field.getName().startsWith("lvl_"))
+		
+		AssetManager am = context.getAssets();
+		String[] levelSets = am.list("lvl");
+		
+		for(String levelSet : levelSets) {
+			Log.v("SpaceGame", "Found levelset at " + levelSet);
+			
+			lSetInfo.filename = BUILTIN_PREFIX + levelSet;
+			lSetInfo.author = "";
+			lSetInfo.name = "";
+			try {
+				BufferedReader br = new BufferedReader(new InputStreamReader(am.open("lvl/" + levelSet + "/info.lvlset")));
+				String line;
+				while((line = br.readLine()) != null) {
+					String[] lineparts = line.split(":");
+					if(lineparts.length < 2) continue;
+					if(lineparts[0].equalsIgnoreCase("setname"))
+						lSetInfo.name = lineparts[1];
+					if(lineparts[0].equalsIgnoreCase("authour"))
+						lSetInfo.author = lineparts[1];
+				}
+			} catch(IOException e) {
+				Log.i("SpaceGame", "Error processing levelset in " + levelSet);
+				break;
+			}
+			if(db.CheckLevelSetNotExists(lSetInfo.filename))
 			{
-				resFilename = field.getName();
-				lInfo.set = BUILTIN_PREFIX
-						+ resFilename.substring(resFilename.indexOf('_') + 1,
-								resFilename.lastIndexOf('_'));
-				lInfo.filename = resFilename.substring(resFilename
-						.lastIndexOf('_') + 1);
-				Log.d("SpaceGame", "Checking level '" + lInfo.filename
-						+ "' from set '" + lInfo.set + "'.");
-				if(db.CheckLevelExists(lInfo.filename, lInfo.set))
+				Log.v("SpaceGame", "Levelset " + lInfo.set
+						+ " doesn't exist in DB, creating...");
+				db.InsertLevelSetInfo(lSetInfo);
+			}
+			
+			// Done set, doing levels...
+			
+			String[] levelFileNames = am.list("lvl/" + levelSet);
+			for(String levelFileName : levelFileNames) {
+				if(!levelFileName.endsWith(".slv")) continue;
+				lInfo.set = lSetInfo.filename;
+				lInfo.filename = levelFileName.substring(0, levelFileName.lastIndexOf("."));
+				
+				// Split levelname
+				try {
+					lInfo.fileNumber = Integer.valueOf(lInfo.filename.substring(lInfo.filename.lastIndexOf(" ") + 1));
+				} catch (NumberFormatException e) {
+					continue;
+				}
+				lInfo.filename = lInfo.filename.substring(0, lInfo.filename.lastIndexOf(" "));
+				
+				Log.i("SpaceGame", "Checking level " + lInfo.filename + " in level set " + lInfo.set);
+				
+				if(db.CheckLevelNotExists(lInfo.filename, lInfo.fileNumber, lInfo.set))
 				{
 					Log.v("SpaceGame", "Level " + lInfo.filename
 							+ " doesn't exist in DB, creating...");
 					SaxInfoLoader.LevelInfo info = SaxInfoLoader
-							.parse(CompuFuncs.decodeIStream(context
-									.getResources().openRawResource(
-											field.getInt(null))));
+							.parse(CompuFuncs.decodeIStream(am.open("lvl/" + levelSet + "/" + lInfo.filename + " " + lInfo.fileNumber + ".slv")));
+					
 					lInfo.author = info.getAuthor();
 					lInfo.name = info.getName();
 					db.InsertLevelInfo(lInfo);
-				}
-				if(db.CheckLevelSetExists(lInfo.set))
-				{
-					Log.v("SpaceGame", "Levelset " + lInfo.filename
-							+ " doesn't exist in DB, creating...");
-					lSetInfo.name = lInfo.set;
-					lSetInfo.filename = lInfo.set;
-					lSetInfo.author = "Will";
-					db.InsertLevelSetInfo(lSetInfo);
 				}
 			}
 		}
 
 		Log.i("SpaceGame",
 				"Checking for items in database which aren't available...");
-		db.CheckDatabaseValidity();
+		db.CheckDatabaseValidity(am);
 
 		db.getWritableDatabase().close();
 		Log.i("SpaceGame", "Finished updating database");
+	}
+	
+	void displayFiles (AssetManager mgr, String path) {
+	    try {
+	        String list[] = mgr.list(path);
+	        if (list != null && list.length != 0)
+	        {
+	            for (int i=0; i<list.length; ++i)
+                {
+                    Log.v("SpaceGame", path + "/" + list[i]);
+                    displayFiles(mgr, path + "/" + list[i]);
+                }
+            }
+	        else {
+		    	Log.v("SpaceGame", path + " is a file");
+	        }
+	    } catch (IOException e) {
+	    }
+
 	}
 
 	public ArrayList<LevelExtendedInfo> GetLevelsFromSet(String set)
@@ -176,7 +220,11 @@ public class LevelManager
 		private static final String KEY_ID = "id";
 		private static final String KEY_FROMSET = "fromset";
 		private static final String KEY_NAME = "name";
+		private static final String KEY_LEVEL_NUMBER = "number";
 		private static final String KEY_AUTHOR = "author";
+		/**
+		 * Foldername of thing
+		 */
 		private static final String KEY_FILENAME = "file";
 		private static final String KEY_TIME = "time";
 
@@ -185,7 +233,7 @@ public class LevelManager
 		private static final String DB_LEVELS_CREATE = "CREATE TABLE "
 				+ DB_LEVELS_NAME + " (" + KEY_ID
 				+ " INTEGER PRIMARY KEY NOT NULL, " + KEY_FROMSET + " TEXT, "
-				+ KEY_NAME + " TEXT, " + KEY_AUTHOR + " TEXT, " + KEY_FILENAME
+				+ KEY_NAME + " TEXT, " + KEY_LEVEL_NUMBER + " INTEGER, " + KEY_AUTHOR + " TEXT, " + KEY_FILENAME
 				+ " TEXT NOT NULL, " + KEY_TIME + " INTEGER DEFAULT -1);";
 		private static final String DB_SETS_NAME = "sets";
 		private static final String DB_SETS_CREATE = "CREATE TABLE "
@@ -217,22 +265,22 @@ public class LevelManager
 
 		}
 
-		private boolean CheckLevelSetExists(String levelset)
+		private boolean CheckLevelSetNotExists(String levelsetName)
 		{
 			Cursor c = getWritableDatabase().query(DB_SETS_NAME,
-					new String[] { KEY_NAME }, KEY_NAME + " = ?",
-					new String[] { levelset }, null, null, null);
+					new String[] { KEY_FILENAME }, KEY_FILENAME + " = ?",
+					new String[] { levelsetName }, null, null, null);
 			boolean ret = c.getCount() == 0;
 			c.close();
 			return ret;
 		}
 
-		private boolean CheckLevelExists(String levelfilename, String levelset)
+		private boolean CheckLevelNotExists(String levelfilename, int levelNumber, String levelset)
 		{
 			Cursor c = getWritableDatabase().query(DB_LEVELS_NAME,
 					new String[] { KEY_NAME },
-					"(" + KEY_FILENAME + " = ?) AND (" + KEY_FROMSET + " = ?)",
-					new String[] { levelfilename, levelset }, null, null, null);
+					"(" + KEY_FILENAME + " = ?) AND (" + KEY_FROMSET + " = ?) AND (" + KEY_LEVEL_NUMBER + " = ?)",
+					new String[] { levelfilename, levelset, "" + levelNumber }, null, null, null);
 			boolean ret = c.getCount() == 0;
 			c.close();
 			return ret;
@@ -243,6 +291,7 @@ public class LevelManager
 			ContentValues vals = new ContentValues();
 			vals.put(KEY_FROMSET, info.set);
 			vals.put(KEY_NAME, info.name);
+			vals.put(KEY_LEVEL_NUMBER, info.fileNumber);
 			vals.put(KEY_AUTHOR, info.author);
 			vals.put(KEY_FILENAME, info.filename);
 			getWritableDatabase().insert(DB_LEVELS_NAME, "", vals);
@@ -257,54 +306,59 @@ public class LevelManager
 			getWritableDatabase().insert(DB_SETS_NAME, "", vals);
 		}
 
-		private void CheckDatabaseValidity()
+		private void CheckDatabaseValidity(AssetManager am) throws IOException
 		{
 			Cursor levels = getWritableDatabase().query(DB_LEVELS_NAME,
-					new String[] { KEY_FILENAME, KEY_FROMSET }, null, null,
+					new String[] { KEY_FILENAME, KEY_FROMSET, KEY_LEVEL_NUMBER }, null, null,
 					null, null, null);
 			while (levels.moveToNext())
 			{
-				if(levels.getString(levels.getColumnIndex(KEY_FROMSET))
-						.startsWith(LevelManager.BUILTIN_PREFIX))
-				{
-					String fromset = levels.getString(
-							levels.getColumnIndex(KEY_FROMSET)).replaceFirst(
-							LevelManager.BUILTIN_PREFIX, "");
-					String filename = levels.getString(levels
-							.getColumnIndex(KEY_FILENAME));
-					// Log.v("SpaceGame", "Level found in set " + fromset +
-					// ", filename: " + filename);
-					try
-					{
-						R.raw.class.getField("lvl_" + fromset + "_" + filename);
-					} catch (SecurityException e)
-					{
-						e.printStackTrace();
-					} catch (NoSuchFieldException e)
-					{
-						// Doesn't exist
-						Log.i("SpaceGame", "Level " + fromset + "." + filename
-								+ " no longer exists, deleting from database");
-						DeleteLevel(filename, fromset);
-						Log.v("SpaceGame", "Deleted!");
+				String set = levels.getString(levels.getColumnIndex(KEY_FROMSET));
+				String filename = levels.getString(levels.getColumnIndex(KEY_FILENAME));
+				int fileNumber = levels.getInt(levels.getColumnIndex(KEY_LEVEL_NUMBER));
+				
+				if(set.startsWith(BUILTIN_PREFIX)) {
+					// Only this currently supported
+					String properSet = set.replaceAll(BUILTIN_PREFIX, "");
+					try {
+						am.open("lvl/" + properSet + "/" + filename + " " + fileNumber + ".slv").close();
+					} catch(IOException e) {
+						DeleteLevel(filename, fileNumber, set);
 					}
 				}
 			}
 			levels.close();
+			
+			// Level sets
+			Cursor levelSets = getWritableDatabase().query(DB_SETS_NAME,
+					new String[] { KEY_FILENAME }, null, null,
+					null, null, null);
+			while (levelSets.moveToNext())
+			{
+				String foldername = levelSets.getString(levelSets.getColumnIndex(KEY_FILENAME));
+				String[] files = am.list("lvl/" + foldername.replace(BUILTIN_PREFIX, ""));
+				boolean isEmpty = true;
+				for(String file : files) {
+					if(file.endsWith(".slv")) isEmpty = false;
+				}
+				if(isEmpty) {
+					Log.i("SpaceGame", "Deleting level set " + foldername);
+					DeleteLevelSet(foldername);
+				}
+			}
 		}
 
-		private void DeleteLevel(String filename, String set)
+		private void DeleteLevel(String filename, int fileNumber, String set)
 		{
 			getWritableDatabase()
 					.delete(
 							DB_LEVELS_NAME,
 							"(" + KEY_FILENAME + " = ?) AND " + "("
-									+ KEY_FROMSET + " = ?)",
+									+ KEY_FROMSET + " = ?) AND (" + KEY_LEVEL_NUMBER + " = ?)",
 							new String[] { filename,
-									LevelManager.BUILTIN_PREFIX + set });
+									set, "" + fileNumber});
 		}
 
-		@SuppressWarnings("unused")
 		private void DeleteLevelSet(String set)
 		{
 			getWritableDatabase().delete(DB_SETS_NAME, KEY_FILENAME + " = ?",
@@ -324,12 +378,13 @@ public class LevelManager
 						new String[] { set }, null, null, KEY_FILENAME);
 				int idFromset = c.getColumnIndex(KEY_FROMSET);
 				int idName = c.getColumnIndex(KEY_NAME);
+				int idFileNumber = c.getColumnIndex(KEY_LEVEL_NUMBER);
 				int idAuthor = c.getColumnIndex(KEY_AUTHOR);
 				int idFilename = c.getColumnIndex(KEY_FILENAME);
 				int idTime = c.getColumnIndex(KEY_TIME);
 				while (c.moveToNext())
 				{
-					items.add(new LevelExtendedInfo(c.getString(idName), c
+					items.add(new LevelExtendedInfo(c.getString(idName), c.getInt(idFileNumber), c
 							.getString(idFromset), c.getString(idAuthor), c
 							.getString(idFilename), c.getInt(idTime)));
 				}
@@ -355,10 +410,12 @@ public class LevelManager
 	protected static class LevelBaseInfo
 	{
 		public String name, set = null;
+		public int fileNumber;
 
-		public LevelBaseInfo(String name, String set)
+		public LevelBaseInfo(String name, int fileNumber, String set)
 		{
 			this.name = name;
+			this.fileNumber = fileNumber;
 			this.set = set;
 		}
 	}
@@ -367,16 +424,16 @@ public class LevelManager
 	{
 		public String author, filename;
 
-		public LevelInfo(String name, String set, String author, String filename)
+		public LevelInfo(String name, int fileNumber, String set, String author, String filename)
 		{
-			super(name, set);
+			super(name, fileNumber, set);
 			this.author = author;
 			this.filename = filename;
 		}
 
 		public LevelInfo()
 		{
-			super(null, null);
+			super(null, 0, null);
 		}
 	}
 
@@ -384,10 +441,10 @@ public class LevelManager
 	{
 		public int time;
 
-		public LevelExtendedInfo(String name, String set, String author,
+		public LevelExtendedInfo(String name, int fileNumber, String set, String author,
 				String filename, int time)
 		{
-			super(name, set, author, filename);
+			super(name, fileNumber, set, author, filename);
 			this.time = time;
 		}
 	}
