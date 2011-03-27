@@ -24,10 +24,9 @@ Planet::Planet(EditorCallbacks &callbacks, int type, double sx, double sy, doubl
 {
 	planetType = planetTypes[type];
 	cout << "Type of new planet: " << type << endl;
-//	planetType = planetTypes[0];
-//	for(vector<PlanetType>::iterator it = planetTypes.begin(); it != planetTypes.end(); it++)
-//		if(it->id == type)
-//			planetType = *it;
+
+	min = planetType.minSize;
+	max = planetType.maxSize;
 
 	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath(planetType.filename));
 	shadow = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("planet-s.png"));
@@ -52,6 +51,9 @@ Planet::Planet(EditorCallbacks &callbacks, TiXmlElement &item) :
 		}
 		typeNum++;
 	}
+
+	min = planetType.minSize;
+	max = planetType.maxSize;
 
 	img = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath(planetType.filename));
 	shadow = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("planet-s.png"));
