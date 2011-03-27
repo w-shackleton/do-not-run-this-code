@@ -82,7 +82,7 @@ public abstract class ThreadedView<VT extends ThreadedView.ViewThread> extends S
 		public void run()
 		{
 			super.run();
-			synchronized(context)
+			// synchronized(context)
 			{
 				initialiseOnThread();
 			}

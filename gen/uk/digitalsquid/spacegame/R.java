@@ -52,11 +52,12 @@ public final class R {
         public static final int planet5=0x7f02001d;
         public static final int planet6=0x7f02001e;
         public static final int planet_s2=0x7f02001f;
-        public static final int restart=0x7f020020;
-        public static final int splash=0x7f020021;
-        public static final int teleporter=0x7f020022;
-        public static final int uparrow=0x7f020023;
-        public static final int wallside=0x7f020024;
+        public static final int planetbouncy=0x7f020020;
+        public static final int restart=0x7f020021;
+        public static final int splash=0x7f020022;
+        public static final int teleporter=0x7f020023;
+        public static final int uparrow=0x7f020024;
+        public static final int wallside=0x7f020025;
     }
     public static final class id {
         public static final int gameviewbuttonquit=0x7f0b0006;
@@ -107,10 +108,8 @@ public final class R {
         public static final int menu=0x7f0a0000;
     }
     public static final class raw {
-        public static final int lvl_tutorial_01=0x7f060000;
-        public static final int lvl_tutorial_02=0x7f060001;
-        public static final int menu=0x7f060002;
-        public static final int menu_levelsets=0x7f060003;
+        public static final int menu=0x7f060000;
+        public static final int menu_levelsets=0x7f060001;
     }
     public static final class string {
         public static final int app_name=0x7f080001;

@@ -163,6 +163,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 			if(loadError)
 			{
 				setRunning(false);
+				return;
 			}
 			
 			planetList = level.planetList;
@@ -203,7 +204,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 				if(!paused)
 				{
 					// Check for collisions with wall
-					if(p.itemC.x > level.bounds.x - AnimatedPlayer.BALL_RADIUS)
+					if(p.itemC.x > level.bounds.x / 2 - AnimatedPlayer.BALL_RADIUS)
 					{
 						p.itemVC.x = -p.itemVC.x;
 						if(p.itemVC.x > 0) // Solves physics error
@@ -211,7 +212,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 						borderBounceColour = 0; // Set bounce colour to 0 - which is red.
 						BounceVibrate.Vibrate((long) (p.itemVC.getLength() / SpaceItem.ITEM_SCALE * 2));
 					}
-					if(p.itemC.x < -(level.bounds.x - AnimatedPlayer.BALL_RADIUS))
+					if(p.itemC.x < -(level.bounds.x / 2 - AnimatedPlayer.BALL_RADIUS))
 					{
 						p.itemVC.x = -p.itemVC.x;
 						if(p.itemVC.x < 0)
@@ -219,7 +220,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 						borderBounceColour = 0; // Set bounce colour to 0 - which is red.
 						BounceVibrate.Vibrate((long) (p.itemVC.getLength() / SpaceItem.ITEM_SCALE * 2));
 					}
-					if(p.itemC.y > level.bounds.y - AnimatedPlayer.BALL_RADIUS)
+					if(p.itemC.y > level.bounds.y / 2 - AnimatedPlayer.BALL_RADIUS)
 					{
 						p.itemVC.y = -p.itemVC.y;
 						if(p.itemVC.y > 0) // Solves physics error
@@ -227,7 +228,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 						borderBounceColour = 0; // Set bounce colour to 0 - which is red.
 						BounceVibrate.Vibrate((long) (p.itemVC.getLength() / SpaceItem.ITEM_SCALE * 2));
 					}
-					if(p.itemC.y < -(level.bounds.y - AnimatedPlayer.BALL_RADIUS))
+					if(p.itemC.y < -(level.bounds.y / 2 - AnimatedPlayer.BALL_RADIUS))
 					{
 						p.itemVC.y = -p.itemVC.y;
 						if(p.itemVC.y < 0)
@@ -488,25 +489,25 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 			borderBounceColour += 20;
 			if(borderBounceColour > 255) borderBounceColour = 255;
 			c.drawLine( // Draw outer bounds
-					(float)-level.bounds.x,
-					(float)level.bounds.y,
-					(float)level.bounds.x,
-					(float)level.bounds.y, PaintLoader.load(txtpaint));
+					(float)-level.bounds.x / 2,
+					(float)level.bounds.y / 2,
+					(float)level.bounds.x / 2,
+					(float)level.bounds.y / 2, PaintLoader.load(txtpaint));
 			c.drawLine(
-					(float)level.bounds.x,
-					(float)-level.bounds.y,
-					(float)level.bounds.x,
-					(float)level.bounds.y, PaintLoader.load(txtpaint));
+					(float)level.bounds.x / 2,
+					(float)-level.bounds.y / 2,
+					(float)level.bounds.x / 2,
+					(float)level.bounds.y / 2, PaintLoader.load(txtpaint));
 			c.drawLine(
-					(float)-level.bounds.x,
-					(float)level.bounds.y,
-					(float)-level.bounds.x,
-					(float)-level.bounds.y, PaintLoader.load(txtpaint));
+					(float)-level.bounds.x / 2,
+					(float)level.bounds.y / 2,
+					(float)-level.bounds.x / 2,
+					(float)-level.bounds.y / 2, PaintLoader.load(txtpaint));
 			c.drawLine(
-					(float)level.bounds.x,
-					(float)-level.bounds.y,
-					(float)-level.bounds.x,
-					(float)-level.bounds.y, PaintLoader.load(txtpaint));
+					(float)level.bounds.x / 2,
+					(float)-level.bounds.y / 2,
+					(float)-level.bounds.x / 2,
+					(float)-level.bounds.y / 2, PaintLoader.load(txtpaint));
 			txtpaint.a = 255;
 			txtpaint.r = 255;
 			txtpaint.g = 255;

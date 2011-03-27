@@ -1,5 +1,6 @@
 package uk.digitalsquid.spacegame.views;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import uk.digitalsquid.spacegame.R;
@@ -21,6 +22,7 @@ import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemClickListener
@@ -104,7 +106,7 @@ public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemCl
 			if(currItem != null)
 			{
 				TextView title = (TextView) convertView.findViewById(R.id.levelselectitem_text);
-				title.setText(currItem.name);
+				title.setText(currItem.filename + " "  + currItem.fileNumber + (currItem.name.equals("") ? "" : (" - " + currItem.name)));
 			}
 			return convertView;
 		}
@@ -118,7 +120,13 @@ public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemCl
 		
 		Message m = Message.obtain();
 		m.what = Spacegame.MESSAGE_START_LEVEL;
-		m.obj = lmanager.GetLevelIStream(adapter.getItem(arg2));
+		try {
+			m.obj = lmanager.GetLevelIStream(adapter.getItem(arg2));
+		} catch (IOException e) {
+			e.printStackTrace();
+			Toast.makeText(context, "Error loading level", Toast.LENGTH_LONG).show();
+			return;
+		}
 		parentHandler.sendMessageAtTime(m, SystemClock.uptimeMillis() + fadeout.getDuration());
 	}
 }

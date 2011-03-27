@@ -16,6 +16,12 @@ import android.graphics.Canvas;
 
 public class GravityField extends Rectangular implements Forceful, Moveable
 {
+	protected static final float VORTEX_POW_MIN = 0.5f;
+	protected static final float VORTEX_POW_MAX = 3;
+	
+	protected static final int VORTEX_SIZE_MIN = 100;
+	protected static final int VORTEX_SIZE_MAX = 400;
+	
 	protected static final float GRAVITY_SPEED = 20;
 	protected static final float LINE_SPEED = 0.03f;
 	protected float speed;
@@ -34,7 +40,9 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 	public GravityField(Context context, Coord coord, Coord size, float rotation, float speed)
 	{
 		super(context, coord, size, rotation);
-		this.speed = speed;
+		this.size.x = CompuFuncs.TrimMinMax(this.size.x, VORTEX_SIZE_MIN, VORTEX_SIZE_MAX);
+		this.size.y = CompuFuncs.TrimMinMax(this.size.y, VORTEX_SIZE_MIN, VORTEX_SIZE_MAX);
+		this.speed = CompuFuncs.TrimMinMax(speed, VORTEX_POW_MIN, VORTEX_POW_MAX);
 		
 		if(rGen == null)
 			rGen = new Random();
