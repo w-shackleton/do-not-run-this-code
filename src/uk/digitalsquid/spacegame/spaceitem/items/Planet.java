@@ -8,6 +8,7 @@ import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.StaticInfo;
 import uk.digitalsquid.spacegame.spaceitem.Bounceable;
+import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.TopDrawable;
 import uk.digitalsquid.spacegame.spaceitem.items.Planet.PlanetType.BgType;
 import uk.digitalsquid.spacegame.spaceitem.items.Planet.PlanetType.FgType;
@@ -47,6 +48,8 @@ public class Planet extends Bounceable implements TopDrawable
 				this.type = t;
 			}
 		}
+		
+		this.radius = CompuFuncs.TrimMinMax(this.radius, type.minSize, type.maxSize);
 		
 		if(pShade == null)
 			pShade = (BitmapDrawable) context.getResources().getDrawable(R.drawable.planet_s2);

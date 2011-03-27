@@ -42,7 +42,6 @@ public class SaxLoader
 	private static final String ITEMS_TELEPORTER = "teleporter";
 	private static final String ITEMS_WALL = "wall";
 
-	private static final String ITEMS_KEY_SIZE = "size";
 	private static final String ITEMS_KEY_ROTATION = "rotation";
 	private static final String ITEMS_KEY_POWER = "power";
 	private static final String ITEMS_KEY_RADIUS = "radius";

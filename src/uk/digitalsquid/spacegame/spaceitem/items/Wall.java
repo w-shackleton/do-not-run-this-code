@@ -8,6 +8,7 @@ import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.StaticInfo;
 import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.spaceitem.BounceableRect;
+import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -27,6 +28,8 @@ public class Wall extends BounceableRect
 	protected static final PaintDesc wallPaint = new PaintDesc(20, 100, 40);
 	
 	protected static final int WALL_WIDTH = 16;
+	protected static final int WALL_MIN_X = 80;
+	protected static final int WALL_MAX_X = 1000;
 	
 	/**
 	 * Construct a new {@link Wall}.
@@ -38,7 +41,7 @@ public class Wall extends BounceableRect
 	 */
 	public Wall(Context context, Coord coord, float size, float rotation)
 	{
-		super(context, coord, new Coord(size, WALL_WIDTH), rotation, BOUNCINESS);
+		super(context, coord, new Coord(CompuFuncs.TrimMinMax(size, WALL_MIN_X, WALL_MAX_X), WALL_WIDTH), rotation, BOUNCINESS);
 		
 		wallside = (BitmapDrawable) context.getResources().getDrawable(R.drawable.wallside);
 	}
