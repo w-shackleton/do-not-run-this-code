@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 import org.xml.sax.SAXException;
 
-import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import android.content.ContentValues;
 import android.content.Context;
@@ -29,13 +28,15 @@ import android.util.Log;
  */
 public class LevelManager
 {
-	DbStorage db;
-	Context context;
+	final DbStorage db;
+	final Context context;
+	final AssetManager am;
 
 	public LevelManager(Context context)
 	{
 		db = new DbStorage(context);
 		this.context = context;
+		am = context.getAssets();
 	}
 
 	public void initialise()
@@ -75,7 +76,6 @@ public class LevelManager
 		LevelInfo lInfo = new LevelInfo();
 		LevelSetInfo lSetInfo = new LevelSetInfo();
 		
-		AssetManager am = context.getAssets();
 		String[] levelSets = am.list("lvl");
 		
 		for(String levelSet : levelSets) {
@@ -170,42 +170,13 @@ public class LevelManager
 		return db.GetLevelsFromSet(set);
 	}
 
-	public InputStream GetLevelIStream(LevelExtendedInfo info)
+	public InputStream GetLevelIStream(LevelExtendedInfo info) throws IOException
 	{
 		if(info.set.startsWith(BUILTIN_PREFIX))
 		{
-			try
-			{
-				return context.getResources().openRawResource(
-						R.raw.class.getField(
-								"lvl_" + info.set.replaceFirst(BUILTIN_PREFIX, "") + "_"
-										+ info.filename).getInt(null));
-			} catch (NotFoundException e)
-			{
-				e.printStackTrace();
-				Log.e("SpaceGame", "Resource not found: "
-						+ e.getLocalizedMessage());
-			} catch (IllegalArgumentException e)
-			{
-				e.printStackTrace();
-				Log.e("SpaceGame", "Illegal Argument: "
-						+ e.getLocalizedMessage());
-			} catch (SecurityException e)
-			{
-				e.printStackTrace();
-				Log.e("SpaceGame", "Error finding item in Resources: "
-						+ e.getLocalizedMessage());
-			} catch (IllegalAccessException e)
-			{
-				e.printStackTrace();
-				Log.e("SpaceGame", "Error finding item in Resources: "
-						+ e.getLocalizedMessage());
-			} catch (NoSuchFieldException e)
-			{
-				e.printStackTrace();
-				Log.e("SpaceGame", "Error finding item in Resources: "
-						+ e.getLocalizedMessage());
-			}
+			String setFilePath = info.set.replace(BUILTIN_PREFIX, ""); // Remove it
+			Log.v("SpaceGame", "Opening level at path " + "lvl/" + setFilePath + "/" + info.filename + " " + info.fileNumber + ".slv");
+			return am.open("lvl/" + setFilePath + "/" + info.filename + " " + info.fileNumber + ".slv");
 		}
 		return null;
 	}
@@ -373,7 +344,7 @@ public class LevelManager
 			{
 				Cursor c = getReadableDatabase().query(
 						DB_LEVELS_NAME,
-						new String[] { KEY_FROMSET, KEY_NAME, KEY_AUTHOR,
+						new String[] { KEY_FROMSET, KEY_NAME, KEY_LEVEL_NUMBER, KEY_AUTHOR,
 								KEY_FILENAME, KEY_TIME }, KEY_FROMSET + " = ?",
 						new String[] { set }, null, null, KEY_FILENAME);
 				int idFromset = c.getColumnIndex(KEY_FROMSET);

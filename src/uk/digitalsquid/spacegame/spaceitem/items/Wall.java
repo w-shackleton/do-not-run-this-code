@@ -20,6 +20,8 @@ public class Wall extends BounceableRect
 	protected static final float RAND_MAX_SIZE = 20 * ITEM_SCALE;
 	protected static final Random rGen = new Random();
 	
+	protected static final float BOUNCINESS = 0.7f;
+	
 	protected BitmapDrawable wallside;
 	
 	protected static final PaintDesc wallPaint = new PaintDesc(20, 100, 40);
@@ -34,9 +36,9 @@ public class Wall extends BounceableRect
 	 * @param rotation The rotation of this object, in DEGREES
 	 * @param bounciness
 	 */
-	public Wall(Context context, Coord coord, float size, float rotation, float bounciness)
+	public Wall(Context context, Coord coord, float size, float rotation)
 	{
-		super(context, coord, new Coord(size, WALL_WIDTH), rotation, bounciness);
+		super(context, coord, new Coord(size, WALL_WIDTH), rotation, BOUNCINESS);
 		
 		wallside = (BitmapDrawable) context.getResources().getDrawable(R.drawable.wallside);
 	}

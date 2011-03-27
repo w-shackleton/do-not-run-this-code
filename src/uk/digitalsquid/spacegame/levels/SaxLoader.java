@@ -46,8 +46,8 @@ public class SaxLoader
 	private static final String ITEMS_KEY_ROTATION = "rotation";
 	private static final String ITEMS_KEY_SPEED = "speed";
 	private static final String ITEMS_KEY_RADIUS = "radius";
-	private static final String ITEMS_KEY_DENSITY = "density";
 	private static final String ITEMS_KEY_BOUNCINESS = "bounciness";
+	private static final String ITEMS_KEY_TYPE = "type";
 	
 	/**
 	 * Other default {@link Coord} for {@link #getCoord(Attributes, Coord)}.
@@ -137,7 +137,7 @@ public class SaxLoader
 						getCoord(attributes),
 						getSCoord(attributes),
 						getNum(attributes, ITEMS_KEY_ROTATION, 0),
-						getNum(attributes, ITEMS_KEY_SPEED, 3)));
+						getNum(attributes, ITEMS_KEY_SPEED, 0)));
 			}
 		});
 		
@@ -166,12 +166,12 @@ public class SaxLoader
 			@Override
 			public void start(Attributes attributes)
 			{
-				level.planetList.add(new Planet(
+				Planet p = new Planet(
 						context,
 						getCoord(attributes),
 						getNum(attributes, ITEMS_KEY_RADIUS, 30),
-						getNum(attributes, ITEMS_KEY_DENSITY, 0.5f),
-						getNum(attributes, ITEMS_KEY_BOUNCINESS, 0.7f)));
+						(int) getNum(attributes, ITEMS_KEY_TYPE, 0));
+				level.planetList.add(p);
 			}
 		});
 		
@@ -204,8 +204,7 @@ public class SaxLoader
 						context,
 						getCoord(attributes),
 						getNum(attributes, ITEMS_KEY_SIZE, 100),
-						getNum(attributes, ITEMS_KEY_ROTATION, 0),
-						getNum(attributes, ITEMS_KEY_BOUNCINESS, 1)));
+						getNum(attributes, ITEMS_KEY_ROTATION, 0)));
 			}
 		});
 	}
@@ -309,8 +308,11 @@ public class SaxLoader
 		{
 			return Float.valueOf(attributes.getValue(key)).floatValue();
 		}
-		catch(NumberFormatException e)
-		{
+		catch(NumberFormatException e) {
+			errorOccurred = true;
+			return defaultValue;
+		}
+		catch(NullPointerException e) {
 			errorOccurred = true;
 			return defaultValue;
 		}
@@ -329,19 +331,6 @@ public class SaxLoader
 	 */
 	public synchronized static final LevelItem parse(Context context, String data) throws SAXException
 	{
-		while(running)	// Wait until not running, then continue.
-						// This will probably never be needed, but is there in case of simulataneous threads running this code.
-		{
-			try
-			{
-				Thread.sleep(20);
-			} catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		
-		running = true;
 		SaxLoader.context = context;
 		try
 		{
@@ -355,7 +344,7 @@ public class SaxLoader
 		if(errorOccurred)
 		{
 			errorOccurred = false;
-			throw new SAXException("Error decoding values from XML");
+			// throw new SAXException("Error decoding values from XML");
 		}
 		return level;
 	}

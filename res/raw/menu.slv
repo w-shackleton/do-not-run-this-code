@@ -7,7 +7,7 @@
 	<bounds x="240" y="160" />
 	<items>
 		<!--<gravity x="-30" y="0" sx="70" sy="80" rotation="45" speed="5" />-->
-		<planet x="-100" y="0" radius="30" density="1" bounciness="0.98f" />
-		<planet x="70" y="0" radius="30" density="1" bounciness="1.05f" />
+		<planet x="-100" y="0" radius="30" type="5" />
+		<planet x="70" y="0" radius="30" type="0" />
 	</items>
 </level>

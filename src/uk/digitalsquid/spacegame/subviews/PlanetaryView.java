@@ -163,6 +163,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 			if(loadError)
 			{
 				setRunning(false);
+				return;
 			}
 			
 			planetList = level.planetList;
