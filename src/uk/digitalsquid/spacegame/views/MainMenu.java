@@ -47,8 +47,8 @@ public class MainMenu extends PlanetaryView<MainMenu.ViewThread>
 		@Override
 		protected void predraw(Canvas c)
 		{
-			level.bounds.x = c.getWidth() / 2 / WORLD_ZOOM + 2;
-			level.bounds.y = c.getHeight() / 2 / WORLD_ZOOM + 2;
+			level.bounds.x = c.getWidth() / WORLD_ZOOM + 2;
+			level.bounds.y = c.getHeight() / WORLD_ZOOM + 2;
 			super.predraw(c);
 		}
 

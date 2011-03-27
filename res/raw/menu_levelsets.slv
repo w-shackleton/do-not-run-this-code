@@ -4,7 +4,7 @@
 	<creator>Will</creator>
 	<start x="40" y="0" />
 	<startspeed x="0" y="10" />
-	<bounds x="240" y="160" />
+	<bounds x="480" y="320" />
 	<items>
 		<planet x="120" y="0" radius="25" density="0.5f" bounciness="1f" />
 	</items>

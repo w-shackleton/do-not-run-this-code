@@ -55,7 +55,7 @@ public class Planet extends Bounceable implements TopDrawable
 		{
 			p = type.colour1;
 		}
-		else
+		else if(type.bgType == BgType.image)
 		{
 			Bg = (BitmapDrawable) context.getResources().getDrawable(type.fileId1);
 		}
@@ -79,7 +79,7 @@ public class Planet extends Bounceable implements TopDrawable
 		{
 			c.drawCircle((float)pos.x, (float)pos.y, (float)radius, PaintLoader.load(p));
 		}
-		else
+		else if(type.bgType == BgType.image)
 		{
 			Bg.setAntiAlias(StaticInfo.Antialiasing);
 			Bg.setBounds(dp);
