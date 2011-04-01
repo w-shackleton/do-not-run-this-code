@@ -62,6 +62,9 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 			//Log.v("SpaceGame", "N");
 		return null;
 	}
+	
+	private final Coord tmpP1 = new Coord();
+	private final Coord tmpP2 = new Coord();
 
 	@Override
 	public void draw(Canvas c, float worldZoom)
@@ -79,33 +82,35 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 		for(int i = 0; i < lines.size(); i++)
 		{
 			LineInfo line = lines.get(i);
-			Coord p1 = new Coord();
-			Coord p2 = new Coord();
 			
-			p1.y = line.x * size.x;
-			p2.y = line.x * size.x;
+			tmpP1.y = line.x * size.x;
+			tmpP2.y = line.x * size.x;
 
-			p1.x = (-Math.cos(((line.y < 0) ? 0 : line.y) * DEG_TO_RAD) / 2 + .5) * size.y; // If less than 0, set to 0.
-			p2.x = (-Math.cos(
+			tmpP1.x = (-Math.cos(((line.y < 0) ? 0 : line.y) * DEG_TO_RAD) / 2 + .5) * size.y; // If less than 0, set to 0.
+			tmpP2.x = (-Math.cos(
 					(
 							(line.y + line.length < 180) ?
 									(line.y + line.length) :
 									180
 							) * DEG_TO_RAD
 					) / 2 + .5) * size.y; // If line position + size > 180, put it to 180.
-			p1 = p1.minus(size.scale(0.5f)).add(pos); // Move to centre around middle of gravity field
-			p2 = p2.minus(size.scale(0.5f)).add(pos); // Move to centre around middle of gravity field
-			p1 = p1.rotate(pos, rotation * DEG_TO_RAD);
-			p2 = p2.rotate(pos, rotation * DEG_TO_RAD);
+			size.scaleThis(0.5f);
+			tmpP1.minusThis(size); // Move to centre around middle of gravity field
+			tmpP2.minusThis(size); // Move to centre around middle of gravity field
+			size.scaleThis(2);
+			tmpP1.addThis(pos);
+			tmpP2.addThis(pos);
+			tmpP1.rotateThis(pos, rotation * DEG_TO_RAD);
+			tmpP2.rotateThis(pos, rotation * DEG_TO_RAD);
 			
 			//Log.v("SpaceGame", "p1: " + p1 + ", p2: " + p2);
 			
 			LineInfo.LinePaint.stroke = line.lineSize;
 			c.drawLine(
-					(float)p1.x * worldZoom,
-					(float)p1.y * worldZoom,
-					(float)p2.x * worldZoom,
-					(float)p2.y * worldZoom,
+					(float)tmpP1.x * worldZoom,
+					(float)tmpP1.y * worldZoom,
+					(float)tmpP2.x * worldZoom,
+					(float)tmpP2.y * worldZoom,
 					PaintLoader.load(LineInfo.LinePaint));
 		}
 		/*for(int i = (int) (pos.x - (size.x / 2)); i < pos.x + (size.x / 2); i += 12)

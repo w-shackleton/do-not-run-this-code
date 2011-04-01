@@ -8,9 +8,9 @@ import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Paint.Style;
 import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 

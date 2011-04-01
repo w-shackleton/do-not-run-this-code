@@ -12,7 +12,7 @@ public abstract class Player extends Spherical implements Moveable
 	protected static final float EYE_RADIUS = 5 * ITEM_SCALE;
 	protected static final int ITERS = 5; // From PlanetaryView - not really needed.
 	
-	public Coord itemC, itemVC, itemRF; // For portability to old code
+	public final Coord itemC = new Coord(), itemVC = new Coord(), itemRF = new Coord(); // For portability to old code
 	
 	protected float ballRotation = 0;
 	protected float ballRotationSpeed = 0;

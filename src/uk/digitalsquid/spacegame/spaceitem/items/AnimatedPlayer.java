@@ -9,7 +9,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 public class AnimatedPlayer extends Player
 {
@@ -44,6 +43,7 @@ public class AnimatedPlayer extends Player
 	protected static final int LOOKTO_DISTANCE_AFFECTOR = 150;
 	
 	protected Drawable ball, eye, eyeinside, eyeblinking, leftEar, rightEar;
+	private final Rect ballRect = new Rect();
 	
 	/**
 	 * Amount of time left blinking
@@ -71,6 +71,8 @@ public class AnimatedPlayer extends Player
 	protected static final Coord lEye = new Coord(-6 * ITEM_SCALE, -7 * ITEM_SCALE);
 	protected static final Coord rEye = new Coord(-6 * ITEM_SCALE, 7 * ITEM_SCALE);
 	
+	private final Coord eyeSPos = new Coord();
+	
 	public AnimatedPlayer(Context context, Coord coord, Coord velocity)
 	{
 		super(context, coord, BALL_RADIUS);
@@ -81,9 +83,9 @@ public class AnimatedPlayer extends Player
 		leftEar = context.getResources().getDrawable(R.drawable.earleft);
 		rightEar = context.getResources().getDrawable(R.drawable.earright);
 		
-		itemC = pos; // Referenced?
-		itemVC = velocity;
-		itemRF = new Coord();
+		itemC.copyFrom(pos); // Referenced?
+		itemVC.copyFrom(velocity);
+		itemRF.reset();
 		eP.setARGB(255, 255, 255, 255);
 		eP.setStrokeWidth(4);
 		
@@ -108,7 +110,7 @@ public class AnimatedPlayer extends Player
 		eyeMoveTo.x = Math.cos(lookAngle) * lookLength; // Reapply angle
 		eyeMoveTo.y = Math.sin(lookAngle) * lookLength;
 		
-		Log.v("SpaceGame", "X: " + eyeMoveTo.x + ", Y: " + eyeMoveTo.y);
+		// Log.v("SpaceGame", "X: " + eyeMoveTo.x + ", Y: " + eyeMoveTo.y);
 		
 		//eyeMoveTo.x = eyeMovePosX; // CompuFuncs.RotateX(eyeMovePosX, eyeMovePosY, ballRotation * DEG_TO_RAD);
 		//eyeMoveTo.y = eyeMovePosY; //CompuFuncs.RotateY(eyeMovePosX, eyeMovePosY, ballRotation * DEG_TO_RAD);
@@ -122,79 +124,57 @@ public class AnimatedPlayer extends Player
 		// Draw
 		
 		c.rotate(ballRotation, (float)itemC.x, (float)itemC.y);
-		ball.setBounds(new Rect(
-				(int)((itemC.x - AnimatedPlayer.BALL_RADIUS)),
-				(int)((itemC.y - AnimatedPlayer.BALL_RADIUS)),
-				(int)((itemC.x + AnimatedPlayer.BALL_RADIUS)),
-				(int)((itemC.y + AnimatedPlayer.BALL_RADIUS))
-				));
+		
+		ballRect.left = (int)((itemC.x - AnimatedPlayer.BALL_RADIUS));
+		ballRect.top = (int)((itemC.y - AnimatedPlayer.BALL_RADIUS));
+		ballRect.right = (int)((itemC.x + AnimatedPlayer.BALL_RADIUS));
+		ballRect.bottom = (int)((itemC.y + AnimatedPlayer.BALL_RADIUS));
+		
+		ball.setBounds(ballRect);
 		ball.draw(c);
 		Coord earPos = itemC.add(lEar);
-		Rect earPosRect = new Rect((int)(earPos.x - EAR_SIZE.x), (int)(earPos.y - EAR_SIZE.y), (int)earPos.x, (int)earPos.y);
-		leftEar.setBounds(earPosRect);
+		leftEar.setBounds((int)(earPos.x - EAR_SIZE.x), (int)(earPos.y - EAR_SIZE.y), (int)earPos.x, (int)earPos.y);
 		leftEar.draw(c);
 		earPos = itemC.add(rEar);
-		earPosRect = new Rect((int)(earPos.x - EAR_SIZE.x), (int)earPos.y, (int)earPos.x, (int)(earPos.y + EAR_SIZE.y));
-		rightEar.setBounds(earPosRect);
+		rightEar.setBounds((int)(earPos.x - EAR_SIZE.x), (int)earPos.y, (int)earPos.x, (int)(earPos.y + EAR_SIZE.y));
 		rightEar.draw(c);
 		
 		if(random.nextInt(1000) == 42) blinkTimeLeft = BLINK_TIME;
 		if(blinkTimeLeft-- > 0) // Blinking
 		{
-			Coord eyeSPos = itemC.add(lEye);
-			Rect eyePosRect = new Rect((int) ((eyeSPos.x - EYE_RADIUS)),
-					(int) ((eyeSPos.y - EYE_RADIUS)),
-					(int) ((eyeSPos.x + EYE_RADIUS)),
-					(int) ((eyeSPos.y + EYE_RADIUS)));
-			eyeblinking.setBounds(eyePosRect);
+			eyeSPos.x = itemC.x + lEye.x;
+			eyeSPos.y = itemC.y + lEye.y;
+			eyeblinking.setBounds((int) ((eyeSPos.x - EYE_RADIUS)), (int) ((eyeSPos.y - EYE_RADIUS)), (int) ((eyeSPos.x + EYE_RADIUS)), (int) ((eyeSPos.y + EYE_RADIUS)));
 			eyeblinking.draw(c);
 
-			eyeSPos = itemC.add(rEye);
-			eyePosRect = new Rect((int) ((eyeSPos.x - EYE_RADIUS)),
-					(int) ((eyeSPos.y - EYE_RADIUS)),
-					(int) ((eyeSPos.x + EYE_RADIUS)),
-					(int) ((eyeSPos.y + EYE_RADIUS)));
-			eyeblinking.setBounds(eyePosRect);
+			eyeSPos.x = itemC.x + rEye.x;
+			eyeSPos.y = itemC.y + rEye.y;
+			eyeblinking.setBounds((int) ((eyeSPos.x - EYE_RADIUS)), (int) ((eyeSPos.y - EYE_RADIUS)), (int) ((eyeSPos.x + EYE_RADIUS)), (int) ((eyeSPos.y + EYE_RADIUS)));
 			eyeblinking.draw(c);
 		}
 		else
 		{
-			Coord eyeSPos = itemC.add(lEye);
-			Rect eyePosRect = new Rect((int) ((eyeSPos.x - EYE_RADIUS)),
-					(int) ((eyeSPos.y - EYE_RADIUS)),
-					(int) ((eyeSPos.x + EYE_RADIUS)),
-					(int) ((eyeSPos.y + EYE_RADIUS)));
-			eye.setBounds(eyePosRect);
+			eyeSPos.x = itemC.x + lEye.x;
+			eyeSPos.y = itemC.y + lEye.y;
+			eye.setBounds((int) ((eyeSPos.x - EYE_RADIUS)), (int) ((eyeSPos.y - EYE_RADIUS)), (int) ((eyeSPos.x + EYE_RADIUS)), (int) ((eyeSPos.y + EYE_RADIUS)));
 			eye.draw(c);
 			
 			eyeSPos.x += eyeRotatedPos.x;
 			eyeSPos.y += eyeRotatedPos.y;
-			eyePosRect.left = (int) (eyeSPos.x - EYE_RADIUS);
-			eyePosRect.top = (int) (eyeSPos.y - EYE_RADIUS);
-			eyePosRect.right = (int)(eyeSPos.x + EYE_RADIUS);
-			eyePosRect.bottom = (int)(eyeSPos.y + EYE_RADIUS);
 			
-			eyeinside.setBounds(eyePosRect);
+			eyeinside.setBounds((int) ((eyeSPos.x - EYE_RADIUS)), (int) ((eyeSPos.y - EYE_RADIUS)), (int) ((eyeSPos.x + EYE_RADIUS)), (int) ((eyeSPos.y + EYE_RADIUS)));
 			eyeinside.draw(c);
 
-			eyeSPos = itemC.add(rEye);
+			eyeSPos.x = itemC.x + rEye.x;
+			eyeSPos.y = itemC.y + rEye.y;
 			
-			eyePosRect.left = (int) (eyeSPos.x - EYE_RADIUS);
-			eyePosRect.top = (int) (eyeSPos.y - EYE_RADIUS);
-			eyePosRect.right = (int)(eyeSPos.x + EYE_RADIUS);
-			eyePosRect.bottom = (int)(eyeSPos.y + EYE_RADIUS);
-			
-			eye.setBounds(eyePosRect);
+			eye.setBounds((int) ((eyeSPos.x - EYE_RADIUS)), (int) ((eyeSPos.y - EYE_RADIUS)), (int) ((eyeSPos.x + EYE_RADIUS)), (int) ((eyeSPos.y + EYE_RADIUS)));
 			eye.draw(c);
 			
 			eyeSPos.x += eyeRotatedPos.x;
 			eyeSPos.y += eyeRotatedPos.y;
-			eyePosRect.left = (int) (eyeSPos.x - EYE_RADIUS);
-			eyePosRect.top = (int) (eyeSPos.y - EYE_RADIUS);
-			eyePosRect.right = (int)(eyeSPos.x + EYE_RADIUS);
-			eyePosRect.bottom = (int)(eyeSPos.y + EYE_RADIUS);
 			
-			eyeinside.setBounds(eyePosRect);
+			eyeinside.setBounds((int) ((eyeSPos.x - EYE_RADIUS)), (int) ((eyeSPos.y - EYE_RADIUS)), (int) ((eyeSPos.x + EYE_RADIUS)), (int) ((eyeSPos.y + EYE_RADIUS)));
 			eyeinside.draw(c);
 		}
 		

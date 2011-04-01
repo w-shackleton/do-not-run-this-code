@@ -111,7 +111,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 
 		protected BgPoint[] Bg_points = new BgPoint[BG_POINTS_PER_AREA];
 		protected Coord avgPos = new Coord();
-		protected Coord[] avgPrevPos = new Coord[BG_BLUR_AMOUNT];
+		private final Coord[] avgPrevPos = new Coord[BG_BLUR_AMOUNT];
 		
 		protected static final int SCROLL_SPEED = 15;
 		protected Coord[] screenPos = new Coord[SCROLL_SPEED];
@@ -244,7 +244,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 					}*/
 				}
 				
-				p.itemRF = new Coord();
+				p.itemRF.reset();
 				for(i = 0; i < planetList.size(); i++)
 				{
 					currObj = planetList.get(i);
@@ -261,7 +261,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 							}
 							if(item != null)
 							{
-								p.itemRF = p.itemRF.add(item.calculateRF(p.itemC, p.itemVC));
+								p.itemRF.addThis(item.calculateRF(p.itemC, p.itemVC));
 							}
 						}
 						
@@ -278,9 +278,9 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 							if(data != null)
 							{
 								if(data.itemC != null)
-									p.itemC = data.itemC;
+									p.itemC.copyFrom(data.itemC);
 								if(data.itemVC != null)
-									p.itemVC = data.itemVC;
+									p.itemVC.copyFrom(data.itemVC);
 							}
 						}
 					}
@@ -312,7 +312,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 					p.itemC.y  += p.itemVC.y * millistep / ITERS / 1000f * SPEED_SCALE;
 					
 					// Air resistance
-					p.itemVC = p.itemVC.scale(AIR_RESISTANCE);
+					p.itemVC.scaleThis(AIR_RESISTANCE);
 					
 					// Move ball - animation
 					p.move(millistep, SPEED_SCALE);
@@ -322,7 +322,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 					Coord smallAvgPos = new Coord();
 					for(int i = screenPos.length - 4; i < screenPos.length; i++)
 					{
-						smallAvgPos = smallAvgPos.add(screenPos[i]);
+						smallAvgPos.addThis(screenPos[i]);
 					}
 					smallAvgPos.x /= 4;
 					smallAvgPos.y /= 4;
@@ -330,7 +330,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 					if(prevSmallAvgPos == null)
 						prevSmallAvgPos = smallAvgPos;
 					
-					if(prevSmallAvgPos.minus(screenPos[screenPos.length - 1]).getLength() < STOPPING_SPEED)
+					if(Coord.getLength(prevSmallAvgPos, screenPos[screenPos.length - 1]) < STOPPING_SPEED)
 						timeSinceStop++;
 					else
 						timeSinceStop = 0;
@@ -561,8 +561,8 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 		{
 			Log.v("SpaceGame", "State Restored");
 			
-			p.itemC = (Coord) bundle.getSerializable("p.itemC");
-			p.itemVC = (Coord) bundle.getSerializable("p.itemVC");
+			p.itemC.copyFrom((Coord) bundle.getSerializable("p.itemC"));
+			p.itemVC.copyFrom((Coord) bundle.getSerializable("p.itemVC"));
 			avgPos = (Coord) bundle.getSerializable("avgPos");
 			for(int i = 0; i < avgPrevPos.length; i++)
 				avgPrevPos[i] = (Coord) bundle.getSerializable("avgPrevPos" + i);

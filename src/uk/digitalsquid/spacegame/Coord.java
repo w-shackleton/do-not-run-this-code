@@ -12,7 +12,7 @@ import android.graphics.RectF;
  * @author william
  *
  */
-public class Coord implements Serializable
+public final class Coord implements Serializable
 {
 	/**
 	 * Serial Version UID (Required by Serializable)
@@ -36,23 +36,41 @@ public class Coord implements Serializable
 		y = old.y;
 	}
 	
-	private static Matrix mtrix = new Matrix();
+	public final void copyFrom(Coord old) {
+		x = old.x;
+		y = old.y;
+	}
+	
+	private static final Matrix mtrix = new Matrix();
+	private static final float[] mtrixNums = new float[2];
 	
 	public Coord(double x, double y, Matrix matrix)
 	{
-		float[] nums = new float[]{(float) x, (float) y};
 		synchronized(mtrix)
 		{
+			mtrixNums[0] = (float) x;
+			mtrixNums[1] = (float) y;
 			matrix.invert(mtrix);
-			mtrix.mapPoints(nums);
-			this.x = nums[0];
-			this.y = nums[1];
+			mtrix.mapPoints(mtrixNums);
+			this.x = mtrixNums[0];
+			this.y = mtrixNums[1];
 		}
+	}
+	
+	public void reset() {
+		x = 0;
+		y = 0;
 	}
 	
 	public Coord scale(float scaleFactor)
 	{
 		return new Coord(x * scaleFactor, y * scaleFactor);
+	}
+	
+	public void scaleThis(float scaleFactor)
+	{
+		x *= scaleFactor;
+		y *= scaleFactor;
 	}
 	
 	public Coord add(Coord orig)
@@ -66,6 +84,40 @@ public class Coord implements Serializable
 	{
 		if(orig == null) return new Coord(this);
 		return new Coord(x - orig.x, y - orig.y);
+	}
+	
+	public void minusThis(Coord orig)
+	{
+		if(orig == null) return;
+		x -= orig.x;
+		y -= orig.y;
+	}
+	
+	public void addThis(Coord orig)
+	{
+		if(orig == null) return;
+		x += orig.x;
+		y += orig.y;
+	}
+	
+	public static final double getLength(Coord a, Coord b) {
+		return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+	}
+	
+	/**
+	 * Performs the calculation into coordInto, as to save the GC a bit
+	 * @param orig
+	 * @param coordInto
+	 */
+	public void addInto(Coord orig, Coord coordInto)
+	{
+		if(orig == null)
+		{
+			coordInto.x = x;
+			coordInto.y = y;
+		}
+		coordInto.x = x + orig.x;
+		coordInto.y = y + orig.y;
 	}
 	
 	/**
@@ -117,19 +169,53 @@ public class Coord implements Serializable
 	 */
 	public Coord rotate(Coord orig, float rot)
 	{
-		if(orig == null) orig = new Coord();
+		if(orig != null)
+			return new Coord(
+					orig.x + CompuFuncs.RotateX(x - orig.x, y - orig.y, rot),
+					orig.y + CompuFuncs.RotateY(x - orig.x, y - orig.y, rot));
 		return new Coord(
-				orig.x + CompuFuncs.RotateX(x - orig.x, y - orig.y, rot),
-				orig.y + CompuFuncs.RotateY(x - orig.x, y - orig.y, rot));
+				CompuFuncs.RotateX(x, y, rot),
+				CompuFuncs.RotateY(x, y, rot));
 	}
 	
+	/**
+	 * Rotate this {@link Coord} around the specified {@link Coord} {@code rot}, by the amount of radians
+	 * @param orig The origin around which to rotate (can be {@code null}, in which case the origin is {@code (0,0)})
+	 * @param rot The amount to rotate, in RADIANS
+	 * @return A new {@link Coord}, which has been rotated
+	 */
+	public void rotateThis(Coord orig, float rot)
+	{
+		if(orig != null) {
+			x = orig.x + CompuFuncs.RotateX(x - orig.x, y - orig.y, rot);
+			y = orig.y + CompuFuncs.RotateY(x - orig.x, y - orig.y, rot);
+		} else {
+			x = CompuFuncs.RotateX(x, y, rot);
+			y = CompuFuncs.RotateY(x, y, rot);
+		}
+	}
+	
+	private Rect tmpRect;
 	public Rect toRect()
 	{
-		return new Rect((int)-x, (int)-y, (int)x, (int)y);
+		tmpRect = new Rect((int)-x / 2, (int)-y / 2, (int)x / 2, (int)y / 2);
+		return tmpRect;
+	}
+	public Rect toRectCache()
+	{
+		if(tmpRect == null) tmpRect = new Rect((int)-x / 2, (int)-y / 2, (int)x / 2, (int)y / 2);
+		return tmpRect;
 	}
 	
+	private RectF tmpRectF;
 	public RectF toRectF()
 	{
-		return new RectF((float)-x, (float)-y, (float)x, (float)y);
+		tmpRectF = new RectF((float)-x / 2, (float)-y / 2, (float)x / 2, (float)y / 2);
+		return tmpRectF;
+	}
+	public RectF toRectFCache()
+	{
+		if(tmpRectF == null) tmpRectF = new RectF((float)-x / 2, (float)-y / 2, (float)x / 2, (float)y / 2);
+		return tmpRectF;
 	}
 }

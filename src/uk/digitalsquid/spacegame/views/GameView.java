@@ -118,12 +118,14 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 			}
 		}
 		
+		private final Coord tmpOuterBounds = new Coord();
 		@Override
 		protected void predraw(Canvas c)
 		{
 			c.drawPaint(PaintLoader.load(bgpaint)); // Different bg outside box could be drawn here...
 			
-			RectF boundRect = level.bounds.add(LevelItem.COORD_BOUNDS_DRAWEXT).toRectF();
+			level.bounds.addInto(LevelItem.COORD_BOUNDS_DRAWEXT, tmpOuterBounds);
+			RectF boundRect = tmpOuterBounds.toRectF();
 			matrix.mapRect(boundRect);
 			c.clipRect(boundRect, Op.REPLACE); // Set clip
 			super.predraw(c);
@@ -197,18 +199,21 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 			}
 		}
 		
+		private final Coord screenSize = new Coord();
+		
 		@Override
 		protected void postdraw(Canvas c)
 		{
 			// Draw objects static to screen (buttons)
 			
 			// Draw menus
-			Iterator<GameMenu> menuIter = gameMenus.iterator();
-			while(menuIter.hasNext())
+			screenSize.x = width;
+			screenSize.y = height;
+			
+			for(GameMenu menu : gameMenus)
 			{
-				GameMenu menu = menuIter.next();
 				menu.move(millistep, SPEED_SCALE);
-				menu.draw(c, WORLD_ZOOM_UNSCALED, new Coord(width, height));
+				menu.draw(c, WORLD_ZOOM_UNSCALED, screenSize);
 			}
 			
 			super.postdraw(c);
@@ -405,8 +410,8 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 					@Override
 					public void onRelease()
 					{
-						p.itemC = new Coord(level.startPos);
-						p.itemVC = new Coord();
+						p.itemC.copyFrom(level.startPos);
+						p.itemVC.reset();
 					}
 						
 					@Override

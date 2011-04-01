@@ -4,14 +4,13 @@ import java.util.Random;
 
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.PaintLoader;
+import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.StaticInfo;
-import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.spaceitem.BounceableRect;
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 
 public class Wall extends BounceableRect
@@ -52,31 +51,30 @@ public class Wall extends BounceableRect
 		c.rotate(rotation, (float)pos.x * worldZoom, (float)pos.y * worldZoom);
 		
 		wallside.setAntiAlias(StaticInfo.Antialiasing);
-		wallside.setBounds(new Rect(
+		wallside.setBounds(
 				(int)((pos.x - (size.x / 2)) * worldZoom),
 				(int)((pos.y - (size.y / 2)) * worldZoom),
 				(int)((pos.x - (size.x / 2) + size.y) * worldZoom),
 				(int)((pos.y + (size.y / 2)) * worldZoom))
-				);
+				;
 		wallside.draw(c);
 		
-		Rect corner2pos = new Rect(
+		c.rotate(180, (float)(pos.x + size.x / 2 - size.y / 2), (float)pos.y);
+		wallside.setBounds(
 				(int)((pos.x + (size.x / 2) - size.y) * worldZoom),
 				(int)((pos.y - (size.y / 2)) * worldZoom),
 				(int)((pos.x + (size.x / 2)) * worldZoom),
 				(int)((pos.y + (size.y / 2)) * worldZoom));
-		c.rotate(180, corner2pos.exactCenterX(), corner2pos.exactCenterY());
-		wallside.setAntiAlias(StaticInfo.Antialiasing);
-		wallside.setBounds(corner2pos);
 		wallside.draw(c);
-		c.rotate(-180, corner2pos.exactCenterX(), corner2pos.exactCenterY());
+		c.rotate(-80, (float)(pos.x + size.x / 2 - size.y / 2), (float)pos.y);
 		
 		final Coord start = new Coord(pos.x - (size.x / 2) + size.y, pos.y);
 		final Coord fin   = new Coord(pos.x + (size.x / 2) - size.y, pos.y);
 		for(int i = 0; i < LINES; i++)
 		{
 			int currPos = 0;
-			Coord prevPos = new Coord(start);
+			double prevPosX = start.x;
+			double prevPosY = start.y;
 			while(currPos + RAND_MAX_SIZE < fin.x - start.x)
 			{
 				final float posHeight = (float) (rGen.nextFloat() * size.y);
@@ -85,17 +83,17 @@ public class Wall extends BounceableRect
 				currPos += posWidth;
 				
 				c.drawLine(
-						(float)(prevPos.x) * worldZoom,
-						(float)(prevPos.y) * worldZoom,
-						(float)(prevPos.x + posWidth) * worldZoom,
+						(float)(prevPosX) * worldZoom,
+						(float)(prevPosY) * worldZoom,
+						(float)(prevPosX + posWidth) * worldZoom,
 						(float)(pos.y - (size.y / 2) + posHeight) * worldZoom,
 						PaintLoader.load(wallPaint));
-				prevPos.x = prevPos.x + posWidth;
-				prevPos.y = pos.y - (size.y / 2) + posHeight;
+				prevPosX = prevPosX + posWidth;
+				prevPosY = pos.y - (size.y / 2) + posHeight;
 			}
 			c.drawLine(
-					(float)prevPos.x * worldZoom,
-					(float)prevPos.y * worldZoom,
+					(float)prevPosX * worldZoom,
+					(float)prevPosY * worldZoom,
 					(float)fin.x * worldZoom,
 					(float)fin.y * worldZoom,
 					PaintLoader.load(wallPaint));

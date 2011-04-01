@@ -8,24 +8,23 @@ import java.util.Random;
 import uk.digitalsquid.spacegame.BounceVibrate;
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.PaintLoader;
+import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.Spacegame;
-import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.levels.LevelItem;
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import uk.digitalsquid.spacegame.spaceitem.SpaceItem;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Forceful;
+import uk.digitalsquid.spacegame.spaceitem.interfaces.Forceful.BallData;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.TopDrawable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Warpable;
-import uk.digitalsquid.spacegame.spaceitem.interfaces.Forceful.BallData;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Warpable.WarpData;
 import uk.digitalsquid.spacegame.spaceview.gamemenu.GameMenu;
 import uk.digitalsquid.spacegame.spaceview.gamemenu.GameMenu.ClickListener;
 import uk.digitalsquid.spacegame.spaceview.gamemenu.GameMenu.GameMenuItem;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -169,7 +168,7 @@ public class SpaceView extends SurfaceView implements SurfaceHolder.Callback, On
 		private List<SpaceItem> planetList;
 		
 		private Coord[] screenPos = new Coord[SCROLL_SPEED];
-		private Coord avgPos;
+		private Coord avgPos = new Coord();
 		private Coord[] avgPrevPos = new Coord[BG_BLUR_AMOUNT];
 		
 		private int borderBounceColour = 255;
@@ -279,6 +278,7 @@ public class SpaceView extends SurfaceView implements SurfaceHolder.Callback, On
 				starpaint = new PaintDesc(220, 255, 255, 255, 2),
 				starprevpaint = new PaintDesc(200, 100, 100, 100, 2);
 		private int width, height;
+		private final Coord screenSize = new Coord();
 		private long currTime, prevTime, millistep;
 		private int i, iter;//, j, k;
 		private SpaceItem currObj;
@@ -295,6 +295,8 @@ public class SpaceView extends SurfaceView implements SurfaceHolder.Callback, On
 			
 			width  = c.getWidth(); // Can canvases even be resized by the OS?
 			height = c.getHeight();
+			screenSize.x = width;
+			screenSize.y = height;
 			
 			if(stopped) // Aiming ball - itemVC used to store velocity
 			{
@@ -319,7 +321,8 @@ public class SpaceView extends SurfaceView implements SurfaceHolder.Callback, On
 					}
 				}
 				
-				itemRF = new Coord();
+				itemRF.x = 0;
+				itemRF.y = 0;
 				for(i = 0; i < planetList.size(); i++)
 				{
 					currObj = planetList.get(i);
@@ -336,7 +339,7 @@ public class SpaceView extends SurfaceView implements SurfaceHolder.Callback, On
 							}
 							if(item != null)
 							{
-								itemRF = itemRF.add(item.calculateRF(itemC, itemVC));
+								itemRF.addThis(item.calculateRF(itemC, itemVC));
 							}
 						}
 						
@@ -382,7 +385,7 @@ public class SpaceView extends SurfaceView implements SurfaceHolder.Callback, On
 					itemC.y  += itemVC.y * millistep / ITERS / 1000f * SPEED_SCALE;
 					
 					// Air resistance
-					itemVC = itemVC.scale(AIR_RESISTANCE);
+					itemVC.scaleThis(AIR_RESISTANCE);
 					
 					// Calculate rotation of ball
 					ballRotation = ballRotation % 360;
@@ -405,7 +408,7 @@ public class SpaceView extends SurfaceView implements SurfaceHolder.Callback, On
 					Coord smallAvgPos = new Coord();
 					for(int i = screenPos.length - 4; i < screenPos.length; i++)
 					{
-						smallAvgPos = smallAvgPos.add(screenPos[i]);
+						smallAvgPos.addThis(screenPos[i]);
 					}
 					smallAvgPos.x /= 4;
 					smallAvgPos.y /= 4;
@@ -413,7 +416,7 @@ public class SpaceView extends SurfaceView implements SurfaceHolder.Callback, On
 					if(prevSmallAvgPos == null)
 						prevSmallAvgPos = smallAvgPos;
 					
-					if(prevSmallAvgPos.minus(screenPos[screenPos.length - 1]).getLength() < STOPPING_SPEED)
+					if(Coord.getLength(prevSmallAvgPos, screenPos[screenPos.length - 1]) < STOPPING_SPEED)
 						timeSinceStop++;
 					else
 						timeSinceStop = 0;
@@ -473,10 +476,9 @@ public class SpaceView extends SurfaceView implements SurfaceHolder.Callback, On
 			{
 				screenPos[i - 1] = screenPos[i];
 			}
-			screenPos[screenPos.length - 1] = new Coord(
-					itemC.x - (width / 2 / WORLD_ZOOM_UNSCALED),
-					itemC.y - (height / 2 / WORLD_ZOOM_UNSCALED));
-			avgPos = new Coord(); // Find average into this var
+			screenPos[screenPos.length - 1].x = itemC.x - (width / 2 / WORLD_ZOOM_UNSCALED);
+			screenPos[screenPos.length - 1].y = itemC.y - (height / 2 / WORLD_ZOOM_UNSCALED);
+			avgPos.reset(); // Find average into this var
 			int totNums = 1;
 			for(int i = 1; i < screenPos.length; i++)
 			{
@@ -554,12 +556,12 @@ public class SpaceView extends SurfaceView implements SurfaceHolder.Callback, On
 			
 			//c.drawCircle((float)itemC.x, (float)itemC.y, BALL_RADIUS, txtpaint);
 			c.rotate(ballRotation, (float)itemC.x, (float)itemC.y);
-			ball.setBounds(new Rect(
+			ball.setBounds(
 					(int)((itemC.x - BALL_RADIUS)),
 					(int)((itemC.y - BALL_RADIUS)),
 					(int)((itemC.x + BALL_RADIUS)),
 					(int)((itemC.y + BALL_RADIUS))
-					));
+					);
 			ball.draw(c);
 			c.rotate(-ballRotation, (float)itemC.x, (float)itemC.y);
 			
@@ -625,12 +627,10 @@ public class SpaceView extends SurfaceView implements SurfaceHolder.Callback, On
 			// Draw objects static to screen (buttons)
 			
 			// Draw menus
-			Iterator<GameMenu> menuIter = gameMenus.iterator();
-			while(menuIter.hasNext())
+			for(GameMenu menu : gameMenus)
 			{
-				GameMenu menu = menuIter.next();
 				menu.move(millistep, SPEED_SCALE);
-				menu.draw(c, WORLD_ZOOM_UNSCALED, new Coord(width, height));
+				menu.draw(c, WORLD_ZOOM_UNSCALED, screenSize);
 			}
 			
 			// Apply warpData, part 2
@@ -638,7 +638,7 @@ public class SpaceView extends SurfaceView implements SurfaceHolder.Callback, On
 			warpDataPaint.r = 0;
 			warpDataPaint.g = 0;
 			warpDataPaint.b = 0;
-			c.drawRect(new Rect(0, 0, width, height), PaintLoader.load(warpDataPaint));
+			c.drawRect(0, 0, width, height, PaintLoader.load(warpDataPaint));
 			
 			//Log.d("SpaceGame", "MS: " + millistep + ",\tPos: " + itemC + ",\tVel: " + itemVC + ",\tAcc: " + itemRF);
 			

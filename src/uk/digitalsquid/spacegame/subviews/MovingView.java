@@ -2,7 +2,6 @@ package uk.digitalsquid.spacegame.subviews;
 
 import java.io.InputStream;
 
-import uk.digitalsquid.spacegame.Coord;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
@@ -30,10 +29,9 @@ public abstract class MovingView<VT extends MovingView.ViewThread> extends Plane
 			{
 				screenPos[i - 1] = screenPos[i];
 			}
-			screenPos[screenPos.length - 1] = new Coord(
-					p.itemC.x - (width / 2 / WORLD_ZOOM_UNSCALED),
-					p.itemC.y - (height / 2 / WORLD_ZOOM_UNSCALED));
-			avgPos = new Coord(); // Find average into this var
+			screenPos[screenPos.length - 1].x = p.itemC.x - (width / 2 / WORLD_ZOOM_UNSCALED);
+			screenPos[screenPos.length - 1].y = p.itemC.y - (height / 2 / WORLD_ZOOM_UNSCALED);
+			avgPos.reset(); // Find average into this var
 			int totNums = 1;
 			for(int i = 1; i < screenPos.length; i++)
 			{
