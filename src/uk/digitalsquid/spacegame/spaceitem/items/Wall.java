@@ -66,7 +66,7 @@ public class Wall extends BounceableRect
 				(int)((pos.x + (size.x / 2)) * worldZoom),
 				(int)((pos.y + (size.y / 2)) * worldZoom));
 		wallside.draw(c);
-		c.rotate(-80, (float)(pos.x + size.x / 2 - size.y / 2), (float)pos.y);
+		c.rotate(-180, (float)(pos.x + size.x / 2 - size.y / 2), (float)pos.y);
 		
 		final Coord start = new Coord(pos.x - (size.x / 2) + size.y, pos.y);
 		final Coord fin   = new Coord(pos.x + (size.x / 2) - size.y, pos.y);

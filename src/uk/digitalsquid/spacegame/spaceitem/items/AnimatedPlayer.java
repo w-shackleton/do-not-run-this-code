@@ -135,7 +135,8 @@ public class AnimatedPlayer extends Player
 		Coord earPos = itemC.add(lEar);
 		leftEar.setBounds((int)(earPos.x - EAR_SIZE.x), (int)(earPos.y - EAR_SIZE.y), (int)earPos.x, (int)earPos.y);
 		leftEar.draw(c);
-		earPos = itemC.add(rEar);
+		earPos.copyFrom(itemC);
+		earPos.addThis(rEar);
 		rightEar.setBounds((int)(earPos.x - EAR_SIZE.x), (int)earPos.y, (int)earPos.x, (int)(earPos.y + EAR_SIZE.y));
 		rightEar.draw(c);
 		

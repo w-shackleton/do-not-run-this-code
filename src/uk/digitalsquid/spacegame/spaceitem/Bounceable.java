@@ -18,7 +18,7 @@ public abstract class Bounceable extends Gravitable
 	public BallData calculateVelocity(Coord itemC, Coord itemVC, float itemRadius)
 	{
 		BallData newBall = super.calculateVelocity(itemC, itemVC, itemRadius);
-		double currDist = pos.minus(itemC).getLength();
+		double currDist = Coord.getLength(pos, itemC);
 		if(currDist < radius + itemRadius)
 		{
 			newBall.itemC = new Coord(

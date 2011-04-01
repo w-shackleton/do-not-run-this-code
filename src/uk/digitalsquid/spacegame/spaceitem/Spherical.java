@@ -17,6 +17,6 @@ public abstract class Spherical extends SpaceItem implements IsClickable
 	@Override
 	public boolean isClicked(Coord point)
 	{
-		return pos.minus(point).getLength() < radius;
+		return Coord.getLength(pos, point) < radius;
 	}
 }

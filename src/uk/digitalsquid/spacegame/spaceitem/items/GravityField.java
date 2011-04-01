@@ -23,7 +23,7 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 	protected static final int VORTEX_SIZE_MAX = 400;
 	
 	protected static final float GRAVITY_SPEED = 20;
-	protected static final float LINE_SPEED = 0.03f;
+	protected static final float LINE_SPEED = 0.07f;
 	protected float speed;
 	
 	protected List<LineInfo> lines = new ArrayList<LineInfo>();

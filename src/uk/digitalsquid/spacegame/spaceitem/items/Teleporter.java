@@ -2,22 +2,23 @@ package uk.digitalsquid.spacegame.spaceitem.items;
 
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.PaintLoader;
+import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.StaticInfo;
-import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.spaceitem.Gravitable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.TopDrawable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Warpable;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 
 public class Teleporter extends Gravitable implements TopDrawable, Moveable, Warpable
 {
 	private static final int TRANSPORTER_RADIUS = 70;
 	private static final float TRANSPORTER_DENSITY = 0.7f;
+	
+	private static final PaintDesc BG_COL = new PaintDesc(0, 0, 0);
 	
 	protected final Coord destination;
 	
@@ -35,7 +36,7 @@ public class Teleporter extends Gravitable implements TopDrawable, Moveable, War
 	@Override
 	public void draw(Canvas c, float worldZoom)
 	{
-		c.drawCircle((float)pos.x, (float)pos.y, radius, PaintLoader.load(new PaintDesc(0, 0,0)));
+		c.drawCircle((float)pos.x, (float)pos.y, radius, PaintLoader.load(BG_COL));
 	}
 
 	@Override
@@ -43,11 +44,11 @@ public class Teleporter extends Gravitable implements TopDrawable, Moveable, War
 	{
 		c.rotate(-rotation, (float)pos.x, (float)pos.y);
 		teleporter.setAntiAlias(StaticInfo.Antialiasing);
-		teleporter.setBounds(new Rect(
+		teleporter.setBounds(
 				(int)((pos.x - (radius)) * worldZoom),
 				(int)((pos.y - (radius)) * worldZoom),
 				(int)((pos.x + (radius)) * worldZoom),
-				(int)((pos.y + (radius)) * worldZoom)));
+				(int)((pos.y + (radius)) * worldZoom));
 		teleporter.draw(c);
 		c.rotate(rotation, (float)pos.x, (float)pos.y);
 	}
@@ -60,8 +61,8 @@ public class Teleporter extends Gravitable implements TopDrawable, Moveable, War
 		double currDist = pos.minus(itemC).getLength();
 		if(currDist < 10f * ITEM_SCALE) // Start teleport
 		{
-			data.itemC = new Coord(destination);
-			data.itemVC = new Coord();
+			data.itemC.copyFrom(destination);
+			data.itemVC.reset();
 		}
 		
 		return data;

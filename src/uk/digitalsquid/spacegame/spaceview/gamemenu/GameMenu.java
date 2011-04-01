@@ -123,6 +123,9 @@ public class GameMenu extends ArrayList<GameMenu.GameMenuItem> implements Moveab
 		drawAt(c, getRect(), worldZoom);
 	}
 	
+	private final RectF drawAtTmpRectF = new RectF();
+	private final Rect drawAtTmpRect = new Rect();
+	
 	/**
 	 * Draw the menu in the specified position
 	 * @param pos The position at which to draw the menu
@@ -130,25 +133,29 @@ public class GameMenu extends ArrayList<GameMenu.GameMenuItem> implements Moveab
 	private void drawAt(Canvas c, Rect pos, float worldZoom)
 	{
 		//bgImg.setBounds(pos);
+		drawAtTmpRectF.bottom = pos.bottom;
+		drawAtTmpRectF.top = pos.top;
+		drawAtTmpRectF.left = pos.left;
+		drawAtTmpRectF.right = pos.right;
 		//bgImg.draw(c);
-		c.drawRoundRect(new RectF(pos), CORNER_ROUNDING * worldZoom, CORNER_ROUNDING * worldZoom, PaintLoader.load(innerPaint));
-		c.drawRoundRect(new RectF(pos), CORNER_ROUNDING * worldZoom, CORNER_ROUNDING * worldZoom, PaintLoader.load(borderPaint));
+		c.drawRoundRect(drawAtTmpRectF, CORNER_ROUNDING * worldZoom, CORNER_ROUNDING * worldZoom, PaintLoader.load(innerPaint));
+		c.drawRoundRect(drawAtTmpRectF, CORNER_ROUNDING * worldZoom, CORNER_ROUNDING * worldZoom, PaintLoader.load(borderPaint));
 		
 		for(int i = 0; i < size(); i++)
 		{
 			int border = (int) (BORDER * worldZoom);
 			int width = (int) (ICON_SIZE * worldZoom);
 			
-			Rect itemPos = new Rect(
-					pos.left + border + ((width + border) * i),
-					pos.top + border,
-					pos.left + ((width + border) * (i+1)),
-					pos.bottom - border
-					);
+			drawAtTmpRect.left = pos.left + border + ((width + border) * i);
+			drawAtTmpRect.top = pos.top + border;
+			drawAtTmpRect.right = pos.left + ((width + border) * (i+1));
+			drawAtTmpRect.bottom = pos.bottom - border;
 			
-			if(i == currItemHover | i == initialItemClicked) c.drawRoundRect(new RectF(itemPos), CORNER_ROUNDING / 2 * worldZoom, CORNER_ROUNDING / 2 * worldZoom, PaintLoader.load(innerPaintSelected));
+			drawAtTmpRectF.set(drawAtTmpRect);
 			
-			get(i).draw(c, itemPos);
+			if(i == currItemHover | i == initialItemClicked) c.drawRoundRect(drawAtTmpRectF, CORNER_ROUNDING / 2 * worldZoom, CORNER_ROUNDING / 2 * worldZoom, PaintLoader.load(innerPaintSelected));
+			
+			get(i).draw(c, drawAtTmpRect);
 		}
 	}
 	

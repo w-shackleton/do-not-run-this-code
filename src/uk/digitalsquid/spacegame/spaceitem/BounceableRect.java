@@ -73,26 +73,27 @@ public abstract class BounceableRect extends Rectangular implements Forceful
 				};
 		for(int i = 0; i < 4; i++)
 		{
-			double currDist = itemRotC.minus(corners[i]).getLength();
+			double currDist = Coord.getLength(itemRotC, corners[i]);
 			if(currDist < itemRadius)
 			{
-				newItemC = new Coord(
-						corners[i].x + (itemRadius * (itemRotC.x - corners[i].x) / currDist),
-						corners[i].y + (itemRadius * (itemRotC.y - corners[i].y) / currDist));
+				newItemC = new Coord();
+				newItemC.x = corners[i].x + (itemRadius * (itemRotC.x - corners[i].x) / currDist);
+				newItemC.y = corners[i].y + (itemRadius * (itemRotC.y - corners[i].y) / currDist);
 				double angleAt = Math.atan2(itemRotC.y - corners[i].y, itemRotC.x - corners[i].x); // Angle to planet
 				double angleVel = Math.atan2(-newItemVC.y, -newItemVC.x); // Angle from velocity
 				double angleNeeded = (2 * angleAt) - angleVel;
 				a = angleAt;
 				B = angleVel;
 				c = angleNeeded;
-				abcC = new Coord(itemC);
+				abcC.reset();
 				/*Log.v("SpaceGame", "angleAt: " + (angleAt * RAD_TO_DEG));
 				Log.v("SpaceGame", "angleVel: " + (angleVel * RAD_TO_DEG));
 				Log.v("SpaceGame", "angleNeeded: " + (angleNeeded * RAD_TO_DEG));
 				Log.v("SpaceGame", " ");*/
 				
 				double speed = newItemVC.getLength();
-				newItemVC = new Coord(Math.cos(angleNeeded) * speed * bounciness, Math.sin(angleNeeded) * speed * bounciness);
+				newItemVC.x = Math.cos(angleNeeded) * speed * bounciness;
+				newItemVC.y = Math.sin(angleNeeded) * speed * bounciness;
 				BounceVibrate.Vibrate((long) (newItemVC.getLength() / ITEM_SCALE * 1.5));
 				break;
 			}

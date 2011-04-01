@@ -78,7 +78,6 @@ public final class Coord implements Serializable
 		if(orig == null) return this;
 		return new Coord(x + orig.x, y + orig.y);
 	}
-	//TODO: Add addInto function
 	
 	public Coord minus(Coord orig)
 	{
@@ -187,11 +186,13 @@ public final class Coord implements Serializable
 	public void rotateThis(Coord orig, float rot)
 	{
 		if(orig != null) {
-			x = orig.x + CompuFuncs.RotateX(x - orig.x, y - orig.y, rot);
+			double tx = orig.x + CompuFuncs.RotateX(x - orig.x, y - orig.y, rot);
 			y = orig.y + CompuFuncs.RotateY(x - orig.x, y - orig.y, rot);
+			x = tx;
 		} else {
-			x = CompuFuncs.RotateX(x, y, rot);
+			double tx = CompuFuncs.RotateX(x, y, rot);
 			y = CompuFuncs.RotateY(x, y, rot);
+			x = tx;
 		}
 	}
 	

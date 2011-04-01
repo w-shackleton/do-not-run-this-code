@@ -68,16 +68,17 @@ public class Planet extends Bounceable implements TopDrawable
 			Fg = (BitmapDrawable) context.getResources().getDrawable(type.fileId2);
 		}
 	}
+	
+	private Rect drawTmpRect = new Rect();
 
 	@Override
 	public void draw(Canvas c, float worldZoom)
 	{
-		Rect dp = new Rect(
-				(int)pos.x - (int)radius,
-				(int)pos.y - (int)radius,
-				(int)pos.x + (int)radius,
-				(int)pos.y + (int)radius
-				);
+		drawTmpRect.left = (int)pos.x - (int)radius;
+		drawTmpRect.top = (int)pos.y - (int)radius;
+		drawTmpRect.right = (int)pos.x + (int)radius;
+		drawTmpRect.bottom = (int)pos.y + (int)radius;
+		
 		if(type.bgType == BgType.colour)
 		{
 			c.drawCircle((float)pos.x, (float)pos.y, (float)radius, PaintLoader.load(p));
@@ -85,17 +86,17 @@ public class Planet extends Bounceable implements TopDrawable
 		else if(type.bgType == BgType.image)
 		{
 			Bg.setAntiAlias(StaticInfo.Antialiasing);
-			Bg.setBounds(dp);
+			Bg.setBounds(drawTmpRect);
 			Bg.draw(c);
 		}
 		
 		if(type.fgType == FgType.image)
 		{
-			c.rotate(fgRotation, dp.centerX(), dp.centerY());
+			c.rotate(fgRotation, drawTmpRect.centerX(), drawTmpRect.centerY());
 			Fg.setAntiAlias(StaticInfo.Antialiasing);
-			Fg.setBounds(dp);
+			Fg.setBounds(drawTmpRect);
 			Fg.draw(c);
-			c.rotate(-fgRotation, dp.centerX(), dp.centerY());
+			c.rotate(-fgRotation, drawTmpRect.centerX(), drawTmpRect.centerY());
 		}
 	}
 
@@ -103,11 +104,11 @@ public class Planet extends Bounceable implements TopDrawable
 	public void drawTop(Canvas c, float worldZoom)
 	{
 		pShade.setAntiAlias(StaticInfo.Antialiasing);
-		pShade.setBounds(new Rect(
+		pShade.setBounds(
 				(int)((pos.x - radius * 2) * worldZoom),
 				(int)((pos.y - radius * 2) * worldZoom),
 				(int)((pos.x + radius * 2) * worldZoom),
-				(int)((pos.y + radius * 2) * worldZoom)));
+				(int)((pos.y + radius * 2) * worldZoom));
 		pShade.draw(c);
 	}
 	

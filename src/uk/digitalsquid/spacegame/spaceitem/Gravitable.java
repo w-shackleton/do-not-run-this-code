@@ -16,28 +16,30 @@ public abstract class Gravitable extends Spherical implements Forceful
 		this.density = density;
 	}
 	
+	private final Coord tmpRF = new Coord();
+	
 	public Coord calculateRF(Coord itemC, Coord itemVC)
 	{
-		return new Coord(
-				CompuFuncs.computeForceX(
-						pos.x,
-						pos.y,
-						density,
-						radius,
-						itemC.x,
-						itemC.y),
-				CompuFuncs.computeForceY(
-						pos.x,
-						pos.y,
-						density,
-						radius,
-						itemC.x,
-						itemC.y));
+		tmpRF.x = CompuFuncs.computeForceX(
+				pos.x,
+				pos.y,
+				density,
+				radius,
+				itemC.x,
+				itemC.y);
+		tmpRF.y = CompuFuncs.computeForceY(
+				pos.x,
+				pos.y,
+				density,
+				radius,
+				itemC.x,
+				itemC.y);
+		return tmpRF;
 	}
 	
 	public BallData calculateVelocity(Coord itemC, Coord itemVC, float itemRadius)
 	{
-		if(pos.minus(itemC).getLength() < radius + itemRadius)
+		if(Coord.getLength(pos, itemC) < radius + itemRadius)
 			return new BallData(null, itemVC.scale(AIR_RESISTANCE));
 		return null;
 	}

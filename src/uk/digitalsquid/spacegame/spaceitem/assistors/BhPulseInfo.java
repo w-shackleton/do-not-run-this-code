@@ -57,8 +57,10 @@ public class BhPulseInfo
 			return;
 		if(finished)
 			return;
-		Coord p1 = new Coord(itemPos.x + extension, itemPos.y).rotate(itemPos, position * (float)Math.PI / 180);
-		Coord p2 = new Coord(itemPos.x + extension + LENGTH, itemPos.y).rotate(itemPos, position * (float)Math.PI / 180);
+		Coord p1 = new Coord(itemPos.x + extension, itemPos.y);
+		p1.rotateThis(itemPos, position * (float)Math.PI / 180);
+		Coord p2 = new Coord(itemPos.x + extension + LENGTH, itemPos.y);
+		p2.rotateThis(itemPos, position * (float)Math.PI / 180);
 		paint.a = (int) CompuFuncs.TrimMinMax(256 - (extension * 2), 0, 255);
 		c.drawLine((float)p1.x * worldScale, (float)p1.y * worldScale, (float)p2.x * worldScale, (float)p2.y * worldScale, PaintLoader.load(paint));
 	}

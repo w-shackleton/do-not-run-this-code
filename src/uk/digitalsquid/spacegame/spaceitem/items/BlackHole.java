@@ -11,7 +11,6 @@ import uk.digitalsquid.spacegame.spaceitem.interfaces.TopDrawable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Warpable;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.preference.PreferenceManager;
 
@@ -54,7 +53,7 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	@Override
 	public Coord calculateRF(Coord itemC, Coord itemVC)
 	{
-		double currDist = pos.minus(itemC).getLength();
+		double currDist = Coord.getLength(pos, itemC);
 		if(currDist < 8f * ITEM_SCALE && !bhActivated) // Start pulse
 		{
 			bhActivated = true;
@@ -74,11 +73,11 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	public void draw(Canvas c, float worldZoom)
 	{
 		bhP2Image.setAntiAlias(StaticInfo.Antialiasing);
-		bhP2Image.setBounds(new Rect(
+		bhP2Image.setBounds(
 				(int)((pos.x - (radius * 2)) * worldZoom),
 				(int)((pos.y - (radius * 2)) * worldZoom),
 				(int)((pos.x + (radius * 2)) * worldZoom),
-				(int)((pos.y + (radius * 2)) * worldZoom)));
+				(int)((pos.y + (radius * 2)) * worldZoom));
 		bhP2Image.draw(c);
 	}
 
@@ -95,11 +94,11 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 		
 		c.rotate(-bhRotation, (float)pos.x * worldZoom, (float)pos.y * worldZoom);
 		bhImage.setAntiAlias(StaticInfo.Antialiasing);
-		bhImage.setBounds(new Rect(
+		bhImage.setBounds(
 				(int)((pos.x - (radius * 2)) * worldZoom),
 				(int)((pos.y - (radius * 2)) * worldZoom),
 				(int)((pos.x + (radius * 2)) * worldZoom),
-				(int)((pos.y + (radius * 2)) * worldZoom)));
+				(int)((pos.y + (radius * 2)) * worldZoom));
 		bhImage.draw(c);
 		c.rotate(bhRotation, (float)pos.x * worldZoom, (float)pos.y * worldZoom);
 	}
