@@ -48,25 +48,29 @@ public class AnimatedPlayer extends Player
 	/**
 	 * Amount of time left blinking
 	 */
-	protected int blinkTimeLeft = 0;
+	private int blinkTimeLeft = 0;
 	
 	/**
 	 * Amount of time to blink for
 	 */
-	protected static final int BLINK_TIME = 3;
+	private static final int BLINK_TIME = 3;
 	
 	/**
 	 * Speed to move the eyes at. Higher is slower.
 	 */
-	protected static final float EYE_MOVE_SPEED = 70;
+	private static final float EYE_MOVE_SPEED = 70;
 	
-	protected static final Coord lEar = new Coord(-7 * ITEM_SCALE, -4 * ITEM_SCALE);
-	protected static final Coord rEar = new Coord(-7 * ITEM_SCALE, 4 * ITEM_SCALE);
-	protected static final Coord EAR_SIZE = new Coord(20 * ITEM_SCALE, 10 * ITEM_SCALE);
-	protected static final float EAR_RESTING_POSITION = 30;
-	protected static final Coord EAR_ROTATING_AXIS = new Coord(2 * ITEM_SCALE, 5 * ITEM_SCALE);
-	protected float lEarRotation = 0;
-	protected float rEarRotation = 0;
+	private static final Coord lEar = new Coord(-7 * ITEM_SCALE, -4 * ITEM_SCALE);
+	private static final Coord rEar = new Coord(-7 * ITEM_SCALE, 4 * ITEM_SCALE);
+	private static final Coord EAR_SIZE = new Coord(20 * ITEM_SCALE, 10 * ITEM_SCALE);
+	private static final float LEFT_EAR_RESTING_POSITION = 20;
+	private static final float RIGHT_EAR_RESTING_POSITION = -20;
+	private static final float EAR_ROTATING_AIR_RESISTANCE = 0.996f;
+	private static final float EAR_ROTATING_SPEED = 15;
+	private float lEarRotation = 30;
+	private float rEarRotation = -30;
+	private float lEarRotationSpeed = 0;
+	private float rEarRotationSpeed = 0;
 	
 	protected static final Coord lEye = new Coord(-6 * ITEM_SCALE, -7 * ITEM_SCALE);
 	protected static final Coord rEye = new Coord(-6 * ITEM_SCALE, 7 * ITEM_SCALE);
@@ -133,12 +137,17 @@ public class AnimatedPlayer extends Player
 		ball.setBounds(ballRect);
 		ball.draw(c);
 		Coord earPos = itemC.add(lEar);
-		leftEar.setBounds((int)(earPos.x - EAR_SIZE.x), (int)(earPos.y - EAR_SIZE.y), (int)earPos.x, (int)earPos.y);
+		c.rotate((float)lEarRotation, (float)earPos.x, (float)earPos.y);
+		leftEar.setBounds((int)(earPos.x - EAR_SIZE.x), (int)(earPos.y - EAR_SIZE.y / 2), (int)earPos.x, (int)(earPos.y + EAR_SIZE.y / 2));
 		leftEar.draw(c);
+		c.rotate((float)-lEarRotation, (float)earPos.x, (float)earPos.y);
+		
 		earPos.copyFrom(itemC);
 		earPos.addThis(rEar);
-		rightEar.setBounds((int)(earPos.x - EAR_SIZE.x), (int)earPos.y, (int)earPos.x, (int)(earPos.y + EAR_SIZE.y));
+		c.rotate((float)rEarRotation, (float)earPos.x, (float)earPos.y);
+		rightEar.setBounds((int)(earPos.x - EAR_SIZE.x), (int)(earPos.y - EAR_SIZE.y / 2), (int)earPos.x, (int)(earPos.y + EAR_SIZE.y / 2));
 		rightEar.draw(c);
+		c.rotate((float)-rEarRotation, (float)earPos.x, (float)earPos.y);
 		
 		if(random.nextInt(1000) == 42) blinkTimeLeft = BLINK_TIME;
 		if(blinkTimeLeft-- > 0) // Blinking
@@ -189,5 +198,29 @@ public class AnimatedPlayer extends Player
 	public void lookTo(Coord point)
 	{
 		eyeMoveToOnGame = point;
+	}
+	
+	@Override
+	public void move(float millistep, float speedScale)
+	{
+		super.move(millistep, speedScale);
+		
+		double leftEarFullRotation = ballRotation + lEarRotation;
+		double rightEarFullRotation = ballRotation + rEarRotation;
+		
+		double leftEarExternalForce  = CompuFuncs.RotateY(itemRF.x, itemRF.y, (180-leftEarFullRotation) / 180 * Math.PI);
+		double rightEarExternalForce = CompuFuncs.RotateY(itemRF.x, itemRF.y, (180-rightEarFullRotation) / 180 * Math.PI);
+		
+		double leftEarForce = LEFT_EAR_RESTING_POSITION - lEarRotation + leftEarExternalForce / 10;
+		
+		lEarRotationSpeed += leftEarForce * millistep / ITERS / 1000f;
+		lEarRotationSpeed *= EAR_ROTATING_AIR_RESISTANCE;
+		lEarRotation += lEarRotationSpeed * millistep / ITERS / 1000f * speedScale * EAR_ROTATING_SPEED;
+		
+		double rightEarForce = RIGHT_EAR_RESTING_POSITION - rEarRotation + rightEarExternalForce / 10;
+		
+		rEarRotationSpeed += rightEarForce * millistep / ITERS / 1000f;
+		rEarRotationSpeed *= EAR_ROTATING_AIR_RESISTANCE;
+		rEarRotation += rEarRotationSpeed * millistep / ITERS / 1000f * speedScale * EAR_ROTATING_SPEED;
 	}
 }
