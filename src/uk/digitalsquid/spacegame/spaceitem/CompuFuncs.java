@@ -94,7 +94,7 @@ public class CompuFuncs
 			double rad,
 			double den)
 	{
-		return (double) (rad * rad * rad * den * Math.PI * 4 / 3);
+		return (double) (rad * rad * den * 300);
 	}
 	
 	public static final double TrimMin(double num, double min)

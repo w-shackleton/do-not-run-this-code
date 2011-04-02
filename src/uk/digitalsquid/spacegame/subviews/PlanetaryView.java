@@ -47,6 +47,8 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 		protected float WORLD_ZOOM_UNSCALED_ZOOMED;
 		protected float WORLD_ZOOM_PRESCALE, WORLD_ZOOM_POSTSCALE;
 		
+		protected static final float WALL_BOUNCINESS = 1;
+		
 		public static final int ITERS = 5;
 		public static final float AIR_RESISTANCE = 1f; // 1 = no resistance, must NEVER be greater than 1
 		public static final int SPEED_SCALE = 20;
@@ -206,7 +208,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 					// Check for collisions with wall
 					if(p.itemC.x > level.bounds.x / 2 - AnimatedPlayer.BALL_RADIUS)
 					{
-						p.itemVC.x = -p.itemVC.x;
+						p.itemVC.x = -p.itemVC.x * WALL_BOUNCINESS;
 						if(p.itemVC.x > 0) // Solves physics error
 							p.itemVC.x = 0;
 						borderBounceColour = 0; // Set bounce colour to 0 - which is red.
@@ -214,7 +216,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 					}
 					if(p.itemC.x < -(level.bounds.x / 2 - AnimatedPlayer.BALL_RADIUS))
 					{
-						p.itemVC.x = -p.itemVC.x;
+						p.itemVC.x = -p.itemVC.x * WALL_BOUNCINESS;
 						if(p.itemVC.x < 0)
 							p.itemVC.x = 0;
 						borderBounceColour = 0; // Set bounce colour to 0 - which is red.
@@ -222,7 +224,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 					}
 					if(p.itemC.y > level.bounds.y / 2 - AnimatedPlayer.BALL_RADIUS)
 					{
-						p.itemVC.y = -p.itemVC.y;
+						p.itemVC.y = -p.itemVC.y * WALL_BOUNCINESS;
 						if(p.itemVC.y > 0) // Solves physics error
 							p.itemVC.y = 0;
 						borderBounceColour = 0; // Set bounce colour to 0 - which is red.
@@ -230,7 +232,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 					}
 					if(p.itemC.y < -(level.bounds.y / 2 - AnimatedPlayer.BALL_RADIUS))
 					{
-						p.itemVC.y = -p.itemVC.y;
+						p.itemVC.y = -p.itemVC.y * WALL_BOUNCINESS;
 						if(p.itemVC.y < 0)
 							p.itemVC.y = 0;
 						borderBounceColour = 0; // Set bounce colour to 0 - which is red.

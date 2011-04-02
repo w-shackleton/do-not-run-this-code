@@ -101,8 +101,8 @@ public class GameViewLayout extends FrameLayout implements KeyInput, OnClickList
 		{
 			if(findViewById(R.id.gameviewbuttons).getVisibility() == View.INVISIBLE)
 			{
-				findViewById(R.id.gameviewbuttons).startAnimation(panin);
 				findViewById(R.id.gameviewbuttons).setVisibility(View.VISIBLE);
+				findViewById(R.id.gameviewbuttons).startAnimation(panin);
 				gameView.setPaused(true);	
 			}
 			else

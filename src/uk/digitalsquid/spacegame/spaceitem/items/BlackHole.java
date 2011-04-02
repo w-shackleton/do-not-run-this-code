@@ -17,10 +17,11 @@ import android.preference.PreferenceManager;
 public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warpable, Messageable
 {
 	private static final int BLACK_HOLE_RADIUS = 70;
-	private static final float BLACK_HOLE_DENSITY = 0.5f;
+	private static final float BLACK_HOLE_DENSITY = 1.3f;
 	private static final float BLACK_HOLE_ZOOM_SPEED = 1.01f;
 	public static final float BLACK_HOLE_ZOOM_POWER = 1.1f;
 	private static final int BLACK_HOLE_ZOOM_WAIT = 100;
+	private static final float BLACK_HOLE_CAPTURE_DIST = 14;
 
 	protected static final int BH_PULSES = 20;
 	
@@ -54,7 +55,7 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	public Coord calculateRF(Coord itemC, Coord itemVC)
 	{
 		double currDist = Coord.getLength(pos, itemC);
-		if(currDist < 8f * ITEM_SCALE && !bhActivated) // Start pulse
+		if(currDist < BLACK_HOLE_CAPTURE_DIST * ITEM_SCALE && !bhActivated) // Start pulse
 		{
 			bhActivated = true;
 			bhStarted = true;
@@ -152,5 +153,24 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	public MessageInfo sendMessage()
 	{
 		return messageInfo;
+	}
+	
+	@Override
+	public BallData calculateVelocity(Coord itemC, Coord itemVC, float itemRadius) {
+		BallData d = super.calculateVelocity(itemC, itemVC, itemRadius);
+		
+		if(bhActivated) {
+			Coord vel = new Coord(0, 0);
+			Coord pos = new Coord(this.pos);
+			
+			if(d == null) {
+				d = new BallData(vel, pos);
+			} else {
+				d.itemC = pos;
+				d.itemVC = vel;
+			}
+		}
+		
+		return d;
 	}
 }
