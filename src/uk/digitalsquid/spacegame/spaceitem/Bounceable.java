@@ -29,7 +29,11 @@ public abstract class Bounceable extends Gravitable
 			double angleNeeded = (2 * angleAt) - angleVel;
 			
 			double speed = newBall.itemVC.getLength();
-			newBall.itemVC = new Coord(Math.cos(angleNeeded) * speed * bounciness, Math.sin(angleNeeded) * speed * bounciness);
+			
+			// TODO: Check this code is correct. What about 1.2 bounciness?
+			double bouncinessX = Math.abs(Math.sin(angleAt) * (1 - bounciness) + bounciness);
+			double bouncinessY = Math.abs(Math.cos(angleAt) * (1 - bounciness) + bounciness);
+			newBall.itemVC = new Coord(Math.cos(angleNeeded) * speed * bouncinessX, Math.sin(angleNeeded) * speed * bouncinessY);
 			//Log.v("SpaceGame", "" + newBall.itemVC.getLength());
 			// TODO: Fix bouncing thing at bounciness 1.
 			if(newBall.itemVC.getLength() < 4)

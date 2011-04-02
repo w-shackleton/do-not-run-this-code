@@ -65,7 +65,7 @@ public class AnimatedPlayer extends Player
 	private static final Coord EAR_SIZE = new Coord(20 * ITEM_SCALE, 10 * ITEM_SCALE);
 	private static final float LEFT_EAR_RESTING_POSITION = 20;
 	private static final float RIGHT_EAR_RESTING_POSITION = -20;
-	private static final float EAR_ROTATING_AIR_RESISTANCE = 0.996f;
+	private static final float EAR_ROTATING_AIR_RESISTANCE = 0.993f;
 	private static final float EAR_ROTATING_SPEED = 15;
 	private float lEarRotation = 30;
 	private float rEarRotation = -30;
@@ -211,16 +211,18 @@ public class AnimatedPlayer extends Player
 		double leftEarExternalForce  = CompuFuncs.RotateY(itemRF.x, itemRF.y, (180-leftEarFullRotation) / 180 * Math.PI);
 		double rightEarExternalForce = CompuFuncs.RotateY(itemRF.x, itemRF.y, (180-rightEarFullRotation) / 180 * Math.PI);
 		
-		double leftEarForce = LEFT_EAR_RESTING_POSITION - lEarRotation + leftEarExternalForce / 10;
+		double leftEarForce = LEFT_EAR_RESTING_POSITION - lEarRotation + leftEarExternalForce / 1.5f;
 		
 		lEarRotationSpeed += leftEarForce * millistep / ITERS / 1000f;
 		lEarRotationSpeed *= EAR_ROTATING_AIR_RESISTANCE;
 		lEarRotation += lEarRotationSpeed * millistep / ITERS / 1000f * speedScale * EAR_ROTATING_SPEED;
+		lEarRotation = CompuFuncs.TrimMinMax(lEarRotation, lEarRotation - 45, lEarRotation + 45);
 		
-		double rightEarForce = RIGHT_EAR_RESTING_POSITION - rEarRotation + rightEarExternalForce / 10;
+		double rightEarForce = RIGHT_EAR_RESTING_POSITION - rEarRotation + rightEarExternalForce / 1.5f;
 		
 		rEarRotationSpeed += rightEarForce * millistep / ITERS / 1000f;
 		rEarRotationSpeed *= EAR_ROTATING_AIR_RESISTANCE;
 		rEarRotation += rEarRotationSpeed * millistep / ITERS / 1000f * speedScale * EAR_ROTATING_SPEED;
+		rEarRotation = CompuFuncs.TrimMinMax(rEarRotation, rEarRotation - 45, rEarRotation + 45);
 	}
 }
