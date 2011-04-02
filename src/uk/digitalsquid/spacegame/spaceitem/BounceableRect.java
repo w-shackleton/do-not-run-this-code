@@ -34,7 +34,7 @@ public abstract class BounceableRect extends Rectangular implements Forceful
 		
 		if((itemRotC.x + itemRadius > l && itemRotC.x - itemRadius < r) && (itemRotC.y > t && itemRotC.y < b))
 		{
-			newItemVC.x = -newItemVC.x;
+			newItemVC.x = -newItemVC.x * bounciness;
 			// Check for ball sinking through rect
 			if(itemRotC.x + itemRadius > l && itemRotC.x + itemRadius < pos.x)
 			{
@@ -50,7 +50,7 @@ public abstract class BounceableRect extends Rectangular implements Forceful
 		}
 		else if((itemRotC.y + itemRadius > t && itemRotC.y - itemRadius < b) && (itemRotC.x > l && itemRotC.x < r))
 		{
-			newItemVC.y = -newItemVC.y;
+			newItemVC.y = -newItemVC.y * bounciness;
 			// Check for ball sinking through rect
 			if(itemRotC.y + itemRadius > t && itemRotC.y + itemRadius < pos.y)
 			{
