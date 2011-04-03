@@ -8,7 +8,7 @@ import uk.digitalsquid.spacegame.spaceitem.SpaceItem;
 
 public class LevelItem
 {
-	public String LevelName;
+	public String levelName;
 	public List<SpaceItem> planetList;
 	public Coord startPos;
 	public Coord startSpeed;
@@ -19,7 +19,7 @@ public class LevelItem
 	
 	public LevelItem(String name, SpaceItem[] planets, float coordX, float coordY, float boundX, float boundY)
 	{
-		LevelName = name;
+		levelName = name;
 		startPos = new Coord(coordX * SpaceItem.ITEM_SCALE, coordY * SpaceItem.ITEM_SCALE);
 		bounds = new Coord(boundX * SpaceItem.ITEM_SCALE, boundY * SpaceItem.ITEM_SCALE);
 		planetList = new ArrayList<SpaceItem>();
@@ -64,5 +64,7 @@ public class LevelItem
 			bounds.x *= SpaceItem.ITEM_SCALE;
 			bounds.y *= SpaceItem.ITEM_SCALE;
 		}
+		
+		if(levelName == null) levelName = "";
 	}
 }

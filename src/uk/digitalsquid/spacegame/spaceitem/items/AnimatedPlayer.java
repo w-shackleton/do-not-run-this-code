@@ -211,14 +211,14 @@ public class AnimatedPlayer extends Player
 		double leftEarExternalForce  = CompuFuncs.RotateY(itemRF.x, itemRF.y, (180-leftEarFullRotation) / 180 * Math.PI);
 		double rightEarExternalForce = CompuFuncs.RotateY(itemRF.x, itemRF.y, (180-rightEarFullRotation) / 180 * Math.PI);
 		
-		double leftEarForce = LEFT_EAR_RESTING_POSITION - lEarRotation + leftEarExternalForce / 1.5f;
+		double leftEarForce = LEFT_EAR_RESTING_POSITION - lEarRotation + leftEarExternalForce / 2f;
 		
 		lEarRotationSpeed += leftEarForce * millistep / ITERS / 1000f;
 		lEarRotationSpeed *= EAR_ROTATING_AIR_RESISTANCE;
 		lEarRotation += lEarRotationSpeed * millistep / ITERS / 1000f * speedScale * EAR_ROTATING_SPEED;
 		lEarRotation = CompuFuncs.TrimMinMax(lEarRotation, lEarRotation - 45, lEarRotation + 45);
 		
-		double rightEarForce = RIGHT_EAR_RESTING_POSITION - rEarRotation + rightEarExternalForce / 1.5f;
+		double rightEarForce = RIGHT_EAR_RESTING_POSITION - rEarRotation + rightEarExternalForce / 2f;
 		
 		rEarRotationSpeed += rightEarForce * millistep / ITERS / 1000f;
 		rEarRotationSpeed *= EAR_ROTATING_AIR_RESISTANCE;

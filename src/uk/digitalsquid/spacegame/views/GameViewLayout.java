@@ -92,6 +92,8 @@ public class GameViewLayout extends FrameLayout implements KeyInput, OnClickList
 
 		findViewById(R.id.gameviewinfoboxpic).setOnClickListener(this);
 		findViewById(R.id.gameviewinfoboxtext).setOnClickListener(this);
+		
+		findViewById(R.id.gameviewbuttons).setVisibility(View.GONE);
 	}
 
 	@Override
@@ -99,7 +101,7 @@ public class GameViewLayout extends FrameLayout implements KeyInput, OnClickList
 	{
 		if(findViewById(R.id.gameviewinfobox).getVisibility() == View.INVISIBLE)
 		{
-			if(findViewById(R.id.gameviewbuttons).getVisibility() == View.INVISIBLE)
+			if(findViewById(R.id.gameviewbuttons).getVisibility() == View.GONE)
 			{
 				findViewById(R.id.gameviewbuttons).setVisibility(View.VISIBLE);
 				findViewById(R.id.gameviewbuttons).startAnimation(panin);
@@ -108,7 +110,7 @@ public class GameViewLayout extends FrameLayout implements KeyInput, OnClickList
 			else
 			{
 				findViewById(R.id.gameviewbuttons).startAnimation(panout);
-				findViewById(R.id.gameviewbuttons).setVisibility(View.INVISIBLE);
+				findViewById(R.id.gameviewbuttons).setVisibility(View.GONE);
 				gameView.setPaused(false);	
 			}
 		}

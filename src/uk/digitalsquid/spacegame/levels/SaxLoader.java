@@ -82,16 +82,16 @@ public class SaxLoader
 			}
 		});
 		
-		root.requireChild(NAME).setEndTextElementListener(new EndTextElementListener()
+		root.getChild(NAME).setEndTextElementListener(new EndTextElementListener()
 		{
 			@Override
 			public void end(String body)
 			{
-				level.LevelName = body;
+				level.levelName = body;
 			}
 		});
 
-		root.requireChild(START).setStartElementListener(new StartElementListener()
+		root.getChild(START).setStartElementListener(new StartElementListener()
 		{
 			@Override
 			public void start(Attributes attributes)
@@ -99,7 +99,7 @@ public class SaxLoader
 				level.startPos = getCoord(attributes);
 			}
 		});
-		root.requireChild(STARTSPEED).setStartElementListener(new StartElementListener()
+		root.getChild(STARTSPEED).setStartElementListener(new StartElementListener()
 		{
 			@Override
 			public void start(Attributes attributes)

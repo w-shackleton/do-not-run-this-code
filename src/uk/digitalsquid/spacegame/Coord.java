@@ -32,11 +32,14 @@ public final class Coord implements Serializable
 	}
 	public Coord(Coord old)
 	{
-		x = old.x;
-		y = old.y;
+		if(old != null) {
+			x = old.x;
+			y = old.y;
+		}
 	}
 	
 	public final void copyFrom(Coord old) {
+		if(old == null) {reset(); return;}
 		x = old.x;
 		y = old.y;
 	}
