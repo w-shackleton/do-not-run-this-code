@@ -9,6 +9,8 @@
 #include "../objects/levelBounds.hpp"
 #include "../editorCallbacks.hpp"
 
+#include "../objects/player.hpp"
+
 namespace Levels
 {
 	class LevelWriter
@@ -16,8 +18,7 @@ namespace Levels
 		public:
 			LevelWriter();
 			void write(std::string filename, std::list<Objects::SpaceItem *>* objs, std::string levelName, std::string creator,
-					double px, double py,
-					double ssx, double ssy,
+					const Objects::Player p,
 					Objects::LevelBounds &bounds);
 		protected:
 			void cleanup();
@@ -34,8 +35,7 @@ namespace Levels
 		public:
 			LevelReader();
 			bool open(const std::string &filename, std::list<Objects::SpaceItem *>* objs, std::string &levelName, std::string &levelCreator,
-					double &px, double &py,
-					double &ssx, double &ssy,
+					Objects::Player& p,
 					Objects::LevelBounds &bounds);
 			bool open(const std::string &filename, std::string &levelName, std::string &levelCreator);
 			void setEditorCallbacks(EditorCallbacks *callbacks);

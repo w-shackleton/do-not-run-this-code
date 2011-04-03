@@ -11,6 +11,8 @@
 
 #include "../objects/levelBounds.hpp"
 
+#include "../objects/player.hpp"
+
 #define LEVEL_MIN 200
 #define LEVEL_MAX 2000
 
@@ -37,6 +39,8 @@ namespace Levels
 			std::list<Objects::SpaceItem *>& objs;
 			std::auto_ptr<Objects::LevelBounds> levelBounds;
 
+			std::auto_ptr<Objects::Player> p;
+
 			std::string levelPath;
 
 			std::string levelName;
@@ -51,8 +55,6 @@ namespace Levels
 			std::list<Objects::SpaceItem *> _objs;
 
 			EditorCallbacks *callbacks;
-
-			Misc::Point position, speed;
 
 			double borderMin, borderMax;
 	};

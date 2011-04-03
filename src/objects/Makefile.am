@@ -2,6 +2,7 @@ pkglib_LTLIBRARIES= libobjects.la
 
 
 libobjects_la_SOURCES = \
+		player.cpp	player.hpp	\
 		levelBounds.cpp	levelBounds.hpp	\
 		wall.cpp	wall.hpp	\
 		infobox.cpp	infobox.hpp	\

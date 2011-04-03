@@ -105,6 +105,8 @@ void SpacePanel::render_draw()
 
 	if(lmanager.levelBounds.get())
 		lmanager.levelBounds->draw(cr);
+	if(lmanager.p.get())
+		lmanager.p->draw(cr);
 
 	cr->reset_clip();
 
@@ -145,6 +147,14 @@ int SpacePanel::getClickedObject(double x, double y, bool useBorder)
 		// Object border is clicked.
 		selectedItem = lmanager.levelBounds.get();
 		ret = CLICKED_Border;
+		selectedItemIsSpecial = true;
+	}
+
+	if(lmanager.p->isClicked(tx, ty))
+	{
+		// Object border is clicked.
+		selectedItem = lmanager.p.get();
+		ret = CLICKED_Inner;
 		selectedItemIsSpecial = true;
 	}
 

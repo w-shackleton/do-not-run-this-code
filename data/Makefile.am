@@ -5,7 +5,7 @@ spacedir=$(datadir)/spaceedit
 # ICO icon is used on wxMSW only, so no need to put in UNIX data folder since windows packaging done manually
 space_DATA = icon.xpm iconlarge.xpm	\
 	message.png wallside.png wall.png vortex.png bh.png	\
-	planet1.png planet2.png planet3.png planet4.png planet5.png planet6.png planet-s.png planetbouncy.png
+	planet1.png planet2.png planet3.png planet4.png planet5.png planet6.png planet-s.png planetbouncy.png player.png
 
 EXTRA_DIST = $(space_DATA) icon.png icon.svg icon.ico	\
 	wall.svg vortex.svg bh.svg	\

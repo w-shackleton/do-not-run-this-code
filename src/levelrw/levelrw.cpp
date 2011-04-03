@@ -16,8 +16,7 @@ LevelWriter::LevelWriter()
 }
 
 void LevelWriter::write(string filename, std::list<Objects::SpaceItem *>* objs, string levelName, string creator,
-		double px, double py,
-		double ssx, double ssy,
+		const Objects::Player p,
 		LevelBounds &bounds)
 {
 	cout << "Saving level" << endl;
@@ -43,16 +42,8 @@ void LevelWriter::write(string filename, std::list<Objects::SpaceItem *>* objs, 
 	// Start
 	{
 		TiXmlElement *name = new TiXmlElement("start");
-		name->SetDoubleAttribute("x", px);
-		name->SetDoubleAttribute("y", py);
-		level->LinkEndChild(name);
-	}
-
-	// Startspeed
-	{
-		TiXmlElement *name = new TiXmlElement("startspeed");
-		name->SetDoubleAttribute("x", ssx);
-		name->SetDoubleAttribute("y", ssy);
+		name->SetDoubleAttribute("x", p.x);
+		name->SetDoubleAttribute("y", p.y);
 		level->LinkEndChild(name);
 	}
 
@@ -98,8 +89,7 @@ LevelReader::LevelReader()
 }
 
 bool LevelReader::open(const std::string &filename, std::list<Objects::SpaceItem *>* objs, std::string &levelName, std::string &levelCreator,
-		double &px, double &py,
-		double &ssx, double &ssy,
+		Objects::Player& p,
 		LevelBounds &bounds)
 {
 	TiXmlDocument doc(filename);
@@ -130,15 +120,8 @@ bool LevelReader::open(const std::string &filename, std::list<Objects::SpaceItem
 	TiXmlElement *start = level->FirstChildElement("start");
 	if(start)
 	{
-		start->QueryDoubleAttribute("x", &px);
-		start->QueryDoubleAttribute("y", &py);
-	}
-
-	TiXmlElement *startspeed = level->FirstChildElement("startspeed");
-	if(startspeed)
-	{
-		startspeed->QueryDoubleAttribute("x", &ssx);
-		startspeed->QueryDoubleAttribute("y", &ssy);
+		start->QueryDoubleAttribute("x", &p.x);
+		start->QueryDoubleAttribute("y", &p.y);
 	}
 
 	TiXmlElement *levelBounds = level->FirstChildElement("bounds");
