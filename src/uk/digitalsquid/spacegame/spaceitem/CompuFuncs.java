@@ -9,7 +9,7 @@ import uk.digitalsquid.spacegame.Coord;
 
 public class CompuFuncs
 {
-	public static final double GRAVCONST = .01f;
+	public static final double GRAVCONST = .1f;
 
 	public static final double computeForceX(
 			double planetX,			// ForceX = G m x 
@@ -34,7 +34,7 @@ public class CompuFuncs
 		return
 			GRAVCONST * (planetX - itemX) *
 			computeWeight(planetRad,planetDensity) /
-			(r * r);
+			(r * r * Math.sqrt(r));
 	}
 	
 	public static final double computeForceY(
@@ -60,7 +60,7 @@ public class CompuFuncs
 		return
 			GRAVCONST * (planetY - itemY) * 
 			computeWeight(planetRad,planetDensity) /
-			(r * r);
+			(r * r * Math.sqrt(r));
 	}
 	/* Old version - didn't work
 	public static final double computeForceY(

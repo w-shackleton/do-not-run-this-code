@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<level>
+    <name>Blank Level</name>
+    <creator>Will</creator>
+    <start x="0.000000" y="0.000000" />
+    <startspeed x="0.000000" y="0.000000" />
+    <bounds x="1000.000000" y="1000.000000" />
+    <items />
+</level>
