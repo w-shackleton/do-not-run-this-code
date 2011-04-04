@@ -10,6 +10,9 @@
 #include<wall.hpp>
 #include<blackhole.hpp>
 
+#include<star.hpp>
+#include<player.hpp>
+
 // Other similar things
 #include<levelBounds.hpp>
 

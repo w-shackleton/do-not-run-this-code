@@ -17,6 +17,7 @@ BEGIN_EVENT_TABLE(SpaceFrame, wxFrame)
 	EVT_BUTTON(SpaceFrame::ID_tb_c_wall, SpaceFrame::OnCreateWall)
 	EVT_BUTTON(SpaceFrame::ID_tb_c_vortex, SpaceFrame::OnCreateVortex)
 	EVT_BUTTON(SpaceFrame::ID_tb_c_blackhole, SpaceFrame::OnCreateBlackHole)
+	EVT_BUTTON(SpaceFrame::ID_tb_c_star, SpaceFrame::OnCreateStar)
 
 	EVT_MENU(SpaceFrame::ID_tb_c_planet, SpaceFrame::OnCreatePlanet)
 	EVT_MENU(SpaceFrame::ID_tb_c_infobox, SpaceFrame::OnCreateInfoBox)
@@ -80,11 +81,12 @@ void SpaceFrame::init(string filename, bool newLevel)
 
 	menuLevel->Append(ID_Level_Change, _("Edit &Level Info\tCtrl-L"));
 
+	menuCreate->Append(ID_tb_c_star, _("Create Star"));
 	menuCreate->Append(ID_tb_c_planet, _("Create Planet"));
 	menuCreate->Append(ID_tb_c_infobox, _("Create Info Box"));
 	menuCreate->Append(ID_tb_c_wall, _("Create Wall"));
 	menuCreate->Append(ID_tb_c_vortex, _("Create Vortex"));
-	menuCreate->Append(ID_tb_c_blackhole, _("Create Bdestroylack Hole"));
+	menuCreate->Append(ID_tb_c_blackhole, _("Create Black Hole"));
 
 	menuAbout->Append(ID_Help_Help, _("&Help\tCtrl-H"));
 	menuAbout->Append(ID_Help_About, _("&About"));
@@ -98,6 +100,7 @@ void SpaceFrame::init(string filename, bool newLevel)
 	SetMenuBar(menuBar);
 
 	wxToolBar *toolbar = CreateToolBar();
+	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_star, _("Create Star")));
 	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_planet, _("Create Planet")));
 	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_infobox, _("Create Info Box")));
 	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_wall, _("Create Wall")));
@@ -251,6 +254,13 @@ void SpaceFrame::OnCreateBlackHole(wxCommandEvent& event)
 {
 	wxSize pos = spacePanel->getMovedPos() + spacePanel->GetSize() / 2;
 	lmanager.objs.push_back(new Objects::BlackHole(*spacePanel, pos.GetWidth(), pos.GetHeight()));
+	spacePanel->redraw();
+}
+
+void SpaceFrame::OnCreateStar(wxCommandEvent& event)
+{
+	wxSize pos = spacePanel->getMovedPos() + spacePanel->GetSize() / 2;
+	lmanager.objs.push_back(new Objects::Star(*spacePanel, pos.GetWidth(), pos.GetHeight()));
 	spacePanel->redraw();
 }
 

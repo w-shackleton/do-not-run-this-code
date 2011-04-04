@@ -148,6 +148,8 @@ bool LevelReader::open(const std::string &filename, std::list<Objects::SpaceItem
 				objs->push_back(new Objects::Vortex(*callbacks, *item));
 			else if(itemName == "wall")
 				objs->push_back(new Objects::Wall(*callbacks, *item));
+			else if(itemName == "star")
+				objs->push_back(new Objects::Star(*callbacks, *item));
 
 			item = item->NextSiblingElement();
 			cout << "Loaded item" << endl;
@@ -181,8 +183,7 @@ bool LevelReader::open(const std::string &filename, std::string &levelName, std:
 		if(const char *n = creator->GetText())
 			levelCreator = n;
 		else
-			levelCreator = "";
-	}
+			levelCreator = ""; }
 	return true;
 }
 
