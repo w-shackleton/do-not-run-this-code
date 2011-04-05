@@ -19,12 +19,14 @@ import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import uk.digitalsquid.spacegame.spaceitem.SpaceItem;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Forceful;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Forceful.BallData;
+import uk.digitalsquid.spacegame.spaceitem.interfaces.LevelAffectable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.TopDrawable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Warpable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Warpable.WarpData;
 import uk.digitalsquid.spacegame.spaceitem.items.AnimatedPlayer;
 import uk.digitalsquid.spacegame.spaceitem.items.Player;
+import uk.digitalsquid.spacegame.spaceitem.items.Star;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -47,7 +49,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 		protected float WORLD_ZOOM_UNSCALED_ZOOMED;
 		protected float WORLD_ZOOM_PRESCALE, WORLD_ZOOM_POSTSCALE;
 		
-		protected static final float WALL_BOUNCINESS = 1;
+		protected static final float WALL_BOUNCINESS = 0.8f;
 		
 		public static final int ITERS = 5;
 		public static final float AIR_RESISTANCE = 1f; // 1 = no resistance, must NEVER be greater than 1
@@ -302,8 +304,24 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 						{
 							mItem.move((int) millistep, SPEED_SCALE);
 						}
+						
+						// Stage for game detail returning
+						LevelAffectable lItem;
+						try
+						{
+							lItem = (LevelAffectable) currObj;
+						} catch (RuntimeException e)
+						{
+							lItem = null;
+						}
+						if(lItem != null)
+						{
+							lItem.affectLevel();
+						}
 					}
 				}
+				
+				setNearestLookPoint();
 				
 				if(!paused)
 				{
@@ -386,6 +404,25 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 			{
 				setRunning(false);
 				endGame = true;
+			}
+		}
+		
+		private void setNearestLookPoint() {
+			double lowestDist = -1;
+			Coord lowestPoint = null;
+			for(SpaceItem item : planetList) {
+				if(item.getClass().equals(Star.class)) {
+					if(lowestDist == -1) lowestDist = Coord.getLength(item.getPos(), p.itemC);
+					double thisDist = Coord.getLength(item.getPos(), p.itemC);
+					if(thisDist < lowestDist) {
+						lowestDist = thisDist;
+						lowestPoint = item.getPos();
+					}
+				}
+			}
+			
+			if(lowestPoint != null) {
+				p.lookTo(lowestPoint);
 			}
 		}
 

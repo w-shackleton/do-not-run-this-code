@@ -23,12 +23,12 @@ public abstract class SpaceItem
 	/**
 	 * The position of this item
 	 */
-	protected Coord pos;
+	protected final Coord pos;
 	
 	public SpaceItem(Context context, Coord coord)
 	{
 		this.context = context;
-		this.pos = coord.scale(ITEM_SCALE);
+		pos = coord.scale(ITEM_SCALE);
 	}
 	
 	/**
@@ -37,4 +37,8 @@ public abstract class SpaceItem
 	 * @param worldZoom	The current Zoom of the canvas
 	 */
 	public abstract void draw(Canvas c, float worldZoom);
+	
+	public Coord getPos() {
+		return pos;
+	}
 }

@@ -9,6 +9,7 @@ import uk.digitalsquid.spacegame.spaceitem.items.GravityField;
 import uk.digitalsquid.spacegame.spaceitem.items.InfoBox;
 import uk.digitalsquid.spacegame.spaceitem.items.Planet;
 import uk.digitalsquid.spacegame.spaceitem.items.Spring;
+import uk.digitalsquid.spacegame.spaceitem.items.Star;
 import uk.digitalsquid.spacegame.spaceitem.items.Teleporter;
 import uk.digitalsquid.spacegame.spaceitem.items.Wall;
 import android.content.Context;
@@ -41,6 +42,7 @@ public class SaxLoader
 	private static final String ITEMS_SPRING = "spring";
 	private static final String ITEMS_TELEPORTER = "teleporter";
 	private static final String ITEMS_WALL = "wall";
+	private static final String ITEMS_STAR = "star";
 
 	private static final String ITEMS_KEY_ROTATION = "rotation";
 	private static final String ITEMS_KEY_POWER = "power";
@@ -204,6 +206,17 @@ public class SaxLoader
 						getCoord(attributes),
 						getNum(attributes, "sx", 100),
 						getNum(attributes, ITEMS_KEY_ROTATION, 0)));
+			}
+		});
+		
+		items.getChild(ITEMS_STAR).setStartElementListener(new StartElementListener()
+		{
+			@Override
+			public void start(Attributes attributes)
+			{
+				level.planetList.add(new Star(
+						context,
+						getCoord(attributes)));
 			}
 		});
 	}
