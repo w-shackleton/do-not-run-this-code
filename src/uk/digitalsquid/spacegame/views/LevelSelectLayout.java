@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
@@ -25,7 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemClickListener
+public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemClickListener, OnItemSelectedListener
 {
 	protected Context context;
 	protected Handler parentHandler;
@@ -33,6 +34,8 @@ public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemCl
 	protected LevelManager lmanager;
 	
 	protected LevelSelectAdapter adapter;
+	
+	private TextView title, authour;
 	
 	public LevelSelectLayout(Context context, AttributeSet attrs, Handler handler, LevelManager lmanager, String levelset)
 	{
@@ -48,11 +51,17 @@ public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemCl
 		startAnimation(fadein);
 		
 		ListView lv = (ListView) findViewById(R.id.levelselect_list);
+		title = (TextView) findViewById(R.id.levelselect_itemtitle);
+		authour = (TextView) findViewById(R.id.levelselect_itemauthor);
 		
 		adapter = new LevelSelectAdapter(context, lmanager.GetLevelsFromSet(levelset));
 		lv.requestFocus();
 		lv.setAdapter(adapter);
 		lv.setOnItemClickListener(this);
+		lv.setOnItemSelectedListener(this);
+		
+		title.setText("");
+		authour.setText("");
 	}
 
 	@Override
@@ -128,5 +137,19 @@ public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemCl
 			return;
 		}
 		parentHandler.sendMessageAtTime(m, SystemClock.uptimeMillis() + fadeout.getDuration());
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
+			long arg3) {
+		LevelExtendedInfo info = adapter.items.get(arg2);
+		title.setText(info.name);
+		authour.setText(info.author);
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		title.setText("");
+		authour.setText("");
 	}
 }
