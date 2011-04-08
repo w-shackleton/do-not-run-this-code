@@ -15,6 +15,7 @@ import uk.digitalsquid.spacegame.spaceitem.SpaceItem;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Clickable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Messageable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Messageable.MessageInfo;
+import uk.digitalsquid.spacegame.spaceitem.interfaces.StaticDrawable;
 import uk.digitalsquid.spacegame.spaceview.gamemenu.GameMenu;
 import uk.digitalsquid.spacegame.spaceview.gamemenu.GameMenu.ClickListener;
 import uk.digitalsquid.spacegame.spaceview.gamemenu.GameMenu.GameMenuItem;
@@ -217,6 +218,20 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 			}
 			
 			super.postdraw(c);
+			
+			for(SpaceItem obj : level.planetList) {
+				// Stage for static drawing
+				StaticDrawable item;
+				try {
+					item = (StaticDrawable) obj;
+				} catch(RuntimeException e) {
+					item = null;
+				}
+				if(item != null)
+				{
+					item.drawStatic(c, 1, width, height, matrix);
+				}
+			}
 		}
 		
 		@Override
