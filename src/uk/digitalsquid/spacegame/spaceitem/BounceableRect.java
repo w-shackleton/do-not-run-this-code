@@ -92,8 +92,8 @@ public abstract class BounceableRect extends Rectangular implements Forceful
 				Log.v("SpaceGame", " ");*/
 				
 				double speed = newItemVC.getLength();
-				newItemVC.x = Math.cos(angleNeeded) * speed * bounciness;
-				newItemVC.y = Math.sin(angleNeeded) * speed * bounciness;
+				newItemVC.x = Math.cos(angleNeeded) * speed;
+				newItemVC.y = Math.sin(angleNeeded) * speed;
 				BounceVibrate.Vibrate((long) (newItemVC.getLength() / ITEM_SCALE * 1.5));
 				break;
 			}

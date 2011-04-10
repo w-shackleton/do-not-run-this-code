@@ -104,6 +104,13 @@ public class CompuFuncs
 		return num;
 	}
 	
+	public static final int TrimMin(int num, int min)
+	{
+		if(num < min)
+			return min;
+		return num;
+	}
+	
 	public static final double TrimMax(double num, double max)
 	{
 		if(num > max)
