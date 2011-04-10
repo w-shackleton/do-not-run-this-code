@@ -45,20 +45,18 @@ public final class R {
         public static final int message=0x7f020016;
         public static final int pause=0x7f020017;
         public static final int planet1=0x7f020018;
-        public static final int planet1p2=0x7f020019;
-        public static final int planet2=0x7f02001a;
-        public static final int planet3=0x7f02001b;
-        public static final int planet4=0x7f02001c;
-        public static final int planet5=0x7f02001d;
-        public static final int planet6=0x7f02001e;
-        public static final int planet_s2=0x7f02001f;
-        public static final int planetbouncy=0x7f020020;
-        public static final int restart=0x7f020021;
-        public static final int splash=0x7f020022;
-        public static final int star=0x7f020023;
-        public static final int teleporter=0x7f020024;
-        public static final int uparrow=0x7f020025;
-        public static final int wallside=0x7f020026;
+        public static final int planet2=0x7f020019;
+        public static final int planet3=0x7f02001a;
+        public static final int planet4=0x7f02001b;
+        public static final int planet5=0x7f02001c;
+        public static final int planet6=0x7f02001d;
+        public static final int planetbouncy=0x7f02001e;
+        public static final int restart=0x7f02001f;
+        public static final int splash=0x7f020020;
+        public static final int star=0x7f020021;
+        public static final int teleporter=0x7f020022;
+        public static final int uparrow=0x7f020023;
+        public static final int wallside=0x7f020024;
     }
     public static final class id {
         public static final int gameviewbuttonquit=0x7f0b0006;
