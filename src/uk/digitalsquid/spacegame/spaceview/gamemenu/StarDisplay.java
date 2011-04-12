@@ -18,6 +18,8 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	 */
 	private int starCount = 0;
 	
+	private final int starTotal;
+	
 	/**
 	 * Number of displayed stars. This is different as it is updated slightly later (when the star reaches the count thing)
 	 */
@@ -50,12 +52,13 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	private static final int STAR_JUMP_DIST = 10;
 	private static final int STAR_JUMP_SPEED = 3;
 	
-	public StarDisplay(Context context) {
+	public StarDisplay(Context context, int starTotal) {
 		if(font == null) {
 			font = Typeface.createFromAsset(context.getAssets(), "fonts/bangers.ttf");
 			txtPaint.setTypeface(font);
 		}
 		star = (BitmapDrawable) context.getResources().getDrawable(R.drawable.star);
+		this.starTotal = starTotal;
 	}
 
 	@Override
@@ -64,7 +67,7 @@ public class StarDisplay implements StaticDrawable, Moveable {
 		star.setBounds(10, 10 - jump, 50, 50 - jump);
 		star.draw(c);
 		
-		c.drawText("" + displayedStarCount, 60, 50, txtPaint);
+		c.drawText("" + displayedStarCount + " / " + starTotal, 60, 50, txtPaint);
 	}
 
 	public void incStarCount() {

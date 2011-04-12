@@ -29,6 +29,7 @@ public class SaxLoader
 	private static final String START = "start";
 	private static final String STARTSPEED = "startspeed";
 	private static final String BOUNDS = "bounds";
+	private static final String STARS = "stars";
 
 	private static final String COORD_X = "x";
 	private static final String COORD_Y = "y";
@@ -118,6 +119,15 @@ public class SaxLoader
 			}
 		});
 		
+		root.getChild(STARS).setStartElementListener(new StartElementListener()
+		{
+			@Override
+			public void start(Attributes attributes)
+			{
+				level.starsToCollect = getInt(attributes, "value", 10);
+			}
+		});
+		
 		Element items = root.getChild(ITEMS);
 		
 		items.getChild(ITEMS_BH).setStartElementListener(new StartElementListener()
@@ -137,8 +147,8 @@ public class SaxLoader
 				level.planetList.add(new GravityField(context,
 						getCoord(attributes),
 						getSCoord(attributes),
-						getNum(attributes, ITEMS_KEY_ROTATION, 0),
-						getNum(attributes, ITEMS_KEY_POWER, 0)));
+						getFloat(attributes, ITEMS_KEY_ROTATION, 0),
+						getFloat(attributes, ITEMS_KEY_POWER, 0)));
 			}
 		});
 		
@@ -152,7 +162,7 @@ public class SaxLoader
 			{
 				coord = getCoord(attributes);
 				initialshow = attributes.getValue("initialshow").contains("true");
-				rotation = getNum(attributes, ITEMS_KEY_ROTATION, 0);
+				rotation = getFloat(attributes, ITEMS_KEY_ROTATION, 0);
 			}
 
 			@Override
@@ -170,8 +180,8 @@ public class SaxLoader
 				Planet p = new Planet(
 						context,
 						getCoord(attributes),
-						getNum(attributes, ITEMS_KEY_RADIUS, 30),
-						(int) getNum(attributes, ITEMS_KEY_TYPE, 0));
+						getFloat(attributes, ITEMS_KEY_RADIUS, 30),
+						(int) getFloat(attributes, ITEMS_KEY_TYPE, 0));
 				level.planetList.add(p);
 			}
 		});
@@ -183,7 +193,7 @@ public class SaxLoader
 			{
 				Coord[] cs = getAbCoord(attributes);
 				level.planetList.add(
-						new Spring(context, cs[0], cs[1], getNum(attributes, ITEMS_KEY_BOUNCINESS, 1)));
+						new Spring(context, cs[0], cs[1], getFloat(attributes, ITEMS_KEY_BOUNCINESS, 1)));
 			}
 		});
 		
@@ -204,8 +214,8 @@ public class SaxLoader
 				level.planetList.add(new Wall(
 						context,
 						getCoord(attributes),
-						getNum(attributes, "sx", 100),
-						getNum(attributes, ITEMS_KEY_ROTATION, 0)));
+						getFloat(attributes, "sx", 100),
+						getFloat(attributes, ITEMS_KEY_ROTATION, 0)));
 			}
 		});
 		
@@ -326,7 +336,26 @@ public class SaxLoader
 	/**
 	 * Extract an integer from these attributes
 	 */
-	private static final float getNum(Attributes attributes, String key, float defaultValue)
+	private static final int getInt(Attributes attributes, String key, int defaultValue)
+	{
+		try
+		{
+			return Integer.valueOf(attributes.getValue(key)).intValue();
+		}
+		catch(NumberFormatException e) {
+			errorOccurred = true;
+			return defaultValue;
+		}
+		catch(NullPointerException e) {
+			errorOccurred = true;
+			return defaultValue;
+		}
+	}
+	
+	/**
+	 * Extract an integer from these attributes
+	 */
+	private static final float getFloat(Attributes attributes, String key, float defaultValue)
 	{
 		try
 		{

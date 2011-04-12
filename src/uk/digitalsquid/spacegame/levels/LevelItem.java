@@ -6,7 +6,7 @@ import java.util.List;
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.spaceitem.SpaceItem;
 
-public class LevelItem
+public final class LevelItem
 {
 	public String levelName;
 	public List<SpaceItem> planetList;
@@ -14,10 +14,12 @@ public class LevelItem
 	public Coord startSpeed;
 	public Coord bounds;
 	
+	public int starsToCollect;
+	
 	// TODO: Move COORD_BOUNDS_DRAWEXT?
 	public static final Coord COORD_BOUNDS_DRAWEXT = new Coord(1, 1);
 	
-	public LevelItem(String name, SpaceItem[] planets, float coordX, float coordY, float boundX, float boundY)
+	public LevelItem(String name, SpaceItem[] planets, float coordX, float coordY, float boundX, float boundY, int starsToCollect)
 	{
 		levelName = name;
 		startPos = new Coord(coordX * SpaceItem.ITEM_SCALE, coordY * SpaceItem.ITEM_SCALE);
@@ -29,6 +31,8 @@ public class LevelItem
 		}
 		
 		startSpeed = new Coord();
+		
+		this.starsToCollect = starsToCollect;
 	}
 	
 	/**
@@ -66,5 +70,7 @@ public class LevelItem
 		}
 		
 		if(levelName == null) levelName = "";
+		
+		if(starsToCollect < 1) starsToCollect = 10;
 	}
 }
