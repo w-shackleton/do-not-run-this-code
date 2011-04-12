@@ -23,6 +23,7 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 	private boolean drawingP1 = true;
 	private boolean drawingP2 = false;
 	private boolean sendStatus = false;
+	private boolean sendFinishedStatus = false;
 	
 	private float drawRadius;
 	
@@ -54,7 +55,11 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 	public AffectData affectLevel() {
 		if(sendStatus) {
 			sendStatus = false;
-			return new AffectData(1);
+			return new AffectData(true, false);
+		}
+		if(sendFinishedStatus) {
+			sendFinishedStatus = false;
+			return new AffectData(false, true);
 		}
 		return null;
 	}
@@ -111,7 +116,10 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 			float distFromDest = (float) Math.hypot(animX, animY);
 			int opacity = 255;
 			if(distFromDest < 128) opacity = CompuFuncs.TrimMin((int) ((distFromDest - 64) * 255f / 64f), 0);
-			if(opacity == 0) drawingP2 = false;
+			if(opacity == 0) {
+				drawingP2 = false;
+				sendFinishedStatus = true;
+			}
 			
 			c.rotate(adjustedAngle, animX, animY);
 			img.setAntiAlias(StaticInfo.Antialiasing);

@@ -13,12 +13,15 @@ import uk.digitalsquid.spacegame.Spacegame;
 import uk.digitalsquid.spacegame.levels.LevelItem;
 import uk.digitalsquid.spacegame.spaceitem.SpaceItem;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Clickable;
+import uk.digitalsquid.spacegame.spaceitem.interfaces.LevelAffectable;
+import uk.digitalsquid.spacegame.spaceitem.interfaces.LevelAffectable.AffectData;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Messageable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Messageable.MessageInfo;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.StaticDrawable;
 import uk.digitalsquid.spacegame.spaceview.gamemenu.GameMenu;
 import uk.digitalsquid.spacegame.spaceview.gamemenu.GameMenu.ClickListener;
 import uk.digitalsquid.spacegame.spaceview.gamemenu.GameMenu.GameMenuItem;
+import uk.digitalsquid.spacegame.spaceview.gamemenu.StarDisplay;
 import uk.digitalsquid.spacegame.subviews.MovingView;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -82,6 +85,8 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 		private static final int GAME_MENU_ZOOM = 0;
 		private static final int GAME_MAIN_MENU = 1;
 		private static final int GAME_MENU_SHOW = 2;
+		
+		private StarDisplay starCount;
 
 		@Override
 		protected void initialiseOnThread()
@@ -117,6 +122,7 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 				constuctMenuShow();
 				gameMenus.get(GAME_MENU_SHOW).show();
 			}
+			starCount = new StarDisplay(context);
 		}
 		
 		private final Coord tmpOuterBounds = new Coord();
@@ -197,7 +203,27 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 						}
 					}
 				}
+				
+				// Stage for game detail returning
+				LevelAffectable lItem;
+				try
+				{
+					lItem = (LevelAffectable) currObj;
+				} catch (RuntimeException e)
+				{
+					lItem = null;
+				}
+				if(lItem != null)
+				{
+					AffectData d = lItem.affectLevel();
+					if(d != null) {
+						if(d.incScore) starCount.incStarCount();
+						if(d.incDisplayedScore) starCount.incDisplayedStarCount();
+					}
+				}
 			}
+			
+			starCount.move(millistep, SPEED_SCALE);
 		}
 		
 		private final Coord screenSize = new Coord();
@@ -232,6 +258,8 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 					item.drawStatic(c, 1, width, height, matrix);
 				}
 			}
+			
+			starCount.drawStatic(c, 1, width, height, matrix);
 		}
 		
 		@Override

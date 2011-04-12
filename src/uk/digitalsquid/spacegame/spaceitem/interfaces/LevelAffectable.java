@@ -16,10 +16,12 @@ public interface LevelAffectable {
 	 */
 	public static class AffectData
 	{
-		public final int scoreAdd;
+		public final boolean incScore;
+		public final boolean incDisplayedScore;
 		
-		public AffectData(int scoreAdd) {
-			this.scoreAdd = scoreAdd;
+		public AffectData(boolean incScore, boolean incDisplayedScore) {
+			this.incScore = incScore;
+			this.incDisplayedScore = incDisplayedScore;
 		}
 	}
 }

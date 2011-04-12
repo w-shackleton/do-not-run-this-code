@@ -19,7 +19,6 @@ import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import uk.digitalsquid.spacegame.spaceitem.SpaceItem;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Forceful;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Forceful.BallData;
-import uk.digitalsquid.spacegame.spaceitem.interfaces.LevelAffectable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.TopDrawable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Warpable;
@@ -303,20 +302,6 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 						if(mItem != null)
 						{
 							mItem.move((int) millistep, SPEED_SCALE);
-						}
-						
-						// Stage for game detail returning
-						LevelAffectable lItem;
-						try
-						{
-							lItem = (LevelAffectable) currObj;
-						} catch (RuntimeException e)
-						{
-							lItem = null;
-						}
-						if(lItem != null)
-						{
-							lItem.affectLevel();
 						}
 					}
 				}
