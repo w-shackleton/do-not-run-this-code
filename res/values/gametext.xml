@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string-array name="bhfirsttimemessage"><item>You seem to have been trapped by the gravity of a black hole!</item>
-<item>There\'s no way of getting out, so you\'ll have to start again!</item>
+<string-array name="bhfirsttimemessage"><item>You\'ve been trapped by the gravity of a black hole!</item>
 </string-array>
 </resources>

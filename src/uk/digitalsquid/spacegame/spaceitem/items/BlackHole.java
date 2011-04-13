@@ -17,7 +17,7 @@ import android.preference.PreferenceManager;
 public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warpable, Messageable
 {
 	private static final int BLACK_HOLE_RADIUS = 70;
-	private static final float BLACK_HOLE_DENSITY = 1.3f;
+	private static final float BLACK_HOLE_DENSITY = .8f;
 	private static final float BLACK_HOLE_ZOOM_SPEED = 1.01f;
 	public static final float BLACK_HOLE_ZOOM_POWER = 1.1f;
 	private static final int BLACK_HOLE_ZOOM_WAIT = 100;
@@ -65,7 +65,7 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 				messageInfo.display = true;
 			}
 			// TODO: Disable for release version
-			messageInfo.display = true;
+			// messageInfo.display = true;
 		}
 		return super.calculateRF(itemC, itemVC);
 	}
@@ -147,7 +147,7 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 		return null;
 	}
 	
-	MessageInfo messageInfo = new MessageInfo(context.getResources().getStringArray(R.array.bhfirsttimemessage), false);
+	private MessageInfo messageInfo = new MessageInfo(context.getResources().getStringArray(R.array.bhfirsttimemessage), false);
 	
 	@Override
 	public MessageInfo sendMessage()

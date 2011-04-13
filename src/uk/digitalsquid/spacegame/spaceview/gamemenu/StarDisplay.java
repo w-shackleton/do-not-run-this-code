@@ -1,13 +1,13 @@
 package uk.digitalsquid.spacegame.spaceview.gamemenu;
 
 import uk.digitalsquid.spacegame.R;
+import uk.digitalsquid.spacegame.StaticInfo;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.StaticDrawable;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
@@ -24,11 +24,6 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	 * Number of displayed stars. This is different as it is updated slightly later (when the star reaches the count thing)
 	 */
 	private int displayedStarCount = 0;
-	
-	/**
-	 * Font 'Bangers' from assets
-	 */
-	private static Typeface font = null;
 	
 	private Drawable star;
 	
@@ -53,10 +48,7 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	private static final int STAR_JUMP_SPEED = 3;
 	
 	public StarDisplay(Context context, int starTotal) {
-		if(font == null) {
-			font = Typeface.createFromAsset(context.getAssets(), "fonts/bangers.ttf");
-			txtPaint.setTypeface(font);
-		}
+		txtPaint.setTypeface(StaticInfo.Fonts.bangers);
 		star = (BitmapDrawable) context.getResources().getDrawable(R.drawable.star);
 		this.starTotal = starTotal;
 	}
