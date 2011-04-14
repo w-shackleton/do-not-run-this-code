@@ -8,8 +8,8 @@ using namespace Objects;
 # include <cmath>
 #endif
 
-#define STAR_RADIUS 30
-#define IMG_RADIUS 60
+#define STAR_RADIUS 15
+#define IMG_RADIUS 30
 
 Star::Star(EditorCallbacks &callbacks, double sx, double sy) :
 	Spherical(callbacks, sx, sy, STAR_RADIUS, STAR_RADIUS, STAR_RADIUS)

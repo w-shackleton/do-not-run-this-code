@@ -17,6 +17,7 @@ LevelWriter::LevelWriter()
 
 void LevelWriter::write(string filename, std::list<Objects::SpaceItem *>* objs, string levelName, string creator,
 		const Objects::Player p,
+		const Objects::Portal portal,
 		LevelBounds &bounds)
 {
 	cout << "Saving level" << endl;
@@ -55,6 +56,14 @@ void LevelWriter::write(string filename, std::list<Objects::SpaceItem *>* objs, 
 		level->LinkEndChild(name);
 	}
 
+	// Portal
+	{
+		TiXmlElement *name = new TiXmlElement("portal");
+		name->SetDoubleAttribute("x", portal.x);
+		name->SetDoubleAttribute("y", portal.y);
+		level->LinkEndChild(name);
+	}
+
 	// Items
 	{
 		TiXmlElement *items = new TiXmlElement("items");
@@ -90,6 +99,7 @@ LevelReader::LevelReader()
 
 bool LevelReader::open(const std::string &filename, std::list<Objects::SpaceItem *>* objs, std::string &levelName, std::string &levelCreator,
 		Objects::Player& p,
+		Objects::Portal& portal,
 		LevelBounds &bounds)
 {
 	TiXmlDocument doc(filename);
@@ -129,6 +139,13 @@ bool LevelReader::open(const std::string &filename, std::list<Objects::SpaceItem
 	{
 		levelBounds->QueryDoubleAttribute("x", &bounds.sx);
 		levelBounds->QueryDoubleAttribute("y", &bounds.sy);
+	}
+
+	TiXmlElement *portalElem = level->FirstChildElement("portal");
+	if(portalElem)
+	{
+		portalElem->QueryDoubleAttribute("x", &portal.x);
+		portalElem->QueryDoubleAttribute("y", &portal.y);
 	}
 
 	TiXmlElement *items = level->FirstChildElement("items");
