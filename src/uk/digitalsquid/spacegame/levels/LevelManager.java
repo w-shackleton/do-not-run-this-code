@@ -317,6 +317,7 @@ public class LevelManager
 					DeleteLevelSet(foldername);
 				}
 			}
+			levelSets.close();
 		}
 
 		private void DeleteLevel(String filename, int fileNumber, String set)
@@ -340,9 +341,10 @@ public class LevelManager
 		{
 			ArrayList<LevelExtendedInfo> items = new ArrayList<LevelExtendedInfo>();
 
+			Cursor c = null;
 			try
 			{
-				Cursor c = getReadableDatabase().query(
+				c = getReadableDatabase().query(
 						DB_LEVELS_NAME,
 						new String[] { KEY_FROMSET, KEY_NAME, KEY_LEVEL_NUMBER, KEY_AUTHOR,
 								KEY_FILENAME, KEY_TIME }, KEY_FROMSET + " = ?",
@@ -359,11 +361,12 @@ public class LevelManager
 							.getString(idFromset), c.getString(idAuthor), c
 							.getString(idFilename), c.getInt(idTime)));
 				}
-				c.close();
 			} catch (SQLiteException e)
 			{
 				Log.e("SpaceGame", "SQLite Database Error: "
 						+ e.getLocalizedMessage());
+			} finally {
+				if(c != null) c.close();
 			}
 
 			return items;

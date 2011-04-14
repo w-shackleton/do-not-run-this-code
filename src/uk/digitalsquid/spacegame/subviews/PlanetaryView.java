@@ -25,6 +25,7 @@ import uk.digitalsquid.spacegame.spaceitem.interfaces.Warpable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Warpable.WarpData;
 import uk.digitalsquid.spacegame.spaceitem.items.AnimatedPlayer;
 import uk.digitalsquid.spacegame.spaceitem.items.Player;
+import uk.digitalsquid.spacegame.spaceitem.items.Portal;
 import uk.digitalsquid.spacegame.spaceitem.items.Star;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -143,6 +144,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 		}
 		
 		protected Player p;
+		protected Portal portal;
 		
 		@Override
 		protected void initialiseOnThread()
@@ -179,6 +181,8 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 //			p.itemC = new Coord(level.startPos);
 //			p.itemVC = new Coord();
 //			p.itemRF = new Coord();
+			
+			portal = new Portal(context, level.portal);
 			
 			millistep = MAX_MILLIS; // Since no initial benchmark
 
@@ -303,6 +307,22 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 						{
 							mItem.move((int) millistep, SPEED_SCALE);
 						}
+					}
+				}
+				
+				if(gravOn)
+					p.itemRF.addThis(portal.calculateRF(p.itemC, p.itemVC));
+				
+				if(!paused) {
+					portal.move((int) millistep, SPEED_SCALE);
+					
+					BallData data = portal.calculateVelocity(p.itemC, p.itemVC, Player.BALL_RADIUS);
+					if(data != null)
+					{
+						if(data.itemC != null)
+							p.itemC.copyFrom(data.itemC);
+						if(data.itemVC != null)
+							p.itemVC.copyFrom(data.itemVC);
 					}
 				}
 				
@@ -488,13 +508,13 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 			// DRAW TIME
 			
 			// Object draw
-			for(i = 0; i < planetList.size(); i++)
+			for(SpaceItem item : planetList)
 			{
-				currObj = planetList.get(i);
-				currObj.draw(c, 1);
+				item.draw(c, 1);
 			}
 			
 			p.draw(c, 1);
+			portal.draw(c, 1);
 			
 //			if(stopped)
 //				c.drawText("MS: " + millistep + ", Spare millis: " + (MAX_MILLIS - System.currentTimeMillis() + prevTime), 20, 20, PaintLoader.load(txtpaint));
@@ -538,12 +558,11 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 			txtpaint.b = 255;
 
 			// DRAW TIME for objects on top of ball
-			for(i = 0; i < planetList.size(); i++)
+			for(SpaceItem obj : planetList)
 			{
-				currObj = planetList.get(i);
 				TopDrawable item;
 				try {
-					item = (TopDrawable) currObj;
+					item = (TopDrawable) obj;
 				} catch(RuntimeException e) {
 					item = null;
 				}
