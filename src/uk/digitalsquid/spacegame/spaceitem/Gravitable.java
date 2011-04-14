@@ -20,20 +20,7 @@ public abstract class Gravitable extends Spherical implements Forceful
 	
 	public Coord calculateRF(Coord itemC, Coord itemVC)
 	{
-		tmpRF.x = CompuFuncs.computeForceX(
-				pos.x,
-				pos.y,
-				density,
-				radius,
-				itemC.x,
-				itemC.y);
-		tmpRF.y = CompuFuncs.computeForceY(
-				pos.x,
-				pos.y,
-				density,
-				radius,
-				itemC.x,
-				itemC.y);
+		CompuFuncs.computeForce(tmpRF, pos, density, radius, itemC);
 		return tmpRF;
 	}
 	
