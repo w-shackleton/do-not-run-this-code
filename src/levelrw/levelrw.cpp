@@ -16,8 +16,10 @@ LevelWriter::LevelWriter()
 }
 
 void LevelWriter::write(string filename, std::list<Objects::SpaceItem *>* objs, string levelName, string creator,
-		const Objects::Player p,
-		LevelBounds &bounds)
+		const Objects::Player &p,
+		const Objects::Portal &portal,
+		LevelBounds &bounds,
+		int& numberStars)
 {
 	cout << "Saving level" << endl;
 	this->objs = objs;
@@ -52,6 +54,21 @@ void LevelWriter::write(string filename, std::list<Objects::SpaceItem *>* objs, 
 		TiXmlElement *name = new TiXmlElement("bounds");
 		name->SetDoubleAttribute("x", bounds.sx);
 		name->SetDoubleAttribute("y", bounds.sy);
+		level->LinkEndChild(name);
+	}
+
+	// Portal
+	{
+		TiXmlElement *name = new TiXmlElement("portal");
+		name->SetDoubleAttribute("x", portal.x);
+		name->SetDoubleAttribute("y", portal.y);
+		level->LinkEndChild(name);
+	}
+
+	// Stars
+	{
+		TiXmlElement *name = new TiXmlElement("stars");
+		name->SetAttribute("value", numberStars);
 		level->LinkEndChild(name);
 	}
 
@@ -90,7 +107,9 @@ LevelReader::LevelReader()
 
 bool LevelReader::open(const std::string &filename, std::list<Objects::SpaceItem *>* objs, std::string &levelName, std::string &levelCreator,
 		Objects::Player& p,
-		LevelBounds &bounds)
+		Objects::Portal& portal,
+		LevelBounds &bounds,
+		int* numberStars)
 {
 	TiXmlDocument doc(filename);
 	if(!doc.LoadFile()) return false;
@@ -131,6 +150,19 @@ bool LevelReader::open(const std::string &filename, std::list<Objects::SpaceItem
 		levelBounds->QueryDoubleAttribute("y", &bounds.sy);
 	}
 
+	TiXmlElement *portalElem = level->FirstChildElement("portal");
+	if(portalElem)
+	{
+		portalElem->QueryDoubleAttribute("x", &portal.x);
+		portalElem->QueryDoubleAttribute("y", &portal.y);
+	}
+
+	TiXmlElement *starsElem = level->FirstChildElement("stars");
+	if(starsElem)
+	{
+		starsElem->QueryIntAttribute("value", numberStars);
+	}
+
 	TiXmlElement *items = level->FirstChildElement("items");
 	if(items)
 	{
@@ -152,11 +184,8 @@ bool LevelReader::open(const std::string &filename, std::list<Objects::SpaceItem
 				objs->push_back(new Objects::Star(*callbacks, *item));
 
 			item = item->NextSiblingElement();
-			cout << "Loaded item" << endl;
 		}
 	}
-
-	cout << "Finished loading" << endl;
 
 	return true;
 }

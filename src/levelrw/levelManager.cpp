@@ -8,7 +8,8 @@ using namespace Objects;
 #include <fstream>
 
 LevelManager::LevelManager() :
-	objs(_objs)
+	objs(_objs),
+	numberStars(10)
 {
 }
 
@@ -18,6 +19,7 @@ LevelManager::~LevelManager()
 	// Release pointer early as to avoid grumbles in spacePanel.cpp
 	levelBounds.release();
 	p.release();
+	portal.release();
 }
 
 void LevelManager::newLevel(std::string filename)
@@ -26,8 +28,11 @@ void LevelManager::newLevel(std::string filename)
 
 	levelBounds.reset(new LevelBounds(*callbacks, 1000, 1000));
 	p.reset(new Player(*callbacks, 0, 0, 0));
+	portal.reset(new Portal(*callbacks, -100, 0));
 	levelPath = filename;
 	levelChanged = true;
+	
+	numberStars = 10;
 
 	save();
 }
@@ -39,13 +44,14 @@ bool LevelManager::openLevel(std::string filename)
 
 	levelBounds.reset(new LevelBounds(*callbacks, 1000, 1000));
 	p.reset(new Player(*callbacks, 0, 0, 0));
+	portal.reset(new Portal(*callbacks, -100, 0));
 
 	if(!ifstream(filename.c_str()))
 	{
 		newLevel(filename);
 		return true;
 	}
-	return reader.open(filename, &objs, levelName, creator, *p, *levelBounds);
+	return reader.open(filename, &objs, levelName, creator, *p, *portal, *levelBounds, &numberStars);
 }
 
 bool LevelManager::save()
@@ -61,7 +67,7 @@ void LevelManager::saveLevel(std::string filename)
 		filename += ".slv";
 	}
 	// INSERT FILENAME CHECK CODE
-	writer.write(filename, &objs, levelName, creator, *p, *levelBounds);
+	writer.write(filename, &objs, levelName, creator, *p, *portal, *levelBounds, numberStars);
 	levelChanged = false;
 	levelPath = filename;
 }

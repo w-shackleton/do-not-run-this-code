@@ -12,6 +12,7 @@
 #include "../objects/levelBounds.hpp"
 
 #include "../objects/player.hpp"
+#include "../objects/portal.hpp"
 
 #define LEVEL_MIN 200
 #define LEVEL_MAX 2000
@@ -40,11 +41,14 @@ namespace Levels
 			std::auto_ptr<Objects::LevelBounds> levelBounds;
 
 			std::auto_ptr<Objects::Player> p;
+			std::auto_ptr<Objects::Portal> portal;
 
 			std::string levelPath;
 
 			std::string levelName;
 			std::string creator;
+
+			int numberStars;
 		protected:
 			friend class LevelInfoEditor;
 

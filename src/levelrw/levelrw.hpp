@@ -10,6 +10,7 @@
 #include "../editorCallbacks.hpp"
 
 #include "../objects/player.hpp"
+#include "../objects/portal.hpp"
 
 namespace Levels
 {
@@ -18,8 +19,10 @@ namespace Levels
 		public:
 			LevelWriter();
 			void write(std::string filename, std::list<Objects::SpaceItem *>* objs, std::string levelName, std::string creator,
-					const Objects::Player p,
-					Objects::LevelBounds &bounds);
+					const Objects::Player &p,
+					const Objects::Portal &portal,
+					Objects::LevelBounds &bounds,
+					int& numberStars);
 		protected:
 			void cleanup();
 			TiXmlDocument doc;
@@ -36,7 +39,9 @@ namespace Levels
 			LevelReader();
 			bool open(const std::string &filename, std::list<Objects::SpaceItem *>* objs, std::string &levelName, std::string &levelCreator,
 					Objects::Player& p,
-					Objects::LevelBounds &bounds);
+					Objects::Portal& portal,
+					Objects::LevelBounds &bounds,
+					int* numberStars);
 			bool open(const std::string &filename, std::string &levelName, std::string &levelCreator);
 			void setEditorCallbacks(EditorCallbacks *callbacks);
 		protected:

@@ -29,6 +29,10 @@ LevelInfoEditor::LevelInfoEditor(LevelManager &lmanager, bool newLevel) :
 	creator = new wxTextCtrl(this, -1, wxString(lmanager.creator.c_str(), wxConvUTF8), wxDefaultPosition, wxSize(180, -1));
 	prefGrid->Add(creator, 1, wxALL | wxEXPAND, 5);
 
+	prefGrid->Add(new wxStaticText(this, -1, _("Number of stars to collect:")), 0, wxALL | wxALIGN_CENTRE, 5);
+	stars = new wxTextCtrl(this, -1, wxString::Format(wxT("%d"), lmanager.numberStars), wxDefaultPosition, wxSize(180, -1));
+	prefGrid->Add(stars, 1, wxALL | wxEXPAND, 5);
+
 	vsizer->Add(prefGrid);
 	prefGrid->SetSizeHints(this);
 
@@ -53,6 +57,8 @@ void LevelInfoEditor::OnOk(wxCommandEvent& event)
 	lmanager.change(); // We have changed something
 	lmanager.levelName = title->GetValue().mb_str();
 	lmanager.creator = creator->GetValue().mb_str();
+
+	stars->GetValue().ToLong((long*)&lmanager.numberStars);
 
 	EndModal(0);
 }

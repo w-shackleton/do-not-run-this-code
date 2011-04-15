@@ -21,7 +21,7 @@ class LevelInfoEditor : public wxDialog
 		void OnCancel(wxCommandEvent& event);
 		void OnOk(wxCommandEvent& event);
 
-		wxTextCtrl *title, *creator;
+		wxTextCtrl *title, *creator, *stars;
 		Levels::LevelManager &lmanager;
 };
 
