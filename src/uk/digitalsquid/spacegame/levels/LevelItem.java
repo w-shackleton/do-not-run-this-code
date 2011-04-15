@@ -14,6 +14,8 @@ public final class LevelItem
 	public Coord startSpeed;
 	public Coord bounds;
 	
+	public Coord portal;
+	
 	public int starsToCollect;
 	
 	// TODO: Move COORD_BOUNDS_DRAWEXT?
@@ -31,6 +33,7 @@ public final class LevelItem
 		}
 		
 		startSpeed = new Coord();
+		portal = new Coord();
 		
 		this.starsToCollect = starsToCollect;
 	}
@@ -68,6 +71,9 @@ public final class LevelItem
 			bounds.x *= SpaceItem.ITEM_SCALE;
 			bounds.y *= SpaceItem.ITEM_SCALE;
 		}
+		
+		if(portal == null) 
+			portal = new Coord();
 		
 		if(levelName == null) levelName = "";
 		

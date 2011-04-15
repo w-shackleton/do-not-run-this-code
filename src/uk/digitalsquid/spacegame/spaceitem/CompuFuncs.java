@@ -10,7 +10,37 @@ import uk.digitalsquid.spacegame.Coord;
 public class CompuFuncs
 {
 	public static final double GRAVCONST = .1f;
+	
+	/**
+	 * Computes the force between a massive body and the player
+	 * @param outForce The {@link Coord} to put the force into
+	 * @param planet The body's position
+	 * @param planetDensity The body's density
+	 * @param planetRad The body's radius
+	 * @param item The position of the player
+	 */
+	public static final void computeForce(
+			Coord outForce,
+			Coord planet,
+			double planetDensity,
+			double planetRad,
+			Coord item) {
+		double r = Math.sqrt((planet.x - item.x) * (planet.x - item.x) + (planet.y - item.y) * (planet.y - item.y)); // Distance between objects
+		
+		if((planet.x - item.x) * (planet.x - item.x) + (planet.y - item.y) * (planet.y - item.y) < planetRad * planetRad)
+			planetRad = r;
+		
+		outForce.x =
+			GRAVCONST * (planet.x - item.x) *
+			computeWeight(planetRad,planetDensity) /
+			(r * r * Math.sqrt(r));
+		outForce.y =
+			GRAVCONST * (planet.y - item.y) * 
+			computeWeight(planetRad,planetDensity) /
+			(r * r * Math.sqrt(r));
+	}
 
+	@Deprecated
 	public static final double computeForceX(
 			double planetX,			// ForceX = G m x 
 			double planetY,			//          -----
@@ -37,6 +67,7 @@ public class CompuFuncs
 			(r * r * Math.sqrt(r));
 	}
 	
+	@Deprecated
 	public static final double computeForceY(
 			double planetX,
 			double planetY,

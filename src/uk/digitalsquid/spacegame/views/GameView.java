@@ -122,7 +122,7 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 				constuctMenuShow();
 				gameMenus.get(GAME_MENU_SHOW).show();
 			}
-			starCount = new StarDisplay(context, level.starsToCollect);
+			starCount = new StarDisplay(context, level.starsToCollect, portal);
 		}
 		
 		private final Coord tmpOuterBounds = new Coord();

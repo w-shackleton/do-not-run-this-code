@@ -4,6 +4,7 @@ import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.StaticInfo;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.StaticDrawable;
+import uk.digitalsquid.spacegame.spaceitem.items.Portal;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -47,10 +48,13 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	private static final int STAR_JUMP_DIST = 10;
 	private static final int STAR_JUMP_SPEED = 3;
 	
-	public StarDisplay(Context context, int starTotal) {
+	private final Portal portal;
+	
+	public StarDisplay(Context context, int starTotal, Portal portal) {
 		txtPaint.setTypeface(StaticInfo.Fonts.bangers);
 		star = (BitmapDrawable) context.getResources().getDrawable(R.drawable.star);
 		this.starTotal = starTotal;
+		this.portal = portal;
 	}
 
 	@Override
@@ -64,6 +68,8 @@ public class StarDisplay implements StaticDrawable, Moveable {
 
 	public void incStarCount() {
 		starCount++;
+		if(starCount == starTotal)
+			portal.activate();
 	}
 
 	public int getStarCount() {

@@ -5,8 +5,8 @@
 	<start x="0" y="0" />
 	<startspeed x="25" y="25" />
 	<bounds x="480" y="320" />
+	<portal x="-1000" y="-1000" />
 	<items>
-		<!--<gravity x="-30" y="0" sx="70" sy="80" rotation="45" speed="5" />-->
 		<planet x="-100" y="0" radius="30" type="5" />
 		<planet x="70" y="0" radius="30" type="0" />
 	</items>

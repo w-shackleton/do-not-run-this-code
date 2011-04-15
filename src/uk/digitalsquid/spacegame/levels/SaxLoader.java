@@ -29,6 +29,7 @@ public class SaxLoader
 	private static final String START = "start";
 	private static final String STARTSPEED = "startspeed";
 	private static final String BOUNDS = "bounds";
+	private static final String PORTAL = "portal";
 	private static final String STARS = "stars";
 
 	private static final String COORD_X = "x";
@@ -116,6 +117,15 @@ public class SaxLoader
 			public void start(Attributes attributes)
 			{
 				level.bounds = getCoord(attributes, DEF_WALL);
+			}
+		});
+		
+		root.getChild(PORTAL).setStartElementListener(new StartElementListener()
+		{
+			@Override
+			public void start(Attributes attributes)
+			{
+				level.portal = getCoord(attributes);
 			}
 		});
 		

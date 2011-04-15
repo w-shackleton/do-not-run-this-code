@@ -98,8 +98,8 @@ public abstract class ThreadedView<VT extends ThreadedView.ViewThread> extends S
 						drawCanvas(c);
 					}
 				} catch (Exception e) {
-					// Toast.makeText(context, "An error occured somewhere, please check log for details!", Toast.LENGTH_LONG);
-					Log.e("SpaceGame", "An error occured in the main game loop: " + e.getMessage() + ".", e);
+					// Toast.makeText(context, "An error occurred somewhere, please check log for details!", Toast.LENGTH_LONG);
+					Log.e("SpaceGame", "An error occurred in the main game loop: " + e.getMessage() + ".", e);
 					break;
 				}
 				finally
