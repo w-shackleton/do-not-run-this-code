@@ -142,23 +142,23 @@ public class Spacegame extends Activity
 		switch(view)
 		{
 		case LOADING:
-			splash = new SplashScreen(this, null, msgHandler, lmanager);
+			splash = new SplashScreen(getApplicationContext(), null, msgHandler, lmanager);
 			linearlayout.addView(splash);
 			break;
 		case MAIN_MENU:
-			mainmenu = new MainMenuLayout(this, null, msgHandler, lmanager);
+			mainmenu = new MainMenuLayout(getApplicationContext(), null, msgHandler, lmanager);
 			linearlayout.addView(mainmenu);
 			break;
 		case GAME:
-			sview = new GameViewLayout(this, null, levelToLoad, msgHandler);
+			sview = new GameViewLayout(getApplicationContext(), null, levelToLoad, msgHandler);
 			linearlayout.addView(sview);
 			break;
 		case MENU_LEVELSET_SELECT:
-			levelsetselect = new LevelSetSelectLayout(this, null, msgHandler);
+			levelsetselect = new LevelSetSelectLayout(getApplicationContext(), null, msgHandler);
 			linearlayout.addView(levelsetselect);
 			break;
 		case MENU_LEVEL_SELECT:
-			levelselect = new LevelSelectLayout(this, null, msgHandler, lmanager, currentLevelset);
+			levelselect = new LevelSelectLayout(getApplicationContext(), null, msgHandler, lmanager, currentLevelset);
 			linearlayout.addView(levelselect);
 			break;
 		}

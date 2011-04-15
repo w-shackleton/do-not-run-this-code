@@ -15,7 +15,7 @@ public class AnimatedPlayer extends Player
 	protected static final Random random = new Random();
 
 	protected Coord eyePos = new Coord(0, 0);
-	protected Coord eyeRotatedPos;
+	protected Coord eyeRotatedPos = new Coord();
 	
 	/**
 	 * The amount that the eye can move in its socket
@@ -123,7 +123,8 @@ public class AnimatedPlayer extends Player
 		eyePos.x += eyeDistanceToMove.x / EYE_MOVE_SPEED;
 		eyePos.y += eyeDistanceToMove.y / EYE_MOVE_SPEED;
 		
-		eyeRotatedPos = eyeMoveTo.rotate(null, -ballRotation * DEG_TO_RAD);
+		eyeRotatedPos.copyFrom(eyeMoveTo);
+		eyeRotatedPos.rotateThis(null, -ballRotation * DEG_TO_RAD);
 		
 		// Draw
 		

@@ -145,7 +145,10 @@ public abstract class ThreadedView<VT extends ThreadedView.ViewThread> extends S
 			
 			c.restore();
 			
+			c.save();
+			postdrawscale(c);
 			postdraw(c);
+			c.restore();
 			
 			// SLEEPY TIME!!
 			currTime = System.currentTimeMillis();
@@ -175,6 +178,7 @@ public abstract class ThreadedView<VT extends ThreadedView.ViewThread> extends S
 		
 		protected void predraw(Canvas c){}
 		protected void draw(Canvas c){}
+		protected abstract void postdrawscale(Canvas c);
 		protected void postdraw(Canvas c){}
 		
 		protected abstract void scale(Canvas c);

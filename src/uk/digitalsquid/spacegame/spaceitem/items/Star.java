@@ -125,10 +125,10 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 			img.setAntiAlias(StaticInfo.Antialiasing);
 			img.setAlpha(opacity);
 			img.setBounds(
-					(int)(animX - radius * 1.5 * worldZoom),
-					(int)(animY - radius * 1.5 * worldZoom),
-					(int)(animX + radius * 1.5 * worldZoom),
-					(int)(animY + radius * 1.5 * worldZoom));
+					(int)(animX - radius * worldZoom),
+					(int)(animY - radius * worldZoom),
+					(int)(animX + radius * worldZoom),
+					(int)(animY + radius * worldZoom));
 			img.draw(c);
 			c.rotate(-adjustedAngle, animX, animY);
 		}

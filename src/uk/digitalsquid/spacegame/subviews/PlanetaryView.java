@@ -30,7 +30,6 @@ import uk.digitalsquid.spacegame.spaceitem.items.Star;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -258,29 +257,15 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 					
 					if(!paused)
 					{
-						if(gravOn) // Stage for gravity forces
+						if(currObj instanceof Forceful)
 						{
-							Forceful item;
-							try {
-								item = (Forceful) currObj;
-							} catch(RuntimeException e) {
-								item = null;
-							}
-							if(item != null)
+							Forceful item = (Forceful) currObj;
+							if(gravOn) // Stage for gravity forces
 							{
 								p.itemRF.addThis(item.calculateRF(p.itemC, p.itemVC));
 							}
-						}
-						
-						// Stage for velocity changes
-						Forceful item;
-						try {
-							item = (Forceful) currObj;
-						} catch(RuntimeException e) {
-							item = null;
-						}
-						if(item != null)
-						{
+							
+							// Stage for velocity changes
 							BallData data = item.calculateVelocity(p.itemC, p.itemVC, AnimatedPlayer.BALL_RADIUS);
 							if(data != null)
 							{
@@ -295,17 +280,9 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 					if(!paused)
 					{
 						// Stage for object animation / movement
-						Moveable mItem;
-						try
+						if(currObj instanceof Moveable)
 						{
-							mItem = (Moveable) currObj;
-						} catch (RuntimeException e)
-						{
-							mItem = null;
-						}
-						if(mItem != null)
-						{
-							mItem.move((int) millistep, SPEED_SCALE);
+							((Moveable) currObj).move((int) millistep, SPEED_SCALE);
 						}
 					}
 				}
@@ -368,20 +345,12 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 			}
 			
 			// object warp data collect
-			warpData = new WarpData();
-			for(i = 0; i < planetList.size(); i++)
+			warpData.reset();
+			for(SpaceItem currObj : planetList)
 			{
-				currObj = planetList.get(i);
-				
-				Warpable wItem;
-				try {
-					wItem = (Warpable) currObj;
-				} catch(RuntimeException e) {
-					wItem = null;
-				}
-				if(wItem != null)
+				if(currObj instanceof Warpable)
 				{
-					WarpData data = wItem.sendWarpData();
+					WarpData data = ((Warpable)currObj).sendWarpData();
 					if(data != null)
 					{
 						warpData.apply(data);
@@ -560,15 +529,9 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 			// DRAW TIME for objects on top of ball
 			for(SpaceItem obj : planetList)
 			{
-				TopDrawable item;
-				try {
-					item = (TopDrawable) obj;
-				} catch(RuntimeException e) {
-					item = null;
-				}
-				if(item != null)
+				if(obj instanceof TopDrawable)
 				{
-					item.drawTop(c, 1);
+					((TopDrawable)obj).drawTop(c, 1);
 				}
 			}
 		}
@@ -578,10 +541,12 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 		{
 			// Apply warpData, part 2. Part 1 is not done here, but in a non-abstract class, in scale()
 			warpDataPaint.a = (int) CompuFuncs.TrimMax(warpData.fade, 255);
-			warpDataPaint.r = 0;
-			warpDataPaint.g = 0;
-			warpDataPaint.b = 0;
-			c.drawRect(new Rect(0, 0, width, height), PaintLoader.load(warpDataPaint));
+			if(warpDataPaint.a != 255) {
+				warpDataPaint.r = 0;
+				warpDataPaint.g = 0;
+				warpDataPaint.b = 0;
+				c.drawRect(0, 0, width, height, PaintLoader.load(warpDataPaint));
+			}
 		}
 		
 		@Override

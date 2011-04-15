@@ -11,7 +11,7 @@ import android.graphics.Paint.Style;
  * @author william
  *
  */
-public class PaintLoader
+public final class PaintLoader
 {
 	private static final Paint p = new Paint();
 	public static final synchronized Paint load(PaintDesc desc)

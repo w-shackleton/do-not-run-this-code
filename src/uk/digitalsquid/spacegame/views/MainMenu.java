@@ -71,5 +71,10 @@ public class MainMenu extends PlanetaryView<MainMenu.ViewThread>
 			msg.what = returnCode;
 			MainMenu.this.gameHandler.sendMessage(msg);
 		}
+
+		@Override
+		protected void postdrawscale(Canvas c) {
+			c.scale(WORLD_ZOOM_UNSCALED, WORLD_ZOOM_UNSCALED);
+		}
 	}
 }

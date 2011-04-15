@@ -2,7 +2,6 @@ package uk.digitalsquid.spacegame.views;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import uk.digitalsquid.spacegame.BounceVibrate;
@@ -169,27 +168,22 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 		}
 		
 		@Override
+		protected void postdrawscale(Canvas c) {
+			c.scale(WORLD_ZOOM_UNSCALED, WORLD_ZOOM_UNSCALED);
+		}
+		
+		@Override
 		protected void calculate()
 		{
 			super.calculate();
 			
 			// Message displays
-			int i;
-			SpaceItem currObj;
 			MessageInfo message;
-			for(i = 0; i < planetList.size(); i++)
+			for(SpaceItem item : planetList)
 			{
-				currObj = planetList.get(i);
-				
-				Messageable mItem;
-				try {
-					mItem = (Messageable) currObj;
-				} catch(RuntimeException e) {
-					mItem = null;
-				}
-				if(mItem != null)
+				if(item instanceof Messageable)
 				{
-					message = mItem.sendMessage();
+					message = ((Messageable)item).sendMessage();
 					if(message != null)
 					{
 						if(message.display)
@@ -205,17 +199,9 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 				}
 				
 				// Stage for game detail returning
-				LevelAffectable lItem;
-				try
+				if(item instanceof LevelAffectable)
 				{
-					lItem = (LevelAffectable) currObj;
-				} catch (RuntimeException e)
-				{
-					lItem = null;
-				}
-				if(lItem != null)
-				{
-					AffectData d = lItem.affectLevel();
+					AffectData d = ((LevelAffectable)item).affectLevel();
 					if(d != null) {
 						if(d.incScore) starCount.incStarCount();
 						if(d.incDisplayedScore) starCount.incDisplayedStarCount();
@@ -226,7 +212,7 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 			starCount.move(millistep, SPEED_SCALE);
 		}
 		
-		private final Coord screenSize = new Coord();
+		private final Coord screenStandardSize = new Coord();
 		
 		@Override
 		protected void postdraw(Canvas c)
@@ -234,32 +220,30 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 			// Draw objects static to screen (buttons)
 			
 			// Draw menus
-			screenSize.x = width;
-			screenSize.y = height;
+			screenStandardSize.x = REQ_SIZE_X;
+			screenStandardSize.y = height * width / REQ_SIZE_X;
 			
 			for(GameMenu menu : gameMenus)
 			{
 				menu.move(millistep, SPEED_SCALE);
-				menu.draw(c, WORLD_ZOOM_UNSCALED, screenSize);
+				menu.draw(c, WORLD_ZOOM_UNSCALED, screenStandardSize);
 			}
 			
 			super.postdraw(c);
 			
+			matrix.postScale(1 / WORLD_ZOOM_UNSCALED, 1 / WORLD_ZOOM_UNSCALED);
+			
 			for(SpaceItem obj : level.planetList) {
 				// Stage for static drawing
-				StaticDrawable item;
-				try {
-					item = (StaticDrawable) obj;
-				} catch(RuntimeException e) {
-					item = null;
-				}
-				if(item != null)
+				if(obj instanceof StaticDrawable)
 				{
-					item.drawStatic(c, 1, width, height, matrix);
+					((StaticDrawable)obj).drawStatic(c, 1, (int)screenStandardSize.x, (int)screenStandardSize.y, matrix);
 				}
 			}
 			
 			starCount.drawStatic(c, 1, width, height, matrix);
+			
+			matrix.postScale(WORLD_ZOOM_UNSCALED, WORLD_ZOOM_UNSCALED);
 		}
 		
 		@Override
@@ -267,11 +251,9 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 		{
 			super.saveState(bundle);
 			
-			Iterator<GameMenu> menuIter = gameMenus.iterator();
 			int i = 0;
-			while(menuIter.hasNext())
+			for(GameMenu menu : gameMenus)
 			{
-				GameMenu menu = menuIter.next();
 				bundle.putBoolean("menu." + i++, menu.isHidden());
 			}
 		}
@@ -281,11 +263,9 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 		{
 			super.restoreState(bundle);
 			
-			Iterator<GameMenu> menuIter = gameMenus.iterator();
 			int i = 0;
-			while(menuIter.hasNext())
+			for(GameMenu menu : gameMenus)
 			{
-				GameMenu menu = menuIter.next();
 				if(bundle.getBoolean("menu." + i++, true))
 					menu.hideImmediately();
 				else
@@ -295,24 +275,16 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 		
 		public synchronized void onTouch(View v, MotionEvent event)
 		{
-			Iterator<GameMenu> iter = gameMenus.iterator();
-			while(iter.hasNext())
+			for(GameMenu menu : gameMenus)
 			{
-				if(iter.next().computeClick(event)) return;
+				if(menu.computeClick(event)) return;
 			}
-			Iterator<SpaceItem> itemIter = planetList.iterator();
-			while(itemIter.hasNext())
+			
+			for(SpaceItem obj : planetList)
 			{
-				SpaceItem currObj = itemIter.next();
-
-				Clickable item;
-				try {
-					item = (Clickable) currObj;
-				} catch(RuntimeException e) {
-					item = null;
-				}
-				if(item != null)
+				if(obj instanceof Clickable)
 				{
+					Clickable item = (Clickable) obj;
 					if(item.isClicked(new Coord(event.getX(), event.getY(), matrix)))
 					{
 						item.onClick();

@@ -56,5 +56,12 @@ public interface Warpable
 			if(oldData.endGame)
 				endGame = true;
 		}
+		
+		public void reset() {
+			fade = 0;
+			rotation = 0;
+			zoom = 1;
+			endGame = false;
+		}
 	}
 }

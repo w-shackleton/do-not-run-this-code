@@ -31,7 +31,7 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	private static final Paint txtPaint = new Paint();
 	static {
 		txtPaint.setAntiAlias(true);
-		txtPaint.setTextSize(40);
+		txtPaint.setTextSize(30);
 		txtPaint.setTextAlign(Paint.Align.LEFT);
 		txtPaint.setColor(0xFFFFFFFF);
 	}
@@ -60,10 +60,10 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	@Override
 	public void drawStatic(Canvas c, float worldZoom, int width, int height, Matrix matrix) {
 		star.setAlpha(255);
-		star.setBounds(10, 10 - jump, 50, 50 - jump);
+		star.setBounds(10, 10 - jump, 40, 40 - jump);
 		star.draw(c);
 		
-		c.drawText("" + displayedStarCount + " / " + starTotal, 60, 50, txtPaint);
+		c.drawText("" + displayedStarCount + " / " + starTotal, 50, 40, txtPaint);
 	}
 
 	public void incStarCount() {

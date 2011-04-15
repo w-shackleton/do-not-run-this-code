@@ -205,5 +205,10 @@ public class SplashScreen extends ThreadedView<SplashScreen.ViewThread>
 		{
 			
 		}
+
+		@Override
+		protected void postdrawscale(Canvas c) {
+			c.scale(1, 1);
+		}
 	}
 }
