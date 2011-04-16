@@ -97,7 +97,7 @@ public class AnimatedPlayer extends Player
 	}
 
 	@Override
-	public void draw(Canvas c, float worldZoom)
+	public void drawPlayer(Canvas c, float worldZoom)
 	{
 		// Calculation steps...
 		

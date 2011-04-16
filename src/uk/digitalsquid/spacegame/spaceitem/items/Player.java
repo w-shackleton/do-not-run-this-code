@@ -4,6 +4,7 @@ import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.spaceitem.Spherical;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Paint;
 
 public abstract class Player extends Spherical implements Moveable
@@ -27,6 +28,19 @@ public abstract class Player extends Spherical implements Moveable
 	{
 		super(context, coord, radius);
 	}
+	
+	@Override
+	public final void draw(Canvas c, float worldZoom) {
+		c.save();
+		c.scale(warpScale, warpScale, (float)itemC.x, (float)itemC.y);
+		c.rotate(warpRotation, (float)itemC.x, (float)itemC.y);
+		
+		drawPlayer(c, worldZoom);
+		
+		c.restore();
+	}
+	
+	public abstract void drawPlayer(Canvas c, float worldZoom);
 
 	@Override
 	public void move(float millistep, float speedScale)
@@ -59,4 +73,7 @@ public abstract class Player extends Spherical implements Moveable
 	 * @param point A {@link Coord} in the game (NOT on the screen). Points on the screen need to be put through the reverse matrix first.
 	 */
 	public void lookTo(Coord point) {}
+	
+	float warpRotation = 0;
+	float warpScale = 1;
 }

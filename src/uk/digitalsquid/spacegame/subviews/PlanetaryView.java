@@ -293,7 +293,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 				if(!paused) {
 					portal.move((int) millistep, SPEED_SCALE);
 					
-					BallData data = portal.calculateVelocity(p.itemC, p.itemVC, Player.BALL_RADIUS);
+					BallData data = portal.calculateVelocity(p, Player.BALL_RADIUS);
 					if(data != null)
 					{
 						if(data.itemC != null)
@@ -482,8 +482,8 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 				item.draw(c, 1);
 			}
 			
-			p.draw(c, 1);
 			portal.draw(c, 1);
+			p.draw(c, 1);
 			
 //			if(stopped)
 //				c.drawText("MS: " + millistep + ", Spare millis: " + (MAX_MILLIS - System.currentTimeMillis() + prevTime), 20, 20, PaintLoader.load(txtpaint));
