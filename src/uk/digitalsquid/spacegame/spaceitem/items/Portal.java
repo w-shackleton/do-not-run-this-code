@@ -6,6 +6,7 @@ import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.spaceitem.Gravitable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
+import uk.digitalsquid.spacegame.spaceitem.interfaces.Warpable;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Path;
@@ -13,7 +14,7 @@ import android.graphics.Path.Direction;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
-public class Portal extends Gravitable implements Moveable {
+public class Portal extends Gravitable implements Moveable, Warpable {
 	
 	private static final int PORTAL_RADIUS = 70;
 	private static final float PORTAL_DENSITY = .8f;
@@ -182,5 +183,13 @@ public class Portal extends Gravitable implements Moveable {
 		octagonClip.lineTo((float)(pos.x + 0     * size), (float)(pos.y - 1     * size));
 		octagonClip.lineTo((float)(pos.x + ONER2 * size), (float)(pos.y - ONER2 * size));
 		octagonClip.close();
+	}
+
+	@Override
+	public WarpData sendWarpData() {
+		if(status == Status.FINISHED) {
+			return new WarpData(true, WarpData.END_SUCCESS);
+		}
+		return null;
 	}
 }

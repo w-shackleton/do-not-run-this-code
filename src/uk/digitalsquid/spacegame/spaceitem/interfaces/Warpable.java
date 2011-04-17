@@ -32,12 +32,34 @@ public interface Warpable
 		 */
 		public boolean endGame = false;
 		
+		public static final int END_NONE = 0;
+		public static final int END_QUIT = 1;
+		public static final int END_FAIL = 2;
+		public static final int END_SUCCESS = 3;
+		
+		public int endReason = END_FAIL;
+		
 		public WarpData(float zoom, float rotation, float fade, boolean endGame)
 		{
 			this.zoom = zoom;
 			this.rotation = rotation;
 			this.fade = fade;
 			this.endGame = endGame;
+		}
+		
+		public WarpData(float zoom, float rotation, float fade, boolean endGame, int endReason)
+		{
+			this.zoom = zoom;
+			this.rotation = rotation;
+			this.fade = fade;
+			this.endGame = endGame;
+			this.endReason = endReason;
+		}
+		
+		public WarpData(boolean endGame, int endReason)
+		{
+			this.endGame = endGame;
+			this.endReason = endReason;
 		}
 
 		public WarpData()
@@ -55,6 +77,8 @@ public interface Warpable
 			zoom *= oldData.zoom;
 			if(oldData.endGame)
 				endGame = true;
+			if(oldData.endReason != END_NONE)
+				endReason = oldData.endReason;
 		}
 		
 		public void reset() {
@@ -62,6 +86,7 @@ public interface Warpable
 			rotation = 0;
 			zoom = 1;
 			endGame = false;
+			endReason = 0;
 		}
 	}
 }

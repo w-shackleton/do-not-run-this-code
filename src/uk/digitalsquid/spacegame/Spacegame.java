@@ -1,8 +1,10 @@
 package uk.digitalsquid.spacegame;
 
-import java.io.InputStream;
+import java.io.IOException;
 
 import uk.digitalsquid.spacegame.levels.LevelManager;
+import uk.digitalsquid.spacegame.levels.LevelManager.LevelExtendedInfo;
+import uk.digitalsquid.spacegame.spaceitem.interfaces.Warpable.WarpData;
 import uk.digitalsquid.spacegame.views.GameViewLayout;
 import uk.digitalsquid.spacegame.views.LevelSelectLayout;
 import uk.digitalsquid.spacegame.views.LevelSetSelectLayout;
@@ -19,6 +21,7 @@ import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public class Spacegame extends Activity
 {
@@ -30,7 +33,7 @@ public class Spacegame extends Activity
 	
 	protected LinearLayout linearlayout;
 	
-	protected InputStream levelToLoad;
+	protected LevelExtendedInfo levelToLoad;
 	
 	protected LevelManager lmanager;
 	
@@ -96,7 +99,15 @@ public class Spacegame extends Activity
 				finish();
 				break;
 			case MESSAGE_END_LEVEL:
-				activateView(Views.MENU_LEVEL_SELECT); // Needs to point somewhere else...
+				switch(m.arg1) {
+				case WarpData.END_FAIL:
+				case WarpData.END_QUIT:
+					activateView(Views.MENU_LEVEL_SELECT);
+					break;
+				case WarpData.END_SUCCESS:
+					showDialog(DIALOG_LEVEL_COMPLETED);
+					break;
+				}
 				break;
 			case MESSAGE_RETURN_TO_MAIN_SCREEN:
 				activateView(Views.MAIN_MENU);
@@ -105,12 +116,11 @@ public class Spacegame extends Activity
 				activateView(Views.MENU_LEVELSET_SELECT);
 				break;
 			case MESSAGE_OPEN_LEVELSET:
-				showDialog(DIALOG_LEVEL_COMPLETED);
 				currentLevelset = (String) m.obj;
 				activateView(Views.MENU_LEVEL_SELECT);
 				break;
 			case MESSAGE_START_LEVEL:
-				levelToLoad = (InputStream) m.obj;
+				levelToLoad = (LevelExtendedInfo) m.obj;
 				activateView(Views.GAME);
 				break;
 			case MESSAGE_RESET_GAME:
@@ -152,7 +162,12 @@ public class Spacegame extends Activity
 			linearlayout.addView(mainmenu);
 			break;
 		case GAME:
-			sview = new GameViewLayout(getApplicationContext(), null, levelToLoad, msgHandler);
+			try {
+				sview = new GameViewLayout(getApplicationContext(), null, lmanager.GetLevelIStream(levelToLoad), msgHandler);
+			} catch (IOException e) {
+				Toast.makeText(this, "Error loading level", Toast.LENGTH_LONG);
+				activateView(Views.MENU_LEVEL_SELECT);
+			}
 			linearlayout.addView(sview);
 			break;
 		case MENU_LEVELSET_SELECT:
@@ -214,12 +229,33 @@ public class Spacegame extends Activity
     private int tmpLevelStars = 0;
     private int tmpLevelStarsTotal = 10;
     
+    static final int LEVELCOMPLETED_CONTINUE = 1;
+    static final int LEVELCOMPLETED_TOMENU = 2;
+    static final int LEVELCOMPLETED_RETRY = 3;
+    
+    private final Handler levelCompletedDialogHandler = new Handler() {
+    	
+		@Override
+		public void handleMessage(Message m) {
+			switch(m.what) {
+			case LEVELCOMPLETED_CONTINUE:
+				break;
+			case LEVELCOMPLETED_TOMENU:
+				activateView(Views.MENU_LEVEL_SELECT);
+				break;
+			case LEVELCOMPLETED_RETRY:
+				activateView(Views.GAME);
+				break;
+			}
+		}
+    };
+    
     @Override
     protected Dialog onCreateDialog(int id) {
     	super.onCreateDialog(id);
     	switch(id) {
     	case DIALOG_LEVEL_COMPLETED:
-    		LevelCompletedDialog d = new LevelCompletedDialog(this, tmpLevelStars, tmpLevelStarsTotal);
+    		LevelCompletedDialog d = new LevelCompletedDialog(this, tmpLevelStars, tmpLevelStarsTotal, levelCompletedDialogHandler);
     		return d;
 		default:
 			return null;

@@ -1,6 +1,5 @@
 package uk.digitalsquid.spacegame.views;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import uk.digitalsquid.spacegame.R;
@@ -18,13 +17,12 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemClickListener, OnItemSelectedListener
 {
@@ -129,13 +127,7 @@ public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemCl
 		
 		Message m = Message.obtain();
 		m.what = Spacegame.MESSAGE_START_LEVEL;
-		try {
-			m.obj = lmanager.GetLevelIStream(adapter.getItem(arg2));
-		} catch (IOException e) {
-			e.printStackTrace();
-			Toast.makeText(context, "Error loading level", Toast.LENGTH_LONG).show();
-			return;
-		}
+		m.obj = adapter.getItem(arg2);
 		parentHandler.sendMessageAtTime(m, SystemClock.uptimeMillis() + fadeout.getDuration());
 	}
 

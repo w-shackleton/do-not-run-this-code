@@ -4,6 +4,7 @@ import java.io.InputStream;
 
 import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.Spacegame;
+import uk.digitalsquid.spacegame.spaceitem.interfaces.Warpable.WarpData;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -147,6 +148,7 @@ public class GameViewLayout extends FrameLayout implements KeyInput, OnClickList
 			findViewById(R.id.gameviewbuttons).setVisibility(View.INVISIBLE);
 			Message m = Message.obtain();
 			m.what = Spacegame.MESSAGE_END_LEVEL;
+			m.arg1 = WarpData.END_QUIT;
 			parentHandler.sendMessageAtTime(m, SystemClock.uptimeMillis() + panout.getDuration());
 			break;
 		case R.id.gameviewinfoboxpic:

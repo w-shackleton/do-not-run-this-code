@@ -201,6 +201,13 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 			}
 		}
 		
+		@Override
+		public synchronized void setRunning(boolean run) {
+			super.setRunning(run);
+			if(!run)
+				setPaused(false);
+		}
+		
 		/**
 		 * Used to pause the game properly
 		 */
@@ -376,6 +383,11 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 						warpData.apply(data);
 					}
 				}
+			}
+			{
+				WarpData data = portal.sendWarpData();
+				if(data != null)
+					warpData.apply(data);
 			}
 
 			if(stopAnimation)

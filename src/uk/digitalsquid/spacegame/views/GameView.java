@@ -59,6 +59,7 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
         			{
         				Message newM = new Message();
         				newM.what = Spacegame.MESSAGE_END_LEVEL;
+        				newM.arg1 = m.arg1;
         				GameView.this.parentHandler.sendMessage(newM);
         			}
         		}
@@ -462,6 +463,7 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 		{
 			Message m = Message.obtain();
 			m.what = MESSAGE_END_GAME;
+			m.arg1 = warpData.endReason;
 			msgHandler.sendMessage(m);
 		}
 	}
