@@ -9,6 +9,7 @@ import uk.digitalsquid.spacegame.views.LevelSetSelectLayout;
 import uk.digitalsquid.spacegame.views.MainMenuLayout;
 import uk.digitalsquid.spacegame.views.SplashScreen;
 import android.app.Activity;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -104,6 +105,7 @@ public class Spacegame extends Activity
 				activateView(Views.MENU_LEVELSET_SELECT);
 				break;
 			case MESSAGE_OPEN_LEVELSET:
+				showDialog(DIALOG_LEVEL_COMPLETED);
 				currentLevelset = (String) m.obj;
 				activateView(Views.MENU_LEVEL_SELECT);
 				break;
@@ -205,5 +207,19 @@ public class Spacegame extends Activity
     		return true;
     	}
     	return super.onKeyDown(keyCode, event);
+    }
+    
+    private static final int DIALOG_LEVEL_COMPLETED = 1;
+    
+    @Override
+    protected Dialog onCreateDialog(int id) {
+    	super.onCreateDialog(id);
+    	switch(id) {
+    	case DIALOG_LEVEL_COMPLETED:
+    		LevelCompletedDialog d = new LevelCompletedDialog(this);
+    		return d;
+		default:
+			return null;
+    	}
     }
 }
