@@ -3,9 +3,9 @@
   xmlns:android="http://schemas.android.com/apk/res/android" android:theme="@style/mainmenupanel"
   android:orientation="vertical" android:layout_height="fill_parent" android:layout_width="fill_parent" android:gravity="center">
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/levelcompleted" android:textSize="20dip"></TextView>
-    <LinearLayout android:id="@+id/linearLayout2" android:layout_width="fill_parent" android:layout_height="wrap_content">
-        <ImageView android:id="@+id/imageView1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/star"></ImageView>
-        <TextView android:text="0/0" android:id="@+id/starsCollected" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+    <LinearLayout android:id="@+id/linearLayout2" android:layout_height="wrap_content" android:layout_width="wrap_content">
+        <ImageView android:id="@+id/imageView1" android:src="@drawable/star" android:layout_width="60dip" android:scaleType="centerInside" android:layout_height="60dip"></ImageView>
+        <TextView android:text="0/0" android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/starsCollected" android:textSize="50dip"></TextView>
     </LinearLayout>
     <LinearLayout android:id="@+id/linearLayout1" android:layout_width="wrap_content" android:layout_height="wrap_content">
         <Button android:text="Menu" android:id="@+id/buttonToMenu" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/mainmenuitem"></Button>

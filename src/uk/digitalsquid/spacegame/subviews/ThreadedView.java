@@ -107,6 +107,8 @@ public abstract class ThreadedView<VT extends ThreadedView.ViewThread> extends S
 					if(c != null)
 						surface.unlockCanvasAndPost(c);
 				}
+				
+				afterdraw();
 			}
 			onThreadEnd();
 		}
@@ -180,6 +182,8 @@ public abstract class ThreadedView<VT extends ThreadedView.ViewThread> extends S
 		protected void draw(Canvas c){}
 		protected abstract void postdrawscale(Canvas c);
 		protected void postdraw(Canvas c){}
+		
+		protected void afterdraw(){}
 		
 		protected abstract void scale(Canvas c);
 		

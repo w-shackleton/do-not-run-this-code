@@ -223,15 +223,13 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 			screenStandardSize.x = REQ_SIZE_X;
 			screenStandardSize.y = height * width / REQ_SIZE_X;
 			
+			matrix.postScale(1 / WORLD_ZOOM_UNSCALED, 1 / WORLD_ZOOM_UNSCALED);
+			
 			for(GameMenu menu : gameMenus)
 			{
 				menu.move(millistep, SPEED_SCALE);
-				menu.draw(c, WORLD_ZOOM_UNSCALED, screenStandardSize);
+				menu.draw(c, 1, screenStandardSize);
 			}
-			
-			super.postdraw(c);
-			
-			matrix.postScale(1 / WORLD_ZOOM_UNSCALED, 1 / WORLD_ZOOM_UNSCALED);
 			
 			for(SpaceItem obj : level.planetList) {
 				// Stage for static drawing
@@ -244,6 +242,8 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 			starCount.drawStatic(c, 1, width, height, matrix);
 			
 			matrix.postScale(WORLD_ZOOM_UNSCALED, WORLD_ZOOM_UNSCALED);
+			
+			super.postdraw(c);
 		}
 		
 		@Override

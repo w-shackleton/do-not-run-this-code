@@ -211,12 +211,15 @@ public class Spacegame extends Activity
     
     private static final int DIALOG_LEVEL_COMPLETED = 1;
     
+    private int tmpLevelStars = 0;
+    private int tmpLevelStarsTotal = 10;
+    
     @Override
     protected Dialog onCreateDialog(int id) {
     	super.onCreateDialog(id);
     	switch(id) {
     	case DIALOG_LEVEL_COMPLETED:
-    		LevelCompletedDialog d = new LevelCompletedDialog(this);
+    		LevelCompletedDialog d = new LevelCompletedDialog(this, tmpLevelStars, tmpLevelStarsTotal);
     		return d;
 		default:
 			return null;

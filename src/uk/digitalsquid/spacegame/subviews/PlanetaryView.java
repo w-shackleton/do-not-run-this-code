@@ -132,14 +132,18 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 		//protected Coord p.itemC, p.itemVC, p.itemRF;
 
 		protected boolean paused = false;
+		private Object pauseNotify = new Object();
 		protected boolean stopped = false;
 		protected boolean gravOn = true;
 		
 		private int borderBounceColour = 255;
 		
-		public synchronized void setPaused(boolean p)
+		public void setPaused(boolean p)
 		{
-			paused = p;
+			synchronized(pauseNotify) {
+				paused = p;
+				pauseNotify.notifyAll();
+			}
 		}
 		
 		protected Player p;
@@ -194,6 +198,22 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 			for(int i = 0; i < BG_POINTS_PER_AREA; i++)
 			{
 				Bg_points[i] = new BgPoint(); // Random constructor
+			}
+		}
+		
+		/**
+		 * Used to pause the game properly
+		 */
+		@Override
+		protected void afterdraw() {
+			super.afterdraw();
+			synchronized(pauseNotify) {
+				if(paused && running) {
+					try {
+						pauseNotify.wait();
+					} catch (InterruptedException e) {
+					}
+				}
 			}
 		}
 		
