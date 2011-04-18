@@ -6,6 +6,8 @@
     <LinearLayout android:id="@+id/linearLayout2" android:layout_height="wrap_content" android:layout_width="wrap_content">
         <ImageView android:id="@+id/imageView1" android:src="@drawable/star" android:layout_width="60dip" android:scaleType="centerInside" android:layout_height="60dip"></ImageView>
         <TextView android:text="0/0" android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/starsCollected" android:textSize="50dip"></TextView>
+        <ImageView android:id="@+id/imageView2" android:layout_gravity="center_vertical" android:src="@drawable/timer" android:layout_width="45dip" android:layout_height="45dip" android:scaleType="fitCenter"></ImageView>
+        <TextView android:layout_height="wrap_content" android:id="@+id/timeTaken" android:layout_width="wrap_content" android:text="0:00" android:textSize="30dip" android:layout_gravity="center_vertical"></TextView>
     </LinearLayout>
     <LinearLayout android:id="@+id/linearLayout1" android:layout_width="wrap_content" android:layout_height="wrap_content">
         <Button android:text="Menu" android:id="@+id/buttonToMenu" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/mainmenuitem"></Button>

@@ -10,6 +10,7 @@ import uk.digitalsquid.spacegame.PaintLoader;
 import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.Spacegame;
 import uk.digitalsquid.spacegame.levels.LevelItem;
+import uk.digitalsquid.spacegame.levels.LevelItem.LevelSummary;
 import uk.digitalsquid.spacegame.spaceitem.SpaceItem;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Clickable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.LevelAffectable;
@@ -60,6 +61,7 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
         				Message newM = new Message();
         				newM.what = Spacegame.MESSAGE_END_LEVEL;
         				newM.arg1 = m.arg1;
+        				newM.obj = m.obj;
         				GameView.this.parentHandler.sendMessage(newM);
         			}
         		}
@@ -464,6 +466,9 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 			Message m = Message.obtain();
 			m.what = MESSAGE_END_GAME;
 			m.arg1 = warpData.endReason;
+			
+			LevelSummary sum = new LevelSummary(level.starsToCollect, starCount.getStarCount(), (int) (finishTime - startTime));
+			m.obj = sum;
 			msgHandler.sendMessage(m);
 		}
 	}

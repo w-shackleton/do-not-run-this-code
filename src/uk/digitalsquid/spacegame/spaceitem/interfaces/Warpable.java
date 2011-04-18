@@ -39,6 +39,8 @@ public interface Warpable
 		
 		public int endReason = END_FAIL;
 		
+		public boolean stopTimer = false;
+		
 		public WarpData(float zoom, float rotation, float fade, boolean endGame)
 		{
 			this.zoom = zoom;
@@ -66,6 +68,11 @@ public interface Warpable
 		{
 		}
 		
+		public WarpData(boolean stopTimer)
+		{
+			this.stopTimer = stopTimer;
+		}
+		
 		/**
 		 * Applies the data from oldData into this {@link WarpData}.
 		 * @param oldData The data to apply into this object.
@@ -79,6 +86,8 @@ public interface Warpable
 				endGame = true;
 			if(oldData.endReason != END_NONE)
 				endReason = oldData.endReason;
+			if(oldData.stopTimer)
+				stopTimer = true;
 		}
 		
 		public void reset() {
@@ -87,6 +96,7 @@ public interface Warpable
 			zoom = 1;
 			endGame = false;
 			endReason = 0;
+			stopTimer = false;
 		}
 	}
 }

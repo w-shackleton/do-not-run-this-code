@@ -147,7 +147,7 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 		
 		if(status == Status.FINISHING || status == Status.FINISHED) {
 			p.itemC.copyFrom(pos);
-		} else if(Coord.getLength(pos, p.itemC) < 10) {
+		} else if(status != Status.DISABLED && Coord.getLength(pos, p.itemC) < 10) {
 			status = Status.FINISHING;
 		}
 		

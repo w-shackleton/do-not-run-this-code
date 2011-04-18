@@ -2,6 +2,7 @@ package uk.digitalsquid.spacegame;
 
 import java.io.IOException;
 
+import uk.digitalsquid.spacegame.levels.LevelItem.LevelSummary;
 import uk.digitalsquid.spacegame.levels.LevelManager;
 import uk.digitalsquid.spacegame.levels.LevelManager.LevelExtendedInfo;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Warpable.WarpData;
@@ -36,6 +37,8 @@ public class Spacegame extends Activity
 	protected LevelExtendedInfo levelToLoad;
 	
 	protected LevelManager lmanager;
+	
+	private LevelSummary levelCompletedSummary;
 	
 	protected String currentLevelset;
 	
@@ -105,6 +108,7 @@ public class Spacegame extends Activity
 					activateView(Views.MENU_LEVEL_SELECT);
 					break;
 				case WarpData.END_SUCCESS:
+					levelCompletedSummary = (LevelSummary) m.obj;
 					showDialog(DIALOG_LEVEL_COMPLETED);
 					break;
 				}
@@ -226,9 +230,6 @@ public class Spacegame extends Activity
     
     private static final int DIALOG_LEVEL_COMPLETED = 1;
     
-    private int tmpLevelStars = 0;
-    private int tmpLevelStarsTotal = 10;
-    
     static final int LEVELCOMPLETED_CONTINUE = 1;
     static final int LEVELCOMPLETED_TOMENU = 2;
     static final int LEVELCOMPLETED_RETRY = 3;
@@ -255,7 +256,7 @@ public class Spacegame extends Activity
     	super.onCreateDialog(id);
     	switch(id) {
     	case DIALOG_LEVEL_COMPLETED:
-    		LevelCompletedDialog d = new LevelCompletedDialog(this, tmpLevelStars, tmpLevelStarsTotal, levelCompletedDialogHandler);
+    		LevelCompletedDialog d = new LevelCompletedDialog(this, levelCompletedSummary, levelCompletedDialogHandler);
     		return d;
 		default:
 			return null;

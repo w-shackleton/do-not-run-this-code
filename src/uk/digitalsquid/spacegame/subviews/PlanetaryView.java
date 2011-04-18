@@ -199,7 +199,11 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 			{
 				Bg_points[i] = new BgPoint(); // Random constructor
 			}
+			
+			startTime = System.currentTimeMillis();
 		}
+		
+		protected long startTime, finishTime;
 		
 		@Override
 		public synchronized void setRunning(boolean run) {
@@ -410,6 +414,9 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewThread> extends
 			{
 				setRunning(false);
 				endGame = true;
+			}
+			if(warpData.stopTimer) {
+				finishTime = System.currentTimeMillis();
 			}
 		}
 		

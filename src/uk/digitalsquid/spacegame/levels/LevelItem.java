@@ -79,4 +79,16 @@ public final class LevelItem
 		
 		if(starsToCollect < 1) starsToCollect = 10;
 	}
+	
+	public static final class LevelSummary {
+		public final int starsToCollect;
+		public final int starsCollected;
+		public final int timeTaken;
+		
+		public LevelSummary(int starsToCollect, int starsCollected, int timeTaken) {
+			this.starsCollected = starsCollected;
+			this.starsToCollect = starsToCollect;
+			this.timeTaken = timeTaken;
+		}
+	}
 }
