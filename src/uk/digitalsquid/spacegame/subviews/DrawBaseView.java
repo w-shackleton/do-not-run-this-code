@@ -4,7 +4,9 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
+import android.opengl.GLES11;
 import android.opengl.GLSurfaceView;
+import android.opengl.GLU;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
@@ -27,13 +29,10 @@ public abstract class DrawBaseView<VT extends DrawBaseView.Renderer> extends GLS
 		protected Context context;
 		protected SurfaceHolder surface;
 		
-		protected static final int MAX_FPS = 30; // 40 is goodish.
-		protected static final int MAX_MILLIS = (int) (1000f / (float)MAX_FPS);
-
 		protected long currTime, prevTime, millistep;
 		
-		protected float WORLD_ZOOM_UNSCALED;
-		protected static final int REQ_SIZE_X = 480; // & 320 - scale to middle-screen size.
+		protected static final int REQ_SIZE_Y = 320; // & 480 - scale to middle-screen size.
+		protected int REQ_SIZE_X = 480;
 		
 		public Renderer(Context context, SurfaceHolder surface)
 		{
@@ -49,14 +48,40 @@ public abstract class DrawBaseView<VT extends DrawBaseView.Renderer> extends GLS
 		
 		@Override
 		public void onDrawFrame(GL10 gl) {
+			// clear Screen and Depth Buffer
+			GLES11.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+	
+			// Reset the Modelview Matrix
+			GLES11.glLoadIdentity();
+	
+			// Drawing
+			GLES11.glTranslatef(0.0f, 0.0f, -REQ_SIZE_Y / 2); // Screen is now 320x???px big, where ??? is about 480px
+			
+			GLES11.glPushMatrix(); // As to stop this matrix being affected
+			
 			drawGL(gl);
 		}
 
 		@Override
 		public void onSurfaceChanged(GL10 gl, int width, int height) {
-			gl.glViewport(0, 0, width, height);
-			this.width = width;
-			this.height = height;
+			if(height == 0) { 						//Prevent A Divide By Zero By
+				height = 1; 						//Making Height Equal One
+			}
+			
+			GLES11.glViewport(0, 0, width, height); 	//Reset The Current Viewport
+			GLES11.glMatrixMode(GL10.GL_PROJECTION); 	//Select The Projection Matrix
+			GLES11.glLoadIdentity(); 					//Reset The Projection Matrix
+	
+			//Calculate The Aspect Ratio Of The Window
+			GLU.gluPerspective(gl, 90.0f, (float)width / (float)height, 0.1f, 1000.0f);
+			REQ_SIZE_X = (REQ_SIZE_Y * width) / height;
+	
+			GLES11.glMatrixMode(GL10.GL_MODELVIEW); 	//Select The Modelview Matrix
+			GLES11.glLoadIdentity(); 					//Reset The Modelview Matrix
+			
+			GLES11.glEnable(GL10.GL_LINE_SMOOTH);
+			GLES11.glHint(GL10.GL_POLYGON_SMOOTH_HINT, GL10.GL_NICEST); // no visible diff
+			GLES11.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
 		}
 
 		protected abstract void initialiseOnThread();
@@ -82,19 +107,18 @@ public abstract class DrawBaseView<VT extends DrawBaseView.Renderer> extends GLS
 			calculate();
 			postcalculate();
 			
-			scaleCalculate();
+			gl.glPushMatrix();
 			
 			predraw(gl);
-			
 			scale(gl);
 			
 			draw(gl);
 			
-			gl.glLoadIdentity();
+			gl.glPopMatrix();
 			
-			postdrawscale(gl);
+			// gl.glPushMatrix();
 			postdraw(gl);
-			gl.glLoadIdentity();
+			// gl.glPopMatrix();
 			
 			// SLEEPY TIME!!
 			currTime = System.currentTimeMillis();
@@ -103,17 +127,12 @@ public abstract class DrawBaseView<VT extends DrawBaseView.Renderer> extends GLS
 			millistep = System.currentTimeMillis() - prevTime;
 		}
 		
-		protected void scaleCalculate(){}
 		protected void precalculate(){}
 		protected void calculate(){}
-		protected void postcalculate()
-		{
-			WORLD_ZOOM_UNSCALED = (float)width / REQ_SIZE_X;
-		}
+		protected void postcalculate(){}
 		
 		protected void predraw(GL10 c){}
 		protected void draw(GL10 c){}
-		protected abstract void postdrawscale(GL10 c);
 		protected void postdraw(GL10 c){}
 		
 		protected void afterdraw(){}
