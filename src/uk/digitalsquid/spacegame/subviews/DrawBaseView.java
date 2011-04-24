@@ -3,46 +3,63 @@ package uk.digitalsquid.spacegame.subviews;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import uk.digitalsquid.spacegame.misc.TextureManager;
 import android.content.Context;
+import android.graphics.PixelFormat;
 import android.opengl.GLES11;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.Bundle;
 import android.util.AttributeSet;
-import android.view.SurfaceHolder;
 
-public abstract class DrawBaseView<VT extends DrawBaseView.Renderer> extends GLSurfaceView
+public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends GLSurfaceView
 {
-	protected VT thread = null;
+	protected final Context context;
+	protected VT thread;
 	
 	/**
 	 * Constructs a new {@link DrawBaseView}. Non-abstract extended classes must initialise a renderer
-	 * with a subclass of {@link Renderer}. 
+	 * with a subclass of {@link ViewWorker}. 
 	 */
 	public DrawBaseView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
+		setEGLConfigChooser(8, 8, 8, 8, 0, 0);
+	    getHolder().setFormat(PixelFormat.RGBA_8888);
+		this.context = context;
 	}
 	
-	public static abstract class Renderer implements GLSurfaceView.Renderer
+	protected final void initP2() {
+		thread = createThread();
+		if(thread == null) throw new IllegalStateException("thread not initialised!");
+		setRenderer(thread);
+	}
+	
+	/**
+	 * Creates the thread
+	 * @return A new VT thread
+	 */
+	protected abstract VT createThread();
+	
+	public static abstract class ViewWorker implements GLSurfaceView.Renderer
 	{
 		protected Context context;
-		protected SurfaceHolder surface;
 		
 		protected long currTime, prevTime, millistep;
 		
 		protected static final int REQ_SIZE_Y = 320; // & 480 - scale to middle-screen size.
-		protected int REQ_SIZE_X = 480;
+		protected int scaledWidth = REQ_SIZE_Y;
+		protected int scaledHeight = 480;
 		
-		public Renderer(Context context, SurfaceHolder surface)
+		public ViewWorker(Context context)
 		{
 			super();
 			this.context = context;
-			this.surface = surface;
 		}
 		
 		@Override
 		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+			TextureManager.init(context, gl);
 			initialiseOnThread();
 		}
 		
@@ -74,7 +91,7 @@ public abstract class DrawBaseView<VT extends DrawBaseView.Renderer> extends GLS
 	
 			//Calculate The Aspect Ratio Of The Window
 			GLU.gluPerspective(gl, 90.0f, (float)width / (float)height, 0.1f, 1000.0f);
-			REQ_SIZE_X = (REQ_SIZE_Y * width) / height;
+			scaledWidth = (REQ_SIZE_Y * width) / height;
 	
 			GLES11.glMatrixMode(GL10.GL_MODELVIEW); 	//Select The Modelview Matrix
 			GLES11.glLoadIdentity(); 					//Reset The Modelview Matrix
@@ -90,6 +107,7 @@ public abstract class DrawBaseView<VT extends DrawBaseView.Renderer> extends GLS
 		
 		public synchronized void setRunning(boolean run) {
 			running = run;
+			onThreadEnd();
 		}
 		
 		/**
