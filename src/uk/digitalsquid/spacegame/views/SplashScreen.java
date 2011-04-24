@@ -3,6 +3,7 @@ package uk.digitalsquid.spacegame.views;
 import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.spacegame.BounceVibrate;
+import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.Spacegame;
 import uk.digitalsquid.spacegame.StaticInfo;
 import uk.digitalsquid.spacegame.levels.LevelManager;
@@ -66,8 +67,8 @@ public class SplashScreen extends DrawBaseView<SplashScreen.ViewWorker>
 		int timeThroughLoop = 0;
 		
 		private RectMesh splashLogo;
-		private static final int SPLASH_LOGO_WIDTH = 160;
-		private static final int SPLASH_LOGO_HEIGHT = 120;
+		private static final int SPLASH_LOGO_WIDTH = 200;
+		private static final int SPLASH_LOGO_HEIGHT = 100;
 		private float splashLogoOpacity = 0;
 		private float splashLogoWantedOpacity = 0;
 		
@@ -143,7 +144,7 @@ public class SplashScreen extends DrawBaseView<SplashScreen.ViewWorker>
 		protected void initialiseOnThread()
 		{
 			loader.start();
-			splashLogo = new RectMesh(0, 0, SPLASH_LOGO_WIDTH, SPLASH_LOGO_HEIGHT, 0.5f, 0.4f, 0.9f);
+			splashLogo = new RectMesh(0, 0, SPLASH_LOGO_WIDTH, SPLASH_LOGO_HEIGHT, R.drawable.splash);
 		}
 
 		@Override

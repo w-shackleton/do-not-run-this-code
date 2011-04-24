@@ -36,7 +36,7 @@ public class Mesh {
 	private int numOfIndices = -1;
 
 	// Flat Color
-	private final float[] mRGBA = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
+	private final float[] mRGBA = new float[] { 1.0f, 1.0f, 1.0f, 0.0f };
 
 	// Translate params.
 	public float x = 0;
@@ -75,10 +75,9 @@ public class Mesh {
 		setVertices(vertices);
 		setIndices(indices);
 		setTextureCoordinates(textureCoords);
-		textureId = TextureManager.getTexture(resId);
 		this.resId = resId;
 	}
-	int resId;
+	int resId = -1;
 
 	/**
 	 * Render the mesh.
@@ -87,7 +86,6 @@ public class Mesh {
 	 *            the OpenGL context to render to.
 	 */
 	public void draw(GL10 gl) {
-		gl.glPushMatrix();
 		// Counter-clockwise winding.
 		gl.glFrontFace(GL10.GL_CCW);
 		// Enable face culling.
@@ -102,8 +100,13 @@ public class Mesh {
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, verticesBuffer);
 		// Set flat color
 		gl.glColor4f(mRGBA[0], mRGBA[1], mRGBA[2], mRGBA[3]);
+		
+		if(resId != -1 && textureId == -1) textureId = TextureManager.getTexture(gl, resId);
 
 		if (textureId != -1 && textureBuffer != null) {
+			gl.glEnable(GL10.GL_BLEND);
+		    gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);
+			
 			gl.glEnable(GL10.GL_TEXTURE_2D);
 			// Enable the texture state
 			gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
@@ -114,7 +117,7 @@ public class Mesh {
 		}
 
 		gl.glTranslatef(x, y, 0);
-		gl.glRotatef(rz++, 0, 0, 1);
+		gl.glRotatef(rz, 0, 0, 1);
 
 		// Point out the where the color buffer is.
 		gl.glDrawElements(GL10.GL_TRIANGLES, numOfIndices,
@@ -129,7 +132,8 @@ public class Mesh {
 		// Disable face culling.
 		gl.glDisable(GL10.GL_CULL_FACE);
 		
-		gl.glPopMatrix();
+		gl.glRotatef(-rz, 0, 0, 1);
+		gl.glTranslatef(-x, -y, 0);
 	}
 
 	/**

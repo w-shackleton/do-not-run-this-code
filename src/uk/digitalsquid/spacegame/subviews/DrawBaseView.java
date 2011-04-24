@@ -5,8 +5,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.spacegame.misc.TextureManager;
 import android.content.Context;
-import android.graphics.PixelFormat;
-import android.opengl.GLES11;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.Bundle;
@@ -24,8 +22,9 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 	public DrawBaseView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
-		setEGLConfigChooser(8, 8, 8, 8, 0, 0);
-	    getHolder().setFormat(PixelFormat.RGBA_8888);
+		// setEGLConfigChooser(8, 8, 8, 8, 0, 0);
+	    // getHolder().setFormat(PixelFormat.RGBA_8888);
+	    setDebugFlags(DEBUG_CHECK_GL_ERROR | DEBUG_LOG_GL_CALLS);
 		this.context = context;
 	}
 	
@@ -59,24 +58,32 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		
 		@Override
 		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-			TextureManager.init(context, gl);
 			initialiseOnThread();
 		}
 		
+		protected boolean firstFrame = true;
+		
 		@Override
 		public void onDrawFrame(GL10 gl) {
+			if(firstFrame) {
+				TextureManager.init(context, gl); // Here because derp derpderp...
+				firstFrame = false;
+			}
 			// clear Screen and Depth Buffer
-			GLES11.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 	
 			// Reset the Modelview Matrix
-			GLES11.glLoadIdentity();
+			gl.glLoadIdentity();
 	
 			// Drawing
-			GLES11.glTranslatef(0.0f, 0.0f, -REQ_SIZE_Y / 2); // Screen is now 320x???px big, where ??? is about 480px
+			gl.glTranslatef(0.0f, 0.0f, -REQ_SIZE_Y / 2); // Screen is now 320x???px big, where ??? is about 480px
+			// gl.glTranslatef(0.0f, 0.0f, -5f);
 			
-			GLES11.glPushMatrix(); // As to stop this matrix being affected
+			gl.glPushMatrix(); // As to stop this matrix being affected
 			
 			drawGL(gl);
+			
+			gl.glPopMatrix();
 		}
 
 		@Override
@@ -85,20 +92,20 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 				height = 1; 						//Making Height Equal One
 			}
 			
-			GLES11.glViewport(0, 0, width, height); 	//Reset The Current Viewport
-			GLES11.glMatrixMode(GL10.GL_PROJECTION); 	//Select The Projection Matrix
-			GLES11.glLoadIdentity(); 					//Reset The Projection Matrix
+			gl.glViewport(0, 0, width, height); 	//Reset The Current Viewport
+			gl.glMatrixMode(GL10.GL_PROJECTION); 	//Select The Projection Matrix
+			gl.glLoadIdentity(); 					//Reset The Projection Matrix
 	
 			//Calculate The Aspect Ratio Of The Window
-			GLU.gluPerspective(gl, 90.0f, (float)width / (float)height, 0.1f, 1000.0f);
+			GLU.gluPerspective(gl, 90.0f, (float)width / (float)height, 50f, 1000.0f);
 			scaledWidth = (REQ_SIZE_Y * width) / height;
 	
-			GLES11.glMatrixMode(GL10.GL_MODELVIEW); 	//Select The Modelview Matrix
-			GLES11.glLoadIdentity(); 					//Reset The Modelview Matrix
+			gl.glMatrixMode(GL10.GL_MODELVIEW); 	//Select The Modelview Matrix
+			gl.glLoadIdentity(); 					//Reset The Modelview Matrix
 			
-			GLES11.glEnable(GL10.GL_LINE_SMOOTH);
-			GLES11.glHint(GL10.GL_POLYGON_SMOOTH_HINT, GL10.GL_NICEST); // no visible diff
-			GLES11.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
+			gl.glEnable(GL10.GL_LINE_SMOOTH);
+			// gl.glHint(GL10.GL_POLYGON_SMOOTH_HINT, GL10.GL_NICEST); // no visible diff
+			gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
 		}
 
 		protected abstract void initialiseOnThread();
