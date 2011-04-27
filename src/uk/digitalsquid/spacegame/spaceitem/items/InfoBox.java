@@ -19,6 +19,11 @@ public class InfoBox extends BounceableRect implements Messageable, Clickable
 	protected BitmapDrawable image;
 	protected boolean showNow;
 	
+	/*
+	 *  NOTE FOR CONVERSION:
+	 * This image is now 128x128, but with vertical padding
+	 */
+	
 	protected static final float BOUNCINESS = 0.8f;
 	protected static final Coord SIZE = new Coord(50, 40);
 	
