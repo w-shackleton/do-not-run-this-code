@@ -39,12 +39,12 @@ public class Mesh {
 	private final float[] mRGBA = new float[] { 1.0f, 1.0f, 1.0f, 0.0f };
 
 	// Translate params.
-	public float x = 0;
+	private float x = 0;
 
-	public float y = 0;
+	private float y = 0;
 
 	// Rotate params.
-	public float rz = 0;
+	private float rz = 0;
 	
 	/**
 	 * Constructs a {@link Mesh} with a colour
@@ -53,12 +53,14 @@ public class Mesh {
 	 * @param textureCoords
 	 * @param resId
 	 */
-	public Mesh(float x, float y, float[] vertices, short[] indices, float r, float g, float b) {
+	public Mesh(float x, float y, float[] vertices, short[] indices, float r, float g, float b, float a) {
+		this.x = x;
+		this.y = y;
 		if(vertices == null) throw new IllegalArgumentException("vertices is null");
 		if(indices == null) throw new IllegalArgumentException("indices is null");
 		setVertices(vertices);
 		setIndices(indices);
-		setColor(r, g, b, 1);
+		setColor(r, g, b, a);
 	}
 
 	/**
@@ -69,6 +71,8 @@ public class Mesh {
 	 * @param resId
 	 */
 	public Mesh(float x, float y, float[] vertices, short[] indices, float[]textureCoords, int resId) {
+		this.x = x;
+		this.y = y;
 		if(vertices == null) throw new IllegalArgumentException("vertices is null");
 		if(indices == null) throw new IllegalArgumentException("indices is null");
 		if(textureCoords == null) throw new IllegalArgumentException("texturecoords is null");
@@ -77,7 +81,7 @@ public class Mesh {
 		setTextureCoordinates(textureCoords);
 		this.resId = resId;
 	}
-	int resId = -1;
+	private int resId = -1;
 
 	/**
 	 * Render the mesh.
@@ -85,7 +89,7 @@ public class Mesh {
 	 * @param gl
 	 *            the OpenGL context to render to.
 	 */
-	public void draw(GL10 gl) {
+	public final void draw(GL10 gl) {
 		// Counter-clockwise winding.
 		gl.glFrontFace(GL10.GL_CCW);
 		// Enable face culling.
@@ -99,13 +103,14 @@ public class Mesh {
 		// coordinates to use when rendering.
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, verticesBuffer);
 		// Set flat color
+		gl.glEnable(GL10.GL_BLEND); // Only if alpha present?
+	    gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+	    
 		gl.glColor4f(mRGBA[0], mRGBA[1], mRGBA[2], mRGBA[3]);
 		
 		if(resId != -1 && textureId == -1) textureId = TextureManager.getTexture(gl, resId);
 
 		if (textureId != -1 && textureBuffer != null) {
-			gl.glEnable(GL10.GL_BLEND);
-		    gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);
 			
 			gl.glEnable(GL10.GL_TEXTURE_2D);
 			// Enable the texture state
@@ -127,7 +132,10 @@ public class Mesh {
 
 		if (textureId != -1 && textureBuffer != null) {
 			gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+			gl.glDisable(GL10.GL_TEXTURE_2D);
 		}
+		
+		gl.glDisable(GL10.GL_BLEND);
 
 		// Disable face culling.
 		gl.glDisable(GL10.GL_CULL_FACE);
@@ -141,7 +149,7 @@ public class Mesh {
 	 * 
 	 * @param vertices
 	 */
-	protected void setVertices(float[] vertices) {
+	private final void setVertices(float[] vertices) {
 		// a float is 4 bytes, therefore we multiply the number if
 		// vertices with 4.
 		ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
@@ -156,7 +164,7 @@ public class Mesh {
 	 * 
 	 * @param indices
 	 */
-	protected void setIndices(short[] indices) {
+	private final void setIndices(short[] indices) {
 		// short is 2 bytes, therefore we multiply the number if
 		// vertices with 2.
 		ByteBuffer ibb = ByteBuffer.allocateDirect(indices.length * 2);
@@ -172,7 +180,7 @@ public class Mesh {
 	 * 
 	 * @param textureCoords
 	 */
-	protected void setTextureCoordinates(float[] textureCoords) { // New
+	private final void setTextureCoordinates(float[] textureCoords) { // New
 																	// function.
 		// float is 4 bytes, therefore we multiply the number if
 		// vertices with 4.
@@ -192,14 +200,18 @@ public class Mesh {
 	 * @param blue
 	 * @param alpha
 	 */
-	protected void setColor(float red, float green, float blue, float alpha) {
+	private final void setColor(float red, float green, float blue, float alpha) {
 		mRGBA[0] = red;
 		mRGBA[1] = green;
 		mRGBA[2] = blue;
 		mRGBA[3] = alpha;
 	}
 	
-	public void setAlpha(float alpha) {
+	/**
+	 * Sets the alpha, between 0 and 1
+	 * @param alpha
+	 */
+	public final void setAlpha(float alpha) {
 		mRGBA[3] = alpha;
 	}
 }

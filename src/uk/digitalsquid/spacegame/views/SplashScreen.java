@@ -94,12 +94,13 @@ public class SplashScreen extends DrawBaseView<SplashScreen.ViewWorker>
 				splashLogoOpacity+=14f / 256;
 			if(splashLogoOpacity > splashLogoWantedOpacity)
 				splashLogoOpacity-=14f / 256;
+			
+			splashLogo.setAlpha(splashLogoOpacity);
 		}
 		
 		@Override
 		protected void predraw(GL10 gl)
 		{
-			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		}
 
 		@Override
@@ -108,7 +109,6 @@ public class SplashScreen extends DrawBaseView<SplashScreen.ViewWorker>
 		@Override
 		protected void draw(GL10 gl)
 		{
-			//splashLogo.setAlpha(splashLogoOpacity);
 			splashLogo.draw(gl);
 		}
 		
@@ -144,6 +144,7 @@ public class SplashScreen extends DrawBaseView<SplashScreen.ViewWorker>
 		protected void initialiseOnThread()
 		{
 			loader.start();
+			// splashLogo = new RectMesh(0, 0, SPLASH_LOGO_WIDTH, SPLASH_LOGO_HEIGHT, 1, 1, 0, 0);
 			splashLogo = new RectMesh(0, 0, SPLASH_LOGO_WIDTH, SPLASH_LOGO_HEIGHT, R.drawable.splash);
 		}
 

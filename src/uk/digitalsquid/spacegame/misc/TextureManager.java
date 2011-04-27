@@ -45,6 +45,8 @@ public class TextureManager {
 		}
 		gl.glDeleteTextures(glTextures.length, glTextures, 0);
 		
+		data.clear();
+		
 		System.gc();
 	}
 	
