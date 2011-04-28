@@ -466,7 +466,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			// Object draw
 			for(SpaceItem item : planetList)
 			{
-				// item.draw(c, 1); // TODO: Re-enable!
+				item.draw(gl, 1);
 			}
 			
 			// portal.draw(c, 1);

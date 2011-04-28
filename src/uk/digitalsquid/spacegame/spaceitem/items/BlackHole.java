@@ -1,8 +1,10 @@
 package uk.digitalsquid.spacegame.spaceitem.items;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.R;
-import uk.digitalsquid.spacegame.StaticInfo;
+import uk.digitalsquid.spacegame.misc.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.Gravitable;
 import uk.digitalsquid.spacegame.spaceitem.assistors.BhPulseInfo;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Messageable;
@@ -10,8 +12,6 @@ import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.TopDrawable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Warpable;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
 import android.preference.PreferenceManager;
 
 public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warpable, Messageable
@@ -25,7 +25,7 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 
 	protected static final int BH_PULSES = 20;
 	
-	protected static BitmapDrawable bhImage, bhP2Image;
+	private final RectMesh bhImage, bhP2Image;
 	protected float bhRotation = 0;
 	
 	protected BhPulseInfo[] bhPulses;
@@ -47,8 +47,8 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 			bhPulses[i] = new BhPulseInfo(pos, (float) (i * 360 / BH_PULSES));
 		}
 
-		bhImage = (BitmapDrawable) context.getResources().getDrawable(R.drawable.bh);
-		bhP2Image = (BitmapDrawable) context.getResources().getDrawable(R.drawable.bhp2);
+		bhImage = new RectMesh((float)pos.x, (float)pos.y, (float)radius * 4, (float)radius * 4, R.drawable.bh);
+		bhP2Image = new RectMesh((float)pos.x, (float)pos.y, (float)radius * 4, (float)radius * 4, R.drawable.bhp2);
 	}
 	
 	@Override
@@ -71,37 +71,24 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	}
 
 	@Override
-	public void draw(Canvas c, float worldZoom)
+	public void draw(GL10 gl, float worldZoom)
 	{
-		bhP2Image.setAntiAlias(StaticInfo.Antialiasing);
-		bhP2Image.setBounds(
-				(int)((pos.x - (radius * 2)) * worldZoom),
-				(int)((pos.y - (radius * 2)) * worldZoom),
-				(int)((pos.x + (radius * 2)) * worldZoom),
-				(int)((pos.y + (radius * 2)) * worldZoom));
-		bhP2Image.draw(c);
+		bhP2Image.draw(gl);
 	}
 
 	@Override
-	public void drawTop(Canvas c, float worldZoom)
+	public void drawTop(GL10 gl, float worldZoom)
 	{
-		if(bhActivated)
+		/* if(bhActivated)
 		{
 			for(int i = 0; i < bhPulses.length; i++)
 			{
 				bhPulses[i].draw(c, worldZoom);
 			}
-		}
+		} */
 		
-		c.rotate(-bhRotation, (float)pos.x * worldZoom, (float)pos.y * worldZoom);
-		bhImage.setAntiAlias(StaticInfo.Antialiasing);
-		bhImage.setBounds(
-				(int)((pos.x - (radius * 2)) * worldZoom),
-				(int)((pos.y - (radius * 2)) * worldZoom),
-				(int)((pos.x + (radius * 2)) * worldZoom),
-				(int)((pos.y + (radius * 2)) * worldZoom));
-		bhImage.draw(c);
-		c.rotate(bhRotation, (float)pos.x * worldZoom, (float)pos.y * worldZoom);
+		bhImage.setRotation(-bhRotation);
+		bhImage.draw(gl);
 	}
 
 	@Override

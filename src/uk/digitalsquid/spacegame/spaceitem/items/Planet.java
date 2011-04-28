@@ -2,18 +2,18 @@ package uk.digitalsquid.spacegame.spaceitem.items;
 
 import java.util.Random;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.R;
-import uk.digitalsquid.spacegame.StaticInfo;
+import uk.digitalsquid.spacegame.misc.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.Bounceable;
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import uk.digitalsquid.spacegame.spaceitem.items.Planet.PlanetType.FgType;
 import uk.digitalsquid.spacegame.spaceitem.items.Planet.PlanetType.Type;
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 
 public class Planet extends Bounceable
 {
@@ -31,7 +31,7 @@ public class Planet extends Bounceable
 	
 	public static final Random rGen = new Random();
 	
-	private BitmapDrawable Fg;
+	private RectMesh fg;
 	float fgRotation = 0;
 	
 	public Planet(Context context, Coord coord, float radius, int typeId)
@@ -49,14 +49,14 @@ public class Planet extends Bounceable
 		if(type.fgType == FgType.image)
 		{
 			// fgRotation = (float) (rGen.nextFloat() * 360);
-			Fg = (BitmapDrawable) context.getResources().getDrawable(type.fileId2);
+			fg = new RectMesh((float)pos.x, (float)pos.y, radius * 2, radius * 2, type.fileId2);
 		}
 	}
 	
 	private Rect drawTmpRect = new Rect();
 
 	@Override
-	public void draw(Canvas c, float worldZoom)
+	public void draw(GL10 gl, float worldZoom)
 	{
 		drawTmpRect.left = (int)pos.x - (int)radius;
 		drawTmpRect.top = (int)pos.y - (int)radius;
@@ -65,11 +65,7 @@ public class Planet extends Bounceable
 		
 		if(type.fgType == FgType.image)
 		{
-			// c.rotate(fgRotation, drawTmpRect.centerX(), drawTmpRect.centerY());
-			Fg.setAntiAlias(StaticInfo.Antialiasing);
-			Fg.setBounds(drawTmpRect);
-			Fg.draw(c);
-			// c.rotate(-fgRotation, drawTmpRect.centerX(), drawTmpRect.centerY());
+			fg.draw(gl);
 		}
 	}
 	

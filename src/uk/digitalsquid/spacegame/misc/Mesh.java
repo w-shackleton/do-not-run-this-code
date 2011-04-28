@@ -218,4 +218,12 @@ public class Mesh {
 	public final float getAlpha() {
 		return mRGBA[3];
 	}
+	
+	public final void setRotation(float rotation) {
+		rz = rotation;
+	}
+	
+	public final float getRotation() {
+		return rz;
+	}
 }

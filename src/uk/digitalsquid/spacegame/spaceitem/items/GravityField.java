@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.PaintLoader;
 import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
@@ -12,7 +14,6 @@ import uk.digitalsquid.spacegame.spaceitem.Rectangular;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Forceful;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import android.content.Context;
-import android.graphics.Canvas;
 
 public class GravityField extends Rectangular implements Forceful, Moveable
 {
@@ -67,7 +68,7 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 	private final Coord tmpP2 = new Coord();
 
 	@Override
-	public void draw(Canvas c, float worldZoom)
+	public void draw(GL10 gl, float worldZoom)
 	{
 		c.rotate(
 				(float)(rotation),
