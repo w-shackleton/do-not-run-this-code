@@ -9,6 +9,7 @@ import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.Log;
 
 public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends GLSurfaceView
 {
@@ -24,7 +25,8 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		super(context, attrs);
 		// setEGLConfigChooser(8, 8, 8, 8, 0, 0);
 	    // getHolder().setFormat(PixelFormat.RGBA_8888);
-	    setDebugFlags(DEBUG_CHECK_GL_ERROR | DEBUG_LOG_GL_CALLS);
+	    // setDebugFlags(DEBUG_CHECK_GL_ERROR | DEBUG_LOG_GL_CALLS);
+	    setDebugFlags(DEBUG_CHECK_GL_ERROR);
 		this.context = context;
 	}
 	
@@ -44,11 +46,11 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 	{
 		protected Context context;
 		
-		protected long currTime, prevTime, millistep;
+		protected long currTime, prevTime, millistep = 17;
 		
 		protected static final int REQ_SIZE_Y = 320; // & 480 - scale to middle-screen size.
-		protected int scaledWidth = REQ_SIZE_Y;
-		protected int scaledHeight = 480;
+		protected int scaledWidth = 480;
+		protected int scaledHeight = REQ_SIZE_Y;
 		
 		public ViewWorker(Context context)
 		{
@@ -67,8 +69,8 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		public void onDrawFrame(GL10 gl) {
 			if(firstFrame) {
 				TextureManager.init(context, gl); // Here because derp derpderp...
-				firstFrame = false;
 			}
+			
 			// clear Screen and Depth Buffer
 			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 	
@@ -84,6 +86,17 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 			drawGL(gl);
 			
 			gl.glPopMatrix();
+			
+			currTime = System.currentTimeMillis();
+			if(firstFrame) {
+				prevTime = System.currentTimeMillis() - 17; // Estimate
+				firstFrame = false;
+			}
+			
+			millistep = currTime - prevTime;
+			Log.v("SpaceGame", "FPS: " + (1000 / millistep));
+			
+			prevTime = currTime;
 		}
 
 		@Override
@@ -126,8 +139,6 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		
 		private void drawGL(GL10 gl)
 		{
-			prevTime = System.currentTimeMillis();
-			
 			precalculate();
 			calculate();
 			postcalculate();
@@ -144,12 +155,6 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 			// gl.glPushMatrix();
 			postdraw(gl);
 			// gl.glPopMatrix();
-			
-			// SLEEPY TIME!!
-			currTime = System.currentTimeMillis();
-
-			// Update millistep for next draw loop
-			millistep = System.currentTimeMillis() - prevTime;
 		}
 		
 		protected void precalculate(){}

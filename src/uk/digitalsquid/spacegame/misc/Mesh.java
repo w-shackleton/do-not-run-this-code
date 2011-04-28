@@ -60,7 +60,7 @@ public class Mesh {
 		if(indices == null) throw new IllegalArgumentException("indices is null");
 		setVertices(vertices);
 		setIndices(indices);
-		setColor(r, g, b, a);
+		setColour(r, g, b, a);
 	}
 
 	/**
@@ -200,7 +200,7 @@ public class Mesh {
 	 * @param blue
 	 * @param alpha
 	 */
-	private final void setColor(float red, float green, float blue, float alpha) {
+	private final void setColour(float red, float green, float blue, float alpha) {
 		mRGBA[0] = red;
 		mRGBA[1] = green;
 		mRGBA[2] = blue;
@@ -213,5 +213,9 @@ public class Mesh {
 	 */
 	public final void setAlpha(float alpha) {
 		mRGBA[3] = alpha;
+	}
+	
+	public final float getAlpha() {
+		return mRGBA[3];
 	}
 }

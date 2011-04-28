@@ -4,21 +4,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.microedition.khronos.opengles.GL10;
+import java.util.Random;
 
 import org.xml.sax.SAXException;
 
 import uk.digitalsquid.spacegame.BounceVibrate;
 import uk.digitalsquid.spacegame.Coord;
+import uk.digitalsquid.spacegame.PaintLoader;
+import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.StaticInfo;
 import uk.digitalsquid.spacegame.levels.LevelItem;
 import uk.digitalsquid.spacegame.levels.SaxLoader;
-import uk.digitalsquid.spacegame.misc.Lines;
-import uk.digitalsquid.spacegame.misc.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import uk.digitalsquid.spacegame.spaceitem.SpaceItem;
-import uk.digitalsquid.spacegame.spaceitem.assistors.BgPoints;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Forceful;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Forceful.BallData;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
@@ -30,19 +28,28 @@ import uk.digitalsquid.spacegame.spaceitem.items.Player;
 import uk.digitalsquid.spacegame.spaceitem.items.Portal;
 import uk.digitalsquid.spacegame.spaceitem.items.Star;
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.SurfaceHolder;
 
-public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends DrawBaseView<VT>
+/**
+ * This class is simply here to stop the old code complaining
+ * @author william
+ *
+ * @param <VT>
+ */
+@Deprecated
+public abstract class OldPlanetaryView<VT extends OldPlanetaryView.ViewThread> extends ThreadedView<VT>
 {
-	public PlanetaryView(Context context, AttributeSet attrs)
+	public OldPlanetaryView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
 	}
 	
-	public static abstract class ViewWorker extends DrawBaseView.ViewWorker
+	public static abstract class ViewThread extends ThreadedView.ViewThread
 	{
 		protected float WORLD_ZOOM;
 		protected float WORLD_ZOOM_UNSCALED_ZOOMED;
@@ -72,9 +79,9 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		
 		protected final InputStream xml;
 		
-		public ViewWorker(Context context, InputStream xml)
+		public ViewThread(Context context, SurfaceHolder surface, InputStream xml)
 		{
-			super(context);
+			super(context, surface);
 			
 			this.xml = xml;
 		}
@@ -90,31 +97,39 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 				userZoom = USER_ZOOM_MIN;
 			if(userZoom > USER_ZOOM_MAX)
 				userZoom = USER_ZOOM_MAX;
-			WORLD_ZOOM = 1f / SpaceItem.ITEM_SCALE *
+			WORLD_ZOOM = (float)width / REQ_SIZE_X / SpaceItem.ITEM_SCALE *
 					userZoom / 100 * warpData.zoom; // Assuming all screens are about the same ratio?
-			WORLD_ZOOM_UNSCALED_ZOOMED = userZoom / 100 * warpData.zoom;
-			WORLD_ZOOM_PRESCALE = 1f / SpaceItem.ITEM_SCALE;
+			WORLD_ZOOM_UNSCALED = (float)width / REQ_SIZE_X;
+			WORLD_ZOOM_UNSCALED_ZOOMED = (float)width / REQ_SIZE_X * userZoom / 100 * warpData.zoom;
+			WORLD_ZOOM_PRESCALE = (float)width / REQ_SIZE_X / SpaceItem.ITEM_SCALE;
 			WORLD_ZOOM_POSTSCALE = userZoom / 100 * warpData.zoom;
 		}
 		
-		private RectMesh warpDataPaint = new RectMesh(0, 0, scaledWidth, scaledHeight, 0, 0, 0, 0);
+		protected PaintDesc
+				bgpaint = new PaintDesc(0, 0, 0);
+		private PaintDesc warpDataPaint = new PaintDesc(0, 0, 0, 0);
+		protected PaintDesc txtpaint = new PaintDesc(255, 255, 255, 255, 2, 12);
+		private PaintDesc starpaint = new PaintDesc(220, 255, 255, 255, 2), starprevpaint = new PaintDesc(200, 160, 160, 160, 2);
 
 
+		private static final int BG_REPEAT_X = 1000;
+		private static final int BG_REPEAT_Y = 1000;
+		private static final float BG_ZOOM_1 = 0.5f;
+		private static final float BG_ZOOM_2 = 1f;
 		private static final int BG_POINTS_PER_AREA = 1000;
+		private static final int BG_BLUR_AMOUNT = 1;
 
-		private BgPoints bgPoints;
+		protected BgPoint[] Bg_points = new BgPoint[BG_POINTS_PER_AREA];
 		protected Coord avgPos = new Coord();
+		private final Coord[] avgPrevPos = new Coord[BG_BLUR_AMOUNT];
 		
 		protected static final int SCROLL_SPEED = 15;
-		/**
-		 * Used to scroll the scene smoothly
-		 */
 		protected Coord[] screenPos = new Coord[SCROLL_SPEED];
 		
 		private Coord prevSmallAvgPos;
 		private int timeSinceStop;
 		private static final float STOPPING_SPEED = 1.5f;
-		private static final int STEPS_TO_STOP = 60 * ITERS * 1; // 1 second.
+		private static final int STEPS_TO_STOP = MAX_FPS * ITERS * 1; // 1 second.
 		
 		
 		protected LevelItem level;
@@ -128,7 +143,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		protected boolean stopped = false;
 		protected boolean gravOn = true;
 		
-		private float borderBounceColour = 255;
+		private int borderBounceColour = 255;
 		
 		public void setPaused(boolean p)
 		{
@@ -170,25 +185,27 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			if(planetList == null)
 				planetList = new ArrayList<SpaceItem>();
 
+			currTime = System.currentTimeMillis();
+			
 			p = new AnimatedPlayer(context, level.startPos, level.startSpeed);
 //			p.itemC = new Coord(level.startPos);
 //			p.itemVC = new Coord();
 //			p.itemRF = new Coord();
 			
-			levelBorder = new Lines(0, 0, new float[] {
-					(float) -level.bounds.x / 2, (float) -level.bounds.y / 2, 0,
-					(float) +level.bounds.x / 2, (float) -level.bounds.y / 2, 0,
-					(float) +level.bounds.x / 2, (float) +level.bounds.y / 2, 0,
-					(float) -level.bounds.x / 2, (float) +level.bounds.y / 2, 0
-			}, GL10.GL_LINE_LOOP, 1, 1, 1, 1);
-			
 			portal = new Portal(context, level.portal);
 			
+			millistep = MAX_MILLIS; // Since no initial benchmark
+
 			for(int i = 0; i < screenPos.length; i++)
 				screenPos[i] = new Coord();
+			for(int i = 0; i < avgPrevPos.length; i++)
+				avgPrevPos[i] = new Coord();
 			
 			// BG Points
-			bgPoints = new BgPoints(BG_POINTS_PER_AREA, (int)level.bounds.x, (int)level.bounds.y);
+			for(int i = 0; i < BG_POINTS_PER_AREA; i++)
+			{
+				Bg_points[i] = new BgPoint(); // Random constructor
+			}
 			
 			startTime = System.currentTimeMillis();
 		}
@@ -445,55 +462,136 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		protected Matrix matrix = new Matrix();
 		
 		@Override
-		protected void predraw(GL10 gl)
+		protected void predraw(Canvas c)
 		{
+			c.drawPaint(PaintLoader.load(bgpaint));
+			
 			if(StaticInfo.Starfield)
 			{
-				bgPoints.draw(gl);
+				// Draw stars
+				//for(int i = 1; i < avgPrevPos.length; i++) // Set speed-line points
+				//	avgPrevPos[i - 1] = avgPrevPos[i];
+				avgPrevPos[avgPrevPos.length - 1] = avgPos; // Since only one previous line
+				
+//				c.clipRect(new Rect(
+//						(int)((-level.bounds.x - avgPrevPos[0].x) * WORLD_ZOOM_UNSCALED_ZOOMED),
+//						(int)((-level.bounds.x - avgPrevPos[0].y) * WORLD_ZOOM_UNSCALED_ZOOMED),
+//						(int)((-level.bounds.x + avgPrevPos[0].x) * WORLD_ZOOM_UNSCALED_ZOOMED),
+//						(int)((-level.bounds.x + avgPrevPos[0].y) * WORLD_ZOOM_UNSCALED_ZOOMED)
+//						), Op.REPLACE); // Set clip
+				
+				for(int i = 0; i < Bg_points.length; i++) // Draw speed-line
+				{
+					for(int j = 1; j < avgPrevPos.length; j++)
+						
+						if(
+								Bg_points[i].point.x > avgPrevPos[j - 1].x * Bg_points[i].zoom &
+								Bg_points[i].point.x < avgPrevPos[j - 1].x * Bg_points[i].zoom + (width / WORLD_ZOOM_UNSCALED_ZOOMED) &
+								Bg_points[i].point.y > avgPrevPos[j - 1].y * Bg_points[i].zoom &
+								Bg_points[i].point.y < avgPrevPos[j - 1].y * Bg_points[i].zoom + (height / WORLD_ZOOM_UNSCALED_ZOOMED)
+								)
+							c.drawLine(
+									(float)(Bg_points[i].point.x + (-avgPrevPos[j - 1].x * Bg_points[i].zoom)) * WORLD_ZOOM_UNSCALED_ZOOMED,
+									(float)(Bg_points[i].point.y + (-avgPrevPos[j - 1].y * Bg_points[i].zoom)) * WORLD_ZOOM_UNSCALED_ZOOMED,
+									(float)(Bg_points[i].point.x + (-avgPrevPos[j].x * Bg_points[i].zoom)) * WORLD_ZOOM_UNSCALED_ZOOMED,
+									(float)(Bg_points[i].point.y + (-avgPrevPos[j].y * Bg_points[i].zoom)) * WORLD_ZOOM_UNSCALED_ZOOMED,
+									PaintLoader.load(starprevpaint));
+				}
+				for(int i = 0; i < Bg_points.length; i++) // Draw points - redundant?
+					if(
+							Bg_points[i].point.x > avgPrevPos[0].x * Bg_points[i].zoom &
+							Bg_points[i].point.x < avgPrevPos[0].x * Bg_points[i].zoom + (width / WORLD_ZOOM_UNSCALED_ZOOMED) &
+							Bg_points[i].point.y > avgPrevPos[0].y * Bg_points[i].zoom &
+							Bg_points[i].point.y < avgPrevPos[0].y * Bg_points[i].zoom + (height / WORLD_ZOOM_UNSCALED_ZOOMED)
+							)
+					{
+						starpaint.stroke = Bg_points[i].size;
+						c.drawPoint(
+								(float)(Bg_points[i].point.x + (-avgPrevPos[0].x * Bg_points[i].zoom)) * WORLD_ZOOM_UNSCALED_ZOOMED,
+								(float)(Bg_points[i].point.y + (-avgPrevPos[0].y * Bg_points[i].zoom)) * WORLD_ZOOM_UNSCALED_ZOOMED,
+								PaintLoader.load(starpaint));
+					}
 			}
 		}
 		
 		int i, iter;
 		
-		private Lines levelBorder;
-		
 		@Override
-		protected void draw(GL10 gl)
+		protected void draw(Canvas c)
 		{
-			super.draw(gl);
+			super.draw(c);
 			// DRAW TIME
 			
 			// Object draw
 			for(SpaceItem item : planetList)
 			{
-				// item.draw(c, 1); // TODO: Re-enable!
+				item.draw(c, 1);
 			}
 			
-			// portal.draw(c, 1);
-			// p.draw(c, 1);
+			portal.draw(c, 1);
+			p.draw(c, 1);
 			
-			levelBorder.setColour(1, 1, borderBounceColour, borderBounceColour);
-			levelBorder.draw(gl);
-			borderBounceColour += 0.05;
-			if(borderBounceColour > 1) borderBounceColour = 1;
+//			if(stopped)
+//				c.drawText("MS: " + millistep + ", Spare millis: " + (MAX_MILLIS - System.currentTimeMillis() + prevTime), 20, 20, PaintLoader.load(txtpaint));
+			
+			/*c.drawLine(
+					(float)(p.itemC.x),
+					(float)(p.itemC.y),
+					(float)((p.itemC.x + p.itemVC.x)),
+					(float)((p.itemC.y + p.itemVC.y)),
+					txtpaint);*/
+			
+			txtpaint.a = 255;
+			txtpaint.r = 255;
+			txtpaint.g = borderBounceColour;
+			txtpaint.b = borderBounceColour;
+			borderBounceColour += 20;
+			if(borderBounceColour > 255) borderBounceColour = 255;
+			c.drawLine( // Draw outer bounds
+					(float)-level.bounds.x / 2,
+					(float)level.bounds.y / 2,
+					(float)level.bounds.x / 2,
+					(float)level.bounds.y / 2, PaintLoader.load(txtpaint));
+			c.drawLine(
+					(float)level.bounds.x / 2,
+					(float)-level.bounds.y / 2,
+					(float)level.bounds.x / 2,
+					(float)level.bounds.y / 2, PaintLoader.load(txtpaint));
+			c.drawLine(
+					(float)-level.bounds.x / 2,
+					(float)level.bounds.y / 2,
+					(float)-level.bounds.x / 2,
+					(float)-level.bounds.y / 2, PaintLoader.load(txtpaint));
+			c.drawLine(
+					(float)level.bounds.x / 2,
+					(float)-level.bounds.y / 2,
+					(float)-level.bounds.x / 2,
+					(float)-level.bounds.y / 2, PaintLoader.load(txtpaint));
+			txtpaint.a = 255;
+			txtpaint.r = 255;
+			txtpaint.g = 255;
+			txtpaint.b = 255;
 
 			// DRAW TIME for objects on top of ball
 			for(SpaceItem obj : planetList)
 			{
 				if(obj instanceof TopDrawable)
 				{
-					// ((TopDrawable)obj).drawTop(c, 1); // TODO: Re-enable!
+					((TopDrawable)obj).drawTop(c, 1);
 				}
 			}
 		}
 		
 		@Override
-		protected void postdraw(GL10 gl)
+		protected void postdraw(Canvas c)
 		{
 			// Apply warpData, part 2. Part 1 is not done here, but in a non-abstract class, in scale()
-			warpDataPaint.setAlpha((float) CompuFuncs.TrimMax(warpData.fade / 256, 1));
-			if(warpDataPaint.getAlpha() != 0) {
-				warpDataPaint.draw(gl);
+			warpDataPaint.a = (int) CompuFuncs.TrimMax(warpData.fade, 255);
+			if(warpDataPaint.a != 255) {
+				warpDataPaint.r = 0;
+				warpDataPaint.g = 0;
+				warpDataPaint.b = 0;
+				c.drawRect(0, 0, width, height, PaintLoader.load(warpDataPaint));
 			}
 		}
 		
@@ -505,6 +603,8 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			bundle.putSerializable("p.itemVC", p.itemVC);
 			bundle.putSerializable("avgPos", avgPos);
 			
+			for(int i = 0; i < avgPrevPos.length; i++)
+				bundle.putSerializable("avgPrevPos" + i, avgPrevPos[i]);
 			for(int i = 0; i < screenPos.length; i++)
 				bundle.putSerializable("screenPos" + i, screenPos[i]);
 			bundle.putFloat("userZoom", userZoom);
@@ -518,6 +618,8 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			p.itemC.copyFrom((Coord) bundle.getSerializable("p.itemC"));
 			p.itemVC.copyFrom((Coord) bundle.getSerializable("p.itemVC"));
 			avgPos = (Coord) bundle.getSerializable("avgPos");
+			for(int i = 0; i < avgPrevPos.length; i++)
+				avgPrevPos[i] = (Coord) bundle.getSerializable("avgPrevPos" + i);
 			for(int i = 0; i < screenPos.length; i++)
 				screenPos[i] = (Coord) bundle.getSerializable("screenPos" + i);
 			
@@ -525,6 +627,34 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		}
 	}
 	
+	protected static class BgPoint
+	{
+		Coord point;
+		float zoom;
+		float size;
+
+		private static final Random rg = new Random();
+		
+		public BgPoint(Coord point, float zoom, float size)
+		{
+			this.point = point;
+			this.zoom = zoom;
+			this.size = size;
+		}
+		
+		/**
+		 * Constucts a new BgPoint with random settings
+		 */
+		public BgPoint()
+		{
+			point = new Coord(
+					rg.nextDouble() * ViewThread.BG_REPEAT_X * 2 - ViewThread.BG_REPEAT_X,
+					rg.nextDouble() * ViewThread.BG_REPEAT_Y * 2 - ViewThread.BG_REPEAT_Y);
+			zoom = rg.nextFloat() * (ViewThread.BG_ZOOM_2 - ViewThread.BG_ZOOM_1) + ViewThread.BG_ZOOM_1;
+			size = rg.nextFloat() * 1.5f + 1;
+		}
+	}
+
 	public void stop(int messageCode)
 	{
 		thread.startStopping(messageCode);

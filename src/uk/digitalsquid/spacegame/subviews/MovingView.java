@@ -6,14 +6,14 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 
-public abstract class MovingView<VT extends MovingView.ViewThread> extends PlanetaryView<VT>
+public abstract class MovingView<VT extends MovingView.ViewThread> extends OldPlanetaryView<VT>
 {
 	public MovingView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
 	}
 	
-	public static abstract class ViewThread extends PlanetaryView.ViewThread
+	public static abstract class ViewThread extends OldPlanetaryView.ViewThread
 	{
 		public ViewThread(Context context, SurfaceHolder surface, InputStream level)
 		{
