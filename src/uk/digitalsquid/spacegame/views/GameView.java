@@ -47,6 +47,8 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 		this.level = level;
         
         setOnTouchListener(this);
+        
+        initP2();
 	}
 
 	@Override

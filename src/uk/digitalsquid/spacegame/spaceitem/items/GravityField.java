@@ -9,6 +9,7 @@ import javax.microedition.khronos.opengles.GL10;
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.PaintLoader;
 import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
+import uk.digitalsquid.spacegame.misc.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import uk.digitalsquid.spacegame.spaceitem.Rectangular;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Forceful;
@@ -33,6 +34,8 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 	
 	protected static final PaintDesc bgPaint = new PaintDesc(0, 0, 0);
 	
+	private final RectMesh bg;
+	
 	/**
 	 * @param coord		Centre position of the rectangle
 	 * @param size		Size of the rectangle
@@ -44,6 +47,9 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 		this.size.x = CompuFuncs.TrimMinMax(this.size.x, VORTEX_SIZE_MIN, VORTEX_SIZE_MAX);
 		this.size.y = CompuFuncs.TrimMinMax(this.size.y, VORTEX_SIZE_MIN, VORTEX_SIZE_MAX);
 		this.speed = CompuFuncs.TrimMinMax(speed, VORTEX_POW_MIN, VORTEX_POW_MAX);
+		
+		bg = new RectMesh((float)pos.x, (float)pos.y, (float)size.x, (float)size.y, 0, 0, 0, 1);
+		bg.setRotation(rotation);
 		
 		if(rGen == null)
 			rGen = new Random();
@@ -70,17 +76,9 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 	@Override
 	public void draw(GL10 gl, float worldZoom)
 	{
-		c.rotate(
-				(float)(rotation),
-				(float)pos.x * worldZoom,
-				(float)pos.y * worldZoom);
-		c.drawRect(getRectF(), PaintLoader.load(bgPaint));
-		c.rotate(
-				(float)(-rotation),
-				(float)pos.x * worldZoom,
-				(float)pos.y * worldZoom);
+		bg.draw(gl);
 		
-		for(int i = 0; i < lines.size(); i++)
+		/* for(int i = 0; i < lines.size(); i++)
 		{
 			LineInfo line = lines.get(i);
 			
@@ -113,7 +111,7 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 					(float)tmpP2.x * worldZoom,
 					(float)tmpP2.y * worldZoom,
 					PaintLoader.load(LineInfo.LinePaint));
-		}
+		} */
 		/*for(int i = (int) (pos.x - (size.x / 2)); i < pos.x + (size.x / 2); i += 12)
 		{
 			for(int j = (int) (pos.y - (size.y / 2)); j < pos.y + (size.y / 2); j += 12)

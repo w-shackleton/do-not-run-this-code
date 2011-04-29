@@ -13,7 +13,6 @@ import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import uk.digitalsquid.spacegame.spaceitem.items.Planet.PlanetType.FgType;
 import uk.digitalsquid.spacegame.spaceitem.items.Planet.PlanetType.Type;
 import android.content.Context;
-import android.graphics.Rect;
 
 public class Planet extends Bounceable
 {
@@ -53,16 +52,9 @@ public class Planet extends Bounceable
 		}
 	}
 	
-	private Rect drawTmpRect = new Rect();
-
 	@Override
 	public void draw(GL10 gl, float worldZoom)
 	{
-		drawTmpRect.left = (int)pos.x - (int)radius;
-		drawTmpRect.top = (int)pos.y - (int)radius;
-		drawTmpRect.right = (int)pos.x + (int)radius;
-		drawTmpRect.bottom = (int)pos.y + (int)radius;
-		
 		if(type.fgType == FgType.image)
 		{
 			fg.draw(gl);

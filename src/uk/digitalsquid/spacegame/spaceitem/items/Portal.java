@@ -3,17 +3,14 @@ package uk.digitalsquid.spacegame.spaceitem.items;
 import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.spacegame.Coord;
-import uk.digitalsquid.spacegame.PaintLoader;
-import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.R;
+import uk.digitalsquid.spacegame.misc.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.Gravitable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Warpable;
 import android.content.Context;
 import android.graphics.Path;
 import android.graphics.Path.Direction;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 
 public class Portal extends Gravitable implements Moveable, Warpable {
 	
@@ -23,8 +20,6 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 	private static final float PORTAL_NORMAL_RADIUS = 0;
 	
 	private static final double ONER2 = 0.707106781; // 1f / Math.sqrt(2);
-	
-	private static final PaintDesc PAINT_BLACK = new PaintDesc(0, 0, 0);
 	
 	private static enum Status {
 		DISABLED,
@@ -44,7 +39,7 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 	private Status status = Status.DISABLED;
 	private FinishingStatus finStatus = FinishingStatus.OPENING;
 
-	private final Drawable img;
+	private final RectMesh img;
 	
 	private float rotation = 0, rotation2 = 0;
 	
@@ -60,7 +55,7 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 		circleClip = new Path();
 		octagonClip = new Path();
 		
-		img = (BitmapDrawable) context.getResources().getDrawable(R.drawable.portal);
+		img = new RectMesh((float)pos.x, (float)pos.y, PORTAL_RADIUS * 2, PORTAL_RADIUS * 2, R.drawable.portal);
 	}
 
 	@Override
@@ -69,29 +64,23 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 			circleClip.reset();
 			circleClip.addCircle((float)pos.x, (float)pos.y, radius, Direction.CW);
 			
-			c.save();
-			c.clipPath(circleClip);
+			// c.save();
+			// c.clipPath(circleClip);
 			
-			c.rotate(rotation, (float)pos.x, (float)pos.y);
-			img.setBounds(
-					(int)((pos.x - PORTAL_RADIUS) * worldZoom),
-					(int)((pos.y - PORTAL_RADIUS) * worldZoom),
-					(int)((pos.x + PORTAL_RADIUS) * worldZoom),
-					(int)((pos.y + PORTAL_RADIUS) * worldZoom));
-			img.draw(c);
-			c.rotate(-rotation, (float)pos.x, (float)pos.y);
+			img.setRotation(rotation);
+			img.draw(gl);
 			
-			c.restore();
+			// c.restore();
 		}
 		if(status == Status.FINISHING) {
 			updateOcatgonClip(openingRadius);
 			
-			c.save();
+			/* c.save();
 			c.rotate(rotation2, (float)pos.x, (float)pos.y);
 			c.clipPath(octagonClip);
 			c.drawPaint(PaintLoader.load(PAINT_BLACK));
 			
-			c.restore();
+			c.restore(); */
 		}
 	}
 	

@@ -36,7 +36,7 @@ public class Mesh {
 	private int numOfIndices = -1;
 
 	// Flat Color
-	private final float[] mRGBA = new float[] { 1.0f, 1.0f, 1.0f, 0.0f };
+	private final float[] mRGBA = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	// Translate params.
 	private float x = 0;

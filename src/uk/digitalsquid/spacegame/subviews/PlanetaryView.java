@@ -444,10 +444,6 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		@Override
 		protected void predraw(GL10 gl)
 		{
-			if(StaticInfo.Starfield)
-			{
-				bgPoints.draw(gl);
-			}
 		}
 		
 		int i, iter;
@@ -460,14 +456,19 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			super.draw(gl);
 			// DRAW TIME
 			
+			if(StaticInfo.Starfield)
+			{
+				bgPoints.draw(gl);
+			}
+			
 			// Object draw
 			for(SpaceItem item : planetList)
 			{
 				item.draw(gl, 1);
 			}
 			
-			// portal.draw(c, 1);
-			// p.draw(c, 1);
+			portal.draw(gl, 1);
+			p.draw(gl, 1);
 			
 			levelBorder.setColour(1, 1, borderBounceColour, borderBounceColour);
 			levelBorder.draw(gl);
@@ -479,7 +480,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			{
 				if(obj instanceof TopDrawable)
 				{
-					// ((TopDrawable)obj).drawTop(c, 1); // TODO: Re-enable!
+					((TopDrawable)obj).drawTop(gl, 1); // TODO: Re-enable!
 				}
 			}
 		}

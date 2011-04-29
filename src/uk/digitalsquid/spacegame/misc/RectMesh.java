@@ -67,7 +67,7 @@ public class RectMesh extends Mesh {
 					 width * 0.5f, -height * 0.5f, 0.0f,
 					-width * 0.5f,  height * 0.5f, 0.0f,
 					 width * 0.5f,  height * 0.5f, 0.0f, },
-		        indices,
+		        indices.clone(),
 		        new float[] {
 					0.0f, texH,
 	                texW, texH,
