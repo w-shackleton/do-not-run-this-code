@@ -8,7 +8,6 @@ import uk.digitalsquid.spacegame.spaceitem.items.BlackHole;
 import uk.digitalsquid.spacegame.spaceitem.items.GravityField;
 import uk.digitalsquid.spacegame.spaceitem.items.InfoBox;
 import uk.digitalsquid.spacegame.spaceitem.items.Planet;
-import uk.digitalsquid.spacegame.spaceitem.items.Spring;
 import uk.digitalsquid.spacegame.spaceitem.items.Star;
 import uk.digitalsquid.spacegame.spaceitem.items.Teleporter;
 import uk.digitalsquid.spacegame.spaceitem.items.Wall;
@@ -41,7 +40,7 @@ public class SaxLoader
 	private static final String ITEMS_GRAV = "gravity";
 	private static final String ITEMS_INFOBOX = "infobox";
 	private static final String ITEMS_PLANET = "planet";
-	private static final String ITEMS_SPRING = "spring";
+	// private static final String ITEMS_SPRING = "spring";
 	private static final String ITEMS_TELEPORTER = "teleporter";
 	private static final String ITEMS_WALL = "wall";
 	private static final String ITEMS_STAR = "star";
@@ -49,7 +48,7 @@ public class SaxLoader
 	private static final String ITEMS_KEY_ROTATION = "rotation";
 	private static final String ITEMS_KEY_POWER = "power";
 	private static final String ITEMS_KEY_RADIUS = "radius";
-	private static final String ITEMS_KEY_BOUNCINESS = "bounciness";
+	// private static final String ITEMS_KEY_BOUNCINESS = "bounciness";
 	private static final String ITEMS_KEY_TYPE = "type";
 	
 	/**
@@ -196,7 +195,7 @@ public class SaxLoader
 			}
 		});
 		
-		items.getChild(ITEMS_SPRING).setStartElementListener(new StartElementListener()
+		/* items.getChild(ITEMS_SPRING).setStartElementListener(new StartElementListener()
 		{
 			@Override
 			public void start(Attributes attributes)
@@ -205,7 +204,7 @@ public class SaxLoader
 				level.planetList.add(
 						new Spring(context, cs[0], cs[1], getFloat(attributes, ITEMS_KEY_BOUNCINESS, 1)));
 			}
-		});
+		}); */
 		
 		items.getChild(ITEMS_TELEPORTER).setStartElementListener(new StartElementListener()
 		{
@@ -335,13 +334,13 @@ public class SaxLoader
 	 * @param attributes The SAX Attributes from which to get the values
 	 * @return A new {@link Coord} containing the values.
 	 */
-	private static final Coord[] getAbCoord(Attributes attributes)
+	/* private static final Coord[] getAbCoord(Attributes attributes)
 	{
 		return new Coord[]{
 				getCoord(attributes, "a"),
 				getCoord(attributes, "b"),
 		};
-	}
+	} */
 	
 	/**
 	 * Extract an integer from these attributes

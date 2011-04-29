@@ -2,16 +2,15 @@ package uk.digitalsquid.spacegame.spaceitem.items;
 
 import java.util.Random;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import uk.digitalsquid.spacegame.Coord;
-import uk.digitalsquid.spacegame.PaintLoader;
 import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.R;
-import uk.digitalsquid.spacegame.StaticInfo;
+import uk.digitalsquid.spacegame.misc.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.BounceableRect;
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
 
 public class Wall extends BounceableRect
 {
@@ -22,7 +21,7 @@ public class Wall extends BounceableRect
 	
 	protected static final float BOUNCINESS = 0.7f;
 	
-	protected BitmapDrawable wallside;
+	private RectMesh wallside1, wallside2;
 	
 	protected static final PaintDesc wallPaint = new PaintDesc(20, 100, 40);
 	
@@ -42,33 +41,22 @@ public class Wall extends BounceableRect
 	{
 		super(context, coord, new Coord(CompuFuncs.TrimMinMax(size, WALL_MIN_X, WALL_MAX_X), WALL_WIDTH), rotation, BOUNCINESS);
 		
-		wallside = (BitmapDrawable) context.getResources().getDrawable(R.drawable.wallside);
+		wallside1 = new RectMesh(0, (float)-(this.size.x / 2 - this.size.y / 2), (float)this.size.y, (float)this.size.y, R.drawable.wallside);
+		wallside2 = new RectMesh(0, (float)+(this.size.x / 2 - this.size.y / 2), (float)this.size.y, (float)this.size.y, R.drawable.wallside);
+		wallside2.setRotation(180);
 	}
 
 	@Override
-	public void draw(Canvas c, float worldZoom)
+	public void draw(GL10 gl, float worldZoom)
 	{
-		c.rotate(rotation, (float)pos.x * worldZoom, (float)pos.y * worldZoom);
+		gl.glPushMatrix();
+		gl.glTranslatef((float)-pos.x, (float)-pos.y, 0);
+		gl.glRotatef(rotation, 0, 0, 1);
 		
-		wallside.setAntiAlias(StaticInfo.Antialiasing);
-		wallside.setBounds(
-				(int)((pos.x - (size.x / 2)) * worldZoom),
-				(int)((pos.y - (size.y / 2)) * worldZoom),
-				(int)((pos.x - (size.x / 2) + size.y) * worldZoom),
-				(int)((pos.y + (size.y / 2)) * worldZoom))
-				;
-		wallside.draw(c);
+		wallside1.draw(gl);
+		wallside2.draw(gl);
 		
-		c.rotate(180, (float)(pos.x + size.x / 2 - size.y / 2), (float)pos.y);
-		wallside.setBounds(
-				(int)((pos.x + (size.x / 2) - size.y) * worldZoom),
-				(int)((pos.y - (size.y / 2)) * worldZoom),
-				(int)((pos.x + (size.x / 2)) * worldZoom),
-				(int)((pos.y + (size.y / 2)) * worldZoom));
-		wallside.draw(c);
-		c.rotate(-180, (float)(pos.x + size.x / 2 - size.y / 2), (float)pos.y);
-		
-		final Coord start = new Coord(pos.x - (size.x / 2) + size.y, pos.y);
+		/* final Coord start = new Coord(pos.x - (size.x / 2) + size.y, pos.y);
 		final Coord fin   = new Coord(pos.x + (size.x / 2) - size.y, pos.y);
 		for(int i = 0; i < LINES; i++)
 		{
@@ -99,6 +87,7 @@ public class Wall extends BounceableRect
 					PaintLoader.load(wallPaint));
 		}
 		
-		c.rotate(-rotation, (float)pos.x * worldZoom, (float)pos.y * worldZoom);
+		c.rotate(-rotation, (float)pos.x * worldZoom, (float)pos.y * worldZoom); */
+		gl.glPopMatrix();
 	}
 }

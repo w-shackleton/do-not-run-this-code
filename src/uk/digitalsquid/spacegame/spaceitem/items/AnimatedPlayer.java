@@ -2,13 +2,13 @@ package uk.digitalsquid.spacegame.spaceitem.items;
 
 import java.util.Random;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.R;
+import uk.digitalsquid.spacegame.misc.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 
 public class AnimatedPlayer extends Player
 {
@@ -42,8 +42,9 @@ public class AnimatedPlayer extends Player
 	 */
 	protected static final int LOOKTO_DISTANCE_AFFECTOR = 150;
 	
-	protected Drawable ball, eye, eyeinside, eyeblinking, leftEar, rightEar;
-	private final Rect ballRect = new Rect();
+	protected final RectMesh ball, leftEar, rightEar;
+	protected final RectMesh leftEye, leftEyeinside, leftEyeblinking;
+	protected final RectMesh rightEye, rightEyeinside, rightEyeblinking;
 	
 	/**
 	 * Amount of time left blinking
@@ -75,17 +76,20 @@ public class AnimatedPlayer extends Player
 	protected static final Coord lEye = new Coord(-6 * ITEM_SCALE, -7 * ITEM_SCALE);
 	protected static final Coord rEye = new Coord(-6 * ITEM_SCALE, 7 * ITEM_SCALE);
 	
-	private final Coord eyeSPos = new Coord();
-	
 	public AnimatedPlayer(Context context, Coord coord, Coord velocity)
 	{
 		super(context, coord, BALL_RADIUS);
-		ball = context.getResources().getDrawable(R.drawable.ball);
-		eye = context.getResources().getDrawable(R.drawable.eye);
-		eyeblinking = context.getResources().getDrawable(R.drawable.eyeblinking);
-		eyeinside = context.getResources().getDrawable(R.drawable.eyeinside);
-		leftEar = context.getResources().getDrawable(R.drawable.earleft);
-		rightEar = context.getResources().getDrawable(R.drawable.earright);
+		ball = new RectMesh(0, 0, BALL_RADIUS * 2, BALL_RADIUS * 2, R.drawable.ball);
+		
+		leftEye = new RectMesh((float)lEye.x, (float)lEye.y, EYE_RADIUS * 2, EYE_RADIUS * 2, R.drawable.eye);
+		leftEyeblinking = new RectMesh((float)lEye.x, (float)lEye.y, EYE_RADIUS * 2, EYE_RADIUS * 2, R.drawable.eyeblinking);
+		leftEyeinside = new RectMesh((float)lEye.x, (float)lEye.y, EYE_RADIUS * 2, EYE_RADIUS * 2, R.drawable.eyeinside);
+		rightEye = new RectMesh((float)rEye.x, (float)rEye.y, EYE_RADIUS * 2, EYE_RADIUS * 2, R.drawable.eye);
+		rightEyeblinking = new RectMesh((float)rEye.x, (float)rEye.y, EYE_RADIUS * 2, EYE_RADIUS * 2, R.drawable.eyeblinking);
+		rightEyeinside = new RectMesh((float)rEye.x, (float)rEye.y, EYE_RADIUS * 2, EYE_RADIUS * 2, R.drawable.eyeinside);
+		
+		leftEar  = new RectMesh(- (float)EAR_SIZE.x / 2, 0, (float)EAR_SIZE.x, (float)EAR_SIZE.y, R.drawable.earleft);
+		rightEar = new RectMesh(- (float)EAR_SIZE.x / 2, 0, (float)EAR_SIZE.x, (float)EAR_SIZE.y, R.drawable.earright);
 		
 		itemC.copyFrom(pos); // Referenced?
 		itemVC.copyFrom(velocity);
@@ -97,7 +101,7 @@ public class AnimatedPlayer extends Player
 	}
 
 	@Override
-	public void drawPlayer(Canvas c, float worldZoom)
+	public void drawPlayer(GL10 gl, float worldZoom)
 	{
 		// Calculation steps...
 		
@@ -128,68 +132,45 @@ public class AnimatedPlayer extends Player
 		
 		// Draw
 		
-		c.rotate(ballRotation, (float)itemC.x, (float)itemC.y);
+		gl.glPushMatrix();
+		gl.glRotatef(ballRotation, 0, 0, 1);
 		
-		ballRect.left = (int)((itemC.x - AnimatedPlayer.BALL_RADIUS));
-		ballRect.top = (int)((itemC.y - AnimatedPlayer.BALL_RADIUS));
-		ballRect.right = (int)((itemC.x + AnimatedPlayer.BALL_RADIUS));
-		ballRect.bottom = (int)((itemC.y + AnimatedPlayer.BALL_RADIUS));
+		ball.draw(gl);
 		
-		ball.setBounds(ballRect);
-		ball.draw(c);
-		Coord earPos = itemC.add(lEar);
-		c.rotate((float)lEarRotation, (float)earPos.x, (float)earPos.y);
-		leftEar.setBounds((int)(earPos.x - EAR_SIZE.x), (int)(earPos.y - EAR_SIZE.y / 2), (int)earPos.x, (int)(earPos.y + EAR_SIZE.y / 2));
-		leftEar.draw(c);
-		c.rotate((float)-lEarRotation, (float)earPos.x, (float)earPos.y);
+		gl.glPushMatrix();
+		gl.glTranslatef((float)-lEar.x, (float)-lEar.y, 0);
+		gl.glRotatef((float)lEarRotation, 0, 0, 1);
+		leftEar.draw(gl);
+		gl.glPopMatrix();
 		
-		earPos.copyFrom(itemC);
-		earPos.addThis(rEar);
-		c.rotate((float)rEarRotation, (float)earPos.x, (float)earPos.y);
-		rightEar.setBounds((int)(earPos.x - EAR_SIZE.x), (int)(earPos.y - EAR_SIZE.y / 2), (int)earPos.x, (int)(earPos.y + EAR_SIZE.y / 2));
-		rightEar.draw(c);
-		c.rotate((float)-rEarRotation, (float)earPos.x, (float)earPos.y);
+		gl.glPushMatrix();
+		gl.glTranslatef((float)-rEar.x, (float)-rEar.y, 0);
+		gl.glRotatef((float)rEarRotation, 0, 0, 1);
+		rightEar.draw(gl);
+		gl.glPopMatrix();
 		
 		if(random.nextInt(1000) == 42) blinkTimeLeft = BLINK_TIME;
 		if(blinkTimeLeft-- > 0) // Blinking
 		{
-			eyeSPos.x = itemC.x + lEye.x;
-			eyeSPos.y = itemC.y + lEye.y;
-			eyeblinking.setBounds((int) ((eyeSPos.x - EYE_RADIUS)), (int) ((eyeSPos.y - EYE_RADIUS)), (int) ((eyeSPos.x + EYE_RADIUS)), (int) ((eyeSPos.y + EYE_RADIUS)));
-			eyeblinking.draw(c);
+			leftEyeblinking.draw(gl);
 
-			eyeSPos.x = itemC.x + rEye.x;
-			eyeSPos.y = itemC.y + rEye.y;
-			eyeblinking.setBounds((int) ((eyeSPos.x - EYE_RADIUS)), (int) ((eyeSPos.y - EYE_RADIUS)), (int) ((eyeSPos.x + EYE_RADIUS)), (int) ((eyeSPos.y + EYE_RADIUS)));
-			eyeblinking.draw(c);
+			rightEyeblinking.draw(gl);
 		}
 		else
 		{
-			eyeSPos.x = itemC.x + lEye.x;
-			eyeSPos.y = itemC.y + lEye.y;
-			eye.setBounds((int) ((eyeSPos.x - EYE_RADIUS)), (int) ((eyeSPos.y - EYE_RADIUS)), (int) ((eyeSPos.x + EYE_RADIUS)), (int) ((eyeSPos.y + EYE_RADIUS)));
-			eye.draw(c);
+			leftEye.draw(gl);
+			rightEye.draw(gl);
 			
-			eyeSPos.x += eyeRotatedPos.x;
-			eyeSPos.y += eyeRotatedPos.y;
+			gl.glPushMatrix();
+			gl.glTranslatef((float)eyeRotatedPos.x, (float)eyeRotatedPos.y, 0);
 			
-			eyeinside.setBounds((int) ((eyeSPos.x - EYE_RADIUS)), (int) ((eyeSPos.y - EYE_RADIUS)), (int) ((eyeSPos.x + EYE_RADIUS)), (int) ((eyeSPos.y + EYE_RADIUS)));
-			eyeinside.draw(c);
-
-			eyeSPos.x = itemC.x + rEye.x;
-			eyeSPos.y = itemC.y + rEye.y;
+			leftEyeinside.draw(gl);
+			rightEyeinside.draw(gl);
 			
-			eye.setBounds((int) ((eyeSPos.x - EYE_RADIUS)), (int) ((eyeSPos.y - EYE_RADIUS)), (int) ((eyeSPos.x + EYE_RADIUS)), (int) ((eyeSPos.y + EYE_RADIUS)));
-			eye.draw(c);
-			
-			eyeSPos.x += eyeRotatedPos.x;
-			eyeSPos.y += eyeRotatedPos.y;
-			
-			eyeinside.setBounds((int) ((eyeSPos.x - EYE_RADIUS)), (int) ((eyeSPos.y - EYE_RADIUS)), (int) ((eyeSPos.x + EYE_RADIUS)), (int) ((eyeSPos.y + EYE_RADIUS)));
-			eyeinside.draw(c);
+			gl.glPopMatrix();
 		}
 		
-		c.rotate(-ballRotation, (float)itemC.x, (float)itemC.y);
+		gl.glPopMatrix();
 	}
 	
 	@Override

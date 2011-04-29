@@ -1,5 +1,7 @@
 package uk.digitalsquid.spacegame.spaceitem.items;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.PaintLoader;
 import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
@@ -8,7 +10,6 @@ import uk.digitalsquid.spacegame.spaceitem.Gravitable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Warpable;
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Path;
 import android.graphics.Path.Direction;
 import android.graphics.drawable.BitmapDrawable;
@@ -63,7 +64,7 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 	}
 
 	@Override
-	public void draw(Canvas c, float worldZoom) {
+	public void draw(GL10 gl, float worldZoom) {
 		if(status != Status.DISABLED) {
 			circleClip.reset();
 			circleClip.addCircle((float)pos.x, (float)pos.y, radius, Direction.CW);

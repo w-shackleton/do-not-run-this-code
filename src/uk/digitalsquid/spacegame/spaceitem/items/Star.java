@@ -1,23 +1,24 @@
 package uk.digitalsquid.spacegame.spaceitem.items;
 
+import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
+
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.R;
-import uk.digitalsquid.spacegame.StaticInfo;
+import uk.digitalsquid.spacegame.misc.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import uk.digitalsquid.spacegame.spaceitem.Spherical;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Forceful;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.LevelAffectable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.StaticDrawable;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
+import android.opengl.Matrix;
 
 public class Star extends Spherical implements LevelAffectable, Forceful, StaticDrawable
 {
 	private static final int STAR_RADIUS = 15;
 	
-	private static BitmapDrawable img;
+	private final RectMesh img;
 	
 	private boolean available = true;
 	private boolean drawingP1 = true;
@@ -25,29 +26,21 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 	private boolean sendStatus = false;
 	private boolean sendFinishedStatus = false;
 	
-	private float drawRadius;
-	
 	public Star(Context context, Coord coord)
 	{
 		super(context, coord, STAR_RADIUS);
 		
-		drawRadius = radius;
-		
-		img = (BitmapDrawable) context.getResources().getDrawable(R.drawable.star);
+		img = new RectMesh(0, 0, (float)radius * 2, (float)radius * 2, R.drawable.star);
 	}
 	
 	@Override
-	public void draw(Canvas c, float worldZoom)
+	public void draw(GL10 gl, float worldZoom)
 	{
 		if(drawingP1) {
-			img.setAntiAlias(StaticInfo.Antialiasing);
-			img.setAlpha(0xFF);
-			img.setBounds(
-					(int)(pos.x - drawRadius * worldZoom),
-					(int)(pos.y - drawRadius * worldZoom),
-					(int)(pos.x + drawRadius * worldZoom),
-					(int)(pos.y + drawRadius * worldZoom));
-			img.draw(c);
+			gl.glPushMatrix();
+			gl.glTranslatef((float)pos.x, (float)pos.y, 0);
+			img.draw(gl);
+			gl.glPopMatrix();
 		}
 	}
 
@@ -89,20 +82,24 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 		return available;
 	}
 	
-	private Matrix tmpInverse = null;
+	private float[] tmpInverse;
 	private float animX, animY;
 	private float animAngle = 1;
 
 	@Override
-	public void drawStatic(Canvas c, final float worldZoom, final int width, final int height,
-			final Matrix matrix) {
+	public void drawStatic(GL10 gl, final int width, final int height) {
 		if(drawingP2) {
 			
+			GL11 gl11 = (GL11) gl;
 			if(tmpInverse == null) { // Get position first time
-				tmpInverse = new Matrix();
-				matrix.invert(tmpInverse);
-				float[] points = {(float) pos.x, (float) pos.y};
-				matrix.mapPoints(points);
+				float[] matrix = new float[16];
+				tmpInverse = new float[16];
+				gl11.glGetFloatv(GL11.GL_MODELVIEW_MATRIX, matrix, 0);
+				Matrix.invertM(tmpInverse, 0, matrix, 0);
+				
+				float[] points = {animX, animY, 0, 1,
+						0,0,0,0};
+				Matrix.multiplyMV(points, 4, tmpInverse, 0, points, 0); // TODO: Check this works!
 				
 				animX = points[0];
 				animY = points[1];
@@ -114,23 +111,19 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 			float adjustedAngle = (float) (Math.cos(animAngle) * 360);
 			
 			float distFromDest = (float) Math.hypot(animX, animY);
-			int opacity = 255;
-			if(distFromDest < 128) opacity = CompuFuncs.TrimMin((int) ((distFromDest - 64) * 255f / 64f), 0);
+			float opacity = 1;
+			if(distFromDest < 128) opacity = CompuFuncs.TrimMin((int) ((distFromDest - 64) / 64f), 0);
 			if(opacity == 0) {
 				drawingP2 = false;
 				sendFinishedStatus = true;
 			}
 			
-			c.rotate(adjustedAngle, animX, animY);
-			img.setAntiAlias(StaticInfo.Antialiasing);
+			gl.glPushMatrix();
+			gl.glTranslatef(animX, animY, 0);
+			gl.glRotatef(adjustedAngle, 0, 0, 1);
 			img.setAlpha(opacity);
-			img.setBounds(
-					(int)(animX - radius * worldZoom),
-					(int)(animY - radius * worldZoom),
-					(int)(animX + radius * worldZoom),
-					(int)(animY + radius * worldZoom));
-			img.draw(c);
-			c.rotate(-adjustedAngle, animX, animY);
+			img.draw(gl);
+			gl.glPopMatrix();
 		}
 	}
 }
