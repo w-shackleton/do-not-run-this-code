@@ -30,7 +30,6 @@ import uk.digitalsquid.spacegame.spaceitem.items.Player;
 import uk.digitalsquid.spacegame.spaceitem.items.Portal;
 import uk.digitalsquid.spacegame.spaceitem.items.Star;
 import android.content.Context;
-import android.graphics.Matrix;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -441,8 +440,6 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			stopAnimation = true;
 			returnCode = messageCode;
 		}
-		
-		protected Matrix matrix = new Matrix();
 		
 		@Override
 		protected void predraw(GL10 gl)

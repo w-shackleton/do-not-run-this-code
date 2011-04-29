@@ -1,16 +1,15 @@
 package uk.digitalsquid.spacegame.spaceview.gamemenu;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.StaticInfo;
+import uk.digitalsquid.spacegame.misc.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.StaticDrawable;
 import uk.digitalsquid.spacegame.spaceitem.items.Portal;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 
 public class StarDisplay implements StaticDrawable, Moveable {
 	
@@ -26,7 +25,7 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	 */
 	private int displayedStarCount = 0;
 	
-	private Drawable star;
+	private RectMesh star;
 	
 	private static final Paint txtPaint = new Paint();
 	static {
@@ -52,18 +51,21 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	
 	public StarDisplay(Context context, int starTotal, Portal portal) {
 		txtPaint.setTypeface(StaticInfo.Fonts.bangers);
-		star = (BitmapDrawable) context.getResources().getDrawable(R.drawable.star);
+		star = new RectMesh(25, 25, 30, 30, R.drawable.star);
 		this.starTotal = starTotal;
 		this.portal = portal;
 	}
 
 	@Override
-	public void drawStatic(Canvas c, float worldZoom, int width, int height, Matrix matrix) {
-		star.setAlpha(255);
-		star.setBounds(10, 10 - jump, 40, 40 - jump);
-		star.draw(c);
+	public void drawStatic(GL10 gl, int width, int height) {
+		gl.glPushMatrix();
+		gl.glTranslatef(0, jump, 0);
+		// star.setAlpha(1);
+		star.draw(gl);
+		gl.glPopMatrix();
 		
-		c.drawText("" + displayedStarCount + " / " + starTotal, 50, 40, txtPaint);
+		// c.drawText("" + displayedStarCount + " / " + starTotal, 50, 40, txtPaint);
+		// TODO: DRAW TEXT
 	}
 
 	public void incStarCount() {

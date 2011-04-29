@@ -4,12 +4,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import uk.digitalsquid.spacegame.BounceVibrate;
 import uk.digitalsquid.spacegame.Coord;
-import uk.digitalsquid.spacegame.PaintLoader;
 import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.Spacegame;
-import uk.digitalsquid.spacegame.levels.LevelItem;
 import uk.digitalsquid.spacegame.levels.LevelItem.LevelSummary;
 import uk.digitalsquid.spacegame.spaceitem.SpaceItem;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Clickable;
@@ -24,22 +24,19 @@ import uk.digitalsquid.spacegame.spaceview.gamemenu.GameMenu.GameMenuItem;
 import uk.digitalsquid.spacegame.spaceview.gamemenu.StarDisplay;
 import uk.digitalsquid.spacegame.subviews.MovingView;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.RectF;
-import android.graphics.Region.Op;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-public class GameView extends MovingView<GameView.ViewThread> implements OnTouchListener, KeyInput
+public class GameView extends MovingView<GameView.ViewWorker> implements OnTouchListener, KeyInput
 {
 	final Handler parentHandler, gvHandler;
+	private final InputStream level;
 	
 	public GameView(Context context, AttributeSet attrs, InputStream level, Handler handler, Handler gvHandler)
 	{
@@ -47,38 +44,39 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 		
 		parentHandler = handler;
 		this.gvHandler = gvHandler;
+		this.level = level;
         
         setOnTouchListener(this);
-        
-        if (isInEditMode() == false)
-        {
-        	thread = new ViewThread(context, new Handler()
-        	{
-        		public void handleMessage(Message m)
-        		{
-        			if(m.what == ViewThread.MESSAGE_END_GAME)
-        			{
-        				Message newM = new Message();
-        				newM.what = Spacegame.MESSAGE_END_LEVEL;
-        				newM.arg1 = m.arg1;
-        				newM.obj = m.obj;
-        				GameView.this.parentHandler.sendMessage(newM);
-        			}
-        		}
-        	}, this.gvHandler, holder, level);
-        }
+	}
+
+	@Override
+	protected ViewWorker createThread() {
+    	return new ViewWorker(context, new Handler()
+    	{
+    		public void handleMessage(Message m)
+    		{
+    			if(m.what == ViewWorker.MESSAGE_END_GAME)
+    			{
+    				Message newM = new Message();
+    				newM.what = Spacegame.MESSAGE_END_LEVEL;
+    				newM.arg1 = m.arg1;
+    				newM.obj = m.obj;
+    				GameView.this.parentHandler.sendMessage(newM);
+    			}
+    		}
+    	}, this.gvHandler, level);
 	}
 	
-	class ViewThread extends MovingView.ViewThread
+	class ViewWorker extends MovingView.ViewWorker
 	{
 		static final int MESSAGE_END_GAME = 1;
 		
 		protected Handler msgHandler, gvHandler;
 		
-		public ViewThread(Context context, Handler handler, Handler gvHandler, SurfaceHolder surface,
+		public ViewWorker(Context context, Handler handler, Handler gvHandler,
 				InputStream level)
 		{
-			super(context, surface, level);
+			super(context, level);
 			msgHandler = handler;
 			this.gvHandler = gvHandler;
 		}
@@ -93,26 +91,6 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 		@Override
 		protected void initialiseOnThread()
 		{
-			Canvas c = null;
-			try
-			{
-				c = surface.lockCanvas(null);
-				synchronized(surface)
-				{
-					// Draw simple loading screen
-					WORLD_ZOOM_UNSCALED = (float)width / REQ_SIZE_X;
-					c.scale(WORLD_ZOOM_UNSCALED, WORLD_ZOOM_UNSCALED);
-					c.drawPaint(PaintLoader.load(bgpaint));
-					c.drawText("Loading...", c.getWidth() / 2 / WORLD_ZOOM_UNSCALED, 100, PaintLoader.load(txtpaint));
-					c.restore();
-				}
-			}
-			finally
-			{
-				if(c != null)
-					surface.unlockCanvasAndPost(c);
-			}
-			
 			BounceVibrate.initialise(context);
 			
 			super.initialiseOnThread();
@@ -127,52 +105,20 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 			starCount = new StarDisplay(context, level.starsToCollect, portal);
 		}
 		
-		private final Coord tmpOuterBounds = new Coord();
 		@Override
-		protected void predraw(Canvas c)
+		protected void predraw(GL10 gl)
 		{
-			c.drawPaint(PaintLoader.load(bgpaint)); // Different bg outside box could be drawn here...
-			
-			level.bounds.addInto(LevelItem.COORD_BOUNDS_DRAWEXT, tmpOuterBounds);
-			RectF boundRect = tmpOuterBounds.toRectF();
-			matrix.mapRect(boundRect);
-			c.clipRect(boundRect, Op.REPLACE); // Set clip
-			super.predraw(c);
+			super.predraw(gl);
 		}
 		
 		@Override
-		protected void scaleCalculate()
+		protected void scale(GL10 gl)
 		{
-			matrix.reset();
-			matrix.preRotate(
-					warpData.rotation,
-					width / 2,
-					height / 2);
-			matrix.preScale(WORLD_ZOOM_POSTSCALE, WORLD_ZOOM_POSTSCALE, width / 2, height / 2);
-			
-			matrix.preTranslate((float)-avgPos.x * WORLD_ZOOM_PRESCALE, (float)-avgPos.y * WORLD_ZOOM_PRESCALE);
-			matrix.preScale(WORLD_ZOOM_PRESCALE, WORLD_ZOOM_PRESCALE);
-		}
-		
-		@Override
-		protected void scale(Canvas c)
-		{
-//			// Move screen & zoom
-//			c.rotate(
-//					warpData.rotation,
-//					width / 2,
-//					height / 2);
-//			c.scale(WORLD_ZOOM_POSTSCALE, WORLD_ZOOM_POSTSCALE, width / 2, height / 2);
-//			
-//			c.translate((float)-avgPos.x * WORLD_ZOOM_PRESCALE, (float)-avgPos.y * WORLD_ZOOM_PRESCALE);
-//			c.scale(WORLD_ZOOM_PRESCALE, WORLD_ZOOM_PRESCALE);
-			
-			c.setMatrix(matrix);
-		}
-		
-		@Override
-		protected void postdrawscale(Canvas c) {
-			c.scale(WORLD_ZOOM_UNSCALED, WORLD_ZOOM_UNSCALED);
+			// TODO: Check this!
+			gl.glScalef(WORLD_ZOOM_PRESCALE, WORLD_ZOOM_PRESCALE, WORLD_ZOOM_PRESCALE);
+			gl.glTranslatef((float)-avgPos.x, (float)-avgPos.y, 0);
+			gl.glScalef(WORLD_ZOOM_POSTSCALE, WORLD_ZOOM_POSTSCALE, WORLD_ZOOM_POSTSCALE);
+			gl.glRotatef(warpData.rotation, 0, 0, 1);
 		}
 		
 		@Override
@@ -218,35 +164,32 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 		private final Coord screenStandardSize = new Coord();
 		
 		@Override
-		protected void postdraw(Canvas c)
+		protected void postdraw(GL10 gl)
 		{
 			// Draw objects static to screen (buttons)
 			
 			// Draw menus
-			screenStandardSize.x = REQ_SIZE_X;
-			screenStandardSize.y = height * width / REQ_SIZE_X;
-			
-			matrix.postScale(1 / WORLD_ZOOM_UNSCALED, 1 / WORLD_ZOOM_UNSCALED);
+			screenStandardSize.x = scaledWidth;
+			screenStandardSize.y = scaledHeight;
 			
 			for(GameMenu menu : gameMenus)
 			{
 				menu.move(millistep, SPEED_SCALE);
-				menu.draw(c, 1, screenStandardSize);
+				// menu.draw(gl, 1, screenStandardSize);
+				// TODO: Re-enable!
 			}
 			
 			for(SpaceItem obj : level.planetList) {
 				// Stage for static drawing
 				if(obj instanceof StaticDrawable)
 				{
-					((StaticDrawable)obj).drawStatic(c, 1, (int)screenStandardSize.x, (int)screenStandardSize.y, matrix);
+					((StaticDrawable)obj).drawStatic(gl, (int)screenStandardSize.x, (int)screenStandardSize.y);
 				}
 			}
 			
-			starCount.drawStatic(c, 1, width, height, matrix);
+			starCount.drawStatic(gl, width, height);
 			
-			matrix.postScale(WORLD_ZOOM_UNSCALED, WORLD_ZOOM_UNSCALED);
-			
-			super.postdraw(c);
+			super.postdraw(gl);
 		}
 		
 		@Override
@@ -288,7 +231,8 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 				if(obj instanceof Clickable)
 				{
 					Clickable item = (Clickable) obj;
-					if(item.isClicked(new Coord(event.getX(), event.getY(), matrix)))
+					// TODO: FIX THIS
+					if(item.isClicked(new Coord(event.getX(), event.getY(), null)))
 					{
 						item.onClick();
 						Log.v("SpaceGame", "Item clicked");
@@ -493,7 +437,7 @@ public class GameView extends MovingView<GameView.ViewThread> implements OnTouch
 	{
 		if(thread != null)
 		{
-			((ViewThread) thread).onTouch(v, event);
+			((ViewWorker) thread).onTouch(v, event);
 		}
 		return true;
 	}
