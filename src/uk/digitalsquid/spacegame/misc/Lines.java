@@ -106,7 +106,7 @@ public class Lines {
 	 * 
 	 * @param vertices
 	 */
-	private final void setVertices(float[] vertices) {
+	public final void setVertices(float[] vertices) {
 		// a float is 4 bytes, therefore we multiply the number if
 		// vertices with 4.
 		numOfVertices = vertices.length / 3;

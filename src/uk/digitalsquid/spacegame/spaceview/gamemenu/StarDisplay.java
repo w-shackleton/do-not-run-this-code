@@ -59,6 +59,8 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	@Override
 	public void drawStatic(GL10 gl, int width, int height) {
 		gl.glPushMatrix();
+		gl.glTranslatef(-width / 2, -height / 2, 0);
+		gl.glPushMatrix();
 		gl.glTranslatef(0, jump, 0);
 		// star.setAlpha(1);
 		star.draw(gl);
@@ -66,6 +68,7 @@ public class StarDisplay implements StaticDrawable, Moveable {
 		
 		// c.drawText("" + displayedStarCount + " / " + starTotal, 50, 40, txtPaint);
 		// TODO: DRAW TEXT
+		gl.glPopMatrix();
 	}
 
 	public void incStarCount() {

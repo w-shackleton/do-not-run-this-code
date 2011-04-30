@@ -74,4 +74,13 @@ public class RectMesh extends Mesh {
                     0.0f, 0.0f,
                     texW, 0.0f }, resId);
 	}
+	
+	public final void setWH(float width, float height) {
+		setVertices(
+				new float[] {
+					-width * 0.5f, -height * 0.5f, 0.0f,
+					 width * 0.5f, -height * 0.5f, 0.0f,
+					-width * 0.5f,  height * 0.5f, 0.0f,
+					 width * 0.5f,  height * 0.5f, 0.0f, });
+	}
 }

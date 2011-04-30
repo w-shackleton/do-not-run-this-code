@@ -138,13 +138,13 @@ public class AnimatedPlayer extends Player
 		ball.draw(gl);
 		
 		gl.glPushMatrix();
-		gl.glTranslatef((float)-lEar.x, (float)-lEar.y, 0);
+		gl.glTranslatef((float)lEar.x, (float)lEar.y, 0);
 		gl.glRotatef((float)lEarRotation, 0, 0, 1);
 		leftEar.draw(gl);
 		gl.glPopMatrix();
 		
 		gl.glPushMatrix();
-		gl.glTranslatef((float)-rEar.x, (float)-rEar.y, 0);
+		gl.glTranslatef((float)rEar.x, (float)rEar.y, 0);
 		gl.glRotatef((float)rEarRotation, 0, 0, 1);
 		rightEar.draw(gl);
 		gl.glPopMatrix();

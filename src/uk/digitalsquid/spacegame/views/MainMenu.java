@@ -40,12 +40,25 @@ public class MainMenu extends PlanetaryView<MainMenu.ViewWorker>
 		{
 			super.initialiseOnThread();
 		}
+		
+		private int oldSW = 0, oldSH = 0;
 
 		@Override
 		protected void predraw(GL10 gl)
 		{
 			level.bounds.x = scaledWidth + 2;
 			level.bounds.y = scaledHeight + 2;
+			
+			if(scaledWidth != oldSW || scaledHeight != oldSH) {
+				oldSW = scaledWidth;
+				oldSH = scaledHeight;
+				levelBorder.setVertices(new float[] {
+					(float) -level.bounds.x / 2, (float) -level.bounds.y / 2, 0,
+					(float) +level.bounds.x / 2, (float) -level.bounds.y / 2, 0,
+					(float) +level.bounds.x / 2, (float) +level.bounds.y / 2, 0,
+					(float) -level.bounds.x / 2, (float) +level.bounds.y / 2, 0 });
+			}
+			
 			super.predraw(gl);
 		}
 

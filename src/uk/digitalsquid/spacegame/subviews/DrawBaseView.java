@@ -9,7 +9,6 @@ import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.Bundle;
 import android.util.AttributeSet;
-import android.util.Log;
 
 public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends GLSurfaceView
 {
@@ -94,7 +93,7 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 			}
 			
 			millistep = currTime - prevTime;
-			Log.v("SpaceGame", "FPS: " + (1000 / millistep));
+			
 			prevTime = currTime;
 		}
 

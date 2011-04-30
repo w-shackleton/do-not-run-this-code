@@ -33,7 +33,7 @@ public abstract class Player extends Spherical implements Moveable
 	@Override
 	public final void draw(GL10 gl, float worldZoom) {
 		gl.glPushMatrix();
-		gl.glTranslatef((float)-itemC.x, (float)-itemC.y, 0);
+		gl.glTranslatef((float)itemC.x, (float)itemC.y, 0);
 		gl.glScalef(warpScale, warpScale, 1);
 		gl.glRotatef(warpRotation, 0, 0, 1);
 		

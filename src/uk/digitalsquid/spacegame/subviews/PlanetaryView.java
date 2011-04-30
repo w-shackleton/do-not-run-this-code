@@ -448,7 +448,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		
 		int i, iter;
 		
-		private Lines levelBorder;
+		protected Lines levelBorder;
 		
 		@Override
 		protected void draw(GL10 gl)

@@ -28,8 +28,8 @@ public abstract class MovingView<VT extends MovingView.ViewWorker> extends Plane
 			{
 				screenPos[i - 1] = screenPos[i];
 			}
-			screenPos[screenPos.length - 1].x = p.itemC.x - (scaledWidth / 2);
-			screenPos[screenPos.length - 1].y = p.itemC.y - (scaledWidth / 2);
+			screenPos[screenPos.length - 1].x = p.itemC.x;
+			screenPos[screenPos.length - 1].y = p.itemC.y;
 			avgPos.reset(); // Find average into this var
 			int totNums = 1;
 			for(int i = 1; i < screenPos.length; i++)

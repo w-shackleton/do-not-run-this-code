@@ -149,7 +149,7 @@ public class Mesh {
 	 * 
 	 * @param vertices
 	 */
-	private final void setVertices(float[] vertices) {
+	protected final void setVertices(float[] vertices) {
 		// a float is 4 bytes, therefore we multiply the number if
 		// vertices with 4.
 		ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
@@ -164,7 +164,7 @@ public class Mesh {
 	 * 
 	 * @param indices
 	 */
-	private final void setIndices(short[] indices) {
+	protected final void setIndices(short[] indices) {
 		// short is 2 bytes, therefore we multiply the number if
 		// vertices with 2.
 		ByteBuffer ibb = ByteBuffer.allocateDirect(indices.length * 2);
@@ -180,7 +180,7 @@ public class Mesh {
 	 * 
 	 * @param textureCoords
 	 */
-	private final void setTextureCoordinates(float[] textureCoords) { // New
+	protected final void setTextureCoordinates(float[] textureCoords) { // New
 																	// function.
 		// float is 4 bytes, therefore we multiply the number if
 		// vertices with 4.
@@ -200,7 +200,7 @@ public class Mesh {
 	 * @param blue
 	 * @param alpha
 	 */
-	private final void setColour(float red, float green, float blue, float alpha) {
+	protected final void setColour(float red, float green, float blue, float alpha) {
 		mRGBA[0] = red;
 		mRGBA[1] = green;
 		mRGBA[2] = blue;
