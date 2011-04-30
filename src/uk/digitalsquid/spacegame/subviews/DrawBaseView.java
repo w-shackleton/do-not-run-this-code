@@ -102,6 +102,8 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 			if(height == 0) { 						//Prevent A Divide By Zero By
 				height = 1; 						//Making Height Equal One
 			}
+			this.width = width;
+			this.height = height;
 			
 			gl.glViewport(0, 0, width, height); 	//Reset The Current Viewport
 			gl.glMatrixMode(GL10.GL_PROJECTION); 	//Select The Projection Matrix

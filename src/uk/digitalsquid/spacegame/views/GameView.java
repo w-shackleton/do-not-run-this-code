@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
 
 import uk.digitalsquid.spacegame.BounceVibrate;
 import uk.digitalsquid.spacegame.Coord;
@@ -24,6 +25,7 @@ import uk.digitalsquid.spacegame.spaceview.gamemenu.GameMenu.GameMenuItem;
 import uk.digitalsquid.spacegame.spaceview.gamemenu.StarDisplay;
 import uk.digitalsquid.spacegame.subviews.MovingView;
 import android.content.Context;
+import android.opengl.GLU;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -113,6 +115,9 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 			super.predraw(gl);
 		}
 		
+		private float[] modelViewMatrix = new float[16];
+		private float[] projectionMatrix = new float[16];
+		
 		@Override
 		protected void scale(GL10 gl)
 		{
@@ -121,6 +126,9 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 			gl.glTranslatef((float)-avgPos.x, (float)-avgPos.y, 0);
 			gl.glScalef(WORLD_ZOOM_POSTSCALE, WORLD_ZOOM_POSTSCALE, WORLD_ZOOM_POSTSCALE);
 			gl.glRotatef(warpData.rotation, 0, 0, 1);
+			
+			((GL11)gl).glGetFloatv(GL11.GL_MODELVIEW_MATRIX, modelViewMatrix, 0);
+			((GL11)gl).glGetFloatv(GL11.GL_PROJECTION_MATRIX, projectionMatrix, 0);
 		}
 		
 		@Override
@@ -221,20 +229,30 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 			}
 		}
 		
+		private final float[] tmpTouchData = {0, 0, 0, 1};
+		private final int[] tmpView = {0, 0, 0, 0};
+		
 		public synchronized void onTouch(View v, MotionEvent event)
 		{
 			for(GameMenu menu : gameMenus)
 			{
-				if(menu.computeClick(event)) return;
+				// if(menu.computeClick(event)) return;
+				// TODO: Do something about this
 			}
+			
+			tmpView[2] = width;
+			tmpView[3] = height;
+			
+			GLU.gluUnProject(event.getX(), event.getY(), 0f, modelViewMatrix, 0, projectionMatrix, 0, tmpView, 0, tmpTouchData, 0);
+			Log.v("SpaceGame", "CLICK X: " + tmpTouchData[0] + ", Y: " + tmpTouchData[1] + ", Z: " + tmpTouchData[2]);
 			
 			for(SpaceItem obj : planetList)
 			{
 				if(obj instanceof Clickable)
 				{
 					Clickable item = (Clickable) obj;
-					// TODO: FIX THIS
-					if(item.isClicked(new Coord(event.getX(), event.getY(), null)))
+					
+					if(item.isClicked(new Coord(event.getX(), event.getY())))
 					{
 						item.onClick();
 						Log.v("SpaceGame", "Item clicked");

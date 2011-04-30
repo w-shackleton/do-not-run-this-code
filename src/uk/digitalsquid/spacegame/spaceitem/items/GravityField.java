@@ -7,7 +7,6 @@ import java.util.Random;
 import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.spacegame.Coord;
-import uk.digitalsquid.spacegame.PaintLoader;
 import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.misc.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;

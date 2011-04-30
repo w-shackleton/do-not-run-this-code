@@ -1,5 +1,6 @@
 package uk.digitalsquid.spacegame.spaceitem.items;
 
+import java.nio.FloatBuffer;
 import java.util.Random;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -7,6 +8,7 @@ import javax.microedition.khronos.opengles.GL10;
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.R;
+import uk.digitalsquid.spacegame.misc.Lines;
 import uk.digitalsquid.spacegame.misc.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.BounceableRect;
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
@@ -15,8 +17,7 @@ import android.content.Context;
 public class Wall extends BounceableRect
 {
 	protected static final int LINES = 10;
-	protected static final float RAND_MIN_SIZE = 10 * ITEM_SCALE;
-	protected static final float RAND_MAX_SIZE = 20 * ITEM_SCALE;
+	protected static final float GAP_WIDTH = 15;
 	protected static final Random rGen = new Random();
 	
 	protected static final float BOUNCINESS = 0.7f;
@@ -41,53 +42,62 @@ public class Wall extends BounceableRect
 	{
 		super(context, coord, new Coord(CompuFuncs.TrimMinMax(size, WALL_MIN_X, WALL_MAX_X), WALL_WIDTH), rotation, BOUNCINESS);
 		
-		wallside1 = new RectMesh(0, (float)-(this.size.x / 2 - this.size.y / 2), (float)this.size.y, (float)this.size.y, R.drawable.wallside);
-		wallside2 = new RectMesh(0, (float)+(this.size.x / 2 - this.size.y / 2), (float)this.size.y, (float)this.size.y, R.drawable.wallside);
+		wallside1 = new RectMesh((float)-(this.size.x / 2 - this.size.y / 2), 0, (float)this.size.y, (float)this.size.y, R.drawable.wallside);
+		wallside2 = new RectMesh((float)+(this.size.x / 2 - this.size.y / 2), 0, (float)this.size.y, (float)this.size.y, R.drawable.wallside);
 		wallside2.setRotation(180);
+		
+		for(int i = 0; i < lines.length; i++) {
+			lines[i] = new Lines(0, 0, new float[(int)((this.size.x - this.size.y * 2) / GAP_WIDTH) * 3 + 3], GL10.GL_LINE_STRIP, 0.1f, 0.5f, 0.2f, 1);
+		}
 	}
+	
+	protected final Lines[] lines = new Lines[LINES];
 
 	@Override
 	public void draw(GL10 gl, float worldZoom)
 	{
 		gl.glPushMatrix();
-		gl.glTranslatef((float)-pos.x, (float)-pos.y, 0);
+		gl.glTranslatef((float)pos.x, (float)pos.y, 0);
 		gl.glRotatef(rotation, 0, 0, 1);
 		
 		wallside1.draw(gl);
 		wallside2.draw(gl);
 		
-		/* final Coord start = new Coord(pos.x - (size.x / 2) + size.y, pos.y);
-		final Coord fin   = new Coord(pos.x + (size.x / 2) - size.y, pos.y);
-		for(int i = 0; i < LINES; i++)
-		{
-			int currPos = 0;
-			double prevPosX = start.x;
-			double prevPosY = start.y;
-			while(currPos + RAND_MAX_SIZE < fin.x - start.x)
-			{
-				final float posHeight = (float) (rGen.nextFloat() * size.y);
-				final float posWidth = rGen.nextFloat() * (RAND_MAX_SIZE - RAND_MIN_SIZE) + RAND_MIN_SIZE;
-				
-				currPos += posWidth;
-				
-				c.drawLine(
-						(float)(prevPosX) * worldZoom,
-						(float)(prevPosY) * worldZoom,
-						(float)(prevPosX + posWidth) * worldZoom,
-						(float)(pos.y - (size.y / 2) + posHeight) * worldZoom,
-						PaintLoader.load(wallPaint));
-				prevPosX = prevPosX + posWidth;
-				prevPosY = pos.y - (size.y / 2) + posHeight;
-			}
-			c.drawLine(
-					(float)prevPosX * worldZoom,
-					(float)prevPosY * worldZoom,
-					(float)fin.x * worldZoom,
-					(float)fin.y * worldZoom,
-					PaintLoader.load(wallPaint));
+		move(0, 0); // Called here as we only want one call per draw
+		for(Lines line : lines) {
+			line.draw(gl);
 		}
 		
-		c.rotate(-rotation, (float)pos.x * worldZoom, (float)pos.y * worldZoom); */
 		gl.glPopMatrix();
+	}
+	
+	private final float[] tmp = {0, 0, 0};
+
+	private final void move(float millistep, float speedScale) {
+		final float startx = (float) (- (size.x / 2) + size.y);
+		final float finx   = (float) (+ (size.x / 2) - size.y);
+		final float starty = 0;
+		
+		for(Lines line : lines)
+		{
+			FloatBuffer buf = line.getVertices();
+			float currPos = startx;
+			while(currPos + GAP_WIDTH < size.x - size.y * 2)
+			{
+				//final float posHeight = (float) (rGen.nextFloat() * size.y);
+				currPos += GAP_WIDTH;
+				
+				// Set vals
+				tmp[0] = currPos;
+				tmp[1] = (float) (rGen.nextFloat() * size.y);
+				buf.put(tmp);
+			}
+			tmp[0] = finx;
+			tmp[1] = starty;
+			buf.put(tmp);
+			
+			buf.position(0);
+		}
+		
 	}
 }

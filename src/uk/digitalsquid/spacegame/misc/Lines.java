@@ -116,6 +116,10 @@ public class Lines {
 		verticesBuffer.put(vertices);
 		verticesBuffer.position(0);
 	}
+	
+	public final FloatBuffer getVertices() {
+		return verticesBuffer;
+	}
 
 	/**
 	 * Set one flat colour on the mesh.

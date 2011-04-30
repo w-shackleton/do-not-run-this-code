@@ -30,17 +30,14 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 	{
 		super(context, coord, STAR_RADIUS);
 		
-		img = new RectMesh(0, 0, (float)radius * 2, (float)radius * 2, R.drawable.star);
+		img = new RectMesh((float)pos.x, (float)pos.y, (float)radius * 2, (float)radius * 2, R.drawable.star);
 	}
 	
 	@Override
 	public void draw(GL10 gl, float worldZoom)
 	{
 		if(drawingP1) {
-			gl.glPushMatrix();
-			gl.glTranslatef((float)pos.x, (float)pos.y, 0);
 			img.draw(gl);
-			gl.glPopMatrix();
 		}
 	}
 
