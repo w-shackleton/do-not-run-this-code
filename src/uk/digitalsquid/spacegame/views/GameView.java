@@ -128,14 +128,14 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 			gl.glScalef(WORLD_ZOOM_PRESCALE, WORLD_ZOOM_PRESCALE, WORLD_ZOOM_PRESCALE);
 			matrix2d.postScale(WORLD_ZOOM_PRESCALE, WORLD_ZOOM_PRESCALE);
 			
+			gl.glRotatef(warpData.rotation, 0, 0, 1);
+			matrix2d.postRotate(warpData.rotation);
+			
 			gl.glTranslatef((float)-avgPos.x, (float)-avgPos.y, 0);
 			matrix2d.postTranslate((float)-avgPos.x, (float)-avgPos.y);
 			
 			gl.glScalef(WORLD_ZOOM_POSTSCALE, WORLD_ZOOM_POSTSCALE, WORLD_ZOOM_POSTSCALE);
 			matrix2d.postScale(WORLD_ZOOM_POSTSCALE, WORLD_ZOOM_POSTSCALE);
-			
-			gl.glRotatef(warpData.rotation, 0, 0, 1);
-			matrix2d.postRotate(warpData.rotation);
 			
 			matrix2d.invert(matrix2dInverse);
 		}

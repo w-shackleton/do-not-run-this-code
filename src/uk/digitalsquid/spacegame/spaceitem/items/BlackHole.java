@@ -6,7 +6,6 @@ import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.misc.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.Gravitable;
-import uk.digitalsquid.spacegame.spaceitem.assistors.BhPulseInfo;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Messageable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.TopDrawable;
@@ -28,7 +27,6 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	private final RectMesh bhImage, bhP2Image;
 	protected float bhRotation = 0;
 	
-	protected BhPulseInfo[] bhPulses;
 	protected boolean bhActivated = false, bhStarted = false;
 	
 	private float bhEndGameZoom = BLACK_HOLE_ZOOM_SPEED;
@@ -41,12 +39,6 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	{
 		super(context, coord, 0.95f, BLACK_HOLE_DENSITY, BLACK_HOLE_RADIUS / 2);
 		
-		bhPulses = new BhPulseInfo[BH_PULSES]; // Initiate random pulses
-		for(int i = 0; i < BH_PULSES; i++)
-		{
-			bhPulses[i] = new BhPulseInfo(pos, (float) (i * 360 / BH_PULSES));
-		}
-
 		bhImage = new RectMesh((float)pos.x, (float)pos.y, (float)radius * 4, (float)radius * 4, R.drawable.bh);
 		bhP2Image = new RectMesh((float)pos.x, (float)pos.y, (float)radius * 4, (float)radius * 4, R.drawable.bhp2);
 	}
@@ -61,7 +53,7 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 			bhStarted = true;
 			if(PreferenceManager.getDefaultSharedPreferences(context).getBoolean("bhFirstTime", true))
 			{
-				PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("bhFirstTime", false);
+				PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("bhFirstTime", false).commit();
 				messageInfo.display = true;
 			}
 			// TODO: Disable for release version
@@ -79,14 +71,6 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	@Override
 	public void drawTop(GL10 gl, float worldZoom)
 	{
-		/* if(bhActivated)
-		{
-			for(int i = 0; i < bhPulses.length; i++)
-			{
-				bhPulses[i].draw(c, worldZoom);
-			}
-		} */
-		
 		bhImage.setRotation(-bhRotation);
 		bhImage.draw(gl);
 	}
@@ -96,15 +80,6 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	{
 		if(bhActivated)
 		{
-			//boolean allFinished = true;
-			for(int i = 0; i < bhPulses.length; i++)
-			{
-				bhPulses[i].move(millistep / 40);
-				//if(!bhPulses[i].move(millistep / 40)) allFinished = false;
-			}
-			//if(allFinished) bhActivated = false;
-
-			//Log.v("SpaceGame", "bhEndGameWait: " + bhEndGameWait);
 			bhEndGameWait += millistep / 50;
 		}
 		bhRotation += millistep / 50;
