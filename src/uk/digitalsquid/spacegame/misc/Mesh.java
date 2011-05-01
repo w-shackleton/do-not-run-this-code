@@ -226,4 +226,9 @@ public class Mesh {
 	public final float getRotation() {
 		return rz;
 	}
+	
+	public final void setXY(float x, float y) {
+		this.x = x;
+		this.y = y;
+	}
 }

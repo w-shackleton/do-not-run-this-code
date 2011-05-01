@@ -34,7 +34,7 @@ public class InfoBox extends BounceableRect implements Messageable, Clickable
 		if(text == null) text = "";
 		this.text = text;
 		
-		image = new RectMesh((float)coord.x, (float)coord.y, (float)IMG_SIZE.x, (float)IMG_SIZE.y, R.drawable.message);
+		image = new RectMesh((float)pos.x, (float)pos.y, (float)IMG_SIZE.x, (float)IMG_SIZE.y, R.drawable.message);
 		image.setRotation(rotation);
 		
 		showNow = initialshow;

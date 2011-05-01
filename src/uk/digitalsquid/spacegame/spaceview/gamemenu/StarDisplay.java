@@ -9,6 +9,7 @@ import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.StaticDrawable;
 import uk.digitalsquid.spacegame.spaceitem.items.Portal;
 import android.content.Context;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 
 public class StarDisplay implements StaticDrawable, Moveable {
@@ -45,21 +46,21 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	private static final int STAR_RISING  = 1;
 	private static final int STAR_FALLING = 2;
 	private static final int STAR_JUMP_DIST = 10;
-	private static final int STAR_JUMP_SPEED = 3;
+	private static final int STAR_JUMP_SPEED = 1;
 	
 	private final Portal portal;
 	
 	public StarDisplay(Context context, int starTotal, Portal portal) {
 		txtPaint.setTypeface(StaticInfo.Fonts.bangers);
-		star = new RectMesh(25, 25, 30, 30, R.drawable.star);
+		star = new RectMesh(25, -25, 30, 30, R.drawable.star);
 		this.starTotal = starTotal;
 		this.portal = portal;
 	}
 
 	@Override
-	public void drawStatic(GL10 gl, int width, int height) {
+	public void drawStatic(GL10 gl, int width, int height, final Matrix matrix) {
 		gl.glPushMatrix();
-		gl.glTranslatef(-width / 2, -height / 2, 0);
+		gl.glTranslatef(-width / 2, +height / 2, 0);
 		gl.glPushMatrix();
 		gl.glTranslatef(0, jump, 0);
 		// star.setAlpha(1);

@@ -1,7 +1,6 @@
 package uk.digitalsquid.spacegame.spaceitem.items;
 
 import javax.microedition.khronos.opengles.GL10;
-import javax.microedition.khronos.opengles.GL11;
 
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.R;
@@ -12,7 +11,7 @@ import uk.digitalsquid.spacegame.spaceitem.interfaces.Forceful;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.LevelAffectable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.StaticDrawable;
 import android.content.Context;
-import android.opengl.Matrix;
+import android.graphics.Matrix;
 
 public class Star extends Spherical implements LevelAffectable, Forceful, StaticDrawable
 {
@@ -79,48 +78,46 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 		return available;
 	}
 	
-	private float[] tmpInverse;
+	private boolean pointsMapped = false;
 	private float animX, animY;
+	private float animDestX, animDestY;
 	private float animAngle = 1;
 
 	@Override
-	public void drawStatic(GL10 gl, final int width, final int height) {
+	public void drawStatic(GL10 gl, final int width, final int height, final Matrix matrix) {
 		if(drawingP2) {
 			
-			GL11 gl11 = (GL11) gl;
-			if(tmpInverse == null) { // Get position first time
-				float[] matrix = new float[16];
-				tmpInverse = new float[16];
-				gl11.glGetFloatv(GL11.GL_MODELVIEW_MATRIX, matrix, 0);
-				Matrix.invertM(tmpInverse, 0, matrix, 0);
-				
-				float[] points = {animX, animY, 0, 1,
-						0,0,0,0};
-				Matrix.multiplyMV(points, 4, tmpInverse, 0, points, 0); // TODO: Check this works!
+			if(!pointsMapped)
+			{
+				float[] points = {(float) pos.x, (float) pos.y};
+				matrix.mapPoints(points);
 				
 				animX = points[0];
 				animY = points[1];
+				
+				animDestX = -width / 2;
+				animDestY = height / 2;
+				
+				pointsMapped = true;
 			}
 			
-			animX *= 0.9f;
-			animY *= 0.9f;
-			if(animAngle < Math.PI) animAngle += 0.1f;
+			animX -= (animX - animDestX) / 20f;
+			animY -= (animY - animDestY) / 20f;
+			if(animAngle < Math.PI) animAngle += 0.01f;
 			float adjustedAngle = (float) (Math.cos(animAngle) * 360);
 			
-			float distFromDest = (float) Math.hypot(animX, animY);
+			float distFromDest = (float) Math.hypot(animX - animDestX, animY - animDestY);
 			float opacity = 1;
-			if(distFromDest < 128) opacity = CompuFuncs.TrimMin((int) ((distFromDest - 64) / 64f), 0);
+			if(distFromDest < 128) opacity = (float) CompuFuncs.TrimMin((distFromDest - 64f) / 64f, 0);
 			if(opacity == 0) {
 				drawingP2 = false;
 				sendFinishedStatus = true;
 			}
 			
-			gl.glPushMatrix();
-			gl.glTranslatef(animX, animY, 0);
-			gl.glRotatef(adjustedAngle, 0, 0, 1);
+			img.setRotation(adjustedAngle);
+			img.setXY(animX, animY);
 			img.setAlpha(opacity);
 			img.draw(gl);
-			gl.glPopMatrix();
 		}
 	}
 }

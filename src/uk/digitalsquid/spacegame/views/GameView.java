@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.microedition.khronos.opengles.GL10;
-import javax.microedition.khronos.opengles.GL11;
 
 import uk.digitalsquid.spacegame.BounceVibrate;
 import uk.digitalsquid.spacegame.Coord;
@@ -25,7 +24,7 @@ import uk.digitalsquid.spacegame.spaceview.gamemenu.GameMenu.GameMenuItem;
 import uk.digitalsquid.spacegame.spaceview.gamemenu.StarDisplay;
 import uk.digitalsquid.spacegame.subviews.MovingView;
 import android.content.Context;
-import android.opengl.GLU;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -115,20 +114,30 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 			super.predraw(gl);
 		}
 		
-		private float[] modelViewMatrix = new float[16];
-		private float[] projectionMatrix = new float[16];
+		private final Matrix matrix2d = new Matrix();
+		private final Matrix matrix2dInverse = new Matrix();
 		
+		/**
+		 * Scales the game to the correct size. We also use a 2D canvas matrix to simplify screen-to-world conversions.
+		 */
 		@Override
 		protected void scale(GL10 gl)
 		{
-			// TODO: Check this!
-			gl.glScalef(WORLD_ZOOM_PRESCALE, WORLD_ZOOM_PRESCALE, WORLD_ZOOM_PRESCALE);
-			gl.glTranslatef((float)-avgPos.x, (float)-avgPos.y, 0);
-			gl.glScalef(WORLD_ZOOM_POSTSCALE, WORLD_ZOOM_POSTSCALE, WORLD_ZOOM_POSTSCALE);
-			gl.glRotatef(warpData.rotation, 0, 0, 1);
+			matrix2d.reset();
 			
-			((GL11)gl).glGetFloatv(GL11.GL_MODELVIEW_MATRIX, modelViewMatrix, 0);
-			((GL11)gl).glGetFloatv(GL11.GL_PROJECTION_MATRIX, projectionMatrix, 0);
+			gl.glScalef(WORLD_ZOOM_PRESCALE, WORLD_ZOOM_PRESCALE, WORLD_ZOOM_PRESCALE);
+			matrix2d.postScale(WORLD_ZOOM_PRESCALE, WORLD_ZOOM_PRESCALE);
+			
+			gl.glTranslatef((float)-avgPos.x, (float)-avgPos.y, 0);
+			matrix2d.postTranslate((float)-avgPos.x, (float)-avgPos.y);
+			
+			gl.glScalef(WORLD_ZOOM_POSTSCALE, WORLD_ZOOM_POSTSCALE, WORLD_ZOOM_POSTSCALE);
+			matrix2d.postScale(WORLD_ZOOM_POSTSCALE, WORLD_ZOOM_POSTSCALE);
+			
+			gl.glRotatef(warpData.rotation, 0, 0, 1);
+			matrix2d.postRotate(warpData.rotation);
+			
+			matrix2d.invert(matrix2dInverse);
 		}
 		
 		@Override
@@ -193,11 +202,11 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 				// Stage for static drawing
 				if(obj instanceof StaticDrawable)
 				{
-					((StaticDrawable)obj).drawStatic(gl, (int)screenStandardSize.x, (int)screenStandardSize.y);
+					((StaticDrawable)obj).drawStatic(gl, (int)scaledWidth, (int)scaledHeight, matrix2d);
 				}
 			}
 			
-			starCount.drawStatic(gl, width, height);
+			starCount.drawStatic(gl, scaledWidth, scaledHeight, matrix2d);
 			
 			super.postdraw(gl);
 		}
@@ -229,9 +238,6 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 			}
 		}
 		
-		private final float[] tmpTouchData = {0, 0, 0, 1};
-		private final int[] tmpView = {0, 0, 0, 0};
-		
 		public synchronized void onTouch(View v, MotionEvent event)
 		{
 			for(GameMenu menu : gameMenus)
@@ -240,11 +246,12 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 				// TODO: Do something about this
 			}
 			
-			tmpView[2] = width;
-			tmpView[3] = height;
+			final float[] tmpData = {
+					+event.getX() * scaledWidth / width - scaledWidth / 2,
+					-event.getY() * scaledHeight / height + scaledHeight / 2 };
+			matrix2dInverse.mapPoints(tmpData);
 			
-			GLU.gluUnProject(event.getX(), event.getY(), 0f, modelViewMatrix, 0, projectionMatrix, 0, tmpView, 0, tmpTouchData, 0);
-			Log.v("SpaceGame", "CLICK X: " + tmpTouchData[0] + ", Y: " + tmpTouchData[1] + ", Z: " + tmpTouchData[2]);
+			Log.v("SpaceGame", "CLICK X: " + tmpData[0] + ", Y: " + tmpData[1]);
 			
 			for(SpaceItem obj : planetList)
 			{
@@ -252,7 +259,7 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 				{
 					Clickable item = (Clickable) obj;
 					
-					if(item.isClicked(new Coord(event.getX(), event.getY())))
+					if(item.isClicked(tmpData[0], tmpData[1]))
 					{
 						item.onClick();
 						Log.v("SpaceGame", "Item clicked");
@@ -261,15 +268,15 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 				}
 			}
 			if(event.getAction() == MotionEvent.ACTION_UP)
-				fireBall(event.getX(), event.getY());
+				fireBall(tmpData[0], tmpData[1]);
 		}
 		
-		private void fireBall(double sPosX, double sPosY)
+		private void fireBall(double x, double y)
 		{
 			if(stopped)
 			{
-				p.itemVC.x = ((sPosX / WORLD_ZOOM) - p.itemC.x + avgPos.x) / 3 * SpaceItem.ITEM_SCALE; // Scale down to compensate for power
-				p.itemVC.y = ((sPosY / WORLD_ZOOM) - p.itemC.y + avgPos.y) / 3 * SpaceItem.ITEM_SCALE;
+				p.itemVC.x = (x - p.itemC.x) / 3 * SpaceItem.ITEM_SCALE; // Scale down to compensate for power
+				p.itemVC.y = (y - p.itemC.y) / 3 * SpaceItem.ITEM_SCALE;
 				
 				p.itemC.x  += p.itemVC.x / 40;
 				p.itemC.y  += p.itemVC.y / 40;

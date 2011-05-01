@@ -93,6 +93,7 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 			}
 			
 			millistep = currTime - prevTime;
+			millistep = (long) (1000f / 60);
 			
 			prevTime = currTime;
 		}

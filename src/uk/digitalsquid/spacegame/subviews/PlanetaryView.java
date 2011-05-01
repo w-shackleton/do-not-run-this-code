@@ -99,12 +99,12 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		private RectMesh warpDataPaint = new RectMesh(0, 0, scaledWidth, scaledHeight, 0, 0, 0, 0);
 
 
-		private static final int BG_POINTS_PER_AREA = 1000;
+		private int BG_POINTS_PER_AREA = 1000;
 
 		private BgPoints bgPoints;
 		protected Coord avgPos = new Coord();
 		
-		protected static final int SCROLL_SPEED = 15;
+		protected static final int SCROLL_SPEED = 20;
 		/**
 		 * Used to scroll the scene smoothly
 		 */
@@ -187,6 +187,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 				screenPos[i] = new Coord();
 			
 			// BG Points
+			BG_POINTS_PER_AREA = (int) level.bounds.getLength();
 			bgPoints = new BgPoints(BG_POINTS_PER_AREA, (int)level.bounds.x, (int)level.bounds.y);
 			
 			startTime = System.currentTimeMillis();

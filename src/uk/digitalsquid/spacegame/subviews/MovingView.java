@@ -26,7 +26,7 @@ public abstract class MovingView<VT extends MovingView.ViewWorker> extends Plane
 			// Compute move screen
 			for(int i = 1; i < screenPos.length; i++)
 			{
-				screenPos[i - 1] = screenPos[i];
+				screenPos[i - 1].copyFrom(screenPos[i]);
 			}
 			screenPos[screenPos.length - 1].x = p.itemC.x;
 			screenPos[screenPos.length - 1].y = p.itemC.y;

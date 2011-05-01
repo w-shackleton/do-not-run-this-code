@@ -91,7 +91,7 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 
 	@Override
 	public void move(float millistep, float speedScale) {
-		rotation -= 3;
+		rotation += 3;
 		rotation2 -= 0.3;
 		if(status == Status.OPENING) {
 			radius  += (float)(PORTAL_RADIUS  - radius ) / 100f;
