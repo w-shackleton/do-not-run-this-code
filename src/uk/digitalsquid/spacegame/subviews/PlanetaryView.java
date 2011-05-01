@@ -92,8 +92,8 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			WORLD_ZOOM = 1f / SpaceItem.ITEM_SCALE *
 					userZoom / 100 * warpData.zoom; // Assuming all screens are about the same ratio?
 			WORLD_ZOOM_UNSCALED_ZOOMED = userZoom / 100 * warpData.zoom;
-			WORLD_ZOOM_PRESCALE = 1f / SpaceItem.ITEM_SCALE;
-			WORLD_ZOOM_POSTSCALE = userZoom / 100 * warpData.zoom;
+			WORLD_ZOOM_PRESCALE = 1f / SpaceItem.ITEM_SCALE * warpData.zoom;
+			WORLD_ZOOM_POSTSCALE = userZoom / 100;
 		}
 		
 		private RectMesh warpDataPaint = new RectMesh(0, 0, scaledWidth, scaledHeight, 0, 0, 0, 0);
@@ -494,6 +494,11 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			if(warpDataPaint.getAlpha() != 0) {
 				warpDataPaint.draw(gl);
 			}
+		}
+		
+		@Override
+		protected void onSizeChanged(int w, int h) {
+			warpDataPaint.setWH(scaledWidth, scaledHeight);
 		}
 		
 		@Override

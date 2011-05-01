@@ -180,17 +180,12 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 			starCount.move(millistep, SPEED_SCALE);
 		}
 		
-		private final Coord screenStandardSize = new Coord();
-		
 		@Override
 		protected void postdraw(GL10 gl)
 		{
 			// Draw objects static to screen (buttons)
 			
 			// Draw menus
-			screenStandardSize.x = scaledWidth;
-			screenStandardSize.y = scaledHeight;
-			
 			for(GameMenu menu : gameMenus)
 			{
 				menu.move(millistep, SPEED_SCALE);

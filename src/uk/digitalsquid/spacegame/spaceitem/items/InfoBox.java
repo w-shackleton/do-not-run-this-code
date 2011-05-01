@@ -26,7 +26,7 @@ public class InfoBox extends BounceableRect implements Messageable, Clickable
 	
 	protected static final float BOUNCINESS = 0.8f;
 	protected static final Coord SIZE = new Coord(50, 40);
-	protected static final Coord IMG_SIZE = new Coord(50, 40);
+	protected static final Coord IMG_SIZE = new Coord(50, 50);
 	
 	public InfoBox(Context context, Coord coord, float rotation, String text, boolean initialshow)
 	{

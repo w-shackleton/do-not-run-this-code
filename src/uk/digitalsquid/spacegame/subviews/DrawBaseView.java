@@ -120,6 +120,8 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 			gl.glEnable(GL10.GL_LINE_SMOOTH);
 			// gl.glHint(GL10.GL_POLYGON_SMOOTH_HINT, GL10.GL_NICEST); // no visible diff
 			gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
+			
+			onSizeChanged(width, height);
 		}
 
 		protected abstract void initialiseOnThread();
@@ -172,6 +174,8 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		
 		public abstract void saveState(Bundle bundle);
 		public abstract void restoreState(Bundle bundle);
+		
+		protected void onSizeChanged(int w, int h) {}
 	}
 	
 	public void saveState(Bundle bundle)
