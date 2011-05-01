@@ -47,7 +47,7 @@ public class Wall extends BounceableRect
 		wallside2.setRotation(180);
 		
 		for(int i = 0; i < lines.length; i++) {
-			lines[i] = new Lines(0, 0, new float[(int)((this.size.x - this.size.y * 2) / GAP_WIDTH) * 3 + 3], GL10.GL_LINE_STRIP, 0.1f, 0.5f, 0.2f, 1);
+			lines[i] = new Lines(0, 0, new float[(int)((this.size.x - this.size.y * 2) / GAP_WIDTH) * 3 + 6], GL10.GL_LINE_STRIP, 0.1f, 0.5f, 0.2f, 1);
 		}
 	}
 	
@@ -81,15 +81,20 @@ public class Wall extends BounceableRect
 		for(Lines line : lines)
 		{
 			FloatBuffer buf = line.getVertices();
+			
+			tmp[0] = startx;
+			tmp[1] = starty;
+			buf.put(tmp);
+			
 			float currPos = startx;
-			while(currPos + GAP_WIDTH < size.x - size.y * 2)
+			while(currPos + GAP_WIDTH < finx)
 			{
 				//final float posHeight = (float) (rGen.nextFloat() * size.y);
 				currPos += GAP_WIDTH;
 				
 				// Set vals
 				tmp[0] = currPos;
-				tmp[1] = (float) (rGen.nextFloat() * size.y);
+				tmp[1] = (float) ((rGen.nextFloat() * size.y) - size.y / 2);
 				buf.put(tmp);
 			}
 			tmp[0] = finx;
