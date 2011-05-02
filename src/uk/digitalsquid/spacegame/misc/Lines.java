@@ -147,4 +147,8 @@ public class Lines {
 	public final float getAlpha() {
 		return mRGBA[3];
 	}
+	
+	public final void setRotation(float rotation) {
+		rz = rotation;
+	}
 }

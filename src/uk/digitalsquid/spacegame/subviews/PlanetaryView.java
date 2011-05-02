@@ -119,7 +119,6 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		protected LevelItem level;
 		protected List<SpaceItem> planetList;
 		
-		private SpaceItem currObj;
 		//protected Coord p.itemC, p.itemVC, p.itemRF;
 
 		protected boolean paused = false;
@@ -272,15 +271,13 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 				}
 				
 				p.itemRF.reset();
-				for(i = 0; i < planetList.size(); i++)
+				for(SpaceItem obj : planetList)
 				{
-					currObj = planetList.get(i);
-					
 					if(!paused)
 					{
-						if(currObj instanceof Forceful)
+						if(obj instanceof Forceful)
 						{
-							Forceful item = (Forceful) currObj;
+							Forceful item = (Forceful) obj;
 							if(gravOn) // Stage for gravity forces
 							{
 								p.itemRF.addThis(item.calculateRF(p.itemC, p.itemVC));
@@ -301,19 +298,22 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 					if(!paused)
 					{
 						// Stage for object animation / movement
-						if(currObj instanceof Moveable)
+						if(obj instanceof Moveable)
 						{
-							((Moveable) currObj).move((int) millistep, SPEED_SCALE);
+							((Moveable) obj).move((int) millistep, SPEED_SCALE);
 						}
 					}
 				}
 
 				if(!paused)
 				{
-					// Stage for object animation / movement
-					if(currObj instanceof Moveable)
+					for(SpaceItem obj : planetList)
 					{
-						((Moveable) currObj).drawMove((int) millistep, SPEED_SCALE);
+						// Stage for object animation / movement
+						if(obj instanceof Moveable)
+						{
+							((Moveable) obj).drawMove((int) millistep, SPEED_SCALE);
+						}
 					}
 				}
 				
