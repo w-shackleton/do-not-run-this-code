@@ -90,7 +90,10 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 	private float openingTimer = 0;
 
 	@Override
-	public void move(float millistep, float speedScale) {
+	public void move(float millistep, float speedScale) { }
+
+	@Override
+	public void drawMove(float millistep, float speedscale) {
 		rotation += 3;
 		rotation2 -= 0.3;
 		if(status == Status.OPENING) {

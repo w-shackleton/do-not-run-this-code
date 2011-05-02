@@ -361,4 +361,10 @@ public class GameMenu extends ArrayList<GameMenu.GameMenuItem> implements Moveab
 		public void onMoveOn();
 		public void onMoveOff();
 	}
+
+	@Override
+	public void drawMove(float millistep, float speedscale) {
+		// TODO Auto-generated method stub
+		
+	}
 }

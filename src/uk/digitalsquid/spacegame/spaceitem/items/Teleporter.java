@@ -22,30 +22,26 @@ public class Teleporter extends Gravitable implements TopDrawable, Moveable, War
 	
 	protected final RectMesh teleporter;
 	
-	public Teleporter(Context context, Coord coord, Coord destination)
-	{
+	public Teleporter(Context context, Coord coord, Coord destination) {
 		super(context, coord, 0.98f, TRANSPORTER_DENSITY, TRANSPORTER_RADIUS / 2);
 		this.destination = destination;
 		teleporter = new RectMesh((float)pos.x, (float)pos.y, radius * 2, radius * 2, R.drawable.teleporter);
 	}
 
 	@Override
-	public void draw(GL10 gl, float worldZoom)
-	{
+	public void draw(GL10 gl, float worldZoom) {
 		// c.drawCircle((float)pos.x, (float)pos.y, radius, PaintLoader.load(BG_COL));
 		// TODO: Re-implement!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 	}
 
 	@Override
-	public void drawTop(GL10 gl, float worldZoom)
-	{
+	public void drawTop(GL10 gl, float worldZoom) {
 		teleporter.setRotation(rotation);
 		teleporter.draw(gl);
 	}
 	
 	@Override
-	public BallData calculateVelocity(Coord itemC, Coord itemVC, float itemRadius)
-	{
+	public BallData calculateVelocity(Coord itemC, Coord itemVC, float itemRadius) {
 		BallData data = super.calculateVelocity(itemC, itemVC, itemRadius);
 
 		double currDist = pos.minus(itemC).getLength();
@@ -59,15 +55,16 @@ public class Teleporter extends Gravitable implements TopDrawable, Moveable, War
 	}
 
 	@Override
-	public void move(float millistep, float speedScale)
-	{
-		rotation -= 1;
+	public void move(float millistep, float speedScale) { }
+
+	@Override
+	public WarpData sendWarpData() {
+		return null; // new WarpData((float)(Math.sin((double)rotation / 20) + 2) / 10 + 1, 0, 0, false);
 	}
 
 	@Override
-	public WarpData sendWarpData()
-	{
-		return null; // new WarpData((float)(Math.sin((double)rotation / 20) + 2) / 10 + 1, 0, 0, false);
+	public void drawMove(float millistep, float speedscale) {
+		rotation -= 1;
 	}
 	
 }

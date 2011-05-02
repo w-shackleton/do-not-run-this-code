@@ -180,8 +180,7 @@ public class AnimatedPlayer extends Player
 	}
 	
 	@Override
-	public void move(float millistep, float speedScale)
-	{
+	public void move(float millistep, float speedScale) {
 		super.move(millistep, speedScale);
 		
 		double leftEarFullRotation = ballRotation + lEarRotation;
@@ -204,4 +203,7 @@ public class AnimatedPlayer extends Player
 		rEarRotation += rEarRotationSpeed * millistep / ITERS / 1000f * speedScale * EAR_ROTATING_SPEED;
 		rEarRotation = CompuFuncs.TrimMinMax(rEarRotation, rEarRotation - 45, rEarRotation + 45);
 	}
+
+	@Override
+	public void drawMove(float millistep, float speedscale) { }
 }

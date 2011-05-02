@@ -7,7 +7,6 @@ import java.util.List;
 import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.spacegame.BounceVibrate;
-import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.Spacegame;
 import uk.digitalsquid.spacegame.levels.LevelItem.LevelSummary;
@@ -177,7 +176,8 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 				}
 			}
 			
-			starCount.move(millistep, SPEED_SCALE);
+			starCount.move(millistep, SPEED_SCALE); // TODO: Move these to the ITER-part part? Probably no need.
+			starCount.drawMove(millistep, SPEED_SCALE);
 		}
 		
 		@Override
@@ -189,6 +189,7 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 			for(GameMenu menu : gameMenus)
 			{
 				menu.move(millistep, SPEED_SCALE);
+				menu.drawMove(millistep, SPEED_SCALE);
 				// menu.draw(gl, 1, screenStandardSize);
 				// TODO: Re-enable!
 			}

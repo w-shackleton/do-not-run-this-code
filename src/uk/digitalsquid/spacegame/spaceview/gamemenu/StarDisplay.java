@@ -92,7 +92,10 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	}
 
 	@Override
-	public void move(float millistep, float speedScale) {
+	public void move(float millistep, float speedScale) { }
+
+	@Override
+	public void drawMove(float millistep, float speedscale) {
 		switch(jumpStatus) {
 		case STAR_RESTING:
 		default:

@@ -76,8 +76,10 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	}
 
 	@Override
-	public void move(float millistep, float speedScale)
-	{
+	public void move(float millistep, float speedScale) { }
+
+	@Override
+	public void drawMove(float millistep, float speedscale) {
 		if(bhActivated)
 		{
 			bhEndGameWait += millistep / 50;
@@ -93,8 +95,7 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	}
 
 	@Override
-	public WarpData sendWarpData()
-	{
+	public WarpData sendWarpData() {
 		if(bhStarted && bhEndGameWait > 0)
 		{
 			WarpData data;

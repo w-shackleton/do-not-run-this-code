@@ -1,13 +1,12 @@
 package uk.digitalsquid.spacegame.spaceitem.items;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
+import uk.digitalsquid.spacegame.misc.Lines;
 import uk.digitalsquid.spacegame.misc.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import uk.digitalsquid.spacegame.spaceitem.Rectangular;
@@ -23,17 +22,20 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 	protected static final int VORTEX_SIZE_MIN = 100;
 	protected static final int VORTEX_SIZE_MAX = 400;
 	
+	protected static final int NUM_LINES = 20;
+	
 	protected static final float GRAVITY_SPEED = 20;
 	protected static final float LINE_SPEED = 0.07f;
 	protected float speed;
-	
-	protected List<LineInfo> lines = new ArrayList<LineInfo>();
 	
 	protected static Random rGen = null;
 	
 	protected static final PaintDesc bgPaint = new PaintDesc(0, 0, 0);
 	
 	private final RectMesh bg;
+	private final Lines lines;
+	
+	private final float[] untranslatedPoints = new float[NUM_LINES];
 	
 	/**
 	 * @param coord		Centre position of the rectangle
@@ -50,8 +52,14 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 		bg = new RectMesh((float)pos.x, (float)pos.y, (float)size.x, (float)size.y, 0, 0, 0, 1);
 		bg.setRotation(rotation);
 		
+		lines = new Lines((float)pos.x, (float)pos.y, new float[NUM_LINES * 6], GL10.GL_LINES, 1, 1, 1, 1);
+		
 		if(rGen == null)
 			rGen = new Random();
+		
+		for(int i = 0; i < untranslatedPoints.length; i++) {
+			untranslatedPoints[i] = (float) (rGen.nextFloat() * size.x - (size.x / 2));
+		}
 	}
 
 	@Override
@@ -69,91 +77,10 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 		return null;
 	}
 	
-	private final Coord tmpP1 = new Coord();
-	private final Coord tmpP2 = new Coord();
-
 	@Override
 	public void draw(GL10 gl, float worldZoom)
 	{
 		bg.draw(gl);
-		
-		/* for(int i = 0; i < lines.size(); i++)
-		{
-			LineInfo line = lines.get(i);
-			
-			tmpP1.y = line.x * size.x;
-			tmpP2.y = line.x * size.x;
-
-			tmpP1.x = (-Math.cos(((line.y < 0) ? 0 : line.y) * DEG_TO_RAD) / 2 + .5) * size.y; // If less than 0, set to 0.
-			tmpP2.x = (-Math.cos(
-					(
-							(line.y + line.length < 180) ?
-									(line.y + line.length) :
-									180
-							) * DEG_TO_RAD
-					) / 2 + .5) * size.y; // If line position + size > 180, put it to 180.
-			size.scaleThis(0.5f);
-			tmpP1.minusThis(size); // Move to centre around middle of gravity field
-			tmpP2.minusThis(size); // Move to centre around middle of gravity field
-			size.scaleThis(2);
-			tmpP1.addThis(pos);
-			tmpP2.addThis(pos);
-			tmpP1.rotateThis(pos, rotation * DEG_TO_RAD);
-			tmpP2.rotateThis(pos, rotation * DEG_TO_RAD);
-			
-			//Log.v("SpaceGame", "p1: " + p1 + ", p2: " + p2);
-			
-			LineInfo.LinePaint.stroke = line.lineSize;
-			c.drawLine(
-					(float)tmpP1.x * worldZoom,
-					(float)tmpP1.y * worldZoom,
-					(float)tmpP2.x * worldZoom,
-					(float)tmpP2.y * worldZoom,
-					PaintLoader.load(LineInfo.LinePaint));
-		} */
-		/*for(int i = (int) (pos.x - (size.x / 2)); i < pos.x + (size.x / 2); i += 12)
-		{
-			for(int j = (int) (pos.y - (size.y / 2)); j < pos.y + (size.y / 2); j += 12)
-			{
-				if(CompuFuncs.PointInPolygon(getRectPos(), new Coord(i, j)))
-				{
-					c.drawPoint(i * worldZoom, j * worldZoom, LineInfo.LinePaint);
-				}
-			}
-		}*/
-		
-		/*Coord[] points = getRectPos();
-		c.drawLine(
-				(float)points[0].x * worldZoom,
-				(float)points[0].y * worldZoom,
-				(float)points[1].x * worldZoom,
-				(float)points[1].y * worldZoom, LineInfo.LinePaint);
-		c.drawLine(
-				(float)points[1].x * worldZoom,
-				(float)points[1].y * worldZoom,
-				(float)points[2].x * worldZoom,
-				(float)points[2].y * worldZoom, LineInfo.LinePaint);
-		c.drawLine(
-				(float)points[2].x * worldZoom,
-				(float)points[2].y * worldZoom,
-				(float)points[3].x * worldZoom,
-				(float)points[3].y * worldZoom, LineInfo.LinePaint);
-		c.drawLine(
-				(float)points[3].x * worldZoom,
-				(float)points[3].y * worldZoom,
-				(float)points[0].x * worldZoom,
-				(float)points[0].y * worldZoom, LineInfo.LinePaint);
-		
-		/*for(int i = -200; i < 200; i += 12)
-		{
-			for(int j = -200; j < 200; j += 12)
-			{
-				if(CompuFuncs.PointInPolygon(getRectPos(), new Coord(i, j)))
-				{
-					c.drawPoint(i * worldZoom, j * worldZoom, LineInfo.LinePaint);
-				}
-			}
-		}*/
 	}
 
 	@Override
@@ -185,37 +112,5 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 	public BallData calculateVelocity(Coord itemC, Coord itemVC, float itemRadius)
 	{
 		return null;
-	}
-	
-	protected static class LineInfo
-	{
-		public float x, y;
-		public float length;
-		
-		public float lineSize;
-		
-		public static PaintDesc LinePaint = new PaintDesc(255, 255, 255, 255, 0.8f);
-		
-		/**
-		 * Manual constructor
-		 * @param x The position, from 0 to 1, of the line
-		 * @param length The length of the line, in degrees from 0 to 180
-		 * @param lineSize The size of the brush used to paint the line.
-		 */
-		public LineInfo(float x, float length, float lineSize)
-		{
-			this.y = -length;
-			this.x = x;
-			this.lineSize = lineSize;
-			this.length = length;
-		}
-		
-		public LineInfo()
-		{
-			x = rGen.nextFloat();
-			length = rGen.nextInt(30);
-			lineSize = rGen.nextFloat() + 1;
-			y = -length;
-		}
 	}
 }

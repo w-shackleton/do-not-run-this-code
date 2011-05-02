@@ -307,12 +307,22 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 						}
 					}
 				}
+
+				if(!paused)
+				{
+					// Stage for object animation / movement
+					if(currObj instanceof Moveable)
+					{
+						((Moveable) currObj).drawMove((int) millistep, SPEED_SCALE);
+					}
+				}
 				
 				if(gravOn)
 					p.itemRF.addThis(portal.calculateRF(p.itemC, p.itemVC));
 				
 				if(!paused) {
 					portal.move((int) millistep, SPEED_SCALE);
+					portal.drawMove((int) millistep, SPEED_SCALE);
 					
 					BallData data = portal.calculateVelocity(p, Player.BALL_RADIUS);
 					if(data != null)
@@ -339,6 +349,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 					
 					// Move ball - animation
 					p.move(millistep, SPEED_SCALE);
+					p.drawMove(millistep, SPEED_SCALE);
 					
 					// Work out if no longer moving, from last 4 positions
 					
