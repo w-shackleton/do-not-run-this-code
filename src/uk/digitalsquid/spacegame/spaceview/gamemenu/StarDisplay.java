@@ -1,16 +1,18 @@
 package uk.digitalsquid.spacegame.spaceview.gamemenu;
 
+import java.io.IOException;
+
 import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.spacegame.R;
-import uk.digitalsquid.spacegame.StaticInfo;
 import uk.digitalsquid.spacegame.misc.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.StaticDrawable;
 import uk.digitalsquid.spacegame.spaceitem.items.Portal;
 import android.content.Context;
 import android.graphics.Matrix;
-import android.graphics.Paint;
+import android.util.Log;
+import codehead.cbfg.TexFont;
 
 public class StarDisplay implements StaticDrawable, Moveable {
 	
@@ -28,13 +30,7 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	
 	private RectMesh star;
 	
-	private static final Paint txtPaint = new Paint();
-	static {
-		txtPaint.setAntiAlias(true);
-		txtPaint.setTextSize(30);
-		txtPaint.setTextAlign(Paint.Align.LEFT);
-		txtPaint.setColor(0xFFFFFFFF);
-	}
+	private TexFont text = null;
 	
 	/**
 	 * Causes star to 'jump' when star collected
@@ -50,8 +46,11 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	
 	private final Portal portal;
 	
+	private final Context context;
+	
 	public StarDisplay(Context context, int starTotal, Portal portal) {
-		txtPaint.setTypeface(StaticInfo.Fonts.bangers);
+		this.context = context;
+		
 		star = new RectMesh(25, -25, 30, 30, R.drawable.star);
 		this.starTotal = starTotal;
 		this.portal = portal;
@@ -59,6 +58,15 @@ public class StarDisplay implements StaticDrawable, Moveable {
 
 	@Override
 	public void drawStatic(GL10 gl, int width, int height, final Matrix matrix) {
+		if(text == null) {
+			text = new TexFont(context, gl);
+			try {
+				text.LoadFont("fonts/bangers.bff", gl);
+			} catch (IOException e) {
+				Log.v("SpaceGame", "Couldn't load font!", e);
+			}
+		}
+		
 		gl.glPushMatrix();
 		gl.glTranslatef(-width / 2, +height / 2, 0);
 		gl.glPushMatrix();
@@ -67,8 +75,11 @@ public class StarDisplay implements StaticDrawable, Moveable {
 		star.draw(gl);
 		gl.glPopMatrix();
 		
-		// c.drawText("" + displayedStarCount + " / " + starTotal, 50, 40, txtPaint);
-		// TODO: DRAW TEXT
+		// For some reason this doesn't obey matrices, so setting absolute position
+		gl.glEnable(GL10.GL_BLEND); // Only if alpha present?
+	    gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		text.PrintAt(gl, "543896894", 50, 480-64);
+		
 		gl.glPopMatrix();
 	}
 
