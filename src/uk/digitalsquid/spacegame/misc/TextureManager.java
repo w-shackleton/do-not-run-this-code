@@ -22,16 +22,15 @@ public class TextureManager {
 	private static Resources resources;
 	private static final BitmapFactory.Options bmpOpts;
 	
-	private static final int TEXT_HEIGHT = 128;
-	private static final int TEXT_WIDTH = 128;
+	protected static final int TEXT_HEIGHT = 128;
+	protected static final int TEXT_WIDTH = 128;
 	private static final Paint txtPaint = new Paint();
 	
 	static {
 		bmpOpts = new BitmapFactory.Options();
 		bmpOpts.inScaled = false;
 		
-		txtPaint.setTypeface(StaticInfo.Fonts.bangers);
-		txtPaint.setColor(0xFFFFFFFF);
+		txtPaint.setColor(0xFFFFFFFF /* White */);
 		txtPaint.setTextSize(128);
 		txtPaint.setTextAlign(Align.LEFT);
 	}
@@ -41,6 +40,9 @@ public class TextureManager {
 	public static final void init(Context context, GL10 gl) {
 		resources = context.getResources();
 		if(initialised) nullify(gl); // Not this GL?
+		
+		txtPaint.setTypeface(StaticInfo.Fonts.bangers);
+		txtPaint.setAntiAlias(StaticInfo.Antialiasing);
 		
 		initialised = true;
 	}
@@ -100,7 +102,7 @@ public class TextureManager {
 		// Scale up if the texture if smaller.
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D,
 		                   GL10.GL_TEXTURE_MAG_FILTER,
-		                   GL10.GL_LINEAR); // TODO: Use this as a performance / quality global option ( / GL_LINEAR)
+		                   GL10.GL_LINEAR); // TODO: Use this as a performance / quality global option ( / GL_NEAREST)
 		// scale linearly when image smaller than texture
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D,
 		                   GL10.GL_TEXTURE_MIN_FILTER,
@@ -140,7 +142,7 @@ public class TextureManager {
 		// Scale up if the texture if smaller.
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D,
 		                   GL10.GL_TEXTURE_MAG_FILTER,
-		                   GL10.GL_LINEAR); // TODO: Use this as a performance / quality global option ( / GL_LINEAR)
+		                   GL10.GL_LINEAR); // TODO: Use this as a performance / quality global option ( / GL_NEAREST)
 		// scale linearly when image smaller than texture
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D,
 		                   GL10.GL_TEXTURE_MIN_FILTER,
@@ -150,7 +152,8 @@ public class TextureManager {
 		
 		Bitmap bmp = Bitmap.createBitmap(TEXT_WIDTH, TEXT_HEIGHT, Bitmap.Config.ARGB_8888);
 		Canvas c = new Canvas(bmp);
-		c.drawText("" + letter, 10, 0, txtPaint);
+		c.drawColor(0x00FFFFFF);
+		c.drawText("" + letter, 10, 128, txtPaint);
 		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bmp, 0);
 		
 		Letter ret = new Letter(textures[0], width);

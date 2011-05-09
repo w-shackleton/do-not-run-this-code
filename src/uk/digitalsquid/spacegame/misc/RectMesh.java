@@ -2,8 +2,8 @@ package uk.digitalsquid.spacegame.misc;
 
 public class RectMesh extends Mesh {
 	
-	private static final short[] indices = {0, 1, 2, 1, 3, 2};
-	private static final float[] texCoords = 
+	protected static final short[] indices = {0, 1, 2, 1, 3, 2};
+	protected static final float[] texCoords = 
 					{0.0f, 1.0f,
 	                1.0f, 1.0f,
                     0.0f, 0.0f,
@@ -21,12 +21,30 @@ public class RectMesh extends Mesh {
 	 * @param a
 	 */
 	public RectMesh(float x, float y, float width, float height, float r, float g, float b, float a) {
+		this(x, y, width, height, 0, 0, r, g, b, a);
+	}
+
+	// TODO: Perhaps implement this in other constructors also?
+	/**
+	 * Constructs a new rectangular mesh with a colour.
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param gravX The 'gravity' (from -.5 to .5)
+	 * @param gravY The 'gravity' (from -.5 to .5)
+	 * @param r
+	 * @param g
+	 * @param b
+	 * @param a
+	 */
+	public RectMesh(float x, float y, float width, float height, float gravX, float gravY, float r, float g, float b, float a) {
 		super(x, y,
 				new float[] {
-					-width * 0.5f, -height * 0.5f, 0.0f,
-					 width * 0.5f, -height * 0.5f, 0.0f,
-					-width * 0.5f,  height * 0.5f, 0.0f,
-					 width * 0.5f,  height * 0.5f, 0.0f, },
+					width * (gravX -0.5f), height * (gravY -0.5f), 0.0f,
+					width * (gravX +0.5f), height * (gravY -0.5f), 0.0f,
+					width * (gravX -0.5f), height * (gravY +0.5f), 0.0f,
+					width * (gravX +0.5f), height * (gravY +0.5f), 0.0f, },
 					 indices.clone(),
                 r, g, b, a);
 	}
@@ -82,5 +100,14 @@ public class RectMesh extends Mesh {
 					 width * 0.5f, -height * 0.5f, 0.0f,
 					-width * 0.5f,  height * 0.5f, 0.0f,
 					 width * 0.5f,  height * 0.5f, 0.0f, });
+	}
+	
+	public final void setWH(float width, float height, float gravX, float gravY) {
+		setVertices(
+				new float[] {
+					width * (gravX -0.5f), height * (gravY -0.5f), 0.0f,
+					width * (gravX +0.5f), height * (gravY -0.5f), 0.0f,
+					width * (gravX -0.5f), height * (gravY +0.5f), 0.0f,
+					width * (gravX +0.5f), height * (gravY +0.5f), 0.0f} );
 	}
 }

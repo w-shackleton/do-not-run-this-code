@@ -135,6 +135,8 @@ public class Mesh {
 			gl.glDisable(GL10.GL_TEXTURE_2D);
 		}
 		
+		internalDraw(gl);
+		
 		gl.glDisable(GL10.GL_BLEND);
 
 		// Disable face culling.
@@ -143,6 +145,12 @@ public class Mesh {
 		gl.glRotatef(-rz, 0, 0, 1);
 		gl.glTranslatef(-x, -y, 0);
 	}
+	
+	/**
+	 * Does any required drawing within the settings, rotation and transformation. Designed to be overridden.
+	 * @param gl
+	 */
+	protected void internalDraw(GL10 gl) {}
 
 	/**
 	 * Set the vertices.
@@ -180,8 +188,7 @@ public class Mesh {
 	 * 
 	 * @param textureCoords
 	 */
-	protected final void setTextureCoordinates(float[] textureCoords) { // New
-																	// function.
+	protected final void setTextureCoordinates(float[] textureCoords) {
 		// float is 4 bytes, therefore we multiply the number if
 		// vertices with 4.
 		ByteBuffer byteBuf = ByteBuffer
@@ -230,5 +237,13 @@ public class Mesh {
 	public final void setXY(float x, float y) {
 		this.x = x;
 		this.y = y;
+	}
+	
+	/**
+	 * Sets a custom texture ID (not one through textureManager)
+	 * @param texId
+	 */
+	protected final void setTextureId(int texId) {
+		textureId = texId;
 	}
 }
