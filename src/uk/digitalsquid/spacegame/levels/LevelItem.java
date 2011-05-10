@@ -44,6 +44,7 @@ public final class LevelItem
 	protected LevelItem()
 	{
 		planetList = new ArrayList<SpaceItem>();
+		portal = new Coord();
 	}
 	
 	protected void initialisePart2()
@@ -72,8 +73,11 @@ public final class LevelItem
 			bounds.y *= SpaceItem.ITEM_SCALE;
 		}
 		
-		if(portal == null) 
-			portal = new Coord();
+		// if(portal == null) 
+			// portal = new Coord();
+		if(portal.equals(startPos)) {
+			startPos.x++;
+		}
 		
 		if(levelName == null) levelName = "";
 		

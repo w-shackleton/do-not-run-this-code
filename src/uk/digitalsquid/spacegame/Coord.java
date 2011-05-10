@@ -205,4 +205,16 @@ public final class Coord implements Serializable
 		if(tmpRectF == null) tmpRectF = new RectF((float)-x / 2, (float)-y / 2, (float)x / 2, (float)y / 2);
 		return tmpRectF;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof Coord) {
+			Coord c = (Coord)o;
+			
+			if(x == c.x && y == c.y) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
