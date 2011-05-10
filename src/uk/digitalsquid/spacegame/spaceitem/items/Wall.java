@@ -12,9 +12,10 @@ import uk.digitalsquid.spacegame.misc.Lines;
 import uk.digitalsquid.spacegame.misc.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.BounceableRect;
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
+import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import android.content.Context;
 
-public class Wall extends BounceableRect
+public class Wall extends BounceableRect implements Moveable
 {
 	protected static final int LINES = 10;
 	protected static final float GAP_WIDTH = 15;
@@ -63,7 +64,6 @@ public class Wall extends BounceableRect
 		wallside1.draw(gl);
 		wallside2.draw(gl);
 		
-		move(0, 0); // Called here as we only want one call per draw
 		for(Lines line : lines) {
 			line.draw(gl);
 		}
@@ -73,7 +73,8 @@ public class Wall extends BounceableRect
 	
 	private final float[] tmp = {0, 0, 0};
 
-	private final void move(float millistep, float speedScale) {
+	@Override
+	public void drawMove(float millistep, float speedScale) {
 		final float startx = (float) (- (size.x / 2) + size.y);
 		final float finx   = (float) (+ (size.x / 2) - size.y);
 		final float starty = 0;
@@ -105,4 +106,7 @@ public class Wall extends BounceableRect
 		}
 		
 	}
+
+	@Override
+	public void move(float millistep, float speedScale) { }
 }
