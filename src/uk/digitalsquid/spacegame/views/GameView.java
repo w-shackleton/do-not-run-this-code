@@ -1,13 +1,10 @@
 package uk.digitalsquid.spacegame.views;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.spacegame.BounceVibrate;
-import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.Spacegame;
 import uk.digitalsquid.spacegame.levels.LevelItem.LevelSummary;
 import uk.digitalsquid.spacegame.spaceitem.SpaceItem;
@@ -17,9 +14,6 @@ import uk.digitalsquid.spacegame.spaceitem.interfaces.LevelAffectable.AffectData
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Messageable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Messageable.MessageInfo;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.StaticDrawable;
-import uk.digitalsquid.spacegame.spaceview.gamemenu.GameMenu;
-import uk.digitalsquid.spacegame.spaceview.gamemenu.GameMenu.ClickListener;
-import uk.digitalsquid.spacegame.spaceview.gamemenu.GameMenu.GameMenuItem;
 import uk.digitalsquid.spacegame.spaceview.gamemenu.StarDisplay;
 import uk.digitalsquid.spacegame.subviews.MovingView;
 import android.content.Context;
@@ -83,11 +77,6 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 			this.gvHandler = gvHandler;
 		}
 		
-		private List<GameMenu> gameMenus;
-		private static final int GAME_MENU_ZOOM = 0;
-		private static final int GAME_MAIN_MENU = 1;
-		private static final int GAME_MENU_SHOW = 2;
-		
 		private StarDisplay starCount;
 
 		@Override
@@ -96,14 +85,6 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 			BounceVibrate.initialise(context);
 			
 			super.initialiseOnThread();
-			if(gameMenus == null)
-			{
-				gameMenus = new ArrayList<GameMenu>();
-				constructMenuZoom();
-				constuctMainMenu();
-				constuctMenuShow();
-				gameMenus.get(GAME_MENU_SHOW).show();
-			}
 			starCount = new StarDisplay(context, level.starsToCollect, portal);
 		}
 		
@@ -184,16 +165,6 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 		protected void postdraw(GL10 gl)
 		{
 			// Draw objects static to screen (buttons)
-			
-			// Draw menus
-			for(GameMenu menu : gameMenus)
-			{
-				menu.move(millistep, SPEED_SCALE);
-				menu.drawMove(millistep, SPEED_SCALE);
-				// menu.draw(gl, 1, screenStandardSize);
-				// TODO: Re-enable!
-			}
-			
 			for(SpaceItem obj : level.planetList) {
 				// Stage for static drawing
 				if(obj instanceof StaticDrawable)
@@ -211,37 +182,16 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 		public synchronized void saveState(Bundle bundle)
 		{
 			super.saveState(bundle);
-			
-			int i = 0;
-			for(GameMenu menu : gameMenus)
-			{
-				bundle.putBoolean("menu." + i++, menu.isHidden());
-			}
 		}
 		
 		@Override
 		public synchronized void restoreState(Bundle bundle)
 		{
 			super.restoreState(bundle);
-			
-			int i = 0;
-			for(GameMenu menu : gameMenus)
-			{
-				if(bundle.getBoolean("menu." + i++, true))
-					menu.hideImmediately();
-				else
-					menu.showImmediately();
-			}
 		}
 		
 		public synchronized void onTouch(View v, MotionEvent event)
 		{
-			for(GameMenu menu : gameMenus)
-			{
-				// if(menu.computeClick(event)) return;
-				// TODO: Do something about this
-			}
-			
 			final float[] tmpData = {
 					+event.getX() * scaledWidth / width - scaledWidth / 2,
 					-event.getY() * scaledHeight / height + scaledHeight / 2 };
@@ -279,152 +229,6 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 				
 				stopped = false;
 			}
-		}
-		
-		private void constructMenuZoom()
-		{
-			gameMenus.add(GAME_MENU_ZOOM, new GameMenu(context, new GameMenuItem[]{
-				new GameMenuItem(new ClickListener()
-				{
-					@Override
-					public void onClickDown()
-					{
-						userZoomMultiplier = USER_ZOOM_INCREASE_SPEED;
-					}
-
-					@Override
-					public void onMoveOff()
-					{
-						onRelease();
-					}
-
-					@Override
-					public void onRelease()
-					{
-						userZoomMultiplier = 1;
-					}
-
-					@Override
-					public void onMoveOn()
-					{
-						onClickDown();
-					}
-				}, R.drawable.magplus),
-				new GameMenuItem(new ClickListener()
-				{
-					@Override
-					public void onClickDown()
-					{
-						userZoomMultiplier = 1 / USER_ZOOM_INCREASE_SPEED;
-					}
-					@Override
-					public void onMoveOff()
-					{
-						onRelease();
-					}
-					@Override
-					public void onRelease()
-					{
-						userZoomMultiplier = 1;
-					}
-					@Override
-					public void onMoveOn()
-					{
-						onClickDown();
-					}
-				}, R.drawable.magminus),
-			}, GameMenu.Corner.TOP_RIGHT));
-		}
-		
-		private void constuctMenuShow()
-		{
-			gameMenus.add(GAME_MENU_SHOW, new GameMenu(context, new GameMenuItem[]{
-				new GameMenuItem(new ClickListener()
-				{
-					@Override
-					public void onClickDown()
-					{}
-
-					@Override
-					public void onMoveOff()
-					{}
-
-					@Override
-					public void onMoveOn()
-					{}
-
-					@Override
-					public void onRelease()
-					{
-						gameMenus.get(GAME_MAIN_MENU).show();
-						gameMenus.get(GAME_MENU_ZOOM).show();
-						gameMenus.get(GAME_MENU_SHOW).hide();
-					}}, R.drawable.uparrow),
-			},GameMenu.Corner.BOTTOM_LEFT));
-		}
-		
-		private void constuctMainMenu()
-		{
-			gameMenus.add(GAME_MAIN_MENU, new GameMenu(context, new GameMenuItem[]{
-				new GameMenuItem(new ClickListener()
-				{
-					@Override
-					public void onClickDown()
-					{}
-
-					@Override
-					public void onMoveOff()
-					{}
-
-					@Override
-					public void onMoveOn()
-					{}
-
-					@Override
-					public void onRelease()
-					{
-						gameMenus.get(GAME_MAIN_MENU).hide();
-						gameMenus.get(GAME_MENU_ZOOM).hide();
-						gameMenus.get(GAME_MENU_SHOW).show();
-					}}, R.drawable.downarrow),
-				new GameMenuItem(new ClickListener()
-				{
-					@Override
-					public void onClickDown(){}
-					
-					@Override
-					public void onRelease()
-					{
-						p.itemC.copyFrom(level.startPos);
-						p.itemVC.reset();
-					}
-						
-					@Override
-					public void onMoveOff(){}
-					
-					@Override
-					public void onMoveOn(){}					
-					}, R.drawable.restart),
-				new GameMenuItem(new ClickListener()
-				{
-					@Override
-					public void onClickDown(){}
-					
-					@Override
-					public void onRelease()
-					{
-						Message m = Message.obtain();
-						m.what = GameViewLayout.GVL_MSG_PAUSE;
-						gvHandler.sendMessage(m);
-					}
-						
-					@Override
-					public void onMoveOff(){}
-					
-					@Override
-					public void onMoveOn(){}					
-					}, R.drawable.pause),
-			}, GameMenu.Corner.BOTTOM_LEFT));
 		}
 
 		@Override
