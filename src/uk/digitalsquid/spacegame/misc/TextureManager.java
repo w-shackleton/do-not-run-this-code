@@ -50,30 +50,32 @@ public class TextureManager {
 	public static final void nullify(GL10 gl) {
 		initialised = false;
 		
-		if(data.size() == 0) return;
-		
-		// Free all previous textures
-		Collection<Integer> textures = data.values();
-		int[] glTextures = new int[data.size()];
-		
-		int i = 0;
-		for(int t : textures) {
-			glTextures[i++] = t;
+		if(data.size() != 0) {
+			// Free all previous textures
+			Collection<Integer> textures = data.values();
+			int[] glTextures = new int[data.size()];
+			
+			int i = 0;
+			for(int t : textures) {
+				glTextures[i++] = t;
+			}
+			gl.glDeleteTextures(glTextures.length, glTextures, 0);
 		}
-		gl.glDeleteTextures(glTextures.length, glTextures, 0);
 		
-		// Free all previous chars
-		Collection<Letter> bLetters = letters.values();
-		int[] glLetters = new int[letters.size()];
-		
-		i = 0;
-		for(Letter t : bLetters) {
-			glLetters[i++] = t.id;
+		if(letters.size() != 0) {
+			// Free all previous chars
+			Collection<Letter> bLetters = letters.values();
+			int[] glLetters = new int[letters.size()];
+			
+			int i = 0;
+			for(Letter t : bLetters) {
+				glLetters[i++] = t.id;
+			}
+			gl.glDeleteTextures(glLetters.length, glLetters, 0);
 		}
-		gl.glDeleteTextures(glLetters.length, glLetters, 0);
 		
 		data.clear();
-		bLetters.clear();
+		letters.clear();
 		
 		System.gc();
 	}
