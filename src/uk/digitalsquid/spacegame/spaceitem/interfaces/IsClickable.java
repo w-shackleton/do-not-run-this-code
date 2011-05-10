@@ -1,6 +1,5 @@
 package uk.digitalsquid.spacegame.spaceitem.interfaces;
 
-import uk.digitalsquid.spacegame.Coord;
 
 /**
  * Add to a subclass of SpaceItem to define code that calculates whether the object
@@ -16,5 +15,5 @@ public interface IsClickable
 	 * @param point The point in the game where the click occurred
 	 * @return
 	 */
-	public boolean isClicked(Coord point);
+	public boolean isClicked(float x, float y);
 }

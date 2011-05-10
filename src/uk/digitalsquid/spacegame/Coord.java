@@ -3,7 +3,6 @@ package uk.digitalsquid.spacegame;
 import java.io.Serializable;
 
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
-import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
@@ -42,22 +41,6 @@ public final class Coord implements Serializable
 		if(old == null) {reset(); return;}
 		x = old.x;
 		y = old.y;
-	}
-	
-	private static final Matrix mtrix = new Matrix();
-	private static final float[] mtrixNums = new float[2];
-	
-	public Coord(double x, double y, Matrix matrix)
-	{
-		synchronized(mtrix)
-		{
-			mtrixNums[0] = (float) x;
-			mtrixNums[1] = (float) y;
-			matrix.invert(mtrix);
-			mtrix.mapPoints(mtrixNums);
-			this.x = mtrixNums[0];
-			this.y = mtrixNums[1];
-		}
 	}
 	
 	public void reset() {
@@ -221,5 +204,17 @@ public final class Coord implements Serializable
 	{
 		if(tmpRectF == null) tmpRectF = new RectF((float)-x / 2, (float)-y / 2, (float)x / 2, (float)y / 2);
 		return tmpRectF;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof Coord) {
+			Coord c = (Coord)o;
+			
+			if(x == c.x && y == c.y) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

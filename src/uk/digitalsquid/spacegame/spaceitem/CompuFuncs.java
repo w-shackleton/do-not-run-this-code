@@ -211,7 +211,7 @@ public class CompuFuncs
 	}*/
 	
 	/**
-	 * Check of point is inside the polygon points
+	 * Check if point is inside the polygon points
 	 */
 	public static final boolean PointInPolygon(Coord points[], Coord point)
 	{
@@ -223,6 +223,31 @@ public class CompuFuncs
 			//Log.v("SpaceGame", "" + i + ": " + points[i] + ", " + j + ": " + points[j]);
 			if (( ((points[i].y<=point.y) && (point.y<points[j].y)) || ((points[j].y<=point.y) && (point.y<points[i].y)) ) &&
 					(point.x < (points[j].x - points[i].x) * (point.y - points[i].y) / (points[j].y - points[i].y) + points[i].x))
+			//{
+				c = !c;
+			//	Log.v("SpaceGame", "          is ON  line");
+			//}
+			//else
+				//Log.v("SpaceGame", "          is OFF line");
+		}
+		//Log.v("SpaceGame", " ");
+		//Log.v("SpaceGame", " ");
+		return c;
+	}
+	
+	/**
+	 * Check if point is inside the polygon points
+	 */
+	public static final boolean PointInPolygon(Coord points[], float pointx, float pointy)
+	{
+		int i, j;
+		boolean c = false;
+		
+		for (i = 0, j = points.length - 1; i < points.length; j = i++)
+		{
+			//Log.v("SpaceGame", "" + i + ": " + points[i] + ", " + j + ": " + points[j]);
+			if (( ((points[i].y<=pointy) && (pointy<points[j].y)) || ((points[j].y<=pointy) && (pointy<points[i].y)) ) &&
+					(pointx < (points[j].x - points[i].x) * (pointy - points[i].y) / (points[j].y - points[i].y) + points[i].x))
 			//{
 				c = !c;
 			//	Log.v("SpaceGame", "          is ON  line");

@@ -1,16 +1,15 @@
 package uk.digitalsquid.spacegame.spaceview.gamemenu;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import uk.digitalsquid.spacegame.R;
-import uk.digitalsquid.spacegame.StaticInfo;
+import uk.digitalsquid.spacegame.misc.RectMesh;
+import uk.digitalsquid.spacegame.misc.Text;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.StaticDrawable;
 import uk.digitalsquid.spacegame.spaceitem.items.Portal;
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 
 public class StarDisplay implements StaticDrawable, Moveable {
 	
@@ -26,15 +25,9 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	 */
 	private int displayedStarCount = 0;
 	
-	private Drawable star;
+	private final RectMesh star;
 	
-	private static final Paint txtPaint = new Paint();
-	static {
-		txtPaint.setAntiAlias(true);
-		txtPaint.setTextSize(30);
-		txtPaint.setTextAlign(Paint.Align.LEFT);
-		txtPaint.setColor(0xFFFFFFFF);
-	}
+	private final Text text;
 	
 	/**
 	 * Causes star to 'jump' when star collected
@@ -46,24 +39,31 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	private static final int STAR_RISING  = 1;
 	private static final int STAR_FALLING = 2;
 	private static final int STAR_JUMP_DIST = 10;
-	private static final int STAR_JUMP_SPEED = 3;
+	private static final int STAR_JUMP_SPEED = 1;
 	
 	private final Portal portal;
 	
 	public StarDisplay(Context context, int starTotal, Portal portal) {
-		txtPaint.setTypeface(StaticInfo.Fonts.bangers);
-		star = (BitmapDrawable) context.getResources().getDrawable(R.drawable.star);
+		star = new RectMesh(25, -25, 30, 30, R.drawable.star);
 		this.starTotal = starTotal;
 		this.portal = portal;
+		
+		text = new Text("0", 50, -25, 30);
 	}
 
 	@Override
-	public void drawStatic(Canvas c, float worldZoom, int width, int height, Matrix matrix) {
-		star.setAlpha(255);
-		star.setBounds(10, 10 - jump, 40, 40 - jump);
-		star.draw(c);
+	public void drawStatic(GL10 gl, int width, int height, final Matrix matrix) {
+		gl.glPushMatrix();
+		gl.glTranslatef(-width / 2, +height / 2, 0);
+		gl.glPushMatrix();
+		gl.glTranslatef(0, jump, 0);
+		// star.setAlpha(1);
+		star.draw(gl);
+		gl.glPopMatrix();
 		
-		c.drawText("" + displayedStarCount + " / " + starTotal, 50, 40, txtPaint);
+		text.draw(gl);
+		
+		gl.glPopMatrix();
 	}
 
 	public void incStarCount() {
@@ -78,6 +78,7 @@ public class StarDisplay implements StaticDrawable, Moveable {
 
 	public void incDisplayedStarCount() {
 		displayedStarCount++;
+		text.setText("" + displayedStarCount);
 		jumpStatus = STAR_RISING;
 	}
 
@@ -86,7 +87,10 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	}
 
 	@Override
-	public void move(float millistep, float speedScale) {
+	public void move(float millistep, float speedScale) { }
+
+	@Override
+	public void drawMove(float millistep, float speedscale) {
 		switch(jumpStatus) {
 		case STAR_RESTING:
 		default:

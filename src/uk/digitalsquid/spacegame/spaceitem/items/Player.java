@@ -1,10 +1,11 @@
 package uk.digitalsquid.spacegame.spaceitem.items;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.spaceitem.Spherical;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Paint;
 
 public abstract class Player extends Spherical implements Moveable
@@ -30,17 +31,23 @@ public abstract class Player extends Spherical implements Moveable
 	}
 	
 	@Override
-	public final void draw(Canvas c, float worldZoom) {
-		c.save();
-		c.scale(warpScale, warpScale, (float)itemC.x, (float)itemC.y);
-		c.rotate(warpRotation, (float)itemC.x, (float)itemC.y);
+	public final void draw(GL10 gl, float worldZoom) {
+		gl.glPushMatrix();
+		gl.glTranslatef((float)itemC.x, (float)itemC.y, 0);
+		gl.glScalef(warpScale, warpScale, 1);
+		gl.glRotatef(warpRotation, 0, 0, 1);
 		
-		drawPlayer(c, worldZoom);
+		drawPlayer(gl, worldZoom);
 		
-		c.restore();
+		gl.glPopMatrix();
 	}
 	
-	public abstract void drawPlayer(Canvas c, float worldZoom);
+	/**
+	 * Draws the player around the point (0, 0)
+	 * @param gl
+	 * @param worldZoom
+	 */
+	public abstract void drawPlayer(GL10 gl, float worldZoom);
 
 	@Override
 	public void move(float millistep, float speedScale)

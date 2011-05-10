@@ -4,20 +4,19 @@ import java.io.InputStream;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.SurfaceHolder;
 
-public abstract class MovingView<VT extends MovingView.ViewThread> extends PlanetaryView<VT>
+public abstract class MovingView<VT extends MovingView.ViewWorker> extends PlanetaryView<VT>
 {
 	public MovingView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
 	}
 	
-	public static abstract class ViewThread extends PlanetaryView.ViewThread
+	public static abstract class ViewWorker extends PlanetaryView.ViewWorker
 	{
-		public ViewThread(Context context, SurfaceHolder surface, InputStream level)
+		public ViewWorker(Context context, InputStream level)
 		{
-			super(context, surface, level);
+			super(context, level);
 		}
 		
 		@Override
@@ -27,10 +26,10 @@ public abstract class MovingView<VT extends MovingView.ViewThread> extends Plane
 			// Compute move screen
 			for(int i = 1; i < screenPos.length; i++)
 			{
-				screenPos[i - 1] = screenPos[i];
+				screenPos[i - 1].copyFrom(screenPos[i]);
 			}
-			screenPos[screenPos.length - 1].x = p.itemC.x - (width / 2 / WORLD_ZOOM_UNSCALED);
-			screenPos[screenPos.length - 1].y = p.itemC.y - (height / 2 / WORLD_ZOOM_UNSCALED);
+			screenPos[screenPos.length - 1].x = p.itemC.x;
+			screenPos[screenPos.length - 1].y = p.itemC.y;
 			avgPos.reset(); // Find average into this var
 			int totNums = 1;
 			for(int i = 1; i < screenPos.length; i++)

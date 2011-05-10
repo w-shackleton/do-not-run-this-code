@@ -1,8 +1,9 @@
 package uk.digitalsquid.spacegame.spaceitem;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import uk.digitalsquid.spacegame.Coord;
 import android.content.Context;
-import android.graphics.Canvas;
 
 public abstract class SpaceItem
 {
@@ -33,10 +34,10 @@ public abstract class SpaceItem
 	
 	/**
 	 * Draw this object onto the screen
-	 * @param c			The canvas to draw to
+	 * @param gl		The GL to draw to
 	 * @param worldZoom	The current Zoom of the canvas
 	 */
-	public abstract void draw(Canvas c, float worldZoom);
+	public abstract void draw(GL10 gl, float worldZoom);
 	
 	public Coord getPos() {
 		return pos;

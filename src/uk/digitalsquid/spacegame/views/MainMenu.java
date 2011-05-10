@@ -2,40 +2,37 @@ package uk.digitalsquid.spacegame.views;
 
 import java.io.InputStream;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import uk.digitalsquid.spacegame.subviews.PlanetaryView;
 import android.content.Context;
-import android.graphics.Canvas;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.view.SurfaceHolder;
 
-public class MainMenu extends PlanetaryView<MainMenu.ViewThread>
+public class MainMenu extends PlanetaryView<MainMenu.ViewWorker>
 {
-	protected Handler gameHandler;
+	protected final Handler gameHandler;
+	private final InputStream levelData;
 	public MainMenu(Context context, AttributeSet attrs, Handler gameHandler, InputStream levelData)
 	{
 		super(context, attrs);
 		this.gameHandler = gameHandler;
-		thread = new ViewThread(context, holder, levelData);// , new Handler()
-		// {
-		// public void handleMessage(Message m)
-		// {
-		// if(m.what == ViewThread.MESSAGE_QUIT)
-		// {
-		// Message newM = new Message();
-		// newM.what = Spacegame.MESSAGE_END_LEVEL;
-		// MainMenu.this.parentHandler.sendMessage(newM);
-		// }
-		// }
-		// }, holder);
+		this.levelData = levelData;
+		
+		initP2();
 	}
 
-	protected class ViewThread extends PlanetaryView.ViewThread
+	@Override
+	protected ViewWorker createThread() {
+		return new ViewWorker(context, levelData);
+	}
+
+	protected class ViewWorker extends PlanetaryView.ViewWorker
 	{
-		public ViewThread(Context context, SurfaceHolder surface, InputStream levelData)
+		public ViewWorker(Context context, InputStream levelData)
 		{
-			super(context, surface, levelData);
+			super(context, levelData);
 		}
 
 		@Override
@@ -43,25 +40,37 @@ public class MainMenu extends PlanetaryView<MainMenu.ViewThread>
 		{
 			super.initialiseOnThread();
 		}
-
+		
 		@Override
-		protected void predraw(Canvas c)
+		protected void predraw(GL10 gl)
 		{
-			level.bounds.x = c.getWidth() / WORLD_ZOOM + 2;
-			level.bounds.y = c.getHeight() / WORLD_ZOOM + 2;
-			super.predraw(c);
+			level.bounds.x = scaledWidth + 2;
+			level.bounds.y = scaledHeight + 2;
+			
+			super.predraw(gl);
+		}
+		
+		@Override
+		protected void onSizeChanged(int w, int h) {
+			super.onSizeChanged(w, h);
+			
+			level.bounds.x = scaledWidth + 2;
+			level.bounds.y = scaledHeight + 2;
+			
+			levelBorder.setVertices(new float[] {
+				(float) -level.bounds.x / 2, (float) -level.bounds.y / 2, 0,
+				(float) +level.bounds.x / 2, (float) -level.bounds.y / 2, 0,
+				(float) +level.bounds.x / 2, (float) +level.bounds.y / 2, 0,
+				(float) -level.bounds.x / 2, (float) +level.bounds.y / 2, 0 });
 		}
 
 		@Override
-		protected void scale(Canvas c)
+		protected void scale(GL10 gl)
 		{
-			c.rotate(
-					warpData.rotation,
-					c.getWidth() / 2,
-					c.getHeight() / 2);
-			c.scale(WORLD_ZOOM_POSTSCALE, WORLD_ZOOM_POSTSCALE, width / 2, height / 2);
-			c.translate(c.getWidth() / 2, c.getHeight() / 2);
-			c.scale(WORLD_ZOOM_PRESCALE, WORLD_ZOOM_PRESCALE);
+			gl.glRotatef(warpData.rotation, 0, 0, 1);
+			
+			gl.glScalef(WORLD_ZOOM_POSTSCALE, WORLD_ZOOM_POSTSCALE, 1);
+			gl.glScalef(WORLD_ZOOM_PRESCALE, WORLD_ZOOM_PRESCALE, 1);
 		}
 
 		@Override
@@ -70,11 +79,6 @@ public class MainMenu extends PlanetaryView<MainMenu.ViewThread>
 			Message msg = Message.obtain();
 			msg.what = returnCode;
 			MainMenu.this.gameHandler.sendMessage(msg);
-		}
-
-		@Override
-		protected void postdrawscale(Canvas c) {
-			c.scale(WORLD_ZOOM_UNSCALED, WORLD_ZOOM_UNSCALED);
 		}
 	}
 }

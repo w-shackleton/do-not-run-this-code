@@ -27,7 +27,7 @@ public abstract class Gravitable extends Spherical implements Forceful
 	public BallData calculateVelocity(Coord itemC, Coord itemVC, float itemRadius)
 	{
 		if(Coord.getLength(pos, itemC) < radius + itemRadius)
-			return new BallData(null, itemVC.scale(internalResistance));
+			return new BallData(null, itemVC.scale(radius == 0 ? 1 : internalResistance));
 		return null;
 	}
 }

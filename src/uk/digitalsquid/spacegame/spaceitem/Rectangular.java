@@ -99,8 +99,8 @@ public abstract class Rectangular extends SpaceItem implements IsClickable
 	}
 	
 	@Override
-	public boolean isClicked(Coord point)
+	public boolean isClicked(float x, float y)
 	{
-		return CompuFuncs.PointInPolygon(getRectPos(), point);
+		return CompuFuncs.PointInPolygon(getRectPos(), x, y);
 	}
 }

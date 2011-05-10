@@ -1,61 +1,47 @@
 package uk.digitalsquid.spacegame.spaceitem.items;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import uk.digitalsquid.spacegame.Coord;
-import uk.digitalsquid.spacegame.PaintLoader;
-import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.R;
-import uk.digitalsquid.spacegame.StaticInfo;
+import uk.digitalsquid.spacegame.misc.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.Gravitable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.TopDrawable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Warpable;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
 
 public class Teleporter extends Gravitable implements TopDrawable, Moveable, Warpable
 {
 	private static final int TRANSPORTER_RADIUS = 70;
 	private static final float TRANSPORTER_DENSITY = 0.7f;
 	
-	private static final PaintDesc BG_COL = new PaintDesc(0, 0, 0);
-	
 	protected final Coord destination;
 	
 	protected int rotation = 0;
 	
-	protected BitmapDrawable teleporter;
+	protected final RectMesh teleporter;
 	
-	public Teleporter(Context context, Coord coord, Coord destination)
-	{
+	public Teleporter(Context context, Coord coord, Coord destination) {
 		super(context, coord, 0.98f, TRANSPORTER_DENSITY, TRANSPORTER_RADIUS / 2);
 		this.destination = destination;
-		teleporter = (BitmapDrawable) context.getResources().getDrawable(R.drawable.teleporter);
+		teleporter = new RectMesh((float)pos.x, (float)pos.y, radius * 2, radius * 2, R.drawable.teleporter);
 	}
 
 	@Override
-	public void draw(Canvas c, float worldZoom)
-	{
-		c.drawCircle((float)pos.x, (float)pos.y, radius, PaintLoader.load(BG_COL));
+	public void draw(GL10 gl, float worldZoom) {
+		// c.drawCircle((float)pos.x, (float)pos.y, radius, PaintLoader.load(BG_COL));
+		// TODO: Re-implement!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 	}
 
 	@Override
-	public void drawTop(Canvas c, float worldZoom)
-	{
-		c.rotate(-rotation, (float)pos.x, (float)pos.y);
-		teleporter.setAntiAlias(StaticInfo.Antialiasing);
-		teleporter.setBounds(
-				(int)((pos.x - (radius)) * worldZoom),
-				(int)((pos.y - (radius)) * worldZoom),
-				(int)((pos.x + (radius)) * worldZoom),
-				(int)((pos.y + (radius)) * worldZoom));
-		teleporter.draw(c);
-		c.rotate(rotation, (float)pos.x, (float)pos.y);
+	public void drawTop(GL10 gl, float worldZoom) {
+		teleporter.setRotation(rotation);
+		teleporter.draw(gl);
 	}
 	
 	@Override
-	public BallData calculateVelocity(Coord itemC, Coord itemVC, float itemRadius)
-	{
+	public BallData calculateVelocity(Coord itemC, Coord itemVC, float itemRadius) {
 		BallData data = super.calculateVelocity(itemC, itemVC, itemRadius);
 
 		double currDist = pos.minus(itemC).getLength();
@@ -69,15 +55,16 @@ public class Teleporter extends Gravitable implements TopDrawable, Moveable, War
 	}
 
 	@Override
-	public void move(float millistep, float speedScale)
-	{
-		rotation -= 1;
+	public void move(float millistep, float speedScale) { }
+
+	@Override
+	public WarpData sendWarpData() {
+		return null; // new WarpData((float)(Math.sin((double)rotation / 20) + 2) / 10 + 1, 0, 0, false);
 	}
 
 	@Override
-	public WarpData sendWarpData()
-	{
-		return null; // new WarpData((float)(Math.sin((double)rotation / 20) + 2) / 10 + 1, 0, 0, false);
+	public void drawMove(float millistep, float speedscale) {
+		rotation -= 1;
 	}
 	
 }

@@ -1,62 +1,62 @@
 package uk.digitalsquid.spacegame.views;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import uk.digitalsquid.spacegame.BounceVibrate;
-import uk.digitalsquid.spacegame.PaintLoader;
 import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.Spacegame;
 import uk.digitalsquid.spacegame.StaticInfo;
-import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.levels.LevelManager;
 import uk.digitalsquid.spacegame.levels.SaxInfoLoader;
 import uk.digitalsquid.spacegame.levels.SaxLoader;
-import uk.digitalsquid.spacegame.subviews.ThreadedView;
+import uk.digitalsquid.spacegame.misc.RectMesh;
+import uk.digitalsquid.spacegame.subviews.DrawBaseView;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.SurfaceHolder;
 
-public class SplashScreen extends ThreadedView<SplashScreen.ViewThread>
+public class SplashScreen extends DrawBaseView<SplashScreen.ViewWorker>
 {
 	Handler parentHandler;
+	
+	private final LevelManager lmanager;
 	
 	public SplashScreen(Context context, AttributeSet attrib, Handler parentHandler, LevelManager lmanager)
 	{
 		super(context, attrib);
 		
-        SurfaceHolder holder = getHolder();
-        holder.addCallback(this);
+		this.lmanager = lmanager;
         this.parentHandler = parentHandler;
         
-        if (isInEditMode() == false)
-        {
-        	thread = new ViewThread(context, holder, new Handler()
-        	{
-        		@Override
-        		public void handleMessage(Message m)
-        		{
-        			super.handleMessage(m);
-        			if(m.what == ViewThread.MESSAGE_FINISHED)
-        			{
-        				Message newM = new Message();
-        				newM.what = Spacegame.MESSAGE_FINISHED_LOADING;
-        				SplashScreen.this.parentHandler.sendMessage(newM);
-        			}
-        		}
-        	}, lmanager);
-        }
+        initP2();
 	}
 	
-	static class ViewThread extends ThreadedView.ViewThread
+	@Override
+	protected ViewWorker createThread() {
+    	return new ViewWorker(context, new Handler()
+    	{
+    		@Override
+    		public void handleMessage(Message m)
+    		{
+    			super.handleMessage(m);
+    			if(m.what == ViewWorker.MESSAGE_FINISHED)
+    			{
+    				Message newM = new Message();
+    				newM.what = Spacegame.MESSAGE_FINISHED_LOADING;
+    				SplashScreen.this.parentHandler.sendMessage(newM);
+    			}
+    		}
+    	}, lmanager);
+	}
+	
+	static class ViewWorker extends DrawBaseView.ViewWorker
 	{
-		public ViewThread(Context context, SurfaceHolder surface, Handler handler, LevelManager lmanager)
+		public ViewWorker(Context context, Handler handler, LevelManager lmanager)
 		{
-			super(context, surface);
+			super(context);
 			msgHandler = handler;
 			loader = new Loader(context, lmanager);
 		}
@@ -64,20 +64,13 @@ public class SplashScreen extends ThreadedView<SplashScreen.ViewThread>
 		static final int MESSAGE_FINISHED = 1;
 		private Handler msgHandler;
 
-		private float WORLD_ZOOM;
-		@SuppressWarnings("unused")
-		private int scaledWidth, scaledHeight;
-
-		protected static final PaintDesc bgPaint = new PaintDesc(0, 0, 0);
-		protected static final PaintDesc txtPaint = new PaintDesc(255, 255, 255, 255, 1, 12);
-		
 		int timeThroughLoop = 0;
 		
-		private Drawable splashLogo;
-		private static final int SPLASH_LOGO_WIDTH = 160;
-		private static final int SPLASH_LOGO_HEIGHT = 120;
-		private int splashLogoOpacity = 0;
-		private int splashLogoWantedOpacity = 0;
+		private RectMesh splashLogo;
+		private static final int SPLASH_LOGO_WIDTH = 200;
+		private static final int SPLASH_LOGO_HEIGHT = 100;
+		private float splashLogoOpacity = 0;
+		private float splashLogoWantedOpacity = 0;
 		
 		@Override
 		protected void precalculate()
@@ -91,50 +84,32 @@ public class SplashScreen extends ThreadedView<SplashScreen.ViewThread>
 		{
 			// Set fade in&out and exit points
 			if(timeThroughLoop == 10)
-				splashLogoWantedOpacity = 200;
+				splashLogoWantedOpacity = 1;
 			if(timeThroughLoop == 50)
 				splashLogoWantedOpacity = 0;
 			if(timeThroughLoop == 70)
 				setRunning(false);
 
 			if(splashLogoOpacity < splashLogoWantedOpacity)
-				splashLogoOpacity+=14;
+				splashLogoOpacity+=14f / 256;
 			if(splashLogoOpacity > splashLogoWantedOpacity)
-				splashLogoOpacity-=14;
-		}
-		
-		@Override
-		protected void postcalculate()
-		{
-			WORLD_ZOOM = (float) width / (float) REQ_SIZE_X;
-
-			scaledHeight = (int) (height / WORLD_ZOOM);
-			scaledWidth = (int) (width / WORLD_ZOOM);
-		}
-		
-		@Override
-		protected void predraw(Canvas c)
-		{
-			c.drawPaint(PaintLoader.load(bgPaint));
-		}
-
-		@Override
-		protected void scale(Canvas c)
-		{
-			c.scale(WORLD_ZOOM, WORLD_ZOOM);
-		};
-		
-		@Override
-		protected void draw(Canvas c)
-		{
-			splashLogo.setBounds(new Rect(
-					(scaledWidth / 2) - (SPLASH_LOGO_WIDTH / 2),
-					120 - (SPLASH_LOGO_HEIGHT / 2),
-					(scaledWidth / 2) + (SPLASH_LOGO_WIDTH / 2),
-					120  + (SPLASH_LOGO_HEIGHT / 2)
-					));
+				splashLogoOpacity-=14f / 256;
+			
 			splashLogo.setAlpha(splashLogoOpacity);
-			splashLogo.draw(c);
+		}
+		
+		@Override
+		protected void predraw(GL10 gl)
+		{
+		}
+
+		@Override
+		protected void scale(GL10 gl) {}
+		
+		@Override
+		protected void draw(GL10 gl)
+		{
+			splashLogo.draw(gl);
 		}
 		
 		private Loader loader;
@@ -153,18 +128,15 @@ public class SplashScreen extends ThreadedView<SplashScreen.ViewThread>
 			@Override
 			public void run()
 			{
-				synchronized(context) // Main loading point of application
-				{
-					Log.i("SpaceGame", "Initialising various game components...");
-					BounceVibrate.initialise(context);
-					StaticInfo.initialise(context);
-					Log.i("SpaceGame", "Loading XML parser...");
-					SaxLoader.initialise();
-					SaxInfoLoader.initialise();
-					Log.i("SpaceGame", "Loading Level Loaders...");
-					lmanager.initialise();
-					Log.i("SpaceGame", "Loaded.");
-				}
+				Log.i("SpaceGame", "Initialising various game components...");
+				BounceVibrate.initialise(context);
+				StaticInfo.initialise(context);
+				Log.i("SpaceGame", "Loading XML parser...");
+				SaxLoader.initialise();
+				SaxInfoLoader.initialise();
+				Log.i("SpaceGame", "Loading Level Loaders...");
+				lmanager.initialise();
+				Log.i("SpaceGame", "Loaded.");
 			}
 		}
 
@@ -172,7 +144,8 @@ public class SplashScreen extends ThreadedView<SplashScreen.ViewThread>
 		protected void initialiseOnThread()
 		{
 			loader.start();
-			splashLogo = context.getResources().getDrawable(R.drawable.splash);
+			// splashLogo = new RectMesh(0, 0, SPLASH_LOGO_WIDTH, SPLASH_LOGO_HEIGHT, 1, 1, 0, 0);
+			splashLogo = new RectMesh(0, 0, SPLASH_LOGO_WIDTH, SPLASH_LOGO_HEIGHT, R.drawable.splash);
 		}
 
 		@Override
@@ -204,11 +177,6 @@ public class SplashScreen extends ThreadedView<SplashScreen.ViewThread>
 		public void saveState(Bundle bundle)
 		{
 			
-		}
-
-		@Override
-		protected void postdrawscale(Canvas c) {
-			c.scale(1, 1);
 		}
 	}
 }
