@@ -58,6 +58,9 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
     				newM.arg1 = m.arg1;
     				newM.obj = m.obj;
     				GameView.this.parentHandler.sendMessage(newM);
+    				
+    				// This ends the level, so turn off rendering
+    				setRenderMode(RENDERMODE_WHEN_DIRTY);
     			}
     		}
     	}, this.gvHandler, level);
@@ -238,7 +241,9 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 			m.what = MESSAGE_END_GAME;
 			m.arg1 = warpData.endReason;
 			
-			LevelSummary sum = new LevelSummary(level.starsToCollect, starCount.getStarCount(), (int) (finishTime - startTime));
+			Log.v("SpaceGame", "Start time: " + startTime + ", Finish time: " + finishTime + ".");
+			Log.i("SpaceGame", "Level took " + ((long) (finishTime - startTime)) + " millis");
+			LevelSummary sum = new LevelSummary(level.starsToCollect, starCount.getStarCount(), (int)((long) (finishTime - startTime)));
 			m.obj = sum;
 			msgHandler.sendMessage(m);
 		}

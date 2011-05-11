@@ -136,7 +136,7 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 				tmpWarpRotateSpeed += 0.07f;
 				
 				p.warpScale += tmpWarpScaleSpeed;
-				tmpWarpScaleSpeed -= 0.001f;
+				tmpWarpScaleSpeed -= 0.0006f;
 				
 				if(p.warpScale < 0) {
 					p.warpScale = 0;
@@ -148,10 +148,15 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 		return data;
 	}
 	
+	private boolean firstTimeFinish = true;
+	
 	@Override
 	public WarpData sendWarpData() {
 		if(status == Status.FINISHED) {
 			return new WarpData(true, WarpData.END_SUCCESS);
+		} else if(status == Status.FINISHING && firstTimeFinish) {
+			firstTimeFinish = false;
+			return new WarpData(true);
 		}
 		return null;
 	}

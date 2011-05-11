@@ -129,8 +129,9 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		protected boolean running = true;
 		
 		public synchronized void setRunning(boolean run) {
+			if(running && !run) // One time stop
+				onThreadEnd();
 			running = run;
-			onThreadEnd();
 		}
 		
 		/**
