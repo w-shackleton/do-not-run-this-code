@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="tut1">Welcome to Bright Day! This tutorial will show you how to use the program.</string>
+<string name="tut2">The graph at the top shows how the brightness will change throughout the day. The green bar shows the current time, and the curve shows the brightness change.</string>
+<string name="tut3">The program has five controls:\n* Minimum Brightness\n* Maximum Brightness\n* Shift\n* Gamma\n* Stretch</string>
+<string name="tut_minmax">Min and Max brightness change the top and bottom of the graph.</string>
+<string name="tut_shift">The next control is shift. This changes the line's position on the graph.</string>
+<string name="tut_gamma">The fourth control, gamma, controls how quickly the curve reaches the top and bottom.</string>
+<string name="tut_stretch">The final control is stretch. This shifts the entire contents of the graph up and down, spreading the curve.</string>
+<string name="tut_save">Once done, you can click save to save the current configuration.</string>
+<string name="tut_comp">Now you know how to use Bright Day, you can start to set it up.\nIt can be turned off from the menu, if you want to stop the brightness changes.\nThis tutorial can also be viewed from the menu.</string>
+</resources>
