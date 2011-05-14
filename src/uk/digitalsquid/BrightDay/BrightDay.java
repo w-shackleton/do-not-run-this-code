@@ -18,13 +18,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 
 public class BrightDay extends Activity implements OnSeekBarChangeListener, OnClickListener
 {
@@ -278,10 +279,13 @@ public class BrightDay extends Activity implements OnSeekBarChangeListener, OnCl
 		
     	Intent intent = new Intent(this, BrightDayTick.class);
     	PendingIntent pI = PendingIntent.getBroadcast(this, 0, intent, 0);
-    	try
-    	{
+    	try {
 			pI.send();
 		} catch (CanceledException e1){	}
+		
+		WindowManager.LayoutParams layout = getWindow().getAttributes();
+		layout.screenBrightness = (float)BrightDayTick.getValue256(getApplicationContext()) / 256f;
+		getWindow().setAttributes(layout);
 	}
 	
 	protected Dialog onCreateDialog(int id)
