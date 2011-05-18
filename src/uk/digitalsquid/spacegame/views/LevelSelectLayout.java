@@ -21,11 +21,11 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemClickListener, OnItemSelectedListener
-{
+public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemClickListener, OnItemSelectedListener {
 	protected Context context;
 	protected Handler parentHandler;
 	
@@ -35,8 +35,7 @@ public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemCl
 	
 	private final TextView title, authour, time;
 	
-	public LevelSelectLayout(Context context, AttributeSet attrs, Handler handler, LevelManager lmanager, String levelset)
-	{
+	public LevelSelectLayout(Context context, AttributeSet attrs, Handler handler, LevelManager lmanager, String levelset) {
 		super(context, attrs);
 		this.context = context;
 		parentHandler = handler;
@@ -53,7 +52,7 @@ public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemCl
 		authour = (TextView) findViewById(R.id.levelselect_itemauthor);
 		time = (TextView) findViewById(R.id.levelselect_itemtime);
 		
-		adapter = new LevelSelectAdapter(context, lmanager.GetLevelsFromSet(levelset));
+		adapter = new LevelSelectAdapter(context, lmanager.getLevelsFromSet(levelset));
 		lv.requestFocus();
 		lv.setAdapter(adapter);
 		lv.setOnItemClickListener(this);
@@ -61,11 +60,11 @@ public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemCl
 		
 		title.setText("");
 		authour.setText("");
+		time.setText("");
 	}
 
 	@Override
-	public void onBackPress()
-	{
+	public void onBackPress() {
 		Animation fadeout = AnimationUtils.loadAnimation(context, R.anim.fadeout);
 		startAnimation(fadeout);
 		
@@ -74,47 +73,49 @@ public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemCl
 		parentHandler.sendMessageAtTime(msg, SystemClock.uptimeMillis() + fadeout.getDuration());
 	}
 	
-	private static class LevelSelectAdapter extends BaseAdapter
-	{
+	private static class LevelSelectAdapter extends BaseAdapter {
 		protected LayoutInflater inflater;
 		protected ArrayList<LevelExtendedInfo> items;
 		
-		public LevelSelectAdapter(Context context, ArrayList<LevelExtendedInfo> items)
-		{
+		public LevelSelectAdapter(Context context, ArrayList<LevelExtendedInfo> items) {
 			inflater = LayoutInflater.from(context);
 			this.items = items;
 		}
 		
 		@Override
-		public int getCount()
-		{
+		public int getCount() {
 			return items.size();
 		}
 
 		@Override
-		public LevelExtendedInfo getItem(int arg0)
-		{
+		public LevelExtendedInfo getItem(int arg0) {
 			return items.get(arg0);
 		}
 
 		@Override
-		public long getItemId(int position)
-		{
+		public long getItemId(int position) {
 			return position;
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent)
-		{
-			if(convertView == null)
-			{
+		public View getView(int position, View convertView, ViewGroup parent) {
+			if(convertView == null) {
 				convertView = inflater.inflate(R.layout.levelselectitem, null); // Construct from XML if view is non-existent
 			}
 			LevelExtendedInfo currItem = items.get(position);
-			if(currItem != null)
-			{
+			if(currItem != null) {
 				TextView title = (TextView) convertView.findViewById(R.id.levelselectitem_text);
 				title.setText(currItem.filename + " "  + currItem.fileNumber + (currItem.name.equals("") ? "" : (" - " + currItem.name)));
+				ImageView img = (ImageView) convertView.findViewById(R.id.levelselectitem_statusimg);
+				if(currItem.completed) {
+					img.setImageResource(android.R.drawable.presence_online);
+				} else {
+					if(currItem.playable) {
+						img.setImageResource(android.R.drawable.presence_away);
+					} else {
+						img.setImageResource(android.R.drawable.presence_offline);
+					}
+				}
 			}
 			convertView.setEnabled(currItem.playable);
 			return convertView;
@@ -122,15 +123,16 @@ public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemCl
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
-	{
-		Animation fadeout = AnimationUtils.loadAnimation(context, R.anim.fadeout);
-		startAnimation(fadeout);
-		
-		Message m = Message.obtain();
-		m.what = Spacegame.MESSAGE_START_LEVEL;
-		m.obj = adapter.getItem(arg2);
-		parentHandler.sendMessageAtTime(m, SystemClock.uptimeMillis() + fadeout.getDuration());
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		if(adapter.getItem(arg2).playable) {
+			Animation fadeout = AnimationUtils.loadAnimation(context, R.anim.fadeout);
+			startAnimation(fadeout);
+			
+			Message m = Message.obtain();
+			m.what = Spacegame.MESSAGE_START_LEVEL;
+			m.obj = adapter.getItem(arg2);
+			parentHandler.sendMessageAtTime(m, SystemClock.uptimeMillis() + fadeout.getDuration());
+		}
 	}
 
 	@Override
@@ -139,11 +141,21 @@ public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemCl
 		LevelExtendedInfo info = adapter.items.get(arg2);
 		title.setText(info.name);
 		authour.setText(info.author);
+		
+		if(info.completed) {
+			int deci = (info.time / 100) % 10;
+			int secs = (info.time / 1000) % 60;
+			int mins = (info.time / 1000) / 60;
+			time.setText(String.format("%d:%d.%d", mins, secs, deci));
+		} else {
+			time.setText("Not yet completed");
+		}
 	}
 
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
 		title.setText("");
 		authour.setText("");
+		time.setText("");
 	}
 }

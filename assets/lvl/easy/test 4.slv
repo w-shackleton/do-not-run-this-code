@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<level>
+    <name></name>
+    <creator></creator>
+    <start x="0.000000" y="0.000000" />
+    <startspeed x="0.000000" y="0.000000" />
+    <bounds x="500.000000" y="500.000000" />
+    <items>
+        <planet x="43.000000" y="89.000000" radius="77.025970" type="4" />
+        <planet x="264.000000" y="-40.000000" radius="74.793048" type="3" />
+        <blackhole x="-87.000000" y="-73.000000" radius="70.000000" />
+        <gravity x="-313.000000" y="106.000000" sx="100.000000" sy="159.263714" rotation="-24.064227" power="1.000000" />
+        <wall x="-196.000000" y="73.000000" sx="314.000000" sy="16.000000" rotation="51.566202" />
+        <infobox x="-151.000000" y="28.000000" sx="50.000000" sy="40.000000" rotation="24.064227" initialshow="true">hi</infobox>
+    </items>
+</level>

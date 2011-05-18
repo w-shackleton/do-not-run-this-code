@@ -165,15 +165,13 @@ public class LevelManager
 
 	}
 
-	public ArrayList<LevelExtendedInfo> GetLevelsFromSet(String set)
+	public ArrayList<LevelExtendedInfo> getLevelsFromSet(String set)
 	{
 		return db.GetLevelsFromSet(set);
 	}
 
-	public InputStream GetLevelIStream(LevelExtendedInfo info) throws IOException
-	{
-		if(info.set.startsWith(BUILTIN_PREFIX))
-		{
+	public InputStream getLevelIStream(LevelExtendedInfo info) throws IOException {
+		if(info.set.startsWith(BUILTIN_PREFIX)) {
 			String setFilePath = info.set.replace(BUILTIN_PREFIX, ""); // Remove it
 			Log.v("SpaceGame", "Opening level at path " + "lvl/" + setFilePath + "/" + info.filename + " " + info.fileNumber + ".slv");
 			return am.open("lvl/" + setFilePath + "/" + info.filename + " " + info.fileNumber + ".slv");
@@ -181,9 +179,12 @@ public class LevelManager
 		return null;
 	}
 	
-	public void ResetDB()
-	{
-		db.ResetDB();
+	public void setLevelTime(LevelExtendedInfo level, int milliTime) {
+		db.setLevelTime(level, milliTime);
+	}
+	
+	public void resetDB() {
+		db.resetDB();
 	}
 
 	private class DbStorage extends SQLiteOpenHelper
@@ -236,12 +237,11 @@ public class LevelManager
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
 		{
-
 		}
 
 		private boolean CheckLevelSetNotExists(String levelsetName)
 		{
-			Cursor c = getWritableDatabase().query(DB_SETS_NAME,
+			Cursor c = getReadableDatabase().query(DB_SETS_NAME,
 					new String[] { KEY_FILENAME }, KEY_FILENAME + " = ?",
 					new String[] { levelsetName }, null, null, null);
 			boolean ret = c.getCount() == 0;
@@ -251,7 +251,7 @@ public class LevelManager
 
 		private boolean CheckLevelNotExists(String levelfilename, int levelNumber, String levelset)
 		{
-			Cursor c = getWritableDatabase().query(DB_LEVELS_NAME,
+			Cursor c = getReadableDatabase().query(DB_LEVELS_NAME,
 					new String[] { KEY_NAME },
 					"(" + KEY_FILENAME + " = ?) AND (" + KEY_FROMSET + " = ?) AND (" + KEY_LEVEL_NUMBER + " = ?)",
 					new String[] { levelfilename, levelset, "" + levelNumber }, null, null, null);
@@ -282,7 +282,7 @@ public class LevelManager
 
 		private void CheckDatabaseValidity(AssetManager am) throws IOException
 		{
-			Cursor levels = getWritableDatabase().query(DB_LEVELS_NAME,
+			Cursor levels = getReadableDatabase().query(DB_LEVELS_NAME,
 					new String[] { KEY_FILENAME, KEY_FROMSET, KEY_LEVEL_NUMBER }, null, null,
 					null, null, null);
 			while (levels.moveToNext())
@@ -358,11 +358,21 @@ public class LevelManager
 				int idAuthor = c.getColumnIndex(KEY_AUTHOR);
 				int idFilename = c.getColumnIndex(KEY_FILENAME);
 				int idTime = c.getColumnIndex(KEY_TIME);
+				
+				String prevFileName = "\\\42/3gremkjrif3jvf I lost the game"; // Random string
+				boolean playable = true;
 				while (c.moveToNext())
 				{
+					String fileName = c.getString(idFilename);
+					boolean completed = c.getInt(idTime) >= 0;
+					if(!prevFileName.equals(fileName)) {
+						playable = true;
+						prevFileName = fileName;
+					}
 					items.add(new LevelExtendedInfo(c.getString(idName), c.getInt(idFileNumber), c
-							.getString(idFromset), c.getString(idAuthor), c
-							.getString(idFilename), c.getInt(idTime), c.getInt(idTime) >= 0, false)); // TODO: Update!!!
+							.getString(idFromset), c.getString(idAuthor),
+							fileName, c.getInt(idTime), completed, playable));
+					playable = completed;
 				}
 			} catch (SQLiteException e)
 			{
@@ -375,7 +385,16 @@ public class LevelManager
 			return items;
 		}
 		
-		protected void ResetDB()
+		protected void setLevelTime(LevelExtendedInfo level, int milliTime) {
+			ContentValues vals = new ContentValues();
+			vals.put(KEY_TIME, milliTime);
+			getWritableDatabase().update(DB_LEVELS_NAME, vals, 
+						"(" + KEY_FILENAME + " = ?) AND " + "("
+							+ KEY_FROMSET + " = ?) AND (" + KEY_LEVEL_NUMBER + " = ?)",
+						new String[] {level.filename, level.set, "" + level.fileNumber});
+		}
+		
+		protected void resetDB()
 		{
 			Log.i("SpaceGame", "Deleting all data from DB...");
 			getWritableDatabase().delete(DB_LEVELS_NAME, null, null);

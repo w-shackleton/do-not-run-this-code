@@ -98,7 +98,6 @@ public class Spacegame extends Activity
 				break;
 			case MESSAGE_MAIN_MENU_FINISHED:
 				Log.i("SpaceGame", "Starting game...");
-//				levelToLoad = getResources().openRawResource(R.raw.level1);
 				activateView(Views.MENU_LEVELSET_SELECT);
 				break;
 			case MESSAGE_QUIT:
@@ -112,6 +111,7 @@ public class Spacegame extends Activity
 					break;
 				case WarpData.END_SUCCESS:
 					levelCompletedSummary = (LevelSummary) m.obj;
+					lmanager.setLevelTime(levelToLoad, levelCompletedSummary.timeTaken);
 					showDialog(DIALOG_LEVEL_COMPLETED);
 					break;
 				}
@@ -170,7 +170,7 @@ public class Spacegame extends Activity
 			break;
 		case GAME:
 			try {
-				sview = new GameViewLayout(getApplicationContext(), null, lmanager.GetLevelIStream(levelToLoad), msgHandler);
+				sview = new GameViewLayout(getApplicationContext(), null, lmanager.getLevelIStream(levelToLoad), msgHandler);
 			} catch (IOException e) {
 				Toast.makeText(this, "Error loading level", Toast.LENGTH_LONG);
 				activateView(Views.MENU_LEVEL_SELECT);

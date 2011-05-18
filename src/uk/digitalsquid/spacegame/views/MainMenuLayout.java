@@ -124,7 +124,7 @@ public class MainMenuLayout extends FrameLayout implements OnClickListener, OnCh
 			findViewById(R.id.mainmenuoptions).setVisibility(View.VISIBLE);
 			break;
 		case R.id.mainmenuoptionsperformancebuttonresetdb:
-			lmanager.ResetDB();
+			lmanager.resetDB();
 			findViewById(R.id.mainmenuoptionsperformance).startAnimation(panout);
 			findViewById(R.id.mainmenuoptionsperformance).setVisibility(View.INVISIBLE);
 			menuView.stop(-1);
