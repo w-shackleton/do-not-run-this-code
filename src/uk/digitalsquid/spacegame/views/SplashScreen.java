@@ -2,7 +2,6 @@ package uk.digitalsquid.spacegame.views;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import uk.digitalsquid.spacegame.BounceVibrate;
 import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.Spacegame;
 import uk.digitalsquid.spacegame.StaticInfo;
@@ -129,7 +128,7 @@ public class SplashScreen extends DrawBaseView<SplashScreen.ViewWorker>
 			public void run()
 			{
 				Log.i("SpaceGame", "Initialising various game components...");
-				BounceVibrate.initialise(context);
+				// BounceVibrate.initialise(context);
 				StaticInfo.initialise(context);
 				Log.i("SpaceGame", "Loading XML parser...");
 				SaxLoader.initialise();

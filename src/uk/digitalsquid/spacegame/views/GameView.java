@@ -4,7 +4,6 @@ import java.io.InputStream;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import uk.digitalsquid.spacegame.BounceVibrate;
 import uk.digitalsquid.spacegame.Spacegame;
 import uk.digitalsquid.spacegame.levels.LevelItem.LevelSummary;
 import uk.digitalsquid.spacegame.spaceitem.SpaceItem;
@@ -85,8 +84,6 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 		@Override
 		protected void initialiseOnThread()
 		{
-			BounceVibrate.initialise(context);
-			
 			super.initialiseOnThread();
 			starCount = new StarDisplay(context, level.starsToCollect, portal);
 		}

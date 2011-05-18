@@ -397,7 +397,6 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 
 			if(stopAnimation)
 			{
-				BounceVibrate.Nullify(); // Nullify here since weird things happen otherwise...
 				WarpData data;
 				if(stopAnimationTime > 30)
 				{

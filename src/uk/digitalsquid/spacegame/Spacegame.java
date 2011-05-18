@@ -47,7 +47,10 @@ public class Spacegame extends Activity
     {
         super.onCreate(savedInstanceState);
         
-        lmanager = new LevelManager(getBaseContext());
+        // UI thread initialisy stuff
+        BounceVibrate.initialise(getApplicationContext());
+        
+        lmanager = new LevelManager(getApplicationContext());
         
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         
@@ -82,7 +85,7 @@ public class Spacegame extends Activity
 	public static final int MESSAGE_START_LEVEL = 8;
 	public static final int MESSAGE_RESET_GAME = 9;
 	
-	protected Handler msgHandler = new Handler()
+	private final Handler msgHandler = new Handler()
 	{
 		@Override
 		public void handleMessage(Message m)

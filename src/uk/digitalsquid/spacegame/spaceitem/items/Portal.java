@@ -45,8 +45,8 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 	public Portal(Context context, Coord coord) {
 		super(context, coord, 0.95f, PORTAL_NORMAL_DENSITY, PORTAL_NORMAL_RADIUS);
 		
-		img = new RectMesh((float)pos.x, (float)pos.y, PORTAL_RADIUS * 2, PORTAL_RADIUS * 2, R.drawable.portal);
-		opening = new RectMesh((float)pos.x, (float)pos.y, openingRadius * 2, openingRadius * 2, R.drawable.portal_opening);
+		img = new RectMesh((float)pos.x, (float)pos.y, 0, 0, R.drawable.portal);
+		opening = new RectMesh((float)pos.x, (float)pos.y, 0, 0, R.drawable.portal_opening);
 	}
 
 	@Override
