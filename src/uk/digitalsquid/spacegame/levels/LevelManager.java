@@ -197,6 +197,9 @@ public class LevelManager
 		 * Foldername of thing
 		 */
 		private static final String KEY_FILENAME = "file";
+		/**
+		 * Time to complete in millis
+		 */
 		private static final String KEY_TIME = "time";
 
 		private static final int DB_VERSION = 1;
@@ -359,7 +362,7 @@ public class LevelManager
 				{
 					items.add(new LevelExtendedInfo(c.getString(idName), c.getInt(idFileNumber), c
 							.getString(idFromset), c.getString(idAuthor), c
-							.getString(idFilename), c.getInt(idTime)));
+							.getString(idFilename), c.getInt(idTime), c.getInt(idTime) >= 0, false)); // TODO: Update!!!
 				}
 			} catch (SQLiteException e)
 			{
@@ -414,12 +417,15 @@ public class LevelManager
 	public static final class LevelExtendedInfo extends LevelInfo
 	{
 		public int time;
+		public boolean completed, playable;
 
 		public LevelExtendedInfo(String name, int fileNumber, String set, String author,
-				String filename, int time)
+				String filename, int time, boolean completed, boolean playable)
 		{
 			super(name, fileNumber, set, author, filename);
 			this.time = time;
+			this.completed = completed;
+			this.playable = playable;
 		}
 	}
 

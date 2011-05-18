@@ -33,7 +33,7 @@ public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemCl
 	
 	protected LevelSelectAdapter adapter;
 	
-	private TextView title, authour;
+	private final TextView title, authour, time;
 	
 	public LevelSelectLayout(Context context, AttributeSet attrs, Handler handler, LevelManager lmanager, String levelset)
 	{
@@ -51,6 +51,7 @@ public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemCl
 		ListView lv = (ListView) findViewById(R.id.levelselect_list);
 		title = (TextView) findViewById(R.id.levelselect_itemtitle);
 		authour = (TextView) findViewById(R.id.levelselect_itemauthor);
+		time = (TextView) findViewById(R.id.levelselect_itemtime);
 		
 		adapter = new LevelSelectAdapter(context, lmanager.GetLevelsFromSet(levelset));
 		lv.requestFocus();
@@ -115,6 +116,7 @@ public class LevelSelectLayout extends FrameLayout implements KeyInput, OnItemCl
 				TextView title = (TextView) convertView.findViewById(R.id.levelselectitem_text);
 				title.setText(currItem.filename + " "  + currItem.fileNumber + (currItem.name.equals("") ? "" : (" - " + currItem.name)));
 			}
+			convertView.setEnabled(currItem.playable);
 			return convertView;
 		}
 	}
