@@ -7,6 +7,7 @@ import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.misc.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import uk.digitalsquid.spacegame.spaceitem.Spherical;
+import uk.digitalsquid.spacegame.spaceitem.assistors.SoundManager;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Forceful;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.LevelAffectable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.StaticDrawable;
@@ -64,6 +65,7 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 		if(available && Coord.getLength(pos, itemC) < radius + itemRadius) {
 			available = false;
 			sendStatus = true;
+			SoundManager.get().playSound(SoundManager.SOUND_STAR);
 		}
 		
 		if(!available && drawingP1) {

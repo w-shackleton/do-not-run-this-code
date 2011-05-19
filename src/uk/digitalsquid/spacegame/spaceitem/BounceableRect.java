@@ -2,6 +2,7 @@ package uk.digitalsquid.spacegame.spaceitem;
 
 import uk.digitalsquid.spacegame.BounceVibrate;
 import uk.digitalsquid.spacegame.Coord;
+import uk.digitalsquid.spacegame.spaceitem.assistors.SoundManager;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Forceful;
 import android.content.Context;
 
@@ -47,6 +48,7 @@ public abstract class BounceableRect extends Rectangular implements Forceful
 				newItemC.x = r + itemRadius;
 			}
 			BounceVibrate.Vibrate((long) (newItemVC.getLength() / ITEM_SCALE * 1.5));
+			SoundManager.get().playSound(SoundManager.SOUND_BOUNCE, (float) (itemVC.getLength() / ITEM_SCALE / 30));
 		}
 		else if((itemRotC.y + itemRadius > t && itemRotC.y - itemRadius < b) && (itemRotC.x > l && itemRotC.x < r))
 		{
@@ -63,6 +65,7 @@ public abstract class BounceableRect extends Rectangular implements Forceful
 				newItemC.y = b + itemRadius;
 			}
 			BounceVibrate.Vibrate((long) (newItemVC.getLength() / ITEM_SCALE * 1.5));
+			SoundManager.get().playSound(SoundManager.SOUND_BOUNCE, (float) (itemVC.getLength() / ITEM_SCALE / 30));
 		}
 		
 		Coord corners[] = {
@@ -95,6 +98,7 @@ public abstract class BounceableRect extends Rectangular implements Forceful
 				newItemVC.x = Math.cos(angleNeeded) * speed;
 				newItemVC.y = Math.sin(angleNeeded) * speed;
 				BounceVibrate.Vibrate((long) (newItemVC.getLength() / ITEM_SCALE * 1.5));
+				SoundManager.get().playSound(SoundManager.SOUND_BOUNCE, (float) (itemVC.getLength() / ITEM_SCALE / 30));
 				break;
 			}
 		}

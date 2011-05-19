@@ -9,7 +9,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 import org.xml.sax.SAXException;
 
-import uk.digitalsquid.spacegame.BounceVibrate;
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.StaticInfo;
 import uk.digitalsquid.spacegame.levels.LevelItem;
@@ -217,6 +216,8 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			}
 		}
 		
+		protected abstract void wallBounced(float amount);
+		
 		@Override
 		protected void calculate()
 		{
@@ -236,7 +237,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 						if(p.itemVC.x > 0) // Solves physics error
 							p.itemVC.x = 0;
 						borderBounceColour = 0; // Set bounce colour to 0 - which is red.
-						BounceVibrate.Vibrate((long) (p.itemVC.getLength() / SpaceItem.ITEM_SCALE * 2));
+						wallBounced((float) (p.itemVC.getLength() / SpaceItem.ITEM_SCALE));
 					}
 					if(p.itemC.x < -(level.bounds.x / 2 - AnimatedPlayer.BALL_RADIUS))
 					{
@@ -244,7 +245,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 						if(p.itemVC.x < 0)
 							p.itemVC.x = 0;
 						borderBounceColour = 0; // Set bounce colour to 0 - which is red.
-						BounceVibrate.Vibrate((long) (p.itemVC.getLength() / SpaceItem.ITEM_SCALE * 2));
+						wallBounced((float) (p.itemVC.getLength() / SpaceItem.ITEM_SCALE));
 					}
 					if(p.itemC.y > level.bounds.y / 2 - AnimatedPlayer.BALL_RADIUS)
 					{
@@ -252,7 +253,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 						if(p.itemVC.y > 0) // Solves physics error
 							p.itemVC.y = 0;
 						borderBounceColour = 0; // Set bounce colour to 0 - which is red.
-						BounceVibrate.Vibrate((long) (p.itemVC.getLength() / SpaceItem.ITEM_SCALE * 2));
+						wallBounced((float) (p.itemVC.getLength() / SpaceItem.ITEM_SCALE));
 					}
 					if(p.itemC.y < -(level.bounds.y / 2 - AnimatedPlayer.BALL_RADIUS))
 					{
@@ -260,7 +261,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 						if(p.itemVC.y < 0)
 							p.itemVC.y = 0;
 						borderBounceColour = 0; // Set bounce colour to 0 - which is red.
-						BounceVibrate.Vibrate((long) (p.itemVC.getLength() / SpaceItem.ITEM_SCALE * 2));
+						wallBounced((float) (p.itemVC.getLength() / SpaceItem.ITEM_SCALE));
 					}
 					/*if(Math.abs(p.p.itemC.y) > Math.abs(level.bounds.y) - BALL_RADIUS)
 					{

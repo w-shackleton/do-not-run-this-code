@@ -9,6 +9,7 @@ import uk.digitalsquid.spacegame.levels.LevelManager;
 import uk.digitalsquid.spacegame.levels.SaxInfoLoader;
 import uk.digitalsquid.spacegame.levels.SaxLoader;
 import uk.digitalsquid.spacegame.misc.RectMesh;
+import uk.digitalsquid.spacegame.spaceitem.assistors.SoundManager;
 import uk.digitalsquid.spacegame.subviews.DrawBaseView;
 import android.content.Context;
 import android.os.Bundle;
@@ -135,6 +136,8 @@ public class SplashScreen extends DrawBaseView<SplashScreen.ViewWorker>
 				SaxInfoLoader.initialise();
 				Log.i("SpaceGame", "Loading Level Loaders...");
 				lmanager.initialise();
+				Log.i("SpaceGame", "Loading Sounds...");
+				SoundManager.initialise(context);
 				Log.i("SpaceGame", "Loaded.");
 			}
 		}

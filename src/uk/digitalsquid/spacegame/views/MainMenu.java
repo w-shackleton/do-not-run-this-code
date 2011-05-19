@@ -80,5 +80,11 @@ public class MainMenu extends PlanetaryView<MainMenu.ViewWorker>
 			msg.what = returnCode;
 			MainMenu.this.gameHandler.sendMessage(msg);
 		}
+
+		@Override
+		protected void wallBounced(float amount) {
+			// TODO Auto-generated method stub
+			
+		}
 	}
 }

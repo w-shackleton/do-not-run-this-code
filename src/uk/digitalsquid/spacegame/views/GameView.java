@@ -4,9 +4,11 @@ import java.io.InputStream;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import uk.digitalsquid.spacegame.BounceVibrate;
 import uk.digitalsquid.spacegame.Spacegame;
 import uk.digitalsquid.spacegame.levels.LevelItem.LevelSummary;
 import uk.digitalsquid.spacegame.spaceitem.SpaceItem;
+import uk.digitalsquid.spacegame.spaceitem.assistors.SoundManager;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Clickable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.LevelAffectable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.LevelAffectable.AffectData;
@@ -243,6 +245,12 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 			LevelSummary sum = new LevelSummary(level.starsToCollect, starCount.getStarCount(), (int)((long) (finishTime - startTime)));
 			m.obj = sum;
 			msgHandler.sendMessage(m);
+		}
+
+		@Override
+		protected void wallBounced(float amount) {
+			BounceVibrate.Vibrate((long) (amount * 2));
+			SoundManager.get().playSound(SoundManager.SOUND_BOUNCE, amount / 50); // 50 here just some number - scale it roughly to 0 to 1
 		}
 	}
 	

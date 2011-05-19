@@ -117,6 +117,9 @@ public final class R {
     public static final class raw {
         public static final int menu=0x7f060000;
         public static final int menu_levelsets=0x7f060001;
+        public static final int snd_bounce=0x7f060002;
+        public static final int snd_portal=0x7f060003;
+        public static final int snd_star=0x7f060004;
     }
     public static final class string {
         public static final int app_name=0x7f080001;

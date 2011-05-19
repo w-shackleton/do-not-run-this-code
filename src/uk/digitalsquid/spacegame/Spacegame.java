@@ -13,6 +13,7 @@ import uk.digitalsquid.spacegame.views.MainMenuLayout;
 import uk.digitalsquid.spacegame.views.SplashScreen;
 import android.app.Activity;
 import android.app.Dialog;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -53,8 +54,8 @@ public class Spacegame extends Activity
         lmanager = new LevelManager(getApplicationContext());
         
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
 		
         linearlayout = new LinearLayout(this);
         

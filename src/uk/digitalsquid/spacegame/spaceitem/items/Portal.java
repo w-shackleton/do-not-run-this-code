@@ -6,6 +6,7 @@ import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.misc.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.Gravitable;
+import uk.digitalsquid.spacegame.spaceitem.assistors.SoundManager;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Warpable;
 import android.content.Context;
@@ -91,8 +92,9 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 				if(openingRadius > OPENING_RADIUS)
 					openingRadius = OPENING_RADIUS;
 				
-				if(openingTimer++ > 200)
+				if(openingTimer++ > 200) {
 					finStatus = FinishingStatus.ENTERING;
+				}
 				opening.setWH(openingRadius * 2, openingRadius * 2);
 				break;
 			case ENTERING:
@@ -128,6 +130,7 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 		} else if(status != Status.DISABLED && Coord.getLength(pos, p.itemC) < 10) {
 			status = Status.FINISHING;
 			tmpFinishPoint.copyFrom(p.itemC);
+			SoundManager.get().playSound(SoundManager.SOUND_PORTAL);
 		}
 		
 		if(status == Status.FINISHING) {

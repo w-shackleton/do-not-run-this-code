@@ -2,6 +2,7 @@ package uk.digitalsquid.spacegame.spaceitem;
 
 import uk.digitalsquid.spacegame.BounceVibrate;
 import uk.digitalsquid.spacegame.Coord;
+import uk.digitalsquid.spacegame.spaceitem.assistors.SoundManager;
 import android.content.Context;
 
 public abstract class Bounceable extends Gravitable
@@ -41,6 +42,7 @@ public abstract class Bounceable extends Gravitable
 				newBall.stopBall = true;
 			}
 			BounceVibrate.Vibrate((long) (itemVC.getLength() / ITEM_SCALE));
+				SoundManager.get().playSound(SoundManager.SOUND_BOUNCE, (float) (itemVC.getLength() / ITEM_SCALE / 30));
 		}
 		return newBall;
 	}
