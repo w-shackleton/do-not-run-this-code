@@ -216,6 +216,13 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			}
 		}
 		
+		/**
+		 * Sets a temporary multiplier for the gravity; this is used when firing the ball, 
+		 * to improve gameplay slightly by giving the character a 'head start' on gravity.
+		 * If only NASA knew about this.
+		 */
+		protected float gravityEffectMultiplier = 1;
+		
 		protected abstract void wallBounced(float amount);
 		
 		@Override
@@ -339,7 +346,10 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 				
 				if(!paused)
 				{
-					p.itemVC.x += p.itemRF.x * millistep / ITERS / 1000f;
+					gravityEffectMultiplier = CompuFuncs.TrimMinMax(gravityEffectMultiplier, -0.1f, 1);
+					gravityEffectMultiplier = (gravityEffectMultiplier - 1) * 0.99f + 1; // Slowly reset to 1
+					// Log.v("SpaceGame", "Grav is " + gravityEffectMultiplier);
+					p.itemVC.x += p.itemRF.x * millistep / ITERS / 1000f * gravityEffectMultiplier;
 					p.itemVC.y += p.itemRF.y * millistep / ITERS / 1000f;
 					
 					p.itemC.x  += p.itemVC.x * millistep / ITERS / 1000f * SPEED_SCALE;

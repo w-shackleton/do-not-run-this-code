@@ -46,6 +46,8 @@ public class AnimatedPlayer extends Player
 	protected final RectMesh leftEye, leftEyeinside, leftEyeblinking;
 	protected final RectMesh rightEye, rightEyeinside, rightEyeblinking;
 	
+	protected final RectMesh landingGearLeft, landingGearRight;
+	
 	/**
 	 * Amount of time left blinking
 	 */
@@ -76,6 +78,18 @@ public class AnimatedPlayer extends Player
 	protected static final Coord lEye = new Coord(-6 * ITEM_SCALE, -7 * ITEM_SCALE);
 	protected static final Coord rEye = new Coord(-6 * ITEM_SCALE, 7 * ITEM_SCALE);
 	
+	private static final Coord LANDING_GEAR_SIZE = new Coord(40 * ITEM_SCALE, 20 * ITEM_SCALE);
+	
+	/**
+	 * Left gear has to be negative
+	 */
+	private static final int LANDING_GEAR_CLOSED_ROTATION = 120;
+	
+	/**
+	 * Left gear has to be negative
+	 */
+	private static final int LANDING_GEAR_OPEN_ROTATION = 0;
+	
 	public AnimatedPlayer(Context context, Coord coord, Coord velocity)
 	{
 		super(context, coord, BALL_RADIUS);
@@ -91,15 +105,18 @@ public class AnimatedPlayer extends Player
 		leftEar  = new RectMesh(- (float)EAR_SIZE.x / 2, 0, (float)EAR_SIZE.x, (float)EAR_SIZE.y, R.drawable.earleft);
 		rightEar = new RectMesh(- (float)EAR_SIZE.x / 2, 0, (float)EAR_SIZE.x, (float)EAR_SIZE.y, R.drawable.earright);
 		
+		landingGearLeft  = new RectMesh((float)LANDING_GEAR_SIZE.x / 3, 0, (float)LANDING_GEAR_SIZE.x, (float)LANDING_GEAR_SIZE.y, 0f, -0.5f, R.drawable.landing_gear_half_left, true);
+		landingGearRight  = new RectMesh((float)LANDING_GEAR_SIZE.x / 3, 0, (float)LANDING_GEAR_SIZE.x, (float)LANDING_GEAR_SIZE.y, 0f, 0.5f, R.drawable.landing_gear_half_right, true);
+		landingGearLeft.setRotation(-LANDING_GEAR_CLOSED_ROTATION);
+		landingGearRight.setRotation(LANDING_GEAR_CLOSED_ROTATION);
+		
 		itemC.copyFrom(pos); // Referenced?
 		itemVC.copyFrom(velocity);
 		itemRF.reset();
-		eP.setARGB(255, 255, 255, 255);
-		eP.setStrokeWidth(4);
 		
 		lookTo(new Coord(0, 0));
 	}
-
+	
 	@Override
 	public void drawPlayer(GL10 gl, float worldZoom)
 	{
@@ -134,6 +151,12 @@ public class AnimatedPlayer extends Player
 		
 		gl.glPushMatrix();
 		gl.glRotatef(ballRotation, 0, 0, 1);
+		gl.glTranslatef(-landingDrawShiftX, 0, 0);
+		
+		// Landing gear
+		
+		landingGearLeft.draw(gl);
+		landingGearRight.draw(gl);
 		
 		ball.draw(gl);
 		
@@ -179,6 +202,34 @@ public class AnimatedPlayer extends Player
 		eyeMoveToOnGame = point;
 	}
 	
+	public final void openLanding() {
+		moveLandingTo(LANDING_GEAR_OPEN_ROTATION, LANDING_DRAW_SHIFT_TOTAL);
+	}
+	
+	public final void closeLanding() {
+		moveLandingTo(LANDING_GEAR_CLOSED_ROTATION, 0);
+	}
+	
+	private static final float LANDING_MOVE_ANIMATION_STEP = (float) (Math.PI * 0.004);
+	private static final int LANDING_DRAW_SHIFT_TOTAL = 14;
+	
+	private float landingAnimationMidPoint = 0;
+	private float landingAnimationScale = 0;
+	private float landingAnimationShiftMidPoint = 0;
+	private float landingAnimationShiftScale = 0;
+	private float landingAnimation = (float) Math.PI;
+	private float landingPosition = 0;
+	private float landingDrawShiftX = 0;
+	
+	private final void moveLandingTo(int degrees, int moveTo) {
+		landingAnimation = 0;
+		landingAnimationScale = (degrees - landingPosition) / 2;
+		landingAnimationMidPoint = (degrees + landingPosition) / 2;
+		
+		landingAnimationShiftMidPoint = (moveTo + landingDrawShiftX) / 2;
+		landingAnimationShiftScale = (moveTo - landingDrawShiftX) / 2;
+	}
+	
 	@Override
 	public void move(float millistep, float speedScale) {
 		super.move(millistep, speedScale);
@@ -202,6 +253,18 @@ public class AnimatedPlayer extends Player
 		rEarRotationSpeed *= EAR_ROTATING_AIR_RESISTANCE;
 		rEarRotation += rEarRotationSpeed * millistep / ITERS / 1000f * speedScale * EAR_ROTATING_SPEED;
 		rEarRotation = CompuFuncs.TrimMinMax(rEarRotation, rEarRotation - 45, rEarRotation + 45);
+		
+		// Landing gear
+		if(landingAnimation < Math.PI) {
+			landingAnimation += LANDING_MOVE_ANIMATION_STEP;
+			landingPosition = (float) (-Math.cos(landingAnimation /* from 0 to PI for anim */) * landingAnimationScale + landingAnimationMidPoint);
+			landingGearLeft.setRotation(-landingPosition);
+			landingGearRight.setRotation(landingPosition);
+			
+			landingDrawShiftX = (float) (-Math.cos(landingAnimation /* from 0 to PI for anim */) * landingAnimationShiftScale + landingAnimationShiftMidPoint);
+		} else {
+			landingAnimation = (float) Math.PI; // Pi is ending point of curve
+		}
 	}
 
 	@Override

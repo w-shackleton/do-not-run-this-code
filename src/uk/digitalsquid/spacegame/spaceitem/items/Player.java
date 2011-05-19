@@ -3,18 +3,13 @@ package uk.digitalsquid.spacegame.spaceitem.items;
 import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.spacegame.Coord;
-import uk.digitalsquid.spacegame.spaceitem.Spherical;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import android.content.Context;
-import android.graphics.Paint;
 
-public abstract class Player extends Spherical implements Moveable
+public abstract class Player extends PlayerBase implements Moveable
 {
-	public static final float BALL_RADIUS = 14 * ITEM_SCALE;
 	protected static final float EYE_RADIUS = 5 * ITEM_SCALE;
 	protected static final int ITERS = 5; // From PlanetaryView - not really needed.
-	
-	public final Coord itemC = new Coord(), itemVC = new Coord(), itemRF = new Coord(); // For portability to old code
 	
 	protected float ballRotation = 0;
 	protected float ballRotationSpeed = 0;
@@ -22,9 +17,6 @@ public abstract class Player extends Spherical implements Moveable
 	
 	protected static final float BALL_ROTATION_AIR_RESISTANCE = 0.98f;
 	
-	
-	Paint eP = new Paint();
-
 	public Player(Context context, Coord coord, float radius)
 	{
 		super(context, coord, radius);

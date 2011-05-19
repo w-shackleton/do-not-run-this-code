@@ -50,6 +50,28 @@ public class RectMesh extends Mesh {
 	}
 	
 	/**
+	 * Constructs a new rectangular mesh with an image
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param gravX The 'gravity' (from -.5 to .5)
+	 * @param gravY The 'gravity' (from -.5 to .5)
+	 * @param resId
+	 * @param usingGrav A null parameter to distinguish between constructors.
+	 */
+	public RectMesh(float x, float y, float width, float height, float gravX, float gravY, int resId, boolean usingGrav) {
+		super(x, y,
+				new float[] {
+					width * (gravX -0.5f), height * (gravY -0.5f), 0.0f,
+					width * (gravX +0.5f), height * (gravY -0.5f), 0.0f,
+					width * (gravX -0.5f), height * (gravY +0.5f), 0.0f,
+					width * (gravX +0.5f), height * (gravY +0.5f), 0.0f, },
+					indices.clone(),
+	                texCoords.clone(), resId);
+	}
+	
+	/**
 	 * Constructs a new rectangular mesh from an image
 	 * @param x
 	 * @param y

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.spacegame.BounceVibrate;
+import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.Spacegame;
 import uk.digitalsquid.spacegame.levels.LevelItem.LevelSummary;
 import uk.digitalsquid.spacegame.spaceitem.SpaceItem;
@@ -199,8 +200,6 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 					-event.getY() * scaledHeight / height + scaledHeight / 2 };
 			matrix2dInverse.mapPoints(tmpData);
 			
-			Log.v("SpaceGame", "CLICK X: " + tmpData[0] + ", Y: " + tmpData[1]);
-			
 			for(SpaceItem obj : planetList)
 			{
 				if(obj instanceof Clickable)
@@ -215,21 +214,33 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 					}
 				}
 			}
-			if(event.getAction() == MotionEvent.ACTION_UP)
-				fireBall(tmpData[0], tmpData[1]);
+			fireBall(tmpData[0], tmpData[1], event);
 		}
 		
-		private void fireBall(double x, double y)
+		private final Coord fireVelocity = new Coord();
+		
+		private static final int MAX_FIRE_POWER = 50;
+		
+		private void fireBall(double x, double y, MotionEvent event)
 		{
 			if(stopped)
 			{
-				p.itemVC.x = (x - p.itemC.x) / 3 * SpaceItem.ITEM_SCALE; // Scale down to compensate for power
-				p.itemVC.y = (y - p.itemC.y) / 3 * SpaceItem.ITEM_SCALE;
-				
-				p.itemC.x  += p.itemVC.x / 40;
-				p.itemC.y  += p.itemVC.y / 40;
-				
-				stopped = false;
+				switch(event.getAction()) {
+				case MotionEvent.ACTION_MOVE:
+					fireVelocity.x = -(x - p.itemC.x) / 3 * SpaceItem.ITEM_SCALE; // Scale down to compensate for power
+					fireVelocity.y = -(y - p.itemC.y) / 3 * SpaceItem.ITEM_SCALE;
+					if(fireVelocity.getLength() > MAX_FIRE_POWER) {
+						float rot = (float) (fireVelocity.getRotation() / 180 * Math.PI);
+						fireVelocity.x = MAX_FIRE_POWER * Math.cos(rot);
+						fireVelocity.y = MAX_FIRE_POWER * Math.sin(rot);
+					}
+					break;
+				case MotionEvent.ACTION_UP:
+					p.itemVC.copyFrom(fireVelocity);
+					gravityEffectMultiplier = -0.1f; // -0.1 gives it a little 'boost'
+					stopped = false;
+					break;
+				}
 			}
 		}
 
@@ -255,8 +266,7 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 	}
 	
 	@Override
-	public void restoreState(Bundle bundle)
-	{
+	public void restoreState(Bundle bundle) {
 		super.restoreState(bundle);
 		if(bundle != null)
 		{
@@ -264,17 +274,19 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 		}
 	}
 	
-	protected void setPaused(boolean p)
-	{
+	protected void setPaused(boolean p) {
 		thread.setPaused(p);
 	}
 
 	@Override
-	public boolean onTouch(View v, MotionEvent event)
-	{
-		if(thread != null)
-		{
-			((ViewWorker) thread).onTouch(v, event);
+	public boolean onTouch(final View v, final MotionEvent event) {
+		if(thread != null) {
+			queueEvent(new Runnable() {
+				@Override
+				public void run() {
+					((ViewWorker) thread).onTouch(v, event);
+				}
+			});
 		}
 		return true;
 	}
