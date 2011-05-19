@@ -22,6 +22,7 @@ SpaceItem::SpaceItem(EditorCallbacks &callbacks, TiXmlElement &item) :
 {
 	item.QueryDoubleAttribute("x", &x);
 	item.QueryDoubleAttribute("y", &y);
+	y = -y;
 	contextMenu = new wxMenu;
 	contextMenu->Append(contextMenuNextAvailableSlot++, _("&Delete"));
 }
@@ -49,7 +50,7 @@ void SpaceItem::saveXML(TiXmlElement& parent)
 void SpaceItem::saveXMLChild(TiXmlElement* item)
 {
 	item->SetDoubleAttribute("x", x);
-	item->SetDoubleAttribute("y", y);
+	item->SetDoubleAttribute("y", -y);
 }
 
 void SpaceItem::onCMenuItemClick(int id)

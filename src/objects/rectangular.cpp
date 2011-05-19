@@ -25,6 +25,7 @@ Rectangular::Rectangular(EditorCallbacks &callbacks, TiXmlElement &item, Misc::P
 	item.QueryDoubleAttribute("sx", &sx);
 	item.QueryDoubleAttribute("sy", &sy);
 	item.QueryDoubleAttribute("rotation", &rotation);
+	rotation = -rotation;
 	rotation *= M_PI / 180;
 }
 
@@ -123,7 +124,7 @@ void Rectangular::saveXMLChild(TiXmlElement* item)
 	SpaceItem::saveXMLChild(item);
 	item->SetDoubleAttribute("sx", sx);
 	item->SetDoubleAttribute("sy", sy);
-	item->SetDoubleAttribute("rotation", rotation * 180 / M_PI);
+	item->SetDoubleAttribute("rotation", -rotation * 180 / M_PI);
 }
 
 void Rectangular::moveBorder(int dx, int dy)
