@@ -4,7 +4,6 @@ import uk.digitalsquid.spacegame.BounceVibrate;
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.spaceitem.assistors.SoundManager;
 import android.content.Context;
-import android.util.Log;
 
 public abstract class Bounceable extends Gravitable
 {
@@ -36,7 +35,7 @@ public abstract class Bounceable extends Gravitable
 			double bouncinessX = Math.abs(Math.sin(angleAt) * (1 - bounciness) + bounciness);
 			double bouncinessY = Math.abs(Math.cos(angleAt) * (1 - bounciness) + bounciness);
 			newBall.itemVC = new Coord(Math.cos(angleNeeded) * speed * bouncinessX, Math.sin(angleNeeded) * speed * bouncinessY);
-			Log.v("SpaceGame", "" + speed * bouncinessX + ", " + speed * bouncinessY);
+			// Log.v("SpaceGame", "" + speed * bouncinessX + ", " + speed * bouncinessY);
 			// TODO: Fix bouncing thing at bounciness 1.
 			if(speed < 8) {
 				newBall.itemVC.scaleThis(0.5f);

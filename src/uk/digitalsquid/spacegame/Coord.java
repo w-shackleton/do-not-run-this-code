@@ -140,6 +140,15 @@ public final class Coord implements Serializable
 		return (float) (Math.atan2(y, x) * 180 / Math.PI);
 	}
 	
+	/**
+	 * Get the rotation of this {@link Coord} in degrees
+	 * @return The rotation of this Coord about the origin
+	 */
+	public static final float getRotationFrom(Coord from, Coord to)
+	{
+		return (float) (Math.atan2(to.y - from.y, to.x - from.x) * 180 / Math.PI);
+	}
+	
 	@Override
 	public String toString()
 	{

@@ -115,6 +115,7 @@ public class AnimatedPlayer extends Player
 		itemRF.reset();
 		
 		lookTo(new Coord(0, 0));
+		closeLanding();
 	}
 	
 	@Override
@@ -148,15 +149,22 @@ public class AnimatedPlayer extends Player
 		eyeRotatedPos.rotateThis(null, -ballRotation * DEG_TO_RAD);
 		
 		// Draw
+		// Landing gear
+		
+		{
+			gl.glPushMatrix();
+			float transitionFactor = (float)(landingPosition - LANDING_GEAR_OPEN_ROTATION) / (float)(LANDING_GEAR_CLOSED_ROTATION - LANDING_GEAR_OPEN_ROTATION);
+			gl.glRotatef(Coord.getRotationFrom(itemC, nearestPlanet) * (1 - transitionFactor) + ballRotation * transitionFactor, 0, 0, 1);
+			gl.glTranslatef(-landingDrawShiftX, 0, 0);
+			landingGearLeft.draw(gl);
+			landingGearRight.draw(gl);
+			gl.glPopMatrix();
+		}
+		
 		
 		gl.glPushMatrix();
 		gl.glRotatef(ballRotation, 0, 0, 1);
 		gl.glTranslatef(-landingDrawShiftX, 0, 0);
-		
-		// Landing gear
-		
-		landingGearLeft.draw(gl);
-		landingGearRight.draw(gl);
 		
 		ball.draw(gl);
 		
@@ -202,12 +210,18 @@ public class AnimatedPlayer extends Player
 		eyeMoveToOnGame = point;
 	}
 	
+	private float landingDestinationPos = 0;
+	
 	public final void openLanding() {
-		moveLandingTo(LANDING_GEAR_OPEN_ROTATION, LANDING_DRAW_SHIFT_TOTAL);
+		if(landingDestinationPos != LANDING_GEAR_OPEN_ROTATION)
+			moveLandingTo(LANDING_GEAR_OPEN_ROTATION, LANDING_DRAW_SHIFT_TOTAL);
+		landingDestinationPos = LANDING_GEAR_OPEN_ROTATION;
 	}
 	
 	public final void closeLanding() {
-		moveLandingTo(LANDING_GEAR_CLOSED_ROTATION, 0);
+		if(landingDestinationPos != LANDING_GEAR_CLOSED_ROTATION)
+			moveLandingTo(LANDING_GEAR_CLOSED_ROTATION, 0);
+		landingDestinationPos = LANDING_GEAR_CLOSED_ROTATION;
 	}
 	
 	private static final float LANDING_MOVE_ANIMATION_STEP = (float) (Math.PI * 0.004);
@@ -264,6 +278,14 @@ public class AnimatedPlayer extends Player
 			landingDrawShiftX = (float) (-Math.cos(landingAnimation /* from 0 to PI for anim */) * landingAnimationShiftScale + landingAnimationShiftMidPoint);
 		} else {
 			landingAnimation = (float) Math.PI; // Pi is ending point of curve
+		}
+	}
+	
+	private Coord nearestPlanet = new Coord();
+	
+	public void setNearestLandingPoint(final Coord planet) {
+		if(landingAnimation >= Math.PI) { // If animation is in progress, don't set new planet pos, as it will disrupt smooth animation
+			nearestPlanet = planet;
 		}
 	}
 

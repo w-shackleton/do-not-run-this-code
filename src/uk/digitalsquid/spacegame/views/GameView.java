@@ -238,6 +238,7 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 				case MotionEvent.ACTION_UP:
 					p.itemVC.copyFrom(fireVelocity);
 					gravityEffectMultiplier = -0.1f; // -0.1 gives it a little 'boost'
+					p.closeLanding();
 					stopped = false;
 					break;
 				}

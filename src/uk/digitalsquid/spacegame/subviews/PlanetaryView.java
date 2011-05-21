@@ -15,6 +15,8 @@ import uk.digitalsquid.spacegame.levels.LevelItem;
 import uk.digitalsquid.spacegame.levels.SaxLoader;
 import uk.digitalsquid.spacegame.misc.Lines;
 import uk.digitalsquid.spacegame.misc.RectMesh;
+import uk.digitalsquid.spacegame.spaceitem.Bounceable;
+import uk.digitalsquid.spacegame.spaceitem.BounceableRect;
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import uk.digitalsquid.spacegame.spaceitem.SpaceItem;
 import uk.digitalsquid.spacegame.spaceitem.assistors.BgPoints;
@@ -436,21 +438,44 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		}
 		
 		private void setNearestLookPoint() {
-			double lowestDist = -1;
-			Coord lowestPoint = null;
-			for(SpaceItem item : planetList) {
-				if(item.getClass().equals(Star.class)) {
-					if(lowestDist == -1) lowestDist = Coord.getLength(item.getPos(), p.itemC);
-					double thisDist = Coord.getLength(item.getPos(), p.itemC);
-					if(thisDist < lowestDist) {
-						lowestDist = thisDist;
-						lowestPoint = item.getPos();
+			{
+				double lowestDist = -1;
+				Coord lowestPoint = null;
+				for(SpaceItem item : planetList) {
+					if(item.getClass().equals(Star.class)) {
+						if(lowestDist == -1) lowestDist = Coord.getLength(item.getPos(), p.itemC);
+						double thisDist = Coord.getLength(item.getPos(), p.itemC);
+						if(thisDist < lowestDist) {
+							lowestDist = thisDist;
+							lowestPoint = item.getPos();
+						}
 					}
+				}
+				
+				if(lowestPoint != null) {
+					p.lookTo(lowestPoint);
 				}
 			}
 			
-			if(lowestPoint != null) {
-				p.lookTo(lowestPoint);
+			{
+				double lowestDist = -1;
+				Coord lowestPoint = new Coord();
+				for(SpaceItem item : planetList) {
+					if(!item.getClass().equals(Star.class)) {
+						if(item instanceof Bounceable || item instanceof BounceableRect) {
+							if(lowestDist == -1) lowestDist = Coord.getLength(item.getPos(), p.itemC);
+							double thisDist = Coord.getLength(item.getPos(), p.itemC);
+							if(thisDist < lowestDist) {
+								lowestDist = thisDist;
+								lowestPoint.copyFrom(item.getPos());
+							}
+						}
+					}
+				}
+				
+				if(lowestPoint != null) {
+					p.setNearestLandingPoint(lowestPoint);
+				}
 			}
 		}
 
