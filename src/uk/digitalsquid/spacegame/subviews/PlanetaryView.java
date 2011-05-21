@@ -135,7 +135,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			}
 		}
 		
-		protected Player p;
+		protected AnimatedPlayer p;
 		protected Portal portal;
 		
 		@Override
@@ -299,6 +299,10 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 									p.itemC.copyFrom(data.itemC);
 								if(data.itemVC != null)
 									p.itemVC.copyFrom(data.itemVC);
+								if(data.stopBall) {
+									stopped = true;
+									p.openLanding();
+								}
 							}
 						}
 					}

@@ -218,7 +218,7 @@ public class AnimatedPlayer extends Player
 	private float landingAnimationShiftMidPoint = 0;
 	private float landingAnimationShiftScale = 0;
 	private float landingAnimation = (float) Math.PI;
-	private float landingPosition = 0;
+	private float landingPosition = LANDING_GEAR_CLOSED_ROTATION;
 	private float landingDrawShiftX = 0;
 	
 	private final void moveLandingTo(int degrees, int moveTo) {
