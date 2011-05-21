@@ -212,12 +212,14 @@ public class AnimatedPlayer extends Player
 	
 	private float landingDestinationPos = 0;
 	
+	@Override
 	public final void openLanding() {
 		if(landingDestinationPos != LANDING_GEAR_OPEN_ROTATION)
 			moveLandingTo(LANDING_GEAR_OPEN_ROTATION, LANDING_DRAW_SHIFT_TOTAL);
 		landingDestinationPos = LANDING_GEAR_OPEN_ROTATION;
 	}
 	
+	@Override
 	public final void closeLanding() {
 		if(landingDestinationPos != LANDING_GEAR_CLOSED_ROTATION)
 			moveLandingTo(LANDING_GEAR_CLOSED_ROTATION, 0);
@@ -283,6 +285,7 @@ public class AnimatedPlayer extends Player
 	
 	private Coord nearestPlanet = new Coord();
 	
+	@Override
 	public void setNearestLandingPoint(final Coord planet) {
 		if(landingAnimation >= Math.PI) { // If animation is in progress, don't set new planet pos, as it will disrupt smooth animation
 			nearestPlanet = planet;

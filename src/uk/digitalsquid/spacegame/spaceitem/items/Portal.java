@@ -72,11 +72,11 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 
 	@Override
 	public void drawMove(float millistep, float speedscale) {
-		rotation -= 0.5;
-		rotation2 += 0.2;
+		rotation -= 2.5;
+		rotation2 += 1;
 		if(status == Status.OPENING) {
-			radius  += (float)(PORTAL_RADIUS  - radius ) / 100f;
-			density += (float)(PORTAL_DENSITY - density) / 100f;
+			radius  += (float)(PORTAL_RADIUS  - radius ) / 20f;
+			density += (float)(PORTAL_DENSITY - density) / 20f;
 			
 			if(PORTAL_RADIUS - radius < 1) {
 				radius = PORTAL_RADIUS;
@@ -88,11 +88,11 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 		} else if(status == Status.FINISHING) {
 			switch(finStatus) {
 			case OPENING:
-				openingRadius += (float)(OPENING_RADIUS - openingRadius) / 70f;
+				openingRadius += (float)(OPENING_RADIUS - openingRadius) / 20f;
 				if(openingRadius > OPENING_RADIUS)
 					openingRadius = OPENING_RADIUS;
 				
-				if(openingTimer++ > 200) {
+				if(openingTimer++ > 40) {
 					finStatus = FinishingStatus.ENTERING;
 				}
 				opening.setWH(openingRadius * 2, openingRadius * 2);
@@ -100,7 +100,7 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 			case ENTERING:
 				break;
 			case CLOSING:
-				openingRadius -= (float)(OPENING_RADIUS - openingRadius) / 70f;
+				openingRadius -= (float)(OPENING_RADIUS - openingRadius) / 20f;
 				if(openingRadius < 0) {
 					openingRadius = 0;
 					status = Status.FINISHED;
@@ -115,12 +115,12 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 		status = Status.OPENING;
 	}
 	
-	private float tmpWarpRotateSpeed = 0.2f;
-	private float tmpWarpScaleSpeed = 0.02f;
+	private float tmpWarpRotateSpeed = 1;
+	private float tmpWarpScaleSpeed = 0.05f;
 	
 	private final Coord tmpFinishPoint = new Coord();
 	
-	public BallData calculateVelocity(Player p, float itemRadius) {
+	public BallData calculateVelocity(PlayerBase p, float itemRadius) {
 		BallData data = super.calculateVelocity(p.itemC, p.itemVC, itemRadius);
 		
 		if(status == Status.FINISHING || status == Status.FINISHED) {
@@ -132,14 +132,17 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 			tmpFinishPoint.copyFrom(p.itemC);
 			SoundManager.get().playSound(SoundManager.SOUND_PORTAL);
 		}
-		
+		return data;
+	}
+	
+	public void calculateAnimation(Player p) {
 		if(status == Status.FINISHING) {
 			if(finStatus == FinishingStatus.ENTERING) {
 				p.warpRotation += tmpWarpRotateSpeed;
-				tmpWarpRotateSpeed += 0.07f;
+				tmpWarpRotateSpeed += 0.6f;
 				
 				p.warpScale += tmpWarpScaleSpeed;
-				tmpWarpScaleSpeed -= 0.0006f;
+				tmpWarpScaleSpeed -= 0.003f;
 				
 				if(p.warpScale < 0) {
 					p.warpScale = 0;
@@ -147,8 +150,6 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 				}
 			}
 		}
-		
-		return data;
 	}
 	
 	private boolean firstTimeFinish = true;

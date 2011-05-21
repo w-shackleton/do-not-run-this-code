@@ -82,8 +82,7 @@ public class MainMenu extends PlanetaryView<MainMenu.ViewWorker>
 		}
 
 		@Override
-		protected void wallBounced(float amount) {
-			// TODO Auto-generated method stub
+		public void wallBounced(float amount) {
 			
 		}
 	}

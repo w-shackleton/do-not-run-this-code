@@ -20,8 +20,8 @@ import uk.digitalsquid.spacegame.spaceitem.BounceableRect;
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import uk.digitalsquid.spacegame.spaceitem.SpaceItem;
 import uk.digitalsquid.spacegame.spaceitem.assistors.BgPoints;
-import uk.digitalsquid.spacegame.spaceitem.interfaces.Forceful;
-import uk.digitalsquid.spacegame.spaceitem.interfaces.Forceful.BallData;
+import uk.digitalsquid.spacegame.spaceitem.assistors.Simulation;
+import uk.digitalsquid.spacegame.spaceitem.assistors.Simulation.SimulationCallbackListener;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.TopDrawable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Warpable;
@@ -42,17 +42,13 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		super(context, attrs);
 	}
 	
-	public static abstract class ViewWorker extends DrawBaseView.ViewWorker
+	public static abstract class ViewWorker extends DrawBaseView.ViewWorker implements SimulationCallbackListener
 	{
 		protected float WORLD_ZOOM;
 		protected float WORLD_ZOOM_UNSCALED_ZOOMED;
 		protected float WORLD_ZOOM_PRESCALE, WORLD_ZOOM_POSTSCALE;
 		
-		protected static final float WALL_BOUNCINESS = 0.8f;
-		
 		public static final int ITERS = 5;
-		public static final float AIR_RESISTANCE = 1f; // 1 = no resistance, must NEVER be greater than 1
-		public static final int SPEED_SCALE = 20;
 		
 		/**
 		 * Used to store the 'warp' data returned from calculateVelocity
@@ -111,12 +107,6 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		 */
 		protected Coord[] screenPos = new Coord[SCROLL_SPEED];
 		
-		private Coord prevSmallAvgPos;
-		private int timeSinceStop;
-		private static final float STOPPING_SPEED = 1.5f;
-		private static final int STEPS_TO_STOP = 60 * ITERS * 1; // 1 second.
-		
-		
 		protected LevelItem level;
 		protected List<SpaceItem> planetList;
 		
@@ -127,7 +117,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		protected boolean stopped = false;
 		protected boolean gravOn = true;
 		
-		private float borderBounceColour = 255;
+		protected float borderBounceColour = 255;
 		
 		public void setPaused(boolean p)
 		{
@@ -137,7 +127,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			}
 		}
 		
-		protected AnimatedPlayer p;
+		protected Player p;
 		protected Portal portal;
 		
 		@Override
@@ -182,6 +172,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			}, GL10.GL_LINE_LOOP, 1, 1, 1, 1);
 			
 			portal = new Portal(context, level.portal);
+			s = new Simulation(this);
 			
 			for(int i = 0; i < screenPos.length; i++)
 				screenPos[i] = new Coord();
@@ -218,180 +209,77 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			}
 		}
 		
-		/**
-		 * Sets a temporary multiplier for the gravity; this is used when firing the ball, 
-		 * to improve gameplay slightly by giving the character a 'head start' on gravity.
-		 * If only NASA knew about this.
-		 */
-		protected float gravityEffectMultiplier = 1;
+		public abstract void wallBounced(float amount);
 		
-		protected abstract void wallBounced(float amount);
+		protected Simulation s;
+		
+		private Coord prevSmallAvgPos;
+		private int timeSinceStop;
+		private static final float STOPPING_SPEED = 1.5f;
+		private static final int STEPS_TO_STOP = 30 * 1; // 1 second.
 		
 		@Override
 		protected void calculate()
 		{
 			super.calculate();
-			if(stopped) // Aiming ball - p.p.itemVC used to store velocity
-			{
-				
-			}
-			for(iter = 0; iter < ITERS; iter++) // Main physics loop
-			{
-				if(!paused)
-				{
-					// Check for collisions with wall
-					if(p.itemC.x > level.bounds.x / 2 - AnimatedPlayer.BALL_RADIUS)
-					{
-						p.itemVC.x = -p.itemVC.x * WALL_BOUNCINESS;
-						if(p.itemVC.x > 0) // Solves physics error
-							p.itemVC.x = 0;
-						borderBounceColour = 0; // Set bounce colour to 0 - which is red.
-						wallBounced((float) (p.itemVC.getLength() / SpaceItem.ITEM_SCALE));
+			
+			s.calculate(level, p, portal, paused, gravOn, (int) millistep);
+			
+			for(int i = 0; i < ITERS; i++) {
+				if(!paused) { // Animated move
+					for(SpaceItem obj : planetList) {
+						// Stage for object animation / movement
+						if(obj instanceof Moveable)
+						{
+							((Moveable) obj).move((int) millistep, Simulation.SPEED_SCALE);
+						}
 					}
-					if(p.itemC.x < -(level.bounds.x / 2 - AnimatedPlayer.BALL_RADIUS))
-					{
-						p.itemVC.x = -p.itemVC.x * WALL_BOUNCINESS;
-						if(p.itemVC.x < 0)
-							p.itemVC.x = 0;
-						borderBounceColour = 0; // Set bounce colour to 0 - which is red.
-						wallBounced((float) (p.itemVC.getLength() / SpaceItem.ITEM_SCALE));
-					}
-					if(p.itemC.y > level.bounds.y / 2 - AnimatedPlayer.BALL_RADIUS)
-					{
-						p.itemVC.y = -p.itemVC.y * WALL_BOUNCINESS;
-						if(p.itemVC.y > 0) // Solves physics error
-							p.itemVC.y = 0;
-						borderBounceColour = 0; // Set bounce colour to 0 - which is red.
-						wallBounced((float) (p.itemVC.getLength() / SpaceItem.ITEM_SCALE));
-					}
-					if(p.itemC.y < -(level.bounds.y / 2 - AnimatedPlayer.BALL_RADIUS))
-					{
-						p.itemVC.y = -p.itemVC.y * WALL_BOUNCINESS;
-						if(p.itemVC.y < 0)
-							p.itemVC.y = 0;
-						borderBounceColour = 0; // Set bounce colour to 0 - which is red.
-						wallBounced((float) (p.itemVC.getLength() / SpaceItem.ITEM_SCALE));
-					}
-					/*if(Math.abs(p.p.itemC.y) > Math.abs(level.bounds.y) - BALL_RADIUS)
-					{
-						p.itemVC.y = -p.itemVC.y;
-						borderBounceColour = 0;
-						BounceVibrate.Vibrate((long) (p.itemVC.getLength() / SpaceItem.ITEM_SCALE * 2));
-					}*/
+					p.move(millistep, Simulation.SPEED_SCALE);
+					portal.move(millistep, Simulation.SPEED_SCALE);
 				}
-				
-				p.itemRF.reset();
+			}
+			
+			if(!paused)
+			{
 				for(SpaceItem obj : planetList)
 				{
-					if(!paused)
+					// Stage for object animation / movement
+					if(obj instanceof Moveable)
 					{
-						if(obj instanceof Forceful)
-						{
-							Forceful item = (Forceful) obj;
-							if(gravOn) // Stage for gravity forces
-							{
-								p.itemRF.addThis(item.calculateRF(p.itemC, p.itemVC));
-							}
-							
-							// Stage for velocity changes
-							BallData data = item.calculateVelocity(p.itemC, p.itemVC, AnimatedPlayer.BALL_RADIUS);
-							if(data != null)
-							{
-								if(data.itemC != null)
-									p.itemC.copyFrom(data.itemC);
-								if(data.itemVC != null)
-									p.itemVC.copyFrom(data.itemVC);
-								if(data.stopBall) {
-									stopped = true;
-									p.openLanding();
-								}
-							}
-						}
-					}
-
-					if(!paused)
-					{
-						// Stage for object animation / movement
-						if(obj instanceof Moveable)
-						{
-							((Moveable) obj).move((int) millistep, SPEED_SCALE);
-						}
+						((Moveable) obj).drawMove((int) millistep, Simulation.SPEED_SCALE);
 					}
 				}
-
-				if(!paused)
+				
+				// Move ball - animation
+				p.drawMove(millistep, Simulation.SPEED_SCALE);
+					portal.calculateAnimation(p);
+				portal.drawMove(millistep, Simulation.SPEED_SCALE);
+				
+				// Work out if no longer moving, from last 4 positions
+				
+				Coord smallAvgPos = new Coord();
+				for(int i = screenPos.length - 4; i < screenPos.length; i++)
 				{
-					for(SpaceItem obj : planetList)
-					{
-						// Stage for object animation / movement
-						if(obj instanceof Moveable)
-						{
-							((Moveable) obj).drawMove((int) millistep, SPEED_SCALE);
-						}
-					}
+					smallAvgPos.addThis(screenPos[i]);
 				}
+				smallAvgPos.x /= 4;
+				smallAvgPos.y /= 4;
 				
-				if(gravOn)
-					p.itemRF.addThis(portal.calculateRF(p.itemC, p.itemVC));
-				
-				if(!paused) {
-					portal.move((int) millistep, SPEED_SCALE);
-					portal.drawMove((int) millistep, SPEED_SCALE);
-					
-					BallData data = portal.calculateVelocity(p, Player.BALL_RADIUS);
-					if(data != null)
-					{
-						if(data.itemC != null)
-							p.itemC.copyFrom(data.itemC);
-						if(data.itemVC != null)
-							p.itemVC.copyFrom(data.itemVC);
-					}
-				}
-				
-				setNearestLookPoint();
-				
-				if(!paused)
-				{
-					gravityEffectMultiplier = CompuFuncs.TrimMinMax(gravityEffectMultiplier, -0.1f, 1);
-					gravityEffectMultiplier = (gravityEffectMultiplier - 1) * 0.99f + 1; // Slowly reset to 1
-					// Log.v("SpaceGame", "Grav is " + gravityEffectMultiplier);
-					p.itemVC.x += p.itemRF.x * millistep / ITERS / 1000f * gravityEffectMultiplier;
-					p.itemVC.y += p.itemRF.y * millistep / ITERS / 1000f;
-					
-					p.itemC.x  += p.itemVC.x * millistep / ITERS / 1000f * SPEED_SCALE;
-					p.itemC.y  += p.itemVC.y * millistep / ITERS / 1000f * SPEED_SCALE;
-					
-					// Air resistance
-					p.itemVC.scaleThis(AIR_RESISTANCE);
-					
-					// Move ball - animation
-					p.move(millistep, SPEED_SCALE);
-					p.drawMove(millistep, SPEED_SCALE);
-					
-					// Work out if no longer moving, from last 4 positions
-					
-					Coord smallAvgPos = new Coord();
-					for(int i = screenPos.length - 4; i < screenPos.length; i++)
-					{
-						smallAvgPos.addThis(screenPos[i]);
-					}
-					smallAvgPos.x /= 4;
-					smallAvgPos.y /= 4;
-					
-					if(prevSmallAvgPos == null)
-						prevSmallAvgPos = smallAvgPos;
-					
-					if(Coord.getLength(prevSmallAvgPos, screenPos[screenPos.length - 1]) < STOPPING_SPEED)
-						timeSinceStop++;
-					else
-						timeSinceStop = 0;
-					if(timeSinceStop > STEPS_TO_STOP)
-						stopped = true;
-					else
-						stopped = false;
+				if(prevSmallAvgPos == null)
 					prevSmallAvgPos = smallAvgPos;
-				}
+				
+				if(Coord.getLength(prevSmallAvgPos, screenPos[screenPos.length - 1]) < STOPPING_SPEED)
+					timeSinceStop++;
+				else
+					timeSinceStop = 0;
+				if(timeSinceStop > STEPS_TO_STOP)
+					stopped = true;
+				else
+					stopped = false;
+				prevSmallAvgPos = smallAvgPos;
 			}
+			
+			setNearestLookPoint();
 			
 			// object warp data collect
 			warpData.reset();
@@ -477,6 +365,12 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 					p.setNearestLandingPoint(lowestPoint);
 				}
 			}
+		}
+		
+		@Override
+		public void onStop() {
+			stopped = true;
+			p.openLanding();
 		}
 
 		boolean stopAnimation = false;

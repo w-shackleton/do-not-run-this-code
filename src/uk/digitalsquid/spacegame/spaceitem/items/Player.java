@@ -67,11 +67,16 @@ public abstract class Player extends PlayerBase implements Moveable
 		ballRotation += ballRotationSpeed * millistep / ITERS / 1000f * speedScale;
 	}
 	
+	public void openLanding() {}
+	public void closeLanding() {}
+	
 	/**
 	 * Makes the character 'look' towards a certain point. This makes the game seem interactive etc...
 	 * @param point A {@link Coord} in the game (NOT on the screen). Points on the screen need to be put through the reverse matrix first.
 	 */
 	public void lookTo(Coord point) {}
+	
+	public void setNearestLandingPoint(final Coord planet) {}
 	
 	float warpRotation = 0;
 	float warpScale = 1;

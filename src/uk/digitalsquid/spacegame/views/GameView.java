@@ -9,6 +9,7 @@ import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.Spacegame;
 import uk.digitalsquid.spacegame.levels.LevelItem.LevelSummary;
 import uk.digitalsquid.spacegame.spaceitem.SpaceItem;
+import uk.digitalsquid.spacegame.spaceitem.assistors.Simulation;
 import uk.digitalsquid.spacegame.spaceitem.assistors.SoundManager;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Clickable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.LevelAffectable;
@@ -160,8 +161,8 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 				}
 			}
 			
-			starCount.move(millistep, SPEED_SCALE); // TODO: Move these to the ITER-part part? Probably no need.
-			starCount.drawMove(millistep, SPEED_SCALE);
+			starCount.move(millistep, Simulation.SPEED_SCALE); // TODO: Move these to the ITER-part part? Probably no need.
+			starCount.drawMove(millistep, Simulation.SPEED_SCALE);
 		}
 		
 		@Override
@@ -223,6 +224,7 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 		
 		private void fireBall(double x, double y, MotionEvent event)
 		{
+			Log.v("SpaceGame", "Stopped: " + (stopped ? "Yes" : "No"));
 			if(stopped)
 			{
 				switch(event.getAction()) {
@@ -234,10 +236,12 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 						fireVelocity.x = MAX_FIRE_POWER * Math.cos(rot);
 						fireVelocity.y = MAX_FIRE_POWER * Math.sin(rot);
 					}
-					break;
+					if(event.getAction() != MotionEvent.ACTION_UP)
+						break;
 				case MotionEvent.ACTION_UP:
+					Log.v("SpaceGame", "called!");
 					p.itemVC.copyFrom(fireVelocity);
-					gravityEffectMultiplier = -0.1f; // -0.1 gives it a little 'boost'
+					s.gravityEffectMultiplier = -0.1f; // -0.1 gives it a little 'boost'
 					p.closeLanding();
 					stopped = false;
 					break;
@@ -260,9 +264,10 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 		}
 
 		@Override
-		protected void wallBounced(float amount) {
+		public void wallBounced(float amount) {
 			BounceVibrate.Vibrate((long) (amount * 2));
 			SoundManager.get().playSound(SoundManager.SOUND_BOUNCE, amount / 50); // 50 here just some number - scale it roughly to 0 to 1
+			borderBounceColour = 0;
 		}
 	}
 	

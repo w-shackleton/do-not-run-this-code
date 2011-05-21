@@ -31,7 +31,7 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 	protected static final int NUM_LINES = 20;
 	
 	protected static final float GRAVITY_SPEED = 20;
-	protected static final float LINE_SPEED = 0.01f;
+	protected static final float LINE_SPEED = 0.05f;
 	protected static final float LINE_LENGTH_IN_PI = (float) (0.1f * Math.PI);
 	protected float speed;
 	

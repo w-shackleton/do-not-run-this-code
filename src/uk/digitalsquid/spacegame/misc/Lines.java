@@ -72,6 +72,7 @@ public class Lines {
 	 */
 	public final void draw(GL10 gl) {
 		gl.glEnable(GL10.GL_POINT_SMOOTH);
+		gl.glEnable(GL10.GL_LINE_SMOOTH);
 		gl.glPointSize(2);
 		// Enabled the vertices buffer for writing and to be used during
 		// rendering.
@@ -94,6 +95,7 @@ public class Lines {
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 		
 		gl.glDisable(GL10.GL_POINT_SMOOTH);
+		gl.glDisable(GL10.GL_LINE_SMOOTH);
 
 		// gl.glDisable(GL10.GL_BLEND);
 
