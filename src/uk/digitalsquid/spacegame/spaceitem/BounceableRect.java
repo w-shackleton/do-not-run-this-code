@@ -19,7 +19,7 @@ public abstract class BounceableRect extends Rectangular implements Forceful
 	}
 	
 	@Override
-	public BallData calculateVelocity(Coord itemC, Coord itemVC, float itemRadius)
+	public BallData calculateVelocityImmutable(Coord itemC, Coord itemVC, float itemRadius, boolean testRun)
 	{
 		// TODO: Stop sinking through floor bug (help...)
 		double l = pos.x - (size.x / 2);
@@ -47,8 +47,10 @@ public abstract class BounceableRect extends Rectangular implements Forceful
 				newItemC = new Coord(itemRotC);
 				newItemC.x = r + itemRadius;
 			}
-			BounceVibrate.Vibrate((long) (newItemVC.getLength() / ITEM_SCALE * 1.5));
-			SoundManager.get().playSound(SoundManager.SOUND_BOUNCE, (float) (itemVC.getLength() / ITEM_SCALE / 30));
+			if(testRun) {
+				BounceVibrate.Vibrate((long) (newItemVC.getLength() / ITEM_SCALE * 1.5));
+				SoundManager.get().playSound(SoundManager.SOUND_BOUNCE, (float) (itemVC.getLength() / ITEM_SCALE / 30));
+			}
 		}
 		else if((itemRotC.y + itemRadius > t && itemRotC.y - itemRadius < b) && (itemRotC.x > l && itemRotC.x < r))
 		{
@@ -64,8 +66,10 @@ public abstract class BounceableRect extends Rectangular implements Forceful
 				newItemC = new Coord(itemRotC);
 				newItemC.y = b + itemRadius;
 			}
-			BounceVibrate.Vibrate((long) (newItemVC.getLength() / ITEM_SCALE * 1.5));
-			SoundManager.get().playSound(SoundManager.SOUND_BOUNCE, (float) (itemVC.getLength() / ITEM_SCALE / 30));
+			if(testRun) {
+				BounceVibrate.Vibrate((long) (newItemVC.getLength() / ITEM_SCALE * 1.5));
+				SoundManager.get().playSound(SoundManager.SOUND_BOUNCE, (float) (itemVC.getLength() / ITEM_SCALE / 30));
+			}
 		}
 		
 		Coord corners[] = {
@@ -97,8 +101,10 @@ public abstract class BounceableRect extends Rectangular implements Forceful
 				double speed = newItemVC.getLength();
 				newItemVC.x = Math.cos(angleNeeded) * speed;
 				newItemVC.y = Math.sin(angleNeeded) * speed;
-				BounceVibrate.Vibrate((long) (newItemVC.getLength() / ITEM_SCALE * 1.5));
-				SoundManager.get().playSound(SoundManager.SOUND_BOUNCE, (float) (itemVC.getLength() / ITEM_SCALE / 30));
+				if(testRun) {
+					BounceVibrate.Vibrate((long) (newItemVC.getLength() / ITEM_SCALE * 1.5));
+					SoundManager.get().playSound(SoundManager.SOUND_BOUNCE, (float) (itemVC.getLength() / ITEM_SCALE / 30));
+				}
 				break;
 			}
 		}
@@ -109,8 +115,10 @@ public abstract class BounceableRect extends Rectangular implements Forceful
 	}
 	
 	@Override
-	public Coord calculateRF(Coord itemC, Coord itemVC)
-	{
+	public void calculateVelocityMutable(Coord itemC, Coord itemVC, float itemRadius) { }
+	
+	@Override
+	public Coord calculateRF(Coord itemC, Coord itemVC) {
 		return null;
 	}
 }

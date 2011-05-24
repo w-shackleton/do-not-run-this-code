@@ -43,6 +43,14 @@ public final class Coord implements Serializable
 		y = old.y;
 	}
 	
+	/**
+	 * Makes a new copy of this {@link Coord}. Don't use this too often, GC etc...
+	 * @return
+	 */
+	public final Coord copy() {
+		return new Coord(x, y);
+	}
+	
 	public void reset() {
 		x = 0;
 		y = 0;

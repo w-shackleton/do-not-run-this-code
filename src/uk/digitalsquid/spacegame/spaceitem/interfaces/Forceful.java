@@ -24,7 +24,9 @@ public interface Forceful
 	 * @param itemRadius	The ball's radius
 	 * @return				The ball's new velocity
 	 */
-	public BallData calculateVelocity(Coord itemC, Coord itemVC, float itemRadius);
+	public BallData calculateVelocityImmutable(Coord itemC, Coord itemVC, float itemRadius, boolean testRun);
+	
+	public void calculateVelocityMutable(Coord itemC, Coord itemVC, float itemRadius);
 	
 	/**
 	 * A simple class that contains both position and speed of the ball, as well as other data that may need to be returned to the main thread.

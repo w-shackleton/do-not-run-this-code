@@ -16,8 +16,20 @@ public final class Simulation {
 	
 	private final SimulationCallbackListener callbacks;
 	
+	public Simulation() {
+		this(null);
+	}
+	
 	public Simulation(SimulationCallbackListener callbacks) {
-		this.callbacks = callbacks;
+		if(callbacks == null)
+			this.callbacks = new SimulationCallbackListener() {
+				@Override
+				public void wallBounced(float amount) { }
+				@Override
+				public void onStop() { }
+			};
+		else
+			this.callbacks = callbacks;
 	}
 	
 	public static final int ITERS = 5;
@@ -33,7 +45,17 @@ public final class Simulation {
 	 */
 	public float gravityEffectMultiplier = 1;
 		
-	public void calculate(final LevelItem level, final PlayerBase p, final Portal portal, boolean paused, boolean gravOn, final int millistep) {
+	/**
+	 * 
+	 * @param level
+	 * @param p
+	 * @param portal
+	 * @param paused
+	 * @param gravOn
+	 * @param millistep
+	 * @param testRun Whether to run code that affects the game's state, namely the 'Mutable' functions
+	 */
+	public void calculate(final LevelItem level, final PlayerBase p, final Portal portal, boolean paused, boolean gravOn, final int millistep, final boolean testRun) {
 		final List<SpaceItem> planetList = level.planetList;
 		
 		for(int iter = 0; iter < ITERS; iter++) // Main physics loop
@@ -85,7 +107,7 @@ public final class Simulation {
 						}
 						
 						// Stage for velocity changes
-						BallData data = item.calculateVelocity(p.itemC, p.itemVC, AnimatedPlayer.BALL_RADIUS);
+						BallData data = item.calculateVelocityImmutable(p.itemC, p.itemVC, AnimatedPlayer.BALL_RADIUS, testRun);
 						if(data != null)
 						{
 							if(data.itemC != null)
@@ -96,6 +118,7 @@ public final class Simulation {
 								callbacks.onStop();
 							}
 						}
+						if(!testRun) item.calculateVelocityMutable(p.itemC, p.itemVC, AnimatedPlayer.BALL_RADIUS);
 					}
 				}
 			}
@@ -104,14 +127,8 @@ public final class Simulation {
 				if(portal != null)
 					p.itemRF.addThis(portal.calculateRF(p.itemC, p.itemVC));
 			
-			BallData data = portal.calculateVelocity(p, Player.BALL_RADIUS);
-			if(data != null)
-			{
-				if(data.itemC != null)
-					p.itemC.copyFrom(data.itemC);
-				if(data.itemVC != null)
-					p.itemVC.copyFrom(data.itemVC);
-			}
+			portal.calculateVelocityImmutable(p, Player.BALL_RADIUS, testRun);
+			if(!testRun) portal.calculateVelocityMutable(p, Player.BALL_RADIUS);
 			
 			if(!paused)
 			{

@@ -44,11 +44,9 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	}
 	
 	@Override
-	public Coord calculateRF(Coord itemC, Coord itemVC)
-	{
+	public void calculateVelocityMutable(Coord itemC, Coord itemVC, float itemRadius) {
 		double currDist = Coord.getLength(pos, itemC);
-		if(currDist < BLACK_HOLE_CAPTURE_DIST * ITEM_SCALE && !bhActivated) // Start pulse
-		{
+		if(currDist < BLACK_HOLE_CAPTURE_DIST * ITEM_SCALE && !bhActivated) { // Start pulse
 			bhActivated = true;
 			bhStarted = true;
 			if(PreferenceManager.getDefaultSharedPreferences(context).getBoolean("bhFirstTime", true))
@@ -59,7 +57,6 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 			// TODO: Disable for release version
 			// messageInfo.display = true;
 		}
-		return super.calculateRF(itemC, itemVC);
 	}
 
 	@Override
@@ -119,8 +116,8 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	}
 	
 	@Override
-	public BallData calculateVelocity(Coord itemC, Coord itemVC, float itemRadius) {
-		BallData d = super.calculateVelocity(itemC, itemVC, itemRadius);
+	public BallData calculateVelocityImmutable(Coord itemC, Coord itemVC, float itemRadius, boolean testRun) {
+		BallData d = super.calculateVelocityImmutable(itemC, itemVC, itemRadius, testRun);
 		
 		if(bhActivated) {
 			Coord vel = new Coord(0, 0);

@@ -129,9 +129,15 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 	 * Not used
 	 */
 	@Override
-	public BallData calculateVelocity(Coord itemC, Coord itemVC, float itemRadius)
-	{
+	public BallData calculateVelocityImmutable(Coord itemC, Coord itemVC, float itemRadius, boolean testRun) {
 		return null;
+	}
+	
+	/**
+	 * Not used
+	 */
+	@Override
+	public void calculateVelocityMutable(Coord itemC, Coord itemVC, float itemRadius) {
 	}
 	
 	@Override

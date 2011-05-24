@@ -41,8 +41,8 @@ public class Teleporter extends Gravitable implements TopDrawable, Moveable, War
 	}
 	
 	@Override
-	public BallData calculateVelocity(Coord itemC, Coord itemVC, float itemRadius) {
-		BallData data = super.calculateVelocity(itemC, itemVC, itemRadius);
+	public BallData calculateVelocityImmutable(Coord itemC, Coord itemVC, float itemRadius, boolean testRun) {
+		BallData data = super.calculateVelocityImmutable(itemC, itemVC, itemRadius, testRun);
 
 		double currDist = pos.minus(itemC).getLength();
 		if(currDist < 10f * ITEM_SCALE) // Start teleport

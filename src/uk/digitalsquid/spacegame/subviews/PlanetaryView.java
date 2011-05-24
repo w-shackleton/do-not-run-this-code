@@ -114,7 +114,12 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 
 		protected boolean paused = false;
 		private Object pauseNotify = new Object();
-		protected boolean stopped = false;
+		
+		protected static final int GAME_STATE_MOVING = 0;
+		protected static final int GAME_STATE_STOPPED = 1;
+		protected static final int GAME_STATE_AIMING = 2;
+		
+		protected int state = GAME_STATE_MOVING;
 		protected boolean gravOn = true;
 		
 		protected float borderBounceColour = 255;
@@ -223,7 +228,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		{
 			super.calculate();
 			
-			s.calculate(level, p, portal, paused, gravOn, (int) millistep);
+			s.calculate(level, p, portal, paused, gravOn, (int) millistep, false);
 			
 			for(int i = 0; i < ITERS; i++) {
 				if(!paused) { // Animated move
@@ -272,10 +277,8 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 					timeSinceStop++;
 				else
 					timeSinceStop = 0;
-				if(timeSinceStop > STEPS_TO_STOP)
-					stopped = true;
-				else
-					stopped = false;
+				if(timeSinceStop > STEPS_TO_STOP && state == GAME_STATE_MOVING)
+					state = GAME_STATE_STOPPED;
 				prevSmallAvgPos = smallAvgPos;
 			}
 			
@@ -369,7 +372,9 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		
 		@Override
 		public void onStop() {
-			stopped = true;
+			if(state == GAME_STATE_MOVING) {
+				state = GAME_STATE_STOPPED;
+			}
 			p.openLanding();
 		}
 

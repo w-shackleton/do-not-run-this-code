@@ -16,9 +16,9 @@ public abstract class Bounceable extends Gravitable
 	}
 	
 	@Override
-	public BallData calculateVelocity(Coord itemC, Coord itemVC, float itemRadius)
+	public BallData calculateVelocityImmutable(Coord itemC, Coord itemVC, float itemRadius, boolean testRun)
 	{
-		BallData newBall = super.calculateVelocity(itemC, itemVC, itemRadius);
+		BallData newBall = super.calculateVelocityImmutable(itemC, itemVC, itemRadius, testRun);
 		double currDist = Coord.getLength(pos, itemC);
 		if(currDist < radius + itemRadius)
 		{
@@ -43,8 +43,10 @@ public abstract class Bounceable extends Gravitable
 			if(newBall.itemVC.getLength() < 2) {
 				newBall.stopBall = true;
 			}
-			BounceVibrate.Vibrate((long) (itemVC.getLength() / ITEM_SCALE));
+			if(!testRun) {
+				BounceVibrate.Vibrate((long) (itemVC.getLength() / ITEM_SCALE));
 				SoundManager.get().playSound(SoundManager.SOUND_BOUNCE, (float) (itemVC.getLength() / ITEM_SCALE / 30));
+			}
 		}
 		return newBall;
 	}

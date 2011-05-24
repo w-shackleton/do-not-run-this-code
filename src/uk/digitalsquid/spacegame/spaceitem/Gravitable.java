@@ -18,16 +18,21 @@ public abstract class Gravitable extends Spherical implements Forceful
 	
 	private final Coord tmpRF = new Coord();
 	
+	@Override
 	public Coord calculateRF(Coord itemC, Coord itemVC)
 	{
 		CompuFuncs.computeForce(tmpRF, pos, density, radius, itemC);
 		return tmpRF;
 	}
 	
-	public BallData calculateVelocity(Coord itemC, Coord itemVC, float itemRadius)
+	@Override
+	public BallData calculateVelocityImmutable(Coord itemC, Coord itemVC, float itemRadius, boolean testRun)
 	{
 		if(Coord.getLength(pos, itemC) < radius + itemRadius)
 			return new BallData(null, itemVC.scale(radius == 0 ? 1 : internalResistance));
 		return null;
 	}
+	
+	@Override
+	public void calculateVelocityMutable(Coord itemC, Coord itemVC, float itemRadius) { }
 }

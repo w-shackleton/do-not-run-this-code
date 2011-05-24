@@ -63,6 +63,34 @@ public class Lines {
 		setVertices(vertices);
 		setColour(r, g, b, a);
 	}
+	
+	/**
+	 * Constructs a set of lines from vertices
+	 * @param x
+	 * @param y
+	 * @param vertices The vertices to use
+	 * @param type Either {@link GL10}.GL_LINE_STRIP, {@link GL10}.GL_LINE_LOOP or {@link GL10}.GL_LINES.
+	 * @param r
+	 * @param g
+	 * @param b
+	 * @param a
+	 */
+	public Lines(float x, float y, int numVertices, int type, float r, float g, float b, float a) {
+		this.x = x;
+		this.y = y;
+		
+		switch(type) {
+		case GL10.GL_LINE_LOOP:
+		case GL10.GL_LINE_STRIP:
+		case GL10.GL_LINES:
+			break;
+		default:
+			throw new IllegalArgumentException("invalid type");
+		}
+		this.type = type;
+		setVertices(numVertices);
+		setColour(r, g, b, a);
+	}
 
 	/**
 	 * Render the lines.
@@ -116,6 +144,21 @@ public class Lines {
 		vbb.order(ByteOrder.nativeOrder());
 		verticesBuffer = vbb.asFloatBuffer();
 		verticesBuffer.put(vertices);
+		verticesBuffer.position(0);
+	}
+	
+	/**
+	 * Create a blank set of vertices
+	 * 
+	 * @param vertices
+	 */
+	public final void setVertices(int numVertices) {
+		// a float is 4 bytes, therefore we multiply the number if
+		// vertices with 4.
+		numOfVertices = numVertices;
+		ByteBuffer vbb = ByteBuffer.allocateDirect(numVertices * 3 * 4);
+		vbb.order(ByteOrder.nativeOrder());
+		verticesBuffer = vbb.asFloatBuffer();
 		verticesBuffer.position(0);
 	}
 	

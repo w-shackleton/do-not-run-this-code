@@ -60,7 +60,7 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 	}
 
 	@Override
-	public BallData calculateVelocity(Coord itemC, Coord itemVC,
+	public void calculateVelocityMutable(Coord itemC, Coord itemVC,
 			float itemRadius) {
 		if(available && Coord.getLength(pos, itemC) < radius + itemRadius) {
 			available = false;
@@ -72,8 +72,6 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 			drawingP1 = false;
 			drawingP2 = true;
 		}
-		
-		return null;
 	}
 	
 	public boolean isAvailable() {
@@ -121,5 +119,10 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 			img.setAlpha(opacity);
 			img.draw(gl);
 		}
+	}
+
+	@Override
+	public BallData calculateVelocityImmutable(Coord itemC, Coord itemVC, float itemRadius, boolean testRun) {
+		return null;
 	}
 }
