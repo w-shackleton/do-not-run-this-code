@@ -47,7 +47,7 @@ public abstract class BounceableRect extends Rectangular implements Forceful
 				newItemC = new Coord(itemRotC);
 				newItemC.x = r + itemRadius;
 			}
-			if(testRun) {
+			if(!testRun) {
 				BounceVibrate.Vibrate((long) (newItemVC.getLength() / ITEM_SCALE * 1.5));
 				SoundManager.get().playSound(SoundManager.SOUND_BOUNCE, (float) (itemVC.getLength() / ITEM_SCALE / 30));
 			}
@@ -66,7 +66,7 @@ public abstract class BounceableRect extends Rectangular implements Forceful
 				newItemC = new Coord(itemRotC);
 				newItemC.y = b + itemRadius;
 			}
-			if(testRun) {
+			if(!testRun) {
 				BounceVibrate.Vibrate((long) (newItemVC.getLength() / ITEM_SCALE * 1.5));
 				SoundManager.get().playSound(SoundManager.SOUND_BOUNCE, (float) (itemVC.getLength() / ITEM_SCALE / 30));
 			}

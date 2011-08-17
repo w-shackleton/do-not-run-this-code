@@ -24,6 +24,9 @@ public abstract class Player extends PlayerBase implements Moveable
 	
 	@Override
 	public final void draw(GL10 gl, float worldZoom) {
+		// Lock position if necessary
+		if(landPosition != null) itemC.copyFrom(landPosition);
+		
 		gl.glPushMatrix();
 		gl.glTranslatef((float)itemC.x, (float)itemC.y, 0);
 		gl.glScalef(warpScale, warpScale, 1);
@@ -44,6 +47,8 @@ public abstract class Player extends PlayerBase implements Moveable
 	@Override
 	public void move(float millistep, float speedScale)
 	{
+		// Lock position if necessary
+		if(landPosition != null) itemC.copyFrom(landPosition);
 		// Calculate rotation of ball
 		ballRotation = ballRotation % 360;
 		float itemRFDirection = itemRF.getRotation();
@@ -67,8 +72,14 @@ public abstract class Player extends PlayerBase implements Moveable
 		ballRotation += ballRotationSpeed * millistep / ITERS / 1000f * speedScale;
 	}
 	
-	public void openLanding() {}
-	public void closeLanding() {}
+	private Coord landPosition;
+	
+	public void openLanding() {
+		landPosition = new Coord(itemC);
+	}
+	public void closeLanding() {
+		landPosition = null;
+	}
 	
 	/**
 	 * Makes the character 'look' towards a certain point. This makes the game seem interactive etc...

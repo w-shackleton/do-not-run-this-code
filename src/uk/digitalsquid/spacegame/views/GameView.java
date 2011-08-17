@@ -17,7 +17,6 @@ import uk.digitalsquid.spacegame.spaceitem.interfaces.LevelAffectable.AffectData
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Messageable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Messageable.MessageInfo;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.StaticDrawable;
-import uk.digitalsquid.spacegame.spaceitem.items.SimulatedPlayer;
 import uk.digitalsquid.spacegame.spaceview.gamemenu.StarDisplay;
 import uk.digitalsquid.spacegame.subviews.MovingView;
 import android.content.Context;
@@ -91,7 +90,6 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 		{
 			super.initialiseOnThread();
 			starCount = new StarDisplay(context, level.starsToCollect, portal);
-			simulatedPlayer = new SimulatedPlayer(context, level, portal, 100); // TODO: Change the steps to a dynamic val
 		}
 		
 		@Override
@@ -170,11 +168,6 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 		@Override
 		protected void draw(GL10 gl) {
 			super.draw(gl);
-			Log.v("SpaceGame", "Draw");
-			if(state == GAME_STATE_AIMING) {
-				simulatedPlayer.draw(gl, 1);
-				Log.v("SpaceGame", "Draw2");
-			}
 		}
 		
 		@Override
@@ -234,30 +227,20 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 		
 		private static final int MAX_FIRE_POWER = 50;
 		
-		private SimulatedPlayer simulatedPlayer;
-		
-		private double prevFireX, prevFireY;
-		
 		private void fireBall(double x, double y, MotionEvent event)
 		{
-			if(state == GAME_STATE_STOPPED || state == GAME_STATE_AIMING)
+			/*if(state == GAME_STATE_STOPPED || state == GAME_STATE_AIMING)
 			{
 				switch(event.getAction()) {
 				case MotionEvent.ACTION_MOVE:
-					fireVelocity.x = -(x - p.itemC.x) / 3 * SpaceItem.ITEM_SCALE; // Scale down to compensate for power
-					fireVelocity.y = -(y - p.itemC.y) / 3 * SpaceItem.ITEM_SCALE;
+					fireVelocity.x = -(x - p.itemC.x) / 1.5f * SpaceItem.ITEM_SCALE; // Scale down to compensate for power
+					fireVelocity.y = -(y - p.itemC.y) / 1.5f * SpaceItem.ITEM_SCALE;
 					if(fireVelocity.getLength() > MAX_FIRE_POWER) {
 						float rot = (float) (fireVelocity.getRotation() / 180 * Math.PI);
 						fireVelocity.x = MAX_FIRE_POWER * Math.cos(rot);
 						fireVelocity.y = MAX_FIRE_POWER * Math.sin(rot);
 					}
 					state = GAME_STATE_AIMING;
-					if(Math.hypot(prevFireX - x, prevFireY - y) > 6) {
-						if(simulatedPlayer != null) simulatedPlayer.simulateMove(p.itemC, fireVelocity);
-					}
-					
-					prevFireX = x;
-					prevFireY = y;
 					
 					if(event.getAction() != MotionEvent.ACTION_UP)
 						break;
@@ -270,6 +253,20 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 					break;
 				case MotionEvent.ACTION_CANCEL:
 					state = GAME_STATE_STOPPED;
+					break;
+				}
+			}*/
+			if(state == GAME_STATE_STOPPED || state == GAME_STATE_MOVING) {
+				switch(event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+				case MotionEvent.ACTION_MOVE:
+					if(state == GAME_STATE_STOPPED)
+						p.closeLanding();
+					state = GAME_STATE_MOVING;
+					tether.setTetherPos(x, y);
+					break;
+				case MotionEvent.ACTION_UP:
+					tether.untether();
 					break;
 				}
 			}

@@ -11,6 +11,7 @@ import uk.digitalsquid.spacegame.spaceitem.items.AnimatedPlayer;
 import uk.digitalsquid.spacegame.spaceitem.items.Player;
 import uk.digitalsquid.spacegame.spaceitem.items.PlayerBase;
 import uk.digitalsquid.spacegame.spaceitem.items.Portal;
+import uk.digitalsquid.spacegame.spaceitem.items.Tether;
 
 public final class Simulation {
 	
@@ -50,12 +51,13 @@ public final class Simulation {
 	 * @param level
 	 * @param p
 	 * @param portal
+	 * @param tether
 	 * @param paused
 	 * @param gravOn
 	 * @param millistep
 	 * @param testRun Whether to run code that affects the game's state, namely the 'Mutable' functions
 	 */
-	public void calculate(final LevelItem level, final PlayerBase p, final Portal portal, boolean paused, boolean gravOn, final int millistep, final boolean testRun) {
+	public void calculate(final LevelItem level, final PlayerBase p, final Portal portal, final Tether tether, boolean paused, boolean gravOn, final int millistep, final boolean testRun) {
 		final List<SpaceItem> planetList = level.planetList;
 		
 		for(int iter = 0; iter < ITERS; iter++) // Main physics loop
@@ -124,8 +126,12 @@ public final class Simulation {
 			}
 			
 			if(gravOn)
+			{
 				if(portal != null)
 					p.itemRF.addThis(portal.calculateRF(p.itemC, p.itemVC));
+				if(tether != null)
+					p.itemRF.addThis(tether.calculateRF(p.itemC, p.itemVC));
+			}
 			
 			portal.calculateVelocityImmutable(p, Player.BALL_RADIUS, testRun);
 			if(!testRun) portal.calculateVelocityMutable(p, Player.BALL_RADIUS);

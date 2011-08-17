@@ -127,14 +127,14 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 			tmpFinishPoint.x -= (tmpFinishPoint.x - pos.x) / 100f;
 			tmpFinishPoint.y -= (tmpFinishPoint.y - pos.y) / 100f;
 			p.itemC.copyFrom(tmpFinishPoint);
-		} else if(status != Status.DISABLED && Coord.getLength(pos, p.itemC) < 10) {
+		} else if(status != Status.DISABLED && Coord.getLength(pos, p.itemC) < 20) {
 			tmpFinishPoint.copyFrom(p.itemC);
 			SoundManager.get().playSound(SoundManager.SOUND_PORTAL);
 		}
 	}
 	
 	public void calculateVelocityMutable(PlayerBase p, float itemRadius) {
-		if(status != Status.DISABLED && Coord.getLength(pos, p.itemC) < 10)
+		if(status != Status.DISABLED && Coord.getLength(pos, p.itemC) < 20)
 			status = Status.FINISHING;
 	}
 	

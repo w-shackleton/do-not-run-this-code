@@ -18,7 +18,7 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	private static final int BLACK_HOLE_RADIUS = 70;
 	private static final float BLACK_HOLE_DENSITY = .8f;
 	private static final float BLACK_HOLE_ZOOM_SPEED = 1.01f;
-	public static final float BLACK_HOLE_ZOOM_POWER = 1.05f;
+	public static final float BLACK_HOLE_ZOOM_POWER = 1.10f;
 	private static final int BLACK_HOLE_ZOOM_WAIT = 100;
 	private static final float BLACK_HOLE_CAPTURE_DIST = 14;
 
@@ -31,7 +31,7 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	
 	private float bhEndGameZoom = BLACK_HOLE_ZOOM_SPEED;
 	private float bhEndGameFade = 0;
-	private float bhEndGameFadeSpeed = 1;
+	private float bhEndGameFadeSpeed = 1.5f;
 	private float bhEndGameWait = -BLACK_HOLE_ZOOM_WAIT;
 	
 	
@@ -79,14 +79,14 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	public void drawMove(float millistep, float speedscale) {
 		if(bhActivated)
 		{
-			bhEndGameWait += millistep / 50;
+			bhEndGameWait += millistep / 10;
 		}
 		bhRotation += millistep / 50;
 		if(bhStarted && bhEndGameWait > 0)
 		{
 			//WarpData data = new WarpData(1, 0, bhEndGameFade);
 			bhEndGameZoom = (float) Math.pow(bhEndGameZoom, BLACK_HOLE_ZOOM_POWER);
-			bhEndGameFadeSpeed += 1 / 15;
+			bhEndGameFadeSpeed += 1;
 			bhEndGameFade += bhEndGameFadeSpeed;
 		}
 	}
@@ -98,10 +98,10 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 			WarpData data;
 			if(bhEndGameFade > 300)
 			{
-				data = new WarpData(bhEndGameZoom, bhEndGameFade, bhEndGameFade * 1f, true);
+				data = new WarpData(bhEndGameZoom, bhEndGameFade, bhEndGameFade * 2f, true);
 			}
 			else
-				data = new WarpData(bhEndGameZoom, bhEndGameFade, bhEndGameFade * 1f, false);
+				data = new WarpData(bhEndGameZoom, bhEndGameFade, bhEndGameFade * 2f, false);
 			return data;
 		}
 		return null;

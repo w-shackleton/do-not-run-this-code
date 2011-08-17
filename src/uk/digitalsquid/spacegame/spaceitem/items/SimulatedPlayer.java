@@ -10,6 +10,7 @@ import uk.digitalsquid.spacegame.misc.Lines;
 import uk.digitalsquid.spacegame.spaceitem.assistors.Simulation;
 import android.content.Context;
 
+@Deprecated
 public final class SimulatedPlayer extends PlayerBase {
 	private final Simulation sim = new Simulation(null);
 	
@@ -42,7 +43,7 @@ public final class SimulatedPlayer extends PlayerBase {
 		sim.gravityEffectMultiplier = -0.1f;
 		
 		for(int i = 0; i < numSteps; i++) {
-			sim.calculate(level, this, portal, false, true, (int) (1000f / 60f), true);
+			sim.calculate(level, this, portal, null, false, true, (int) (1000f / 60f), true);
 			buf.put(i * 3 + 0, (float) itemC.x);
 			buf.put(i * 3 + 1, (float) itemC.y);
 		}

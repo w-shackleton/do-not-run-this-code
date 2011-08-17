@@ -30,6 +30,7 @@ import uk.digitalsquid.spacegame.spaceitem.items.AnimatedPlayer;
 import uk.digitalsquid.spacegame.spaceitem.items.Player;
 import uk.digitalsquid.spacegame.spaceitem.items.Portal;
 import uk.digitalsquid.spacegame.spaceitem.items.Star;
+import uk.digitalsquid.spacegame.spaceitem.items.Tether;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.AttributeSet;
@@ -134,6 +135,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		
 		protected Player p;
 		protected Portal portal;
+		protected Tether tether;
 		
 		@Override
 		protected void initialiseOnThread()
@@ -177,6 +179,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			}, GL10.GL_LINE_LOOP, 1, 1, 1, 1);
 			
 			portal = new Portal(context, level.portal);
+			tether = new Tether(context);
 			s = new Simulation(this);
 			
 			for(int i = 0; i < screenPos.length; i++)
@@ -228,7 +231,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		{
 			super.calculate();
 			
-			s.calculate(level, p, portal, paused, gravOn, (int) millistep, false);
+			s.calculate(level, p, portal, tether, paused, gravOn, (int) millistep, false);
 			
 			for(int i = 0; i < ITERS; i++) {
 				if(!paused) { // Animated move
@@ -257,8 +260,9 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 				
 				// Move ball - animation
 				p.drawMove(millistep, Simulation.SPEED_SCALE);
-					portal.calculateAnimation(p);
+				portal.calculateAnimation(p);
 				portal.drawMove(millistep, Simulation.SPEED_SCALE);
+				tether.drawMove(millistep, Simulation.SPEED_SCALE);
 				
 				// Work out if no longer moving, from last 4 positions
 				
@@ -418,6 +422,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			}
 			
 			portal.draw(gl, 1);
+			tether.draw(gl, 1);
 			p.draw(gl, 1);
 			
 			levelBorder.setColour(1, 1, borderBounceColour, borderBounceColour);

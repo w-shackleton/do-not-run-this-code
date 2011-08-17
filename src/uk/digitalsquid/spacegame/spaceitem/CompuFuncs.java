@@ -9,7 +9,7 @@ import uk.digitalsquid.spacegame.Coord;
 
 public class CompuFuncs
 {
-	public static final double GRAVCONST = .1f;
+	public static final double GRAVCONST = .008f;
 	
 	/**
 	 * Computes the force between a massive body and the player
@@ -33,11 +33,11 @@ public class CompuFuncs
 		outForce.x =
 			GRAVCONST * (planet.x - item.x) *
 			computeWeight(planetRad,planetDensity) /
-			(r * r * Math.sqrt(r));
+			(r * r);
 		outForce.y =
 			GRAVCONST * (planet.y - item.y) * 
 			computeWeight(planetRad,planetDensity) /
-			(r * r * Math.sqrt(r));
+			(r * r);
 	}
 
 	@Deprecated
