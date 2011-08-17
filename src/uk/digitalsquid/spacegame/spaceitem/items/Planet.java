@@ -7,7 +7,7 @@ import javax.microedition.khronos.opengles.GL10;
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.R;
-import uk.digitalsquid.spacegame.misc.RectMesh;
+import uk.digitalsquid.spacegame.gl.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.Bounceable;
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 import uk.digitalsquid.spacegame.spaceitem.items.Planet.PlanetType.FgType;

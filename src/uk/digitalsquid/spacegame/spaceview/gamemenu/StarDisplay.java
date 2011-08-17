@@ -3,8 +3,8 @@ package uk.digitalsquid.spacegame.spaceview.gamemenu;
 import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.spacegame.R;
-import uk.digitalsquid.spacegame.misc.RectMesh;
-import uk.digitalsquid.spacegame.misc.Text;
+import uk.digitalsquid.spacegame.gl.RectMesh;
+import uk.digitalsquid.spacegame.gl.Text;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.StaticDrawable;
 import uk.digitalsquid.spacegame.spaceitem.items.Portal;

@@ -1,10 +1,10 @@
-package uk.digitalsquid.spacegame.misc;
+package uk.digitalsquid.spacegame.gl;
 
 import java.util.LinkedList;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import uk.digitalsquid.spacegame.misc.TextureManager.Letter;
+import uk.digitalsquid.spacegame.gl.TextureManager.Letter;
 
 public class Text extends RectMesh {
 	

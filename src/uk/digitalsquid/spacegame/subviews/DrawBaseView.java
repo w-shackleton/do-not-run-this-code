@@ -3,7 +3,7 @@ package uk.digitalsquid.spacegame.subviews;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import uk.digitalsquid.spacegame.misc.TextureManager;
+import uk.digitalsquid.spacegame.gl.TextureManager;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;

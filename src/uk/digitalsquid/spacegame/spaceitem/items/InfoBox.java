@@ -6,7 +6,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.R;
-import uk.digitalsquid.spacegame.misc.RectMesh;
+import uk.digitalsquid.spacegame.gl.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.BounceableRect;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Clickable;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Messageable;

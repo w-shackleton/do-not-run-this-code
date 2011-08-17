@@ -1,4 +1,4 @@
-package uk.digitalsquid.spacegame.misc;
+package uk.digitalsquid.spacegame.gl;
 
 public class RectMesh extends Mesh {
 	

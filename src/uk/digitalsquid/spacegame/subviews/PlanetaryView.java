@@ -11,10 +11,10 @@ import org.xml.sax.SAXException;
 
 import uk.digitalsquid.spacegame.Coord;
 import uk.digitalsquid.spacegame.StaticInfo;
+import uk.digitalsquid.spacegame.gl.Lines;
+import uk.digitalsquid.spacegame.gl.RectMesh;
 import uk.digitalsquid.spacegame.levels.LevelItem;
 import uk.digitalsquid.spacegame.levels.SaxLoader;
-import uk.digitalsquid.spacegame.misc.Lines;
-import uk.digitalsquid.spacegame.misc.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.Bounceable;
 import uk.digitalsquid.spacegame.spaceitem.BounceableRect;
 import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;

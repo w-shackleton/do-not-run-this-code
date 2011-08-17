@@ -1,6 +1,6 @@
 package uk.digitalsquid.spacegame.spaceitem.assistors;
 
-import uk.digitalsquid.spacegame.misc.Points;
+import uk.digitalsquid.spacegame.gl.Points;
 
 public final class BgPoints extends Points {
 	private static final int VISUAL_DEPTH = 100;

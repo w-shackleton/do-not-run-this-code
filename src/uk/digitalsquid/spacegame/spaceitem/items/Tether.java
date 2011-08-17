@@ -5,8 +5,8 @@ import javax.microedition.khronos.opengles.GL10;
 import android.content.Context;
 
 import uk.digitalsquid.spacegame.Coord;
-import uk.digitalsquid.spacegame.misc.Mesh;
-import uk.digitalsquid.spacegame.misc.RectMesh;
+import uk.digitalsquid.spacegame.gl.Mesh;
+import uk.digitalsquid.spacegame.gl.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.SpaceItem;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Forceful;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;

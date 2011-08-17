@@ -5,8 +5,8 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.spacegame.Coord;
+import uk.digitalsquid.spacegame.gl.Lines;
 import uk.digitalsquid.spacegame.levels.LevelItem;
-import uk.digitalsquid.spacegame.misc.Lines;
 import uk.digitalsquid.spacegame.spaceitem.assistors.Simulation;
 import android.content.Context;
 
