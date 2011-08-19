@@ -179,7 +179,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			}, GL10.GL_LINE_LOOP, 1, 1, 1, 1);
 			
 			portal = new Portal(context, level.portal);
-			tether = new Tether(context);
+			tether = new Tether(context, p);
 			s = new Simulation(this);
 			
 			for(int i = 0; i < screenPos.length; i++)

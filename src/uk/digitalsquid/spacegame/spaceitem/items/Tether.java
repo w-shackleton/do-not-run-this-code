@@ -2,14 +2,15 @@ package uk.digitalsquid.spacegame.spaceitem.items;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import android.content.Context;
-
 import uk.digitalsquid.spacegame.Coord;
+import uk.digitalsquid.spacegame.gl.Bezier;
 import uk.digitalsquid.spacegame.gl.Mesh;
 import uk.digitalsquid.spacegame.gl.RectMesh;
 import uk.digitalsquid.spacegame.spaceitem.SpaceItem;
+import uk.digitalsquid.spacegame.spaceitem.assistors.Spring;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Forceful;
 import uk.digitalsquid.spacegame.spaceitem.interfaces.Moveable;
+import android.content.Context;
 
 /**
  * The 'tether' which attaches to the user's finger to move the character.
@@ -26,25 +27,41 @@ public final class Tether extends SpaceItem implements Moveable, Forceful {
 		UNTETHERING,
 	}
 	
+	private final Bezier tether;
+	private final Spring springCalc;
+	
 	private State state = State.DISABLED;
+	
+	private final Player player;
 
-	public Tether(Context context) {
+	public Tether(Context context, Player player) {
 		super(context, new Coord());
+		tether = new Bezier(0, 0, 1, 1, 1, 1);
+		this.player = player;
+		
+		springCalc = new Spring(2, 0, 0, 0, 0, 0.9f);
 	}
 	
 	Mesh fingerImg = new RectMesh(0, 0, 30, 30, 1, 0, 0, 1);
 
 	@Override
 	public void move(float millistep, float speedScale) {
+		springCalc.move(millistep, speedScale);
 	}
 
 	@Override
 	public void drawMove(float millistep, float speedscale) {
+		springCalc.setEnds(player.itemC.x, player.itemC.y, pos.x, pos.y);
+		
+		springCalc.drawMove(millistep, speedscale);
+		
+		tether.setBezierPoints(springCalc.getSpringPoints());
 	}
 
 	@Override
 	public void draw(GL10 gl, float worldZoom) {
 		fingerImg.draw(gl);
+		tether.draw(gl);
 	}
 
 	@Override
