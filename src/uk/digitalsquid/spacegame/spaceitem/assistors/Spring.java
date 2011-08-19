@@ -7,6 +7,7 @@ public final class Spring implements Moveable {
 	
 	private float[] springPoints;
 	private float[] velocities;
+	private float[] forces;
 	private float[] masses;
 	private float[] springStiffness;
 	
@@ -14,14 +15,17 @@ public final class Spring implements Moveable {
 	
 	private final float springConstant;
 	
+	private boolean startLocked = true, endLocked = true;
+	
 	public Spring(int pointsInSpring, float startX, float startY, float finishX, float finishY, float springConstant) {
 		springPoints = new float[pointsInSpring * 2];
 		velocities = new float[pointsInSpring * 2];
+		forces = new float[pointsInSpring * 2];
 		masses = new float[pointsInSpring];
 		springStiffness = new float[pointsInSpring];
 		for(int i = 0; i < masses.length; i++) {
 			masses[i] = 1;
-			springStiffness[i] = 1;
+			springStiffness[i] = 3;
 		}
 		numPoints = springPoints.length / 2;
 		this.springConstant = springConstant;
@@ -36,24 +40,37 @@ public final class Spring implements Moveable {
 
 	@Override
 	public void drawMove(float millistep, float speedscale) {
-		// All points except first and last
-		for(int i = 1; i < numPoints - 1; i++) {
+		float x1, y1, x2, y2, x, y;
+		
+		// Calculate ALL forces first
+		final int end = numPoints - 1;
+		for(int i = 0; i < numPoints; i++) {
 			int pointStart = i * 2;
-			float x1 = springPoints[pointStart - 2];
-			float y1 = springPoints[pointStart - 1];
-			float x2 = springPoints[pointStart + 2];
-			float y2 = springPoints[pointStart + 3];
-			float x = springPoints[pointStart];
-			float y = springPoints[pointStart + 1];
+			x = springPoints[pointStart];
+			y = springPoints[pointStart + 1];
+			x1 = i == 0   ? x : springPoints[pointStart - 2]; // 0 if first
+			y1 = i == 0   ? y : springPoints[pointStart - 1]; // 0 if first
+			x2 = i == end ? x : springPoints[pointStart + 2];
+			y2 = i == end ? y : springPoints[pointStart + 3];
 			
 			// Each spring distance * stiffness + dampener
-			velocities[pointStart  ] -= ((x1 - x) * springStiffness[i] + (x2 - x) * springStiffness[i] + (velocities[i] * springConstant)) *
-				millistep / 1000f;
-			velocities[pointStart+1] -= ((y1 - y) * springStiffness[i] + (y2 - y) * springStiffness[i] + (velocities[i] * springConstant)) *
-				millistep / 1000f;
+			forces[pointStart  ] = ((x1 - x) * springStiffness[i] + (x2 - x) * springStiffness[i] - (velocities[pointStart  ] * springConstant));
+			forces[pointStart+1] = ((y1 - y) * springStiffness[i] + (y2 - y) * springStiffness[i] - (velocities[pointStart+1] * springConstant));
+		}
+		
+		// All points except sometimes first and last
+		
+		// Figure out how many points to do calc for.
+		final int start2 = startLocked ? 1 : 0;
+		final int end2 = endLocked ? numPoints - 1 : numPoints;
+		for(int i = start2; i < end2; i++) {
+			int pointStart = i * 2;
 			
-			springPoints[pointStart  ] += velocities[pointStart  ] * millistep / 1000f;
-			springPoints[pointStart+1] += velocities[pointStart+1] * millistep / 1000f;
+			velocities[pointStart  ] += forces[pointStart  ] * millistep / 1000f * 10;
+			velocities[pointStart+1] += forces[pointStart+1] * millistep / 1000f * 10;
+			
+			springPoints[pointStart  ] += velocities[pointStart  ] * millistep / 1000f * 10;
+			springPoints[pointStart+1] += velocities[pointStart+1] * millistep / 1000f * 10;
 		}
 	}
 	
@@ -68,6 +85,13 @@ public final class Spring implements Moveable {
 		}
 	}
 	
+	/**
+	 * Force sets the position of both ends of the spring. Calling this locks both ends.
+	 * @param startX
+	 * @param startY
+	 * @param finishX
+	 * @param finishY
+	 */
 	public void setEnds(double startX, double startY, double finishX, double finishY) {
 		setEnds((float)startX, (float)startY, (float)finishX, (float)finishY);
 	}
@@ -76,9 +100,36 @@ public final class Spring implements Moveable {
 		springPoints[1] = startY;
 		springPoints[springPoints.length-2] = finishX;
 		springPoints[springPoints.length-1] = finishY;
+		
+		startLocked = true;
+		endLocked = true;
+	}
+	
+	/**
+	 * Force sets the position of only one end of the spring. Calling this locks the end.
+	 * @param finishX
+	 * @param finishY
+	 */
+	public void setEnd(double finishX, double finishY) {
+		setEnd((float)finishX, (float)finishY);
+	}
+	public void setEnd(float finishX, float finishY) {
+		springPoints[springPoints.length-2] = finishX;
+		springPoints[springPoints.length-1] = finishY;
+		
+		startLocked = false;
+		endLocked = true;
 	}
 	
 	public float[] getSpringPoints() {
 		return springPoints;
+	}
+	
+	private Coord endForceCoord = new Coord();
+	
+	public Coord calculateEndForce() {
+		endForceCoord.x = forces[forces.length-2];
+		endForceCoord.y = forces[forces.length-1];
+		return endForceCoord;
 	}
 }

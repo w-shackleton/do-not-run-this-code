@@ -14,10 +14,17 @@ import uk.digitalsquid.spacegame.spaceitem.CompuFuncs;
 public class Bezier extends Lines {
 	private static final int BEZIER_POINTS = 30;
 	
-	public Bezier(float x, float y, float r,
+	public Bezier(float r,
 			float g, float b, float a) {
-		super(x, y, BEZIER_POINTS, GL10.GL_LINE_STRIP, r, g, b, a);
+		super(0, 0, BEZIER_POINTS, GL10.GL_LINE_STRIP, r, g, b, a);
+		debugPoints = new Points(0, 0, 0, 1, 1, 0, 1);
+		debugPoints.setPointSize(7);
 	}
+	
+	/**
+	 * Show bezier control points on screen
+	 */
+	private final Points debugPoints;
 	
 	private float[] bezierPoints;
 	
@@ -27,6 +34,19 @@ public class Bezier extends Lines {
 		
 		// TODO: Check
 		bezier2D(bezierPoints, BEZIER_POINTS, getVertices());
+		
+		if(debugPoints.getVertices().capacity() != points.length / 2 * 3) {
+			debugPoints.setVertices(points.length / 2);
+		}
+		
+		// Copy points across
+		FloatBuffer debugVertices = debugPoints.getVertices();
+		int count = 0;
+		for(int i = 0; i < points.length; i+=2) {
+			debugVertices.put(count++, points[i]);
+			debugVertices.put(count++, points[i+1]);
+			debugVertices.put(count++, 0);
+		}
 	}
 	
 	/**
@@ -58,7 +78,6 @@ public class Bezier extends Lines {
     
     private static final void bezier2D(float[] b, int outputPoints, FloatBuffer output)
     {
-        output.rewind();
         int npts = (b.length) / 2;
         int icount = 0, jcount;
         float step = 1.0f / (outputPoints - 1);
@@ -84,5 +103,11 @@ public class Bezier extends Lines {
             output.put(icount++, 0);
             t += step;
         }
+    }
+    
+    @Override
+    public void draw(GL10 gl) {
+    	super.draw(gl);
+    	debugPoints.draw(gl);
     }
 }

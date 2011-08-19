@@ -33,8 +33,10 @@ public class Points {
 	
 	private int numOfVertices = -1;
 	
+	private float pointSize = 2;
+	
 	/**
-	 * Constructs a set of lines from vertices
+	 * Constructs a set of points from vertices
 	 * @param x
 	 * @param y
 	 * @param vertices The vertices to use
@@ -48,6 +50,14 @@ public class Points {
 		this.x = x;
 		this.y = y;
 		if(vertices == null) throw new IllegalArgumentException("vertices is null");
+		
+		setVertices(vertices);
+		setColour(r, g, b, a);
+	}
+	
+	public Points(float x, float y, int vertices, float r, float g, float b, float a) {
+		this.x = x;
+		this.y = y;
 		
 		setVertices(vertices);
 		setColour(r, g, b, a);
@@ -69,6 +79,8 @@ public class Points {
 		// Set flat color
 		// gl.glEnable(GL10.GL_BLEND); // Only if alpha present?
 	    // gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		
+		gl.glPointSize(pointSize);
 	    
 		gl.glColor4f(mRGBA[0], mRGBA[1], mRGBA[2], mRGBA[3]);
 		
@@ -91,7 +103,7 @@ public class Points {
 	 * 
 	 * @param vertices
 	 */
-	private final void setVertices(float[] vertices) {
+	public final void setVertices(float[] vertices) {
 		// a float is 4 bytes, therefore we multiply the number if
 		// vertices with 4.
 		numOfVertices = vertices.length / 3;
@@ -100,6 +112,24 @@ public class Points {
 		verticesBuffer = vbb.asFloatBuffer();
 		verticesBuffer.put(vertices);
 		verticesBuffer.position(0);
+	}
+	
+	/**
+	 * Set some blank vertices
+	 * @param vertices
+	 */
+	public final void setVertices(int vertices) {
+		// a float is 4 bytes, therefore we multiply the number if
+		// vertices with 4.
+		numOfVertices = vertices;
+		ByteBuffer vbb = ByteBuffer.allocateDirect(vertices * 3 * 4);
+		vbb.order(ByteOrder.nativeOrder());
+		verticesBuffer = vbb.asFloatBuffer();
+		verticesBuffer.position(0);
+	}
+	
+	public FloatBuffer getVertices() {
+		return verticesBuffer;
 	}
 
 	/**
@@ -127,5 +157,9 @@ public class Points {
 	
 	public final float getAlpha() {
 		return mRGBA[3];
+	}
+	
+	public final void setPointSize(float size) {
+		pointSize = size;
 	}
 }

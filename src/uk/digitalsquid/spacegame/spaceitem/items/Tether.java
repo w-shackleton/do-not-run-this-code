@@ -36,10 +36,10 @@ public final class Tether extends SpaceItem implements Moveable, Forceful {
 
 	public Tether(Context context, Player player) {
 		super(context, new Coord());
-		tether = new Bezier(0, 0, 1, 1, 1, 1);
+		tether = new Bezier(1, 1, 1, 1);
 		this.player = player;
 		
-		springCalc = new Spring(2, 0, 0, 0, 0, 0.9f);
+		springCalc = new Spring(7, 0, 0, 0, 0, 1f);
 	}
 	
 	Mesh fingerImg = new RectMesh(0, 0, 30, 30, 1, 0, 0, 1);
@@ -51,7 +51,10 @@ public final class Tether extends SpaceItem implements Moveable, Forceful {
 
 	@Override
 	public void drawMove(float millistep, float speedscale) {
-		springCalc.setEnds(player.itemC.x, player.itemC.y, pos.x, pos.y);
+		if(state == State.TETHERED)
+			springCalc.setEnds(pos.x, pos.y, player.itemC.x, player.itemC.y);
+		else
+			springCalc.setEnd(player.itemC.x, player.itemC.y); // Set same positions to 'hide' tether.
 		
 		springCalc.drawMove(millistep, speedscale);
 		
@@ -60,17 +63,19 @@ public final class Tether extends SpaceItem implements Moveable, Forceful {
 
 	@Override
 	public void draw(GL10 gl, float worldZoom) {
-		fingerImg.draw(gl);
+		if(state == State.TETHERED) fingerImg.draw(gl);
 		tether.draw(gl);
 	}
 
 	@Override
 	public Coord calculateRF(Coord itemC, Coord itemVC) {
 		if(state == State.DISABLED) return null;
-		double forceX = pos.x - itemC.x;
+		/*double forceX = pos.x - itemC.x;
 		double forceY = pos.y - itemC.y;
 		
-		return new Coord(forceX / 2, forceY / 2);
+		return new Coord(forceX / 2, forceY / 2);*/
+		
+		return springCalc.calculateEndForce();
 	}
 
 	@Override

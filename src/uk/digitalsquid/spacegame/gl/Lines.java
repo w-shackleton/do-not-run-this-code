@@ -98,7 +98,7 @@ public class Lines {
 	 * @param gl
 	 *            the OpenGL context to render to.
 	 */
-	public final void draw(GL10 gl) {
+	public void draw(GL10 gl) {
 		gl.glEnable(GL10.GL_POINT_SMOOTH);
 		gl.glEnable(GL10.GL_LINE_SMOOTH);
 		gl.glPointSize(2);
