@@ -7,3 +7,5 @@ svg/large
 bin/spacegame.apk
 bin/spacegame.gl.apk
 bin/codehead
+spacegame/bin/*
+spacegamelib/bin/*
