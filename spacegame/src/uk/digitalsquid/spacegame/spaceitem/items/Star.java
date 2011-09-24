@@ -19,7 +19,7 @@ import android.graphics.Matrix;
 
 public class Star extends Spherical implements LevelAffectable, Forceful, StaticDrawable
 {
-	private static final float STAR_RADIUS = .15f;
+	private static final float STAR_RADIUS = 1.5f;
 	
 	private final RectMesh img;
 	
@@ -114,7 +114,7 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 			
 			float distFromDest = (float) Math.hypot(animX - animDestX, animY - animDestY);
 			float opacity = 1;
-			if(distFromDest < 1.28f) opacity = (float) CompuFuncs.TrimMin((distFromDest - .64f) / .64f, 0);
+			if(distFromDest < 12.8f) opacity = (float) CompuFuncs.TrimMin((distFromDest - 6.4f) / 6.4f, 0);
 			if(opacity == 0) {
 				drawingP2 = false;
 				sendFinishedStatus = true;

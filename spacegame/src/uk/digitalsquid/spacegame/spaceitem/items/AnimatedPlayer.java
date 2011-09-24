@@ -22,7 +22,7 @@ public class AnimatedPlayer extends Player
 	/**
 	 * The amount that the eye can move in its socket
 	 */
-	protected static final float EYE_MOVE_AMOUNT = 0.03f;
+	protected static final float EYE_MOVE_AMOUNT = 0.3f;
 	
 	/**
 	 * The position that the eye is aiming to be at (for animation)
@@ -42,7 +42,7 @@ public class AnimatedPlayer extends Player
 	/**
 	 * How quickly the distance affects the eye position
 	 */
-	protected static final float LOOKTO_DISTANCE_AFFECTOR = 1.5f;
+	protected static final float LOOKTO_DISTANCE_AFFECTOR = 15f;
 	
 	protected final RectMesh ball, leftEar, rightEar;
 	protected final RectMesh leftEye, leftEyeinside, leftEyeblinking;
@@ -65,9 +65,9 @@ public class AnimatedPlayer extends Player
 	 */
 	private static final float EYE_MOVE_SPEED = 70;
 	
-	private static final Vec2 lEar = new Vec2(-.07f, -.04f);
-	private static final Vec2 rEar = new Vec2(-.07f, .04f);
-	private static final Vec2 EAR_SIZE = new Vec2(0.2f, 0.1f);
+	private static final Vec2 lEar = new Vec2(-.7f, -.4f);
+	private static final Vec2 rEar = new Vec2(-.7f, .4f);
+	private static final Vec2 EAR_SIZE = new Vec2(2f, 1f);
 	private static final float LEFT_EAR_RESTING_POSITION = 20;
 	private static final float RIGHT_EAR_RESTING_POSITION = -20;
 	private static final float EAR_ROTATING_AIR_RESISTANCE = 0.993f;
@@ -77,10 +77,10 @@ public class AnimatedPlayer extends Player
 	private float lEarRotationSpeed = 0;
 	private float rEarRotationSpeed = 0;
 	
-	protected static final Vec2 lEye = new Vec2(-0.06f, -0.07f);
-	protected static final Vec2 rEye = new Vec2(-0.06f, 0.07f);
+	protected static final Vec2 lEye = new Vec2(-0.6f, -0.7f);
+	protected static final Vec2 rEye = new Vec2(-0.6f, 0.7f);
 	
-	private static final Vec2 LANDING_GEAR_SIZE = new Vec2(0.4f, 0.2f);
+	private static final Vec2 LANDING_GEAR_SIZE = new Vec2(4f, 2f);
 	
 	/**
 	 * Left gear has to be negative

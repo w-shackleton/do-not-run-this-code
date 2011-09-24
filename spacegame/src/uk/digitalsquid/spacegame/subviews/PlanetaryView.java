@@ -199,7 +199,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 				screenPos[i] = new Vec2();
 			
 			// BG Points
-			BG_POINTS_PER_AREA = (int) level.bounds.length() * 300;
+			BG_POINTS_PER_AREA = (int) level.bounds.length() * 30;
 			bgPoints = new BgPoints(BG_POINTS_PER_AREA, (int)level.bounds.x, (int)level.bounds.y);
 			
 			startTime = System.currentTimeMillis();

@@ -48,8 +48,8 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		
 		protected long currTime, prevTime, millistep = 17;
 		
-		protected static final float REQ_SIZE_Y = 3.20f; // & 480 - scale to middle-screen size.
-		protected float scaledWidth = 4.80f;
+		protected static final float REQ_SIZE_Y = 32.0f; // & 480 - scale to middle-screen size.
+		protected float scaledWidth = 48.0f;
 		protected float scaledHeight = REQ_SIZE_Y;
 		
 		public ViewWorker(Context context)
@@ -112,7 +112,7 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 			gl.glLoadIdentity(); 					//Reset The Projection Matrix
 	
 			//Calculate The Aspect Ratio Of The Window
-			GLU.gluPerspective(gl, 90.0f, (float)width / (float)height, .5f, 10.0f);
+			GLU.gluPerspective(gl, 90.0f, (float)width / (float)height, 5f, 200.0f);
 			scaledWidth = (REQ_SIZE_Y * width) / height;
 	
 			gl.glMatrixMode(GL10.GL_MODELVIEW); 	//Select The Modelview Matrix

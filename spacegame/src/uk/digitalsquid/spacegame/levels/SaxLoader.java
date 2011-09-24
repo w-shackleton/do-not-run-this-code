@@ -26,7 +26,7 @@ import android.util.Xml;
  */
 public class SaxLoader
 {
-	protected static final float LOAD_SCALE = 0.01f;
+	protected static final float LOAD_SCALE = 0.1f;
 	
 	private static final String ROOT = "level";
 	

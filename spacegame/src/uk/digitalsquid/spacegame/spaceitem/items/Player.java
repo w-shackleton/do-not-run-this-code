@@ -12,14 +12,12 @@ import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Moveable;
 
 public abstract class Player extends PlayerBase implements Moveable
 {
-	protected static final float EYE_RADIUS = .05f;
+	protected static final float EYE_RADIUS = .5f;
 	protected static final int ITERS = Simulation.ITERS; // From PlanetaryView - not really needed.
 	
 	protected float ballRotation = 0;
 	protected float ballRotationSpeed = 0;
 	protected float ballMomentum = 0;
-	
-	protected static final float BALL_ROTATION_AIR_RESISTANCE = 0.98f;
 	
 	public Player(SimulationContext context, Vec2 coord, float radius)
 	{
@@ -73,7 +71,7 @@ public abstract class Player extends PlayerBase implements Moveable
 			}
 		}
 		
-		body.applyTorque(ballMomentum / 100000 * apparentRF.length());
+		body.applyTorque(ballMomentum / 100 * apparentRF.length());
 		
 		/* ballRotationSpeed += ballMomentum * millistep / ITERS / 1000f;
 		ballRotationSpeed *= BALL_ROTATION_AIR_RESISTANCE;

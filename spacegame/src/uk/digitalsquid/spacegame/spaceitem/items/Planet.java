@@ -19,13 +19,13 @@ import uk.digitalsquid.spacegamelib.spaceitem.Gravitable;
 public class Planet extends Gravitable
 {
 	protected static final PlanetType[] PLANET_TYPES = {
-		new PlanetType(Type.nobounce1,	FgType.image,	R.drawable.planet1,		0.2f, 0.5f, .30f, 2.50f, null),
-		new PlanetType(Type.sticky1,	FgType.image,	R.drawable.planet5,		0f,   0.9f, .40f, 2.50f, null),
-		new PlanetType(Type.bounce2,	FgType.image,	R.drawable.planet2,		1f,   0.1f, .20f, 2.00f, null),
-		new PlanetType(Type.n1,			FgType.image,	R.drawable.planet3,		0.6f, 0.6f, .20f, 2.00f, null),
-		new PlanetType(Type.n2,			FgType.image,	R.drawable.planet4,		0.7f, 0.7f, .20f, 2.00f, null),
-		new PlanetType(Type.n3,			FgType.image,	R.drawable.planet6,		0.8f, 0.8f, .20f, 2.00f, null),
-		new PlanetType(Type.bounce1,	FgType.image,	R.drawable.planetbouncy,1.3f, 0.8f, .20f, 1.50f, null)
+		new PlanetType(Type.nobounce1,	FgType.image,	R.drawable.planet1,		0.2f, 0.5f, 3f, 25f, null),
+		new PlanetType(Type.sticky1,	FgType.image,	R.drawable.planet5,		0f,   0.9f, 4f, 25f, null),
+		new PlanetType(Type.bounce2,	FgType.image,	R.drawable.planet2,		1f,   0.1f, 2f, 20f, null),
+		new PlanetType(Type.n1,			FgType.image,	R.drawable.planet3,		0.6f, 0.6f, 2f, 20f, null),
+		new PlanetType(Type.n2,			FgType.image,	R.drawable.planet4,		0.7f, 0.7f, 2f, 20f, null),
+		new PlanetType(Type.n3,			FgType.image,	R.drawable.planet6,		0.8f, 0.8f, 2f, 20f, null),
+		new PlanetType(Type.bounce1,	FgType.image,	R.drawable.planetbouncy,1.3f, 0.8f, 2f, 15f, null)
 	};
 	
 	protected PlanetType type = PLANET_TYPES[0];

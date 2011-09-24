@@ -67,8 +67,8 @@ public class SplashScreen extends DrawBaseView<SplashScreen.ViewWorker>
 		int timeThroughLoop = 0;
 		
 		private RectMesh splashLogo;
-		private static final int SPLASH_LOGO_WIDTH = 200;
-		private static final int SPLASH_LOGO_HEIGHT = 100;
+		private static final int SPLASH_LOGO_WIDTH = 20;
+		private static final int SPLASH_LOGO_HEIGHT = 10;
 		private float splashLogoOpacity = 0;
 		private float splashLogoWantedOpacity = 0;
 		

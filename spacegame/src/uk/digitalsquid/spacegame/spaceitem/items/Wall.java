@@ -20,7 +20,7 @@ import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Moveable;
 public class Wall extends Rectangular implements Moveable
 {
 	protected static final int LINES = 10;
-	protected static final float GAP_WIDTH = .15f;
+	protected static final float GAP_WIDTH = 1.5f;
 	protected static final Random rGen = new Random();
 	
 	protected static final float BOUNCINESS = 0.7f;
@@ -29,9 +29,9 @@ public class Wall extends Rectangular implements Moveable
 	
 	protected static final PaintDesc wallPaint = new PaintDesc(20, 100, 40);
 	
-	protected static final float WALL_WIDTH = .16f;
-	protected static final float WALL_MIN_X = .80f;
-	protected static final float WALL_MAX_X = 10.00f;
+	protected static final float WALL_WIDTH = 1.6f;
+	protected static final float WALL_MIN_X = 8.0f;
+	protected static final float WALL_MAX_X = 100.0f;
 	
 	/**
 	 * Construct a new {@link Wall}.
@@ -43,7 +43,7 @@ public class Wall extends Rectangular implements Moveable
 	 */
 	public Wall(SimulationContext context, Vec2 coord, float size, float rotation)
 	{
-		super(context, coord, new Vec2(CompuFuncs.TrimMinMax(size, WALL_MIN_X, WALL_MAX_X), WALL_WIDTH), 15, rotation, BOUNCINESS, BodyType.STATIC);
+		super(context, coord, new Vec2(CompuFuncs.TrimMinMax(size, WALL_MIN_X, WALL_MAX_X), WALL_WIDTH), 1, rotation, BOUNCINESS, BodyType.STATIC);
 		
 		wallside1 = new RectMesh((float)-(this.size.x / 2 - this.size.y / 2), 0, (float)this.size.y, (float)this.size.y, R.drawable.wallside);
 		wallside2 = new RectMesh((float)+(this.size.x / 2 - this.size.y / 2), 0, (float)this.size.y, (float)this.size.y, R.drawable.wallside);

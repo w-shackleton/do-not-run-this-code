@@ -8,7 +8,7 @@ import uk.digitalsquid.spacegamelib.SimulationContext;
 import uk.digitalsquid.spacegamelib.spaceitem.Spherical;
 
 public abstract class PlayerBase extends Spherical {
-	public static final float BALL_RADIUS = .14f;
+	public static final float BALL_RADIUS = 1.4f;
 	
 	public final Vec2 itemC, itemRF = new Vec2(); // For portability to old code
 	/**
@@ -19,10 +19,10 @@ public abstract class PlayerBase extends Spherical {
 	public PlayerBase(SimulationContext context, Vec2 coord, float radius) {
 		super(context, coord, 10, BALL_RADIUS, BodyType.DYNAMIC);
 		body.setSleepingAllowed(false);
-		fixture.setRestitution(1f);
-		fixture.setFriction(0.45f);
+		fixture.setRestitution(0.2f);
+		fixture.setFriction(0.95f);
 		fixture.setDensity(10);
-		body.setAngularDamping(0.1f);
+		body.setAngularDamping(0.2f);
 		itemC = getPos();
 		
 		fixture.getFilterData().categoryBits = COLLISION_GROUP_PLAYER;

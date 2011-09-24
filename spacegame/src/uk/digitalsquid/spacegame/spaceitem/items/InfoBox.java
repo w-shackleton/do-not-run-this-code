@@ -27,8 +27,8 @@ public class InfoBox extends Rectangular implements Messageable, Clickable
 	 */
 	
 	protected static final float BOUNCINESS = 0.8f;
-	protected static final Vec2 SIZE = new Vec2(.50f, .40f);
-	protected static final Vec2 IMG_SIZE = new Vec2(.50f, .50f);
+	protected static final Vec2 SIZE = new Vec2(5f, 4f);
+	protected static final Vec2 IMG_SIZE = new Vec2(5f, 5f);
 	
 	public InfoBox(SimulationContext context, Vec2 coord, float rotation, String text, boolean initialshow)
 	{

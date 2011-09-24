@@ -44,7 +44,7 @@ public final class Tether extends SpaceItem implements Moveable, Forceful {
 		springCalc = new Spring(7, player.itemC.x, player.itemC.y, player.itemC.x, player.itemC.y, 1f);
 	}
 	
-	Mesh fingerImg = new RectMesh(0, 0, .3f, .3f, 1, 0, 0, 1);
+	Mesh fingerImg = new RectMesh(0, 0, 3f, 3f, 1, 0, 0, 1);
 
 	@Override
 	public void move(float millistep, float speedScale) {

@@ -32,24 +32,24 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	/**
 	 * Causes star to 'jump' when star collected
 	 */
-	private int jump;
+	private float jump;
 	private int jumpStatus = STAR_RESTING;
 	
 	private static final int STAR_RESTING = 0;
 	private static final int STAR_RISING  = 1;
 	private static final int STAR_FALLING = 2;
 	
-	private static final float STAR_JUMP_DIST = .10f;
-	private static final float STAR_JUMP_SPEED = 0.01f;
+	private static final float STAR_JUMP_DIST = 1f;
+	private static final float STAR_JUMP_SPEED = 0.1f;
 	
 	private final Portal portal;
 	
 	public StarDisplay(Context context, int starTotal, Portal portal) {
-		star = new RectMesh(.25f, -.25f, .30f, .30f, R.drawable.star);
+		star = new RectMesh(2.5f, -2.5f, 3.0f, 3.0f, R.drawable.star);
 		this.starTotal = starTotal;
 		this.portal = portal;
 		
-		text = new Text("0", .50f, -.25f, .30f);
+		text = new Text("0", 5.0f, -2.5f, 3.0f);
 	}
 
 	@Override

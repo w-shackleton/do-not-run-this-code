@@ -21,7 +21,7 @@ import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Warpable;
  */
 public class Portal extends Gravitable implements Moveable, Warpable {
 	
-	private static final float PORTAL_RADIUS = .7f;
+	private static final float PORTAL_RADIUS = 7f;
 	private static final float PORTAL_DENSITY = 5f;
 	private static final float PORTAL_NORMAL_DENSITY = 0;
 	private static final float PORTAL_NORMAL_RADIUS = 0;
@@ -48,7 +48,7 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 	
 	private float rotation = 0, rotation2 = 0;
 	
-	private static final float OPENING_RADIUS = .3f;
+	private static final float OPENING_RADIUS = 3f;
 	private float openingRadius = 0;
 	
 	public Portal(SimulationContext context, Vec2 coord) {
@@ -138,14 +138,14 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 			tmpFinishPoint.x -= (tmpFinishPoint.x - getPosX()) / 100f;
 			tmpFinishPoint.y -= (tmpFinishPoint.y - getPosY()) / 100f;
 			p.itemC.set(tmpFinishPoint);
-		} else if(status != Status.DISABLED && VecHelper.dist(getPos(), p.itemC) < 0.2f) {
+		} else if(status != Status.DISABLED && VecHelper.dist(getPos(), p.itemC) < 2f) {
 			tmpFinishPoint.set(p.itemC);
 			SoundManager.get().playSound(SoundManager.SOUND_PORTAL);
 		}
 	}
 	
 	public void calculateVelocityMutable(PlayerBase p, float itemRadius) {
-		if(status != Status.DISABLED && VecHelper.dist(getPos(), p.itemC) < 0.2f)
+		if(status != Status.DISABLED && VecHelper.dist(getPos(), p.itemC) < 2f)
 			status = Status.FINISHING;
 	}
 	

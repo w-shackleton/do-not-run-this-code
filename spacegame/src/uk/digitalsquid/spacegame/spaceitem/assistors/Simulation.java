@@ -62,7 +62,6 @@ public final class Simulation {
 		{
 			p.itemRF.setZero();
 			p.apparentRF.setZero();
-			Vec2 velocityAcc = null;
 			for(SpaceItem obj : planetList)
 			{
 				if(!paused)
@@ -115,7 +114,7 @@ public final class Simulation {
 				gravityEffectMultiplier = (gravityEffectMultiplier - 1) * 0.99f + 1; // Slowly reset to 1
 				p.itemRF.mulLocal(gravityEffectMultiplier);
 				
-				p.itemRF.mulLocal(.005f);
+				p.itemRF.mulLocal(.5f);
 				
 				p.getBody().applyForce(p.itemRF, p.itemC);
 				
