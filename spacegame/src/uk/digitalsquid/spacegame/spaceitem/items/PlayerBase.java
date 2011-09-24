@@ -18,7 +18,10 @@ public abstract class PlayerBase extends Spherical {
 
 	public PlayerBase(SimulationContext context, Vec2 coord, float radius) {
 		super(context, coord, 1, BALL_RADIUS, BodyType.DYNAMIC);
-		fixture.setRestitution(0.9f);
+		body.setSleepingAllowed(false);
+		fixture.setRestitution(10f);
+		fixture.setFriction(0.45f);
+		body.setAngularDamping(0.1f);
 		itemC = getPos();
 		
 		fixture.getFilterData().categoryBits = COLLISION_GROUP_PLAYER;

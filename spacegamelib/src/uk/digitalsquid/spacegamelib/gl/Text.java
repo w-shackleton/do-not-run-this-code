@@ -51,7 +51,7 @@ public class Text extends RectMesh {
 		
 		char[] l = text.toCharArray();
 		
-		int width = 0;
+		float width = 0;
 		
 		for(char letter : l) {
 			Letter tmpLetter = TextureManager.getText128Texture(gl, letter);

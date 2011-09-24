@@ -38,17 +38,18 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	private static final int STAR_RESTING = 0;
 	private static final int STAR_RISING  = 1;
 	private static final int STAR_FALLING = 2;
-	private static final int STAR_JUMP_DIST = 10;
-	private static final int STAR_JUMP_SPEED = 1;
+	
+	private static final float STAR_JUMP_DIST = .10f;
+	private static final float STAR_JUMP_SPEED = 0.01f;
 	
 	private final Portal portal;
 	
 	public StarDisplay(Context context, int starTotal, Portal portal) {
-		star = new RectMesh(25, -25, 30, 30, R.drawable.star);
+		star = new RectMesh(.25f, -.25f, .30f, .30f, R.drawable.star);
 		this.starTotal = starTotal;
 		this.portal = portal;
 		
-		text = new Text("0", 50, -25, 30);
+		text = new Text("0", .50f, -.25f, .30f);
 	}
 
 	@Override

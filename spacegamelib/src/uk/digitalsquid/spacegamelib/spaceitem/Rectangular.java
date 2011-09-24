@@ -35,7 +35,8 @@ public abstract class Rectangular extends SpaceItem implements IsClickable
 		poly = new PolygonShape();
 		poly.setAsBox((float)size.x / 2, (float)size.y / 2);
 		fixtureDef.shape = poly;
-		fixtureDef.density = density;
+		fixtureDef.density = density * 1000;
+		fixtureDef.friction = 0.4f;
 		fixtureDef.restitution = restitution;
 		fixture = body.createFixture(fixtureDef);
 		fixture.setUserData(this);
@@ -65,7 +66,7 @@ public abstract class Rectangular extends SpaceItem implements IsClickable
 		tmpRectPos[0].y = getPosY() + CompuFuncs.RotateY(-size.x / 2, -size.y / 2, getRotation() * DEG_TO_RAD);
 		tmpRectPos[1].x = getPosX() + CompuFuncs.RotateX(+size.x / 2, -size.y / 2, getRotation() * DEG_TO_RAD);
 		tmpRectPos[1].y = getPosY() + CompuFuncs.RotateY(+size.x / 2, -size.y / 2, getRotation() * DEG_TO_RAD);
-		tmpRectPos[2].x = getPosY() + CompuFuncs.RotateX(+size.x / 2, +size.y / 2, getRotation() * DEG_TO_RAD);
+		tmpRectPos[2].x = getPosX() + CompuFuncs.RotateX(+size.x / 2, +size.y / 2, getRotation() * DEG_TO_RAD);
 		tmpRectPos[2].y = getPosY() + CompuFuncs.RotateY(+size.x / 2, +size.y / 2, getRotation() * DEG_TO_RAD);
 		tmpRectPos[3].x = getPosX() + CompuFuncs.RotateX(-size.x / 2, +size.y / 2, getRotation() * DEG_TO_RAD);
 		tmpRectPos[3].y = getPosY() + CompuFuncs.RotateY(-size.x / 2, +size.y / 2, getRotation() * DEG_TO_RAD);

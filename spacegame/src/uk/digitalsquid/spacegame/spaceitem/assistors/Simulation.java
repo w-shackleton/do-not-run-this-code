@@ -62,6 +62,7 @@ public final class Simulation {
 		{
 			p.itemRF.setZero();
 			p.apparentRF.setZero();
+			Vec2 velocityAcc = null;
 			for(SpaceItem obj : planetList)
 			{
 				if(!paused)
@@ -79,8 +80,9 @@ public final class Simulation {
 						Vec2 data = item.calculateVelocityImmutable(p.itemC, p.getVelocity(), AnimatedPlayer.BALL_RADIUS);
 						if(data != null)
 						{
-							if(data != null)
+							if(data != null && !paused) {
 								p.setVelocity(data);
+							}
 						}
 						item.calculateVelocityMutable(p.itemC, p.getVelocity(), AnimatedPlayer.BALL_RADIUS);
 					}
@@ -115,7 +117,6 @@ public final class Simulation {
 				p.itemRF.mulLocal(.005f);
 				
 				p.getBody().applyForce(p.itemRF, p.itemC);
-				// p.getBody().setLinearVelocity(p.getBody().getLinearVelocity().addLocal(p.itemVC));
 				
 				context.world.step(millistep / ITERS / 1000f * SPEED_SCALE, 1, 1);
 			}

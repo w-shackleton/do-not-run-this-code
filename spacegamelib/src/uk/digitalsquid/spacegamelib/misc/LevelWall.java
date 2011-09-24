@@ -15,7 +15,7 @@ import uk.digitalsquid.spacegamelib.spaceitem.Rectangular;
  */
 public class LevelWall extends Rectangular {
 	
-	protected static final float WALL_RESTITUTION = 0.8f;
+	protected static final float WALL_RESTITUTION = 0.7f;
 
 	public LevelWall(SimulationContext context, Vec2 coord, Vec2 size) {
 		super(context, coord, size, 1, 0, WALL_RESTITUTION, BodyType.STATIC);

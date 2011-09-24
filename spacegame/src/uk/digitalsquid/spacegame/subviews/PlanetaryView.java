@@ -154,7 +154,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			
 			World world = new World(new Vec2(), true);
 			sim = new SimulationContext(context, world);
-			world.setContactListener(this);
+			// world.setContactListener(this);
 			
 			boolean loadError = false;
 			try {

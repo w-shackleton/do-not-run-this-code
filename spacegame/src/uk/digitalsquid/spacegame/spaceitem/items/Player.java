@@ -24,7 +24,6 @@ public abstract class Player extends PlayerBase implements Moveable
 	public Player(SimulationContext context, Vec2 coord, float radius)
 	{
 		super(context, coord, radius);
-		body.setAngularDamping(0.1f);
 	}
 	
 	@Override

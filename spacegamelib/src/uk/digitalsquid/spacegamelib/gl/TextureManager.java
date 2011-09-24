@@ -150,7 +150,7 @@ public class TextureManager {
 		                   GL10.GL_TEXTURE_MIN_FILTER,
 		                   GL10.GL_LINEAR);
 		
-		int width = (int) txtPaint.measureText("" + letter);
+		float width = txtPaint.measureText("" + letter);
 		
 		Bitmap bmp = Bitmap.createBitmap(TEXT_WIDTH, TEXT_HEIGHT, Bitmap.Config.ARGB_8888);
 		Canvas c = new Canvas(bmp);
@@ -166,9 +166,9 @@ public class TextureManager {
 	
 	public static class Letter {
 		public final int id;
-		public final int width;
+		public final float width;
 		
-		public Letter(int id, int width) {
+		public Letter(int id, float width) {
 			this.id = id;
 			this.width = width;
 		}
