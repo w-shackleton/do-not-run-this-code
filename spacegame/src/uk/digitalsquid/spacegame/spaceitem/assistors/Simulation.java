@@ -35,11 +35,9 @@ public final class Simulation {
 			this.callbacks = callbacks;
 	}
 	
-	public static final int ITERS = 5;
+	public static final int ITERS = 1;
 	public static final int SPEED_SCALE = 20;
 
-	protected static final float WALL_BOUNCINESS = 0.8f;
-	
 	/**
 	 * Sets a temporary multiplier for the gravity; this is used when firing the ball, 
 	 * to improve gameplay slightly by giving the character a 'head start' on gravity.
@@ -62,41 +60,8 @@ public final class Simulation {
 		
 		for(int iter = 0; iter < ITERS; iter++) // Main physics loop
 		{
-			if(!paused)
-			{
-				// TODO: CHANGE TO BOX2D
-				// Check for collisions with wall
-				if(p.itemC.x > level.bounds.x / 2 - AnimatedPlayer.BALL_RADIUS)
-				{
-					p.itemVC.x = -p.itemVC.x * WALL_BOUNCINESS;
-					if(p.itemVC.x > 0) // Solves physics error
-						p.itemVC.x = 0;
-					callbacks.wallBounced((float) (p.itemVC.length()));
-				}
-				if(p.itemC.x < -(level.bounds.x / 2 - AnimatedPlayer.BALL_RADIUS))
-				{
-					p.itemVC.x = -p.itemVC.x * WALL_BOUNCINESS;
-					if(p.itemVC.x < 0)
-						p.itemVC.x = 0;
-					callbacks.wallBounced((float) (p.itemVC.length()));
-				}
-				if(p.itemC.y > level.bounds.y / 2 - AnimatedPlayer.BALL_RADIUS)
-				{
-					p.itemVC.y = -p.itemVC.y * WALL_BOUNCINESS;
-					if(p.itemVC.y > 0) // Solves physics error
-						p.itemVC.y = 0;
-					callbacks.wallBounced((float) (p.itemVC.length()));
-				}
-				if(p.itemC.y < -(level.bounds.y / 2 - AnimatedPlayer.BALL_RADIUS))
-				{
-					p.itemVC.y = -p.itemVC.y * WALL_BOUNCINESS;
-					if(p.itemVC.y < 0)
-						p.itemVC.y = 0;
-					callbacks.wallBounced((float) (p.itemVC.length()));
-				}
-			}
-			
 			p.itemRF.setZero();
+			p.apparentRF.setZero();
 			for(SpaceItem obj : planetList)
 			{
 				if(!paused)
@@ -111,26 +76,30 @@ public final class Simulation {
 						}
 						
 						// Stage for velocity changes
-						Vec2 data = item.calculateVelocityImmutable(p.itemC, p.itemVC, AnimatedPlayer.BALL_RADIUS);
+						Vec2 data = item.calculateVelocityImmutable(p.itemC, p.getVelocity(), AnimatedPlayer.BALL_RADIUS);
 						if(data != null)
 						{
 							if(data != null)
-								p.itemVC.set(data);
+								p.setVelocity(data);
 						}
-						item.calculateVelocityMutable(p.itemC, p.itemVC, AnimatedPlayer.BALL_RADIUS);
+						item.calculateVelocityMutable(p.itemC, p.getVelocity(), AnimatedPlayer.BALL_RADIUS);
 					}
 				}
 			}
+			
+			p.apparentRF.set(p.itemRF); // Duplicate - different from here on
 			
 			if(gravOn)
 			{
 				if(portal != null) {
 					Vec2 tmp = portal.calculateRF(p.itemC);
 					if(tmp != null) p.itemRF.addLocal(tmp);
+					if(tmp != null) p.apparentRF.addLocal(tmp);
 				}
 				if(tether != null) {
 					Vec2 tmp = tether.calculateRF(p.itemC);
 					if(tmp != null) p.itemRF.addLocal(tmp);
+					if(tmp != null) p.apparentRF.subLocal(tmp);
 				}
 			}
 			
@@ -143,9 +112,9 @@ public final class Simulation {
 				gravityEffectMultiplier = (gravityEffectMultiplier - 1) * 0.99f + 1; // Slowly reset to 1
 				p.itemRF.mulLocal(gravityEffectMultiplier);
 				
-				p.itemRF.mulLocal(50);
+				p.itemRF.mulLocal(.005f);
 				
-				p.getBody().applyForce(p.itemRF, new Vec2());
+				p.getBody().applyForce(p.itemRF, p.itemC);
 				// p.getBody().setLinearVelocity(p.getBody().getLinearVelocity().addLocal(p.itemVC));
 				
 				context.world.step(millistep / ITERS / 1000f * SPEED_SCALE, 1, 1);

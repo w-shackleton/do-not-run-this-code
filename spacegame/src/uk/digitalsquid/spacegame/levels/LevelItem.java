@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.jbox2d.common.Vec2;
 
+import uk.digitalsquid.spacegamelib.SimulationContext;
+import uk.digitalsquid.spacegamelib.misc.LevelWall;
 import uk.digitalsquid.spacegamelib.spaceitem.SpaceItem;
 
 public final class LevelItem
@@ -57,7 +59,7 @@ public final class LevelItem
 			startSpeed = new Vec2(); // In case it was accidentially not initialised. (ie not in XML)
 		
 		if(bounds == null)
-			bounds = new Vec2(200, 200);
+			bounds = new Vec2(2, 2);
 		
 		// if(portal == null) 
 			// portal = new Coord();
@@ -68,6 +70,14 @@ public final class LevelItem
 		if(levelName == null) levelName = "";
 		
 		if(starsToCollect < 1) starsToCollect = 10;
+	}
+	
+	public void initialiseBox2D(SimulationContext context) {
+		new LevelWall(context, new Vec2(-(bounds.x / 2 + 1), 0), new Vec2(2, bounds.y));
+		new LevelWall(context, new Vec2(+(bounds.x / 2 + 1), 0), new Vec2(2, bounds.y));
+		
+		new LevelWall(context, new Vec2(0, -(bounds.y / 2 + 1)), new Vec2(bounds.x, 2));
+		new LevelWall(context, new Vec2(0, +(bounds.y / 2 + 1)), new Vec2(bounds.x, 2));
 	}
 	
 	public static final class LevelSummary {

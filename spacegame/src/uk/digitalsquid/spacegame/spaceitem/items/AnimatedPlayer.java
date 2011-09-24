@@ -22,7 +22,7 @@ public class AnimatedPlayer extends Player
 	/**
 	 * The amount that the eye can move in its socket
 	 */
-	protected static final int EYE_MOVE_AMOUNT = 3;
+	protected static final float EYE_MOVE_AMOUNT = 0.03f;
 	
 	/**
 	 * The position that the eye is aiming to be at (for animation)
@@ -42,7 +42,7 @@ public class AnimatedPlayer extends Player
 	/**
 	 * How quickly the distance affects the eye position
 	 */
-	protected static final int LOOKTO_DISTANCE_AFFECTOR = 150;
+	protected static final float LOOKTO_DISTANCE_AFFECTOR = 1.5f;
 	
 	protected final RectMesh ball, leftEar, rightEar;
 	protected final RectMesh leftEye, leftEyeinside, leftEyeblinking;
@@ -65,9 +65,9 @@ public class AnimatedPlayer extends Player
 	 */
 	private static final float EYE_MOVE_SPEED = 70;
 	
-	private static final Vec2 lEar = new Vec2(-7, -4);
-	private static final Vec2 rEar = new Vec2(-7, 4);
-	private static final Vec2 EAR_SIZE = new Vec2(20, 10);
+	private static final Vec2 lEar = new Vec2(-.07f, -.04f);
+	private static final Vec2 rEar = new Vec2(-.07f, .04f);
+	private static final Vec2 EAR_SIZE = new Vec2(0.2f, 0.1f);
 	private static final float LEFT_EAR_RESTING_POSITION = 20;
 	private static final float RIGHT_EAR_RESTING_POSITION = -20;
 	private static final float EAR_ROTATING_AIR_RESISTANCE = 0.993f;
@@ -77,10 +77,10 @@ public class AnimatedPlayer extends Player
 	private float lEarRotationSpeed = 0;
 	private float rEarRotationSpeed = 0;
 	
-	protected static final Vec2 lEye = new Vec2(-6, -7);
-	protected static final Vec2 rEye = new Vec2(-6, 7);
+	protected static final Vec2 lEye = new Vec2(-0.06f, -0.07f);
+	protected static final Vec2 rEye = new Vec2(-0.06f, 0.07f);
 	
-	private static final Vec2 LANDING_GEAR_SIZE = new Vec2(40, 20);
+	private static final Vec2 LANDING_GEAR_SIZE = new Vec2(0.4f, 0.2f);
 	
 	/**
 	 * Left gear has to be negative
@@ -112,8 +112,7 @@ public class AnimatedPlayer extends Player
 		landingGearLeft.setRotation(-LANDING_GEAR_CLOSED_ROTATION);
 		landingGearRight.setRotation(LANDING_GEAR_CLOSED_ROTATION);
 		
-		itemC.set(getPos()); // Referenced?
-		itemVC.set(velocity);
+		body.setLinearVelocity(velocity);
 		itemRF.setZero();
 		
 		lookTo(new Vec2(0, 0));
@@ -126,7 +125,7 @@ public class AnimatedPlayer extends Player
 		// Calculation steps...
 		
 		lookToDistance.set(itemC);
-		lookToDistance.subLocal(eyeMoveToOnGame); // lookTo - itemC - eyeMoveToOnGame
+		lookToDistance.subLocal(eyeMoveToOnGame); // lookTo = itemC - eyeMoveToOnGame
 		
 		float lookLength = lookToDistance.length();
 		float lookAngle = VecHelper.angleRad(lookToDistance);
@@ -148,7 +147,7 @@ public class AnimatedPlayer extends Player
 		eyePos.x += eyeDistanceToMove.x / EYE_MOVE_SPEED;
 		eyePos.y += eyeDistanceToMove.y / EYE_MOVE_SPEED;
 		
-		eyeRotatedPos.set(eyeMoveTo);
+		eyeRotatedPos.set(eyePos);
 		CompuFuncs.rotateLocal(eyeRotatedPos, null, -ballRotation * DEG_TO_RAD);
 		
 		// Draw
@@ -166,6 +165,7 @@ public class AnimatedPlayer extends Player
 		
 		
 		gl.glPushMatrix();
+		ballRotation = body.getAngle() * RAD_TO_DEG;
 		gl.glRotatef(ballRotation, 0, 0, 1);
 		gl.glTranslatef(-landingDrawShiftX, 0, 0);
 		
@@ -196,7 +196,7 @@ public class AnimatedPlayer extends Player
 			rightEye.draw(gl);
 			
 			gl.glPushMatrix();
-			gl.glTranslatef((float)eyeRotatedPos.x, (float)eyeRotatedPos.y, 0);
+			gl.glTranslatef((float)-eyeRotatedPos.x, (float)-eyeRotatedPos.y, 0);
 			
 			leftEyeinside.draw(gl);
 			rightEyeinside.draw(gl);
@@ -259,14 +259,14 @@ public class AnimatedPlayer extends Player
 		double leftEarExternalForce  = CompuFuncs.RotateY(itemRF.x, itemRF.y, (float) ((180-leftEarFullRotation) / 180 * Math.PI));
 		double rightEarExternalForce = CompuFuncs.RotateY(itemRF.x, itemRF.y, (float) ((180-rightEarFullRotation) / 180 * Math.PI));
 		
-		double leftEarForce = LEFT_EAR_RESTING_POSITION - lEarRotation + leftEarExternalForce / 2f;
+		double leftEarForce = LEFT_EAR_RESTING_POSITION - lEarRotation + leftEarExternalForce / 10f;
 		
 		lEarRotationSpeed += leftEarForce * millistep / ITERS / 1000f;
 		lEarRotationSpeed *= EAR_ROTATING_AIR_RESISTANCE;
 		lEarRotation += lEarRotationSpeed * millistep / ITERS / 1000f * speedScale * EAR_ROTATING_SPEED;
 		lEarRotation = CompuFuncs.TrimMinMax(lEarRotation, lEarRotation - 45, lEarRotation + 45);
 		
-		double rightEarForce = RIGHT_EAR_RESTING_POSITION - rEarRotation + rightEarExternalForce / 2f;
+		double rightEarForce = RIGHT_EAR_RESTING_POSITION - rEarRotation + rightEarExternalForce / 10f;
 		
 		rEarRotationSpeed += rightEarForce * millistep / ITERS / 1000f;
 		rEarRotationSpeed *= EAR_ROTATING_AIR_RESISTANCE;

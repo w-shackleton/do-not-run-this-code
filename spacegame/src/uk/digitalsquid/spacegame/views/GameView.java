@@ -162,7 +162,7 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 				}
 			}
 			
-			starCount.move(millistep, Simulation.SPEED_SCALE); // TODO: Move these to the ITER-part part? Probably no need.
+			starCount.move(millistep, Simulation.SPEED_SCALE);
 			starCount.drawMove(millistep, Simulation.SPEED_SCALE);
 		}
 		

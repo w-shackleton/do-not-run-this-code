@@ -21,6 +21,16 @@ public abstract class SpaceItem
 	 */
 	protected static final float RAD_TO_DEG = (float) (180 / Math.PI);
 	
+	/**
+	 * The group for things which should collide with the player
+	 */
+	protected static final int COLLISION_GROUP_PLAYER = 0x1;
+	
+	/**
+	 * The group for things which should not collide with the player (0)
+	 */
+	protected static final int COLLISION_GROUP_NONE = 0x0;
+	
 	protected SimulationContext context;
 	
 	protected final Body body;
@@ -32,6 +42,8 @@ public abstract class SpaceItem
 		def.type = type;
 		def.angle = angle * DEG_TO_RAD;
 		body = context.world.createBody(def);
+		
+		body.setUserData(this);
 	}
 	
 	/**

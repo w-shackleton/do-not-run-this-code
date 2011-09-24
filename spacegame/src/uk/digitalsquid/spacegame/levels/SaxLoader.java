@@ -1,5 +1,5 @@
-
 package uk.digitalsquid.spacegame.levels;
+
 import org.jbox2d.common.Vec2;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -19,8 +19,15 @@ import android.sax.StartElementListener;
 import android.sax.TextElementListener;
 import android.util.Xml;
 
+/**
+ * Loads a game from XML
+ * @author william
+ *
+ */
 public class SaxLoader
 {
+	protected static final float LOAD_SCALE = 0.01f;
+	
 	private static final String ROOT = "level";
 	
 	private static final String NAME = "name";
@@ -188,8 +195,8 @@ public class SaxLoader
 				Planet p = new Planet(
 						context,
 						getCoord(attributes),
-						getFloat(attributes, ITEMS_KEY_RADIUS, 30),
-						(int) getFloat(attributes, ITEMS_KEY_TYPE, 0));
+						getFloat(attributes, ITEMS_KEY_RADIUS, 30) * LOAD_SCALE,
+						getInt(attributes, ITEMS_KEY_TYPE, 0));
 				level.planetList.add(p);
 			}
 		});
@@ -222,7 +229,7 @@ public class SaxLoader
 				level.planetList.add(new Wall(
 						context,
 						getCoord(attributes),
-						getFloat(attributes, "sx", 100),
+						getFloat(attributes, "sx", 100) * LOAD_SCALE,
 						getFloat(attributes, ITEMS_KEY_ROTATION, 0)));
 			}
 		});
@@ -251,9 +258,9 @@ public class SaxLoader
 		{
 			return new Vec2(
 					Float.parseFloat(
-							attributes.getValue(COORD_X)),
+							attributes.getValue(COORD_X)) * LOAD_SCALE,
 					Float.parseFloat(
-							attributes.getValue(COORD_Y)));
+							attributes.getValue(COORD_Y)) * LOAD_SCALE);
 		}
 		catch(NumberFormatException e)
 		{
@@ -277,9 +284,9 @@ public class SaxLoader
 		{
 			return new Vec2(
 					Float.parseFloat(
-							attributes.getValue(COORD_X)),
+							attributes.getValue(COORD_X)) * LOAD_SCALE,
 					Float.parseFloat(
-							attributes.getValue(COORD_Y)));
+							attributes.getValue(COORD_Y)) * LOAD_SCALE);
 		}
 		catch(NumberFormatException e)
 		{
@@ -303,9 +310,9 @@ public class SaxLoader
 		{
 			return new Vec2(
 					Float.parseFloat(
-							attributes.getValue(prefix + COORD_X)),
+							attributes.getValue(prefix + COORD_X)) * LOAD_SCALE,
 					Float.parseFloat(
-							attributes.getValue(prefix + COORD_Y)));
+							attributes.getValue(prefix + COORD_Y)) * LOAD_SCALE);
 		}
 		catch(NumberFormatException e)
 		{
@@ -342,13 +349,13 @@ public class SaxLoader
 	} */
 	
 	/**
-	 * Extract an integer from these attributes
+	 * Extract an integer from these attributes - integers aren't scaled
 	 */
 	private static final int getInt(Attributes attributes, String key, int defaultValue)
 	{
 		try
 		{
-			return Integer.valueOf(attributes.getValue(key)).intValue();
+			return Integer.valueOf(attributes.getValue(key));
 		}
 		catch(NumberFormatException e) {
 			errorOccurred = true;
@@ -367,7 +374,7 @@ public class SaxLoader
 	{
 		try
 		{
-			return Float.valueOf(attributes.getValue(key)).floatValue();
+			return Float.valueOf(attributes.getValue(key));
 		}
 		catch(NumberFormatException e) {
 			errorOccurred = true;

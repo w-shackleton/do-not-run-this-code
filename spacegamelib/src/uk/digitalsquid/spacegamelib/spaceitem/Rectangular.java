@@ -38,6 +38,7 @@ public abstract class Rectangular extends SpaceItem implements IsClickable
 		fixtureDef.density = density;
 		fixtureDef.restitution = restitution;
 		fixture = body.createFixture(fixtureDef);
+		fixture.setUserData(this);
 	}
 	
 	@Override

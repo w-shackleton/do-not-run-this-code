@@ -5,6 +5,7 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.spacegamelib.CompuFuncs;
+import uk.digitalsquid.spacegamelib.StaticInfo;
 
 /**
  * A bezier curve GL object - can't use builtin, as GL ES
@@ -17,8 +18,12 @@ public class Bezier extends Lines {
 	public Bezier(float r,
 			float g, float b, float a) {
 		super(0, 0, BEZIER_POINTS, GL10.GL_LINE_STRIP, r, g, b, a);
-		debugPoints = new Points(0, 0, 0, 1, 1, 0, 1);
-		debugPoints.setPointSize(7);
+		if(StaticInfo.DEBUG) {
+			debugPoints = new Points(0, 0, 0, 1, 1, 0, 1);
+			debugPoints.setPointSize(7);
+		} else {
+			debugPoints = null;
+		}
 	}
 	
 	/**
@@ -35,17 +40,19 @@ public class Bezier extends Lines {
 		// TODO: Check
 		bezier2D(bezierPoints, BEZIER_POINTS, getVertices());
 		
-		if(debugPoints.getVertices().capacity() != points.length / 2 * 3) {
-			debugPoints.setVertices(points.length / 2);
-		}
-		
-		// Copy points across
-		FloatBuffer debugVertices = debugPoints.getVertices();
-		int count = 0;
-		for(int i = 0; i < points.length; i+=2) {
-			debugVertices.put(count++, points[i]);
-			debugVertices.put(count++, points[i+1]);
-			debugVertices.put(count++, 0);
+		if(debugPoints != null) {
+			if(debugPoints.getVertices().capacity() != points.length / 2 * 3) {
+				debugPoints.setVertices(points.length / 2);
+			}
+			
+			// Copy points across
+			FloatBuffer debugVertices = debugPoints.getVertices();
+			int count = 0;
+			for(int i = 0; i < points.length; i+=2) {
+				debugVertices.put(count++, points[i]);
+				debugVertices.put(count++, points[i+1]);
+				debugVertices.put(count++, 0);
+			}
 		}
 	}
 	
@@ -108,6 +115,6 @@ public class Bezier extends Lines {
     @Override
     public void draw(GL10 gl) {
     	super.draw(gl);
-    	debugPoints.draw(gl);
+    	if(debugPoints != null) debugPoints.draw(gl);
     }
 }

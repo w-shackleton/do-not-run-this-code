@@ -1,6 +1,7 @@
 package uk.digitalsquid.spacegame;
 
 import uk.digitalsquid.spacegame.levels.LevelItem.LevelSummary;
+import uk.digitalsquid.spacegamelib.StaticInfo;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;

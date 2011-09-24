@@ -15,7 +15,7 @@ public final class VecHelper {
 	 * @return
 	 */
 	public static final float angleFromDeg(Vec2 vec, Vec2 from) {
-		return (float) (Math.atan2(vec.x - from.x, vec.y - from.y) * 180 / Math.PI); 
+		return (float) (Math.atan2(vec.y - from.y, vec.x - from.x) * 180 / Math.PI); 
 	}
 	
 	/**
@@ -24,7 +24,16 @@ public final class VecHelper {
 	 * @return
 	 */
 	public static final float angleDeg(Vec2 vec) {
-		return (float) (Math.atan2(vec.x, vec.y) * 180 / Math.PI); 
+		return (float) (Math.atan2(vec.y, vec.x) * 180 / Math.PI); 
+	}
+	
+	/**
+	 * Returns the positive angle of this vector in DEGREES
+	 * @param vec
+	 * @return
+	 */
+	public static final float anglePositiveDeg(Vec2 vec) {
+		return CompuFuncs.mod(angleDeg(vec), 360);
 	}
 	
 	/**
@@ -33,6 +42,6 @@ public final class VecHelper {
 	 * @return
 	 */
 	public static final float angleRad(Vec2 vec) {
-		return (float) Math.atan2(vec.x, vec.y); 
+		return (float) Math.atan2(vec.y, vec.x); 
 	}
 }

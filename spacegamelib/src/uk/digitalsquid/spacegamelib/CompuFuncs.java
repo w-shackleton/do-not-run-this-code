@@ -301,4 +301,14 @@ public class CompuFuncs
 	public static final double nCr(int n, int i) {
 		return fact(n) / (fact(i) * fact(n - i));
 	}
+	
+	/**
+	 * A PROPER mod function, as in <code>a mod div</code>
+	 * @param a
+	 * @param div
+	 * @return
+	 */
+	public static final float mod(float a, float div) {
+		return (a % div + div) % div;
+	}
 }

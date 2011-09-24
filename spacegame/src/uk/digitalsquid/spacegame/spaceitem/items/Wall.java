@@ -20,7 +20,7 @@ import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Moveable;
 public class Wall extends Rectangular implements Moveable
 {
 	protected static final int LINES = 10;
-	protected static final float GAP_WIDTH = 15;
+	protected static final float GAP_WIDTH = .15f;
 	protected static final Random rGen = new Random();
 	
 	protected static final float BOUNCINESS = 0.7f;
@@ -29,9 +29,9 @@ public class Wall extends Rectangular implements Moveable
 	
 	protected static final PaintDesc wallPaint = new PaintDesc(20, 100, 40);
 	
-	protected static final int WALL_WIDTH = 16;
-	protected static final int WALL_MIN_X = 80;
-	protected static final int WALL_MAX_X = 1000;
+	protected static final float WALL_WIDTH = .16f;
+	protected static final float WALL_MIN_X = .80f;
+	protected static final float WALL_MAX_X = 10.00f;
 	
 	/**
 	 * Construct a new {@link Wall}.
@@ -48,6 +48,10 @@ public class Wall extends Rectangular implements Moveable
 		wallside1 = new RectMesh((float)-(this.size.x / 2 - this.size.y / 2), 0, (float)this.size.y, (float)this.size.y, R.drawable.wallside);
 		wallside2 = new RectMesh((float)+(this.size.x / 2 - this.size.y / 2), 0, (float)this.size.y, (float)this.size.y, R.drawable.wallside);
 		wallside2.setRotation(180);
+		
+		fixture.setFriction(1);
+		fixture.getFilterData().categoryBits = COLLISION_GROUP_PLAYER;
+		fixture.getFilterData().maskBits = COLLISION_GROUP_PLAYER;
 		
 		for(int i = 0; i < lines.length; i++) {
 			lines[i] = new Lines(0, 0, new float[(int)((this.size.x - this.size.y * 2) / GAP_WIDTH) * 3 + 6], GL10.GL_LINE_STRIP, 0.1f, 0.5f, 0.2f, 1);

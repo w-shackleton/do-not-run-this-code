@@ -11,5 +11,5 @@ public interface StaticDrawable
 	 * @param gl		The GL to draw to
 	 * @param inverseMatrix	The inverse matrix to use to translate points
 	 */
-	public abstract void drawStatic(GL10 gl, final int width, final int height, final Matrix matrix);
+	public abstract void drawStatic(GL10 gl, final float width, final float height, final Matrix matrix);
 }

@@ -1,5 +1,6 @@
 package uk.digitalsquid.spacegame;
 
+import uk.digitalsquid.spacegamelib.StaticInfo;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;

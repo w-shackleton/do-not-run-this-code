@@ -52,7 +52,7 @@ public class StarDisplay implements StaticDrawable, Moveable {
 	}
 
 	@Override
-	public void drawStatic(GL10 gl, int width, int height, final Matrix matrix) {
+	public void drawStatic(GL10 gl, float width, float height, final Matrix matrix) {
 		gl.glPushMatrix();
 		gl.glTranslatef(-width / 2, +height / 2, 0);
 		gl.glPushMatrix();

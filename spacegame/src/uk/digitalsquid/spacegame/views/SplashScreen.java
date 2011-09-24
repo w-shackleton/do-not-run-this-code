@@ -4,12 +4,12 @@ import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.Spacegame;
-import uk.digitalsquid.spacegame.StaticInfo;
 import uk.digitalsquid.spacegame.levels.LevelManager;
 import uk.digitalsquid.spacegame.levels.SaxInfoLoader;
 import uk.digitalsquid.spacegame.levels.SaxLoader;
 import uk.digitalsquid.spacegame.spaceitem.assistors.SoundManager;
 import uk.digitalsquid.spacegame.subviews.DrawBaseView;
+import uk.digitalsquid.spacegamelib.StaticInfo;
 import uk.digitalsquid.spacegamelib.gl.RectMesh;
 import android.content.Context;
 import android.os.Bundle;

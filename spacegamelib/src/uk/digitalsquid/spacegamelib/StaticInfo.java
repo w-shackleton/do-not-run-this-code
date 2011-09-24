@@ -4,10 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 public final class StaticInfo {
 	public static boolean Antialiasing;
 	public static boolean Starfield;
+	
+	public static final boolean DEBUG = false;
 	
 	public static final void initialise(Context context)
 	{
@@ -15,7 +18,11 @@ public final class StaticInfo {
 		Antialiasing = p.getBoolean("antialiasing", true);
 		Starfield = p.getBoolean("starfield", true);
 		
-		Fonts.bangers = Typeface.createFromAsset(context.getAssets(), "fonts/bangers_custom.ttf");
+		try {
+			Fonts.bangers = Typeface.createFromAsset(context.getAssets(), "fonts/bangers_custom.ttf");
+		} catch (RuntimeException e) {
+			Log.e("SpaceGame", "Couldn't load fonts", e);
+		}
 	}
 	
 	public static final class Fonts {

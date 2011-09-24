@@ -14,18 +14,18 @@ import uk.digitalsquid.spacegame.spaceitem.items.Planet.PlanetType.Type;
 import uk.digitalsquid.spacegamelib.CompuFuncs;
 import uk.digitalsquid.spacegamelib.SimulationContext;
 import uk.digitalsquid.spacegamelib.gl.RectMesh;
-import uk.digitalsquid.spacegamelib.spaceitem.Spherical;
+import uk.digitalsquid.spacegamelib.spaceitem.Gravitable;
 
-public class Planet extends Spherical
+public class Planet extends Gravitable
 {
 	protected static final PlanetType[] PLANET_TYPES = {
-		new PlanetType(Type.nobounce1,	FgType.image,	R.drawable.planet1,		0.2, 0.5, 30, 250, null),
-		new PlanetType(Type.sticky1,	FgType.image,	R.drawable.planet5,		0,   0.9, 40, 250, null),
-		new PlanetType(Type.bounce2,	FgType.image,	R.drawable.planet2,		1,   0.1, 20, 200, null),
-		new PlanetType(Type.n1,			FgType.image,	R.drawable.planet3,		0.6, 0.6, 20, 200, null),
-		new PlanetType(Type.n2,			FgType.image,	R.drawable.planet4,		0.7, 0.7, 20, 200, null),
-		new PlanetType(Type.n3,			FgType.image,	R.drawable.planet6,		0.8, 0.8, 20, 200, null),
-		new PlanetType(Type.bounce1,	FgType.image,	R.drawable.planetbouncy,1.3, 0.8, 20, 150, null)
+		new PlanetType(Type.nobounce1,	FgType.image,	R.drawable.planet1,		0.2, 0.5, .30f, 2.50f, null),
+		new PlanetType(Type.sticky1,	FgType.image,	R.drawable.planet5,		0,   0.9, .40f, 2.50f, null),
+		new PlanetType(Type.bounce2,	FgType.image,	R.drawable.planet2,		1,   0.1, .20f, 2.00f, null),
+		new PlanetType(Type.n1,			FgType.image,	R.drawable.planet3,		0.6, 0.6, .20f, 2.00f, null),
+		new PlanetType(Type.n2,			FgType.image,	R.drawable.planet4,		0.7, 0.7, .20f, 2.00f, null),
+		new PlanetType(Type.n3,			FgType.image,	R.drawable.planet6,		0.8, 0.8, .20f, 2.00f, null),
+		new PlanetType(Type.bounce1,	FgType.image,	R.drawable.planetbouncy,1.3, 0.8, .20f, 1.50f, null)
 	};
 	
 	protected PlanetType type = PLANET_TYPES[0];
@@ -37,7 +37,7 @@ public class Planet extends Spherical
 	
 	public Planet(SimulationContext context, Vec2 coord, float radius, int typeId)
 	{
-		super(context, coord, getDensityForId(typeId), radius, BodyType.STATIC);
+		super(context, coord, 1, getDensityForId(typeId), radius, BodyType.STATIC);
 		
 		fixture.setRestitution(getBouncinessForId(typeId));
 		
@@ -54,13 +54,16 @@ public class Planet extends Spherical
 			// fgRotation = (float) (rGen.nextFloat() * 360);
 			fg = new RectMesh((float)getPos().x, (float)getPos().y, radius * 2, radius * 2, type.fileId2);
 		}
+		
+		fixture.getFilterData().categoryBits = COLLISION_GROUP_PLAYER;
+		fixture.getFilterData().maskBits = COLLISION_GROUP_PLAYER;
 	}
 	
 	@Override
-	public void draw(GL10 gl, float worldZoom)
-	{
-		if(type.fgType == FgType.image)
-		{
+	public void draw(GL10 gl, float worldZoom) {
+		if(type.fgType == FgType.image) {
+			fg.setXY(getPosX(), getPosY());
+			fg.setRotation(getRotation());
 			fg.draw(gl);
 		}
 	}
@@ -115,13 +118,13 @@ public class Planet extends Spherical
 		
 		public final int fileId2;
 		
-		public final int minSize, maxSize;
+		public final float minSize, maxSize;
 		
 		public final double bounciness, density;
 		
 		public final PaintDesc colour1;
 		
-		protected PlanetType(int typeId, FgType fg, int fileId2, double bounciness, double density, int minSize, int maxSize, PaintDesc colour1) {
+		protected PlanetType(int typeId, FgType fg, int fileId2, double bounciness, double density, float minSize, float maxSize, PaintDesc colour1) {
 			this.typeId = typeId;
 			this.fileId2 = fileId2;
 			this.minSize = minSize;

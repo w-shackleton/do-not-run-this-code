@@ -3,6 +3,7 @@ package uk.digitalsquid.spacegame.subviews;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import uk.digitalsquid.spacegamelib.StaticInfo;
 import uk.digitalsquid.spacegamelib.gl.TextureManager;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
@@ -25,7 +26,7 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		// setEGLConfigChooser(8, 8, 8, 8, 0, 0);
 	    // getHolder().setFormat(PixelFormat.RGBA_8888);
 	    // setDebugFlags(DEBUG_CHECK_GL_ERROR | DEBUG_LOG_GL_CALLS);
-	    setDebugFlags(DEBUG_CHECK_GL_ERROR);
+	    if(StaticInfo.DEBUG) setDebugFlags(DEBUG_CHECK_GL_ERROR);
 		this.context = context;
 	}
 	
@@ -47,9 +48,9 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		
 		protected long currTime, prevTime, millistep = 17;
 		
-		protected static final int REQ_SIZE_Y = 320; // & 480 - scale to middle-screen size.
-		protected int scaledWidth = 480;
-		protected int scaledHeight = REQ_SIZE_Y;
+		protected static final float REQ_SIZE_Y = 3.20f; // & 480 - scale to middle-screen size.
+		protected float scaledWidth = 4.80f;
+		protected float scaledHeight = REQ_SIZE_Y;
 		
 		public ViewWorker(Context context)
 		{
@@ -111,7 +112,7 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 			gl.glLoadIdentity(); 					//Reset The Projection Matrix
 	
 			//Calculate The Aspect Ratio Of The Window
-			GLU.gluPerspective(gl, 90.0f, (float)width / (float)height, 50f, 1000.0f);
+			GLU.gluPerspective(gl, 90.0f, (float)width / (float)height, .5f, 10.0f);
 			scaledWidth = (REQ_SIZE_Y * width) / height;
 	
 			gl.glMatrixMode(GL10.GL_MODELVIEW); 	//Select The Modelview Matrix

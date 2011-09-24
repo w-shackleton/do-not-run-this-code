@@ -19,7 +19,7 @@ import android.graphics.Matrix;
 
 public class Star extends Spherical implements LevelAffectable, Forceful, StaticDrawable
 {
-	private static final int STAR_RADIUS = 15;
+	private static final float STAR_RADIUS = .15f;
 	
 	private final RectMesh img;
 	
@@ -34,6 +34,9 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 		super(context, coord, 1, STAR_RADIUS, BodyType.STATIC);
 		
 		img = new RectMesh(coord.x, coord.y, getRadius() * 2, getRadius() * 2, R.drawable.star);
+		
+		fixture.getFilterData().categoryBits = COLLISION_GROUP_NONE;
+		fixture.getFilterData().maskBits = COLLISION_GROUP_NONE;
 	}
 	
 	@Override
@@ -87,7 +90,7 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 	private float animAngle = 1;
 
 	@Override
-	public void drawStatic(GL10 gl, final int width, final int height, final Matrix matrix) {
+	public void drawStatic(GL10 gl, final float width, final float height, final Matrix matrix) {
 		if(drawingP2) {
 			
 			if(!pointsMapped)

@@ -4,14 +4,16 @@ import javax.microedition.khronos.opengles.GL10;
 
 import org.jbox2d.common.Vec2;
 
+import uk.digitalsquid.spacegame.spaceitem.assistors.Simulation;
+import uk.digitalsquid.spacegamelib.CompuFuncs;
 import uk.digitalsquid.spacegamelib.SimulationContext;
 import uk.digitalsquid.spacegamelib.VecHelper;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Moveable;
 
 public abstract class Player extends PlayerBase implements Moveable
 {
-	protected static final float EYE_RADIUS = 5;
-	protected static final int ITERS = 5; // From PlanetaryView - not really needed.
+	protected static final float EYE_RADIUS = .05f;
+	protected static final int ITERS = Simulation.ITERS; // From PlanetaryView - not really needed.
 	
 	protected float ballRotation = 0;
 	protected float ballRotationSpeed = 0;
@@ -22,6 +24,7 @@ public abstract class Player extends PlayerBase implements Moveable
 	public Player(SimulationContext context, Vec2 coord, float radius)
 	{
 		super(context, coord, radius);
+		body.setAngularDamping(0.1f);
 	}
 	
 	@Override
@@ -52,8 +55,10 @@ public abstract class Player extends PlayerBase implements Moveable
 		// Lock position if necessary
 		if(landPosition != null) itemC.set(landPosition);
 		// Calculate rotation of ball
-		ballRotation = ballRotation % 360;
-		float itemRFDirection = VecHelper.angleDeg(itemRF);
+		ballRotation = body.getAngle() * RAD_TO_DEG;
+		ballRotation = CompuFuncs.mod(ballRotation, 360);
+		float itemRFDirection = VecHelper.angleDeg(apparentRF);
+		ballMomentum = 0;
 		if(Math.abs(ballRotation - itemRFDirection) < 180)
 			ballMomentum = itemRFDirection - ballRotation;
 		else
@@ -69,9 +74,11 @@ public abstract class Player extends PlayerBase implements Moveable
 			}
 		}
 		
-		ballRotationSpeed += ballMomentum * millistep / ITERS / 1000f;
+		body.applyTorque(ballMomentum / 100000 * apparentRF.length());
+		
+		/* ballRotationSpeed += ballMomentum * millistep / ITERS / 1000f;
 		ballRotationSpeed *= BALL_ROTATION_AIR_RESISTANCE;
-		ballRotation += ballRotationSpeed * millistep / ITERS / 1000f * speedScale;
+		ballRotation += ballRotationSpeed * millistep / ITERS / 1000f * speedScale; */
 	}
 	
 	private Vec2 landPosition;

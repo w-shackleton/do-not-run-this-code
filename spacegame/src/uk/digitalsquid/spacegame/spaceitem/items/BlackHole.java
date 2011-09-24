@@ -18,12 +18,12 @@ import android.preference.PreferenceManager;
 
 public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warpable, Messageable
 {
-	private static final int BLACK_HOLE_RADIUS = 70;
+	private static final float BLACK_HOLE_RADIUS = .7f;
 	private static final float BLACK_HOLE_DENSITY = .8f;
 	private static final float BLACK_HOLE_ZOOM_SPEED = 1.01f;
 	public static final float BLACK_HOLE_ZOOM_POWER = 1.10f;
 	private static final int BLACK_HOLE_ZOOM_WAIT = 100;
-	private static final float BLACK_HOLE_CAPTURE_DIST = 14;
+	private static final float BLACK_HOLE_CAPTURE_DIST = .14f;
 
 	protected static final int BH_PULSES = 20;
 	
@@ -44,6 +44,9 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 		
 		bhImage = new RectMesh(getPosX(), getPosY(), (float)getRadius() * 4, (float)getRadius() * 4, R.drawable.bh);
 		bhP2Image = new RectMesh(getPosX(), getPosY(), (float)getRadius() * 4, (float)getRadius() * 4, R.drawable.bhp2);
+		
+		fixture.getFilterData().categoryBits = COLLISION_GROUP_NONE;
+		fixture.getFilterData().maskBits = COLLISION_GROUP_NONE;
 	}
 	
 	@Override

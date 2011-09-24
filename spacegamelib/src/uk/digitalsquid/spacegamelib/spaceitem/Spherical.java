@@ -21,7 +21,10 @@ public abstract class Spherical extends SpaceItem implements IsClickable
 		fixtureDef.shape = new CircleShape();
 		fixtureDef.density = density;
 		fixtureDef.shape.m_radius = radius;
+		fixtureDef.friction = 0.3f;
+		fixtureDef.restitution = 0.7f;
 		fixture = body.createFixture(fixtureDef);
+		fixture.setUserData(this);
 	}
 	
 	@Override

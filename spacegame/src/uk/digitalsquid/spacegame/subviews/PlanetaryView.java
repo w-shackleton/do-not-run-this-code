@@ -7,11 +7,14 @@ import java.util.List;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import org.jbox2d.callbacks.ContactImpulse;
+import org.jbox2d.callbacks.ContactListener;
+import org.jbox2d.collision.Manifold;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.contacts.Contact;
 import org.xml.sax.SAXException;
 
-import uk.digitalsquid.spacegame.StaticInfo;
 import uk.digitalsquid.spacegame.levels.LevelItem;
 import uk.digitalsquid.spacegame.levels.SaxLoader;
 import uk.digitalsquid.spacegame.spaceitem.assistors.BgPoints;
@@ -19,14 +22,17 @@ import uk.digitalsquid.spacegame.spaceitem.assistors.Simulation;
 import uk.digitalsquid.spacegame.spaceitem.assistors.Simulation.SimulationCallbackListener;
 import uk.digitalsquid.spacegame.spaceitem.items.AnimatedPlayer;
 import uk.digitalsquid.spacegame.spaceitem.items.Player;
+import uk.digitalsquid.spacegame.spaceitem.items.PlayerBase;
 import uk.digitalsquid.spacegame.spaceitem.items.Portal;
 import uk.digitalsquid.spacegame.spaceitem.items.Star;
 import uk.digitalsquid.spacegame.spaceitem.items.Tether;
 import uk.digitalsquid.spacegamelib.CompuFuncs;
 import uk.digitalsquid.spacegamelib.SimulationContext;
+import uk.digitalsquid.spacegamelib.StaticInfo;
 import uk.digitalsquid.spacegamelib.VecHelper;
 import uk.digitalsquid.spacegamelib.gl.Lines;
 import uk.digitalsquid.spacegamelib.gl.RectMesh;
+import uk.digitalsquid.spacegamelib.misc.LevelWall;
 import uk.digitalsquid.spacegamelib.spaceitem.Rectangular;
 import uk.digitalsquid.spacegamelib.spaceitem.SpaceItem;
 import uk.digitalsquid.spacegamelib.spaceitem.Spherical;
@@ -46,7 +52,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		super(context, attrs);
 	}
 	
-	public static abstract class ViewWorker extends DrawBaseView.ViewWorker implements SimulationCallbackListener
+	public static abstract class ViewWorker extends DrawBaseView.ViewWorker implements SimulationCallbackListener, ContactListener
 	{
 		protected SimulationContext sim;
 		
@@ -54,7 +60,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		protected float WORLD_ZOOM_UNSCALED_ZOOMED;
 		protected float WORLD_ZOOM_PRESCALE, WORLD_ZOOM_POSTSCALE;
 		
-		public static final int ITERS = 5;
+		public static final int ITERS = Simulation.ITERS;
 		
 		/**
 		 * Used to store the 'warp' data returned from calculateVelocity
@@ -148,6 +154,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			
 			World world = new World(new Vec2(), true);
 			sim = new SimulationContext(context, world);
+			world.setContactListener(this);
 			
 			boolean loadError = false;
 			try {
@@ -165,6 +172,8 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 				setRunning(false);
 				return;
 			}
+			
+			level.initialiseBox2D(sim);
 			
 			planetList = level.planetList;
 			if(planetList == null)
@@ -190,7 +199,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 				screenPos[i] = new Vec2();
 			
 			// BG Points
-			BG_POINTS_PER_AREA = (int) level.bounds.length();
+			BG_POINTS_PER_AREA = (int) level.bounds.length() * 300;
 			bgPoints = new BgPoints(BG_POINTS_PER_AREA, (int)level.bounds.x, (int)level.bounds.y);
 			
 			startTime = System.currentTimeMillis();
@@ -464,7 +473,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		{
 			Log.v("SpaceGame", "State Saved");
 			bundle.putSerializable("p.itemC", p.itemC);
-			bundle.putSerializable("p.itemVC", p.itemVC);
+			bundle.putSerializable("p.itemVC", p.getVelocity());
 			bundle.putSerializable("avgPos", avgPos);
 			
 			for(int i = 0; i < screenPos.length; i++)
@@ -478,13 +487,34 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			Log.v("SpaceGame", "State Restored");
 			
 			p.itemC.set((Vec2) bundle.getSerializable("p.itemC"));
-			p.itemVC.set((Vec2) bundle.getSerializable("p.itemVC"));
+			p.setVelocity((Vec2) bundle.getSerializable("p.itemVC"));
 			avgPos = (Vec2) bundle.getSerializable("avgPos");
 			for(int i = 0; i < screenPos.length; i++)
 				screenPos[i] = (Vec2) bundle.getSerializable("screenPos" + i);
 			
 			userZoom = bundle.getFloat("userZoom");
 		}
+
+		@Override
+		public void beginContact(Contact contact) {
+			Object gameObject1 = contact.getFixtureA().getUserData();
+			Object gameObject2 = contact.getFixtureB().getUserData();
+			
+			if(
+					(gameObject1 instanceof LevelWall && gameObject2 instanceof PlayerBase) ||
+					(gameObject2 instanceof LevelWall && gameObject1 instanceof PlayerBase)) { // Player hit wall
+				wallBounced(1); // TODO: Change?
+			}
+		}
+
+		@Override
+		public void endContact(Contact contact) { }
+
+		@Override
+		public void postSolve(Contact contact, ContactImpulse impulse) { }
+
+		@Override
+		public void preSolve(Contact contact, Manifold oldManifold) { }
 	}
 	
 	public void stop(int messageCode)

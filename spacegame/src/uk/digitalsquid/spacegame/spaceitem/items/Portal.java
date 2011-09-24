@@ -14,9 +14,14 @@ import uk.digitalsquid.spacegamelib.spaceitem.Gravitable;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Warpable;
 
+/**
+ * Finishing portal for the game
+ * @author william
+ *
+ */
 public class Portal extends Gravitable implements Moveable, Warpable {
 	
-	private static final int PORTAL_RADIUS = 70;
+	private static final float PORTAL_RADIUS = .7f;
 	private static final float PORTAL_DENSITY = .5f;
 	private static final float PORTAL_NORMAL_DENSITY = 0;
 	private static final float PORTAL_NORMAL_RADIUS = 0;
@@ -43,14 +48,17 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 	
 	private float rotation = 0, rotation2 = 0;
 	
-	private static final int OPENING_RADIUS = 30;
+	private static final float OPENING_RADIUS = .3f;
 	private float openingRadius = 0;
 	
 	public Portal(SimulationContext context, Vec2 coord) {
-		super(context, coord, 0.95f, 1, PORTAL_RADIUS, BodyType.STATIC);
+		super(context, coord, 0.95f, PORTAL_NORMAL_DENSITY, PORTAL_NORMAL_RADIUS, BodyType.STATIC);
 		
 		img = new RectMesh((float)getPos().x, (float)getPos().y, 0, 0, R.drawable.portal);
 		opening = new RectMesh((float)getPos().x, (float)getPos().y, 0, 0, R.drawable.portal_opening);
+		
+		fixture.getFilterData().categoryBits = COLLISION_GROUP_NONE;
+		fixture.getFilterData().maskBits = COLLISION_GROUP_NONE;
 	}
 
 	@Override
@@ -124,20 +132,20 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 	private final Vec2 tmpFinishPoint = new Vec2();
 	
 	public void calculateVelocityImmutable(PlayerBase p, float itemRadius) {
-		super.calculateVelocityImmutable(p.itemC, p.itemVC, itemRadius);
+		super.calculateVelocityImmutable(p.itemC, p.getVelocity(), itemRadius);
 		
 		if(status == Status.FINISHING || status == Status.FINISHED) {
 			tmpFinishPoint.x -= (tmpFinishPoint.x - getPosX()) / 100f;
 			tmpFinishPoint.y -= (tmpFinishPoint.y - getPosY()) / 100f;
 			p.itemC.set(tmpFinishPoint);
-		} else if(status != Status.DISABLED && VecHelper.dist(getPos(), p.itemC) < 20) {
+		} else if(status != Status.DISABLED && VecHelper.dist(getPos(), p.itemC) < 0.2f) {
 			tmpFinishPoint.set(p.itemC);
 			SoundManager.get().playSound(SoundManager.SOUND_PORTAL);
 		}
 	}
 	
 	public void calculateVelocityMutable(PlayerBase p, float itemRadius) {
-		if(status != Status.DISABLED && VecHelper.dist(getPos(), p.itemC) < 20)
+		if(status != Status.DISABLED && VecHelper.dist(getPos(), p.itemC) < 0.2f)
 			status = Status.FINISHING;
 	}
 	

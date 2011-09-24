@@ -3,8 +3,8 @@ package uk.digitalsquid.spacegame.views;
 import uk.digitalsquid.spacegame.BounceVibrate;
 import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.Spacegame;
-import uk.digitalsquid.spacegame.StaticInfo;
 import uk.digitalsquid.spacegame.levels.LevelManager;
+import uk.digitalsquid.spacegamelib.StaticInfo;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -18,10 +18,10 @@ import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ToggleButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class MainMenuLayout extends FrameLayout implements OnClickListener, OnCheckedChangeListener, KeyInput
 {
