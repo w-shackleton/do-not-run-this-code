@@ -143,7 +143,10 @@ public final class Simulation {
 				gravityEffectMultiplier = (gravityEffectMultiplier - 1) * 0.99f + 1; // Slowly reset to 1
 				p.itemRF.mulLocal(gravityEffectMultiplier);
 				
-				p.getBody().applyForce(p.itemRF, p.itemC);
+				p.itemRF.mulLocal(50);
+				
+				p.getBody().applyForce(p.itemRF, new Vec2());
+				// p.getBody().setLinearVelocity(p.getBody().getLinearVelocity().addLocal(p.itemVC));
 				
 				context.world.step(millistep / ITERS / 1000f * SPEED_SCALE, 1, 1);
 			}

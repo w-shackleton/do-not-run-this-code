@@ -24,7 +24,8 @@ public abstract class Gravitable extends Spherical implements Forceful
 	@Override
 	public Vec2 calculateRF(Vec2 itemC)
 	{
-		CompuFuncs.computeForce(tmpRF, body.getPosition(), getDensity(), getRadius(), itemC);
+		float size = body.getFixtureList().m_shape.m_radius * body.getFixtureList().m_shape.m_radius;
+		CompuFuncs.computeForce(tmpRF, body.getPosition(), size * body.getFixtureList().getDensity(), getRadius(), itemC);
 		return tmpRF;
 	}
 

@@ -30,6 +30,7 @@ public abstract class SpaceItem
 		BodyDef def = new BodyDef();
 		def.position = pos;
 		def.type = type;
+		def.angle = angle * DEG_TO_RAD;
 		body = context.world.createBody(def);
 	}
 	
@@ -60,8 +61,12 @@ public abstract class SpaceItem
 		return getPos().y;
 	}
 	
+	/**
+	 * Rotation in DEGREES
+	 * @return
+	 */
 	protected float getRotation() {
-		return body.getAngle();
+		return body.getAngle() * RAD_TO_DEG;
 	}
 	
 	protected static final int INTERACT_LAYER_NORMAL = 0x1;

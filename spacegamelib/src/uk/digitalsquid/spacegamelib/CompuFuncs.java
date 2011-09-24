@@ -9,20 +9,20 @@ import android.os.Environment;
 
 public class CompuFuncs
 {
-	public static final double GRAVCONST = .008f;
+	public static final double GRAVCONST = 1f;
 	
 	/**
 	 * Computes the force between a massive body and the player
 	 * @param outForce The {@link Coord} to put the force into
 	 * @param planet The body's position
-	 * @param planetDensity The body's density
+	 * @param planetMass The planet's mass
 	 * @param planetRad The body's radius
 	 * @param item The position of the player
 	 */
 	public static final void computeForce(
 			Vec2 outForce,
 			Vec2 planet,
-			float planetDensity,
+			float planetMass,
 			float planetRad,
 			Vec2 item) {
 		float r = (float) Math.sqrt((planet.x - item.x) * (planet.x - item.x) + (planet.y - item.y) * (planet.y - item.y)); // Distance between objects
@@ -32,11 +32,11 @@ public class CompuFuncs
 		
 		outForce.x =
 			(float) (GRAVCONST * (planet.x - item.x) *
-			1 /  // TODO!::!:!:!::!:!"!£$&"*!^$(!^&*^&*$^£Q&*(^&*^&* - get actual weight from b2d
+			planetMass /
 			(r * r));
 		outForce.y =
 			(float) (GRAVCONST * (planet.y - item.y) * 
-			1 / 
+			planetMass / 
 			(r * r));
 	}
 	
