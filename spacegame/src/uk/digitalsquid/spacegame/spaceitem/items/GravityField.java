@@ -53,7 +53,7 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 	 */
 	public GravityField(SimulationContext context, Vec2 coord, Vec2 size, float rotation, float speed)
 	{
-		super(context, coord, size, 1, rotation, 1, BodyType.STATIC);
+		super(context, coord, size, 10, rotation, 1, BodyType.STATIC);
 		
 		if(rGen == null)
 			rGen = new Random();

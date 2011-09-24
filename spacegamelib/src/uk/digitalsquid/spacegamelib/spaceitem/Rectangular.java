@@ -35,7 +35,7 @@ public abstract class Rectangular extends SpaceItem implements IsClickable
 		poly = new PolygonShape();
 		poly.setAsBox((float)size.x / 2, (float)size.y / 2);
 		fixtureDef.shape = poly;
-		fixtureDef.density = density * 1000;
+		fixtureDef.density = density;
 		fixtureDef.friction = 0.4f;
 		fixtureDef.restitution = restitution;
 		fixture = body.createFixture(fixtureDef);

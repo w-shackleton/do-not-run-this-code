@@ -43,7 +43,7 @@ public class Wall extends Rectangular implements Moveable
 	 */
 	public Wall(SimulationContext context, Vec2 coord, float size, float rotation)
 	{
-		super(context, coord, new Vec2(CompuFuncs.TrimMinMax(size, WALL_MIN_X, WALL_MAX_X), WALL_WIDTH), 1, rotation, BOUNCINESS, BodyType.STATIC);
+		super(context, coord, new Vec2(CompuFuncs.TrimMinMax(size, WALL_MIN_X, WALL_MAX_X), WALL_WIDTH), 15, rotation, BOUNCINESS, BodyType.STATIC);
 		
 		wallside1 = new RectMesh((float)-(this.size.x / 2 - this.size.y / 2), 0, (float)this.size.y, (float)this.size.y, R.drawable.wallside);
 		wallside2 = new RectMesh((float)+(this.size.x / 2 - this.size.y / 2), 0, (float)this.size.y, (float)this.size.y, R.drawable.wallside);

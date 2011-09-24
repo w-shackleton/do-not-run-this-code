@@ -37,7 +37,7 @@ public class Planet extends Gravitable
 	
 	public Planet(SimulationContext context, Vec2 coord, float radius, int typeId)
 	{
-		super(context, coord, 1, getDensityForId(typeId), radius, BodyType.STATIC);
+		super(context, coord, 1, getDensityForId(typeId) * 10, radius, BodyType.STATIC);
 		
 		fixture.setRestitution(getBouncinessForId(typeId));
 		// fixture.setFriction(CompuFuncs.TrimMinMax(1 - getBouncinessForId(typeId), 0, 1));

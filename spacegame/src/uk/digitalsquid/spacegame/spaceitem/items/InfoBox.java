@@ -32,7 +32,7 @@ public class InfoBox extends Rectangular implements Messageable, Clickable
 	
 	public InfoBox(SimulationContext context, Vec2 coord, float rotation, String text, boolean initialshow)
 	{
-		super(context, coord, SIZE, 0, rotation, BOUNCINESS, BodyType.STATIC);
+		super(context, coord, SIZE, 10, rotation, BOUNCINESS, BodyType.STATIC);
 		if(text == null) text = "";
 		this.text = text;
 		

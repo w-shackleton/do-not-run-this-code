@@ -100,6 +100,7 @@ public final class Simulation {
 				}
 				if(tether != null) {
 					Vec2 tmp = tether.calculateRF(p.itemC);
+					if(tmp != null) tmp.mulLocal(10);
 					if(tmp != null) p.itemRF.addLocal(tmp);
 					if(tmp != null) p.apparentRF.subLocal(tmp);
 				}
@@ -118,7 +119,7 @@ public final class Simulation {
 				
 				p.getBody().applyForce(p.itemRF, p.itemC);
 				
-				context.world.step(millistep / ITERS / 1000f * SPEED_SCALE, 1, 1);
+				context.world.step(millistep / ITERS / 1000f * SPEED_SCALE, 10, 10);
 			}
 		}
 	}

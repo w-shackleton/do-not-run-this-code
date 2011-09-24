@@ -31,7 +31,7 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 	
 	public Star(SimulationContext context, Vec2 coord)
 	{
-		super(context, coord, 1, STAR_RADIUS, BodyType.STATIC);
+		super(context, coord, 10, STAR_RADIUS, BodyType.STATIC);
 		
 		img = new RectMesh(coord.x, coord.y, getRadius() * 2, getRadius() * 2, R.drawable.star);
 		

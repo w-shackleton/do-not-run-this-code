@@ -8,7 +8,7 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/spacegamelib/jbox2d-library-2.1.2.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="spacegamelib_src"/>
 	<classpathentry kind="lib" path="ext"/>
+	<classpathentry kind="src" path="spacegamelib_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

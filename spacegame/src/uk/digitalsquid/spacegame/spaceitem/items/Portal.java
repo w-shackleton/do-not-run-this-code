@@ -22,7 +22,7 @@ import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Warpable;
 public class Portal extends Gravitable implements Moveable, Warpable {
 	
 	private static final float PORTAL_RADIUS = .7f;
-	private static final float PORTAL_DENSITY = .5f;
+	private static final float PORTAL_DENSITY = 5f;
 	private static final float PORTAL_NORMAL_DENSITY = 0;
 	private static final float PORTAL_NORMAL_RADIUS = 0;
 	
