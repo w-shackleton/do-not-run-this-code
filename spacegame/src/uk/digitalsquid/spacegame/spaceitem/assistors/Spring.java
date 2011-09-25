@@ -18,6 +18,22 @@ public final class Spring implements Moveable {
 	
 	private boolean startLocked = true, endLocked = true;
 	
+	public Spring(int pointsInSpring, float startX, float startY, float finishX, float finishY, float springConstant, float springPower) {
+		springPoints = new float[pointsInSpring * 2];
+		velocities = new float[pointsInSpring * 2];
+		forces = new float[pointsInSpring * 2];
+		masses = new float[pointsInSpring];
+		springStiffness = new float[pointsInSpring];
+		for(int i = 0; i < masses.length; i++) {
+			masses[i] = 1;
+			springStiffness[i] = springPower;
+		}
+		numPoints = springPoints.length / 2;
+		this.springConstant = springConstant;
+		setPosition(startX, startY, finishX, finishY);
+		
+	}
+	
 	public Spring(int pointsInSpring, float startX, float startY, float finishX, float finishY, float springConstant) {
 		springPoints = new float[pointsInSpring * 2];
 		velocities = new float[pointsInSpring * 2];
@@ -75,6 +91,13 @@ public final class Spring implements Moveable {
 		}
 	}
 	
+	/**
+	 * Sets the spring in a straight line.
+	 * @param startX
+	 * @param startY
+	 * @param finishX
+	 * @param finishY
+	 */
 	public void setPosition(float startX, float startY, float finishX, float finishY) {
 		float stepX = (finishX - startX) / numPoints;
 		float stepY = (finishY - startY) / numPoints;

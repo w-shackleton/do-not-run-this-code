@@ -70,7 +70,7 @@ public class InfoBox extends Rectangular implements Messageable, Clickable
 	}
 
 	@Override
-	public void onClick()
+	public void onClick(float x, float y)
 	{
 		Log.v("SpaceGame", "Loading info box...");
 		showNow = true;

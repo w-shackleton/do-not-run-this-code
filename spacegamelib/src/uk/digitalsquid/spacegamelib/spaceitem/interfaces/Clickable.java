@@ -11,6 +11,8 @@ public interface Clickable extends IsClickable
 {
 	/**
 	 * Called when the {@link SpaceItem} is clicked. 
+	 * @param x The X gamespace coord
+	 * @param y The Y gamespace coord
 	 */
-	public void onClick();
+	public void onClick(float x, float y);
 }

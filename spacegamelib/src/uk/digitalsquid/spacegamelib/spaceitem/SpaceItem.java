@@ -27,6 +27,11 @@ public abstract class SpaceItem
 	protected static final int COLLISION_GROUP_PLAYER = 0x1;
 	
 	/**
+	 * The group for simulations (off screen ones)
+	 */
+	protected static final int COLLISION_GROUP_SIMULATION = 0x2;
+	
+	/**
 	 * The group for things which should not collide with the player (0)
 	 */
 	protected static final int COLLISION_GROUP_NONE = 0x0;
@@ -83,4 +88,11 @@ public abstract class SpaceItem
 	
 	protected static final int INTERACT_LAYER_NORMAL = 0x1;
 	protected static final int INTERACT_LAYER_PASSTHROUGH = 0x2;
+	
+	/**
+	 * Unlinks this object from Box2D
+	 */
+	public void dispose() {
+		context.world.destroyBody(body);
+	}
 }

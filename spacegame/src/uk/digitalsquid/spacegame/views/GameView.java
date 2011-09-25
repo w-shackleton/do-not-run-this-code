@@ -4,8 +4,6 @@ import java.io.InputStream;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import org.jbox2d.common.Vec2;
-
 import uk.digitalsquid.spacegame.BounceVibrate;
 import uk.digitalsquid.spacegame.Spacegame;
 import uk.digitalsquid.spacegame.levels.LevelItem.LevelSummary;
@@ -215,7 +213,7 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 					
 					if(item.isClicked(tmpData[0], tmpData[1]))
 					{
-						item.onClick();
+						item.onClick(tmpData[0], tmpData[1]);
 						Log.v("SpaceGame", "Item clicked");
 						return;
 					}
@@ -224,52 +222,28 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 			fireBall(tmpData[0], tmpData[1], event);
 		}
 		
-		private final Vec2 fireVelocity = new Vec2();
-		
-		private static final int MAX_FIRE_POWER = 50;
+		private boolean launchSelected = false;
 		
 		private void fireBall(float x, float y, MotionEvent event)
 		{
-			/*if(state == GAME_STATE_STOPPED || state == GAME_STATE_AIMING)
-			{
-				switch(event.getAction()) {
-				case MotionEvent.ACTION_MOVE:
-					fireVelocity.x = -(x - p.itemC.x) / 1.5f * SpaceItem.ITEM_SCALE; // Scale down to compensate for power
-					fireVelocity.y = -(y - p.itemC.y) / 1.5f * SpaceItem.ITEM_SCALE;
-					if(fireVelocity.getLength() > MAX_FIRE_POWER) {
-						float rot = (float) (fireVelocity.getRotation() / 180 * Math.PI);
-						fireVelocity.x = MAX_FIRE_POWER * Math.cos(rot);
-						fireVelocity.y = MAX_FIRE_POWER * Math.sin(rot);
-					}
-					state = GAME_STATE_AIMING;
-					
-					if(event.getAction() != MotionEvent.ACTION_UP)
-						break;
-				case MotionEvent.ACTION_UP:
-					Log.v("SpaceGame", "called!");
-					p.itemVC.copyFrom(fireVelocity);
-					s.gravityEffectMultiplier = -0.1f; // -0.1 gives it a little 'boost'
-					p.closeLanding();
-					state = GAME_STATE_MOVING;
-					break;
-				case MotionEvent.ACTION_CANCEL:
-					state = GAME_STATE_STOPPED;
-					break;
+			switch(event.getAction()) {
+			case MotionEvent.ACTION_DOWN:
+				if(launch.isClicked(x, y)) {
+					launch.mouseDown(x, y);
+					launchSelected = true;
 				}
-			}*/
-			if(state == GAME_STATE_STOPPED || state == GAME_STATE_MOVING) {
-				switch(event.getAction()) {
-				case MotionEvent.ACTION_DOWN:
-				case MotionEvent.ACTION_MOVE:
-					if(state == GAME_STATE_STOPPED)
-						p.closeLanding();
-					state = GAME_STATE_MOVING;
-					tether.setTetherPos(x, y);
-					break;
-				case MotionEvent.ACTION_UP:
-					tether.untether();
-					break;
+				break;
+			case MotionEvent.ACTION_MOVE:
+				if(launchSelected) {
+					launch.mouseMove(x, y);
 				}
+				break;
+			case MotionEvent.ACTION_UP:
+				if(launchSelected) {
+					launch.mouseUp(x, y);
+					launchSelected = false;
+				}
+				break;
 			}
 		}
 

@@ -9,7 +9,6 @@ import uk.digitalsquid.spacegame.spaceitem.items.AnimatedPlayer;
 import uk.digitalsquid.spacegame.spaceitem.items.Player;
 import uk.digitalsquid.spacegame.spaceitem.items.PlayerBase;
 import uk.digitalsquid.spacegame.spaceitem.items.Portal;
-import uk.digitalsquid.spacegame.spaceitem.items.Tether;
 import uk.digitalsquid.spacegamelib.CompuFuncs;
 import uk.digitalsquid.spacegamelib.SimulationContext;
 import uk.digitalsquid.spacegamelib.spaceitem.SpaceItem;
@@ -55,7 +54,7 @@ public final class Simulation {
 	 * @param gravOn
 	 * @param millistep
 	 */
-	public void calculate(final SimulationContext context, final LevelItem level, final PlayerBase p, final Portal portal, final Tether tether, boolean paused, boolean gravOn, final int millistep) {
+	public void calculate(final SimulationContext context, final LevelItem level, final PlayerBase p, final Portal portal, final LaunchingMechanism launch, boolean paused, boolean gravOn, final int millistep) {
 		final List<SpaceItem> planetList = level.planetList;
 		
 		for(int iter = 0; iter < ITERS; iter++) // Main physics loop
@@ -97,8 +96,8 @@ public final class Simulation {
 					if(tmp != null) p.itemRF.addLocal(tmp);
 					if(tmp != null) p.apparentRF.addLocal(tmp);
 				}
-				if(tether != null) {
-					Vec2 tmp = tether.calculateRF(p.itemC);
+				if(launch != null) {
+					Vec2 tmp = launch.calculateRF(p.itemC);
 					if(tmp != null) tmp.mulLocal(10);
 					if(tmp != null) p.itemRF.addLocal(tmp);
 					if(tmp != null) p.apparentRF.subLocal(tmp);
@@ -118,7 +117,7 @@ public final class Simulation {
 				
 				p.getBody().applyForce(p.itemRF, p.itemC);
 				
-				context.world.step(millistep / ITERS / 1000f * SPEED_SCALE, 10, 10);
+				context.world.step(millistep / ITERS / 1000f * SPEED_SCALE, 2, 2);
 			}
 		}
 	}

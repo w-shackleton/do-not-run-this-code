@@ -18,6 +18,7 @@ import org.xml.sax.SAXException;
 import uk.digitalsquid.spacegame.levels.LevelItem;
 import uk.digitalsquid.spacegame.levels.SaxLoader;
 import uk.digitalsquid.spacegame.spaceitem.assistors.BgPoints;
+import uk.digitalsquid.spacegame.spaceitem.assistors.LaunchingMechanism;
 import uk.digitalsquid.spacegame.spaceitem.assistors.Simulation;
 import uk.digitalsquid.spacegame.spaceitem.assistors.Simulation.SimulationCallbackListener;
 import uk.digitalsquid.spacegame.spaceitem.items.AnimatedPlayer;
@@ -25,7 +26,6 @@ import uk.digitalsquid.spacegame.spaceitem.items.Player;
 import uk.digitalsquid.spacegame.spaceitem.items.PlayerBase;
 import uk.digitalsquid.spacegame.spaceitem.items.Portal;
 import uk.digitalsquid.spacegame.spaceitem.items.Star;
-import uk.digitalsquid.spacegame.spaceitem.items.Tether;
 import uk.digitalsquid.spacegamelib.CompuFuncs;
 import uk.digitalsquid.spacegamelib.SimulationContext;
 import uk.digitalsquid.spacegamelib.StaticInfo;
@@ -145,7 +145,8 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		
 		protected Player p;
 		protected Portal portal;
-		protected Tether tether;
+		// protected Tether tether;
+		protected LaunchingMechanism launch;
 		
 		@Override
 		protected void initialiseOnThread()
@@ -192,7 +193,8 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			}, GL10.GL_LINE_LOOP, 1, 1, 1, 1);
 			
 			portal = new Portal(sim, level.portal);
-			tether = new Tether(sim, p);
+			// tether = new Tether(sim, p);
+			launch = new LaunchingMechanism(sim, p);
 			s = new Simulation(this);
 			
 			for(int i = 0; i < screenPos.length; i++)
@@ -244,7 +246,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		{
 			super.calculate();
 			
-			s.calculate(sim, level, p, portal, tether, paused, gravOn, (int) millistep);
+			s.calculate(sim, level, p, portal, launch, paused, gravOn, (int) millistep);
 			
 			for(int i = 0; i < ITERS; i++) {
 				if(!paused) { // Animated move
@@ -257,6 +259,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 					}
 					p.move(millistep, Simulation.SPEED_SCALE);
 					portal.move(millistep, Simulation.SPEED_SCALE);
+					launch.move(millistep, Simulation.SPEED_SCALE);
 				}
 			}
 			
@@ -275,7 +278,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 				p.drawMove(millistep, Simulation.SPEED_SCALE);
 				portal.calculateAnimation(p);
 				portal.drawMove(millistep, Simulation.SPEED_SCALE);
-				tether.drawMove(millistep, Simulation.SPEED_SCALE);
+				launch.drawMove(millistep, Simulation.SPEED_SCALE);
 				
 				// Work out if no longer moving, from last 4 positions
 				
@@ -372,8 +375,8 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 					if(!(item instanceof Star)) {
 						if(item instanceof Spherical || item instanceof Rectangular) {
 							if(lowestDist == -1) lowestDist = VecHelper.dist(item.getPos(), p.itemC);
-							double thisDist = VecHelper.dist(item.getPos(), p.itemC);
-							if(thisDist < lowestDist) {
+							float thisDist = VecHelper.dist(item.getPos(), p.itemC);
+							if(thisDist <= lowestDist) {
 								lowestDist = thisDist;
 								lowestPoint.set(item.getPos());
 							}
@@ -435,7 +438,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			}
 			
 			portal.draw(gl, 1);
-			tether.draw(gl, 1);
+			launch.draw(gl);
 			p.draw(gl, 1);
 			
 			levelBorder.setColour(1, 1, borderBounceColour, borderBounceColour);

@@ -1,5 +1,8 @@
 package uk.digitalsquid.spacegame.spaceitem.items;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.microedition.khronos.opengles.GL10;
 
 import org.jbox2d.common.Vec2;
@@ -19,18 +22,41 @@ public abstract class Player extends PlayerBase implements Moveable
 	protected float ballRotationSpeed = 0;
 	protected float ballMomentum = 0;
 	
-	public Player(SimulationContext context, Vec2 coord, float radius)
+	public Player(SimulationContext context, Vec2 coord)
 	{
-		super(context, coord, radius);
+		super(context, coord);
 	}
+	
+	/**
+	 * An alternate position to draw the character to (temporarily). If set to null, normal drawing will occur.
+	 */
+	private Vec2 alternateDrawPosition;
+	
+	/**
+	 * The alternate angle. See Player.alternateDrawPosition
+	 */
+	private float alternateDrawAngle;
 	
 	@Override
 	public final void draw(GL10 gl, float worldZoom) {
 		// Lock position if necessary
-		if(landPosition != null) itemC.set(landPosition);
+		// if(landPosition != null) itemC.set(landPosition);
 		
+		// Landing
 		gl.glPushMatrix();
 		gl.glTranslatef((float)itemC.x, (float)itemC.y, 0);
+		
+		drawPlayerLanding(gl, worldZoom);
+		
+		gl.glPopMatrix();
+		
+		// Rest
+		gl.glPushMatrix();
+		if(alternateDrawPosition == null) gl.glTranslatef((float)itemC.x, (float)itemC.y, 0);
+		else {
+			gl.glTranslatef((float)alternateDrawPosition.x, (float)alternateDrawPosition.y, 0); // Use alternate if available
+			gl.glRotatef(alternateDrawAngle - ballRotation, 0, 0, 1); // Rotate to face launch
+		}
 		gl.glScalef(warpScale, warpScale, 1);
 		gl.glRotatef(warpRotation, 0, 0, 1);
 		
@@ -38,6 +64,13 @@ public abstract class Player extends PlayerBase implements Moveable
 		
 		gl.glPopMatrix();
 	}
+	
+	/**
+	 * Draws the player's landing around the point (0, 0)
+	 * @param gl
+	 * @param worldZoom
+	 */
+	public abstract void drawPlayerLanding(GL10 gl, float worldZoom);
 	
 	/**
 	 * Draws the player around the point (0, 0)
@@ -50,7 +83,7 @@ public abstract class Player extends PlayerBase implements Moveable
 	public void move(float millistep, float speedScale)
 	{
 		// Lock position if necessary
-		if(landPosition != null) itemC.set(landPosition);
+		// if(landPosition != null) itemC.set(landPosition);
 		// Calculate rotation of ball
 		ballRotation = body.getAngle() * RAD_TO_DEG;
 		ballRotation = CompuFuncs.mod(ballRotation, 360);
@@ -73,18 +106,55 @@ public abstract class Player extends PlayerBase implements Moveable
 		
 		body.applyTorque(ballMomentum / 100 * apparentRF.length());
 		
-		/* ballRotationSpeed += ballMomentum * millistep / ITERS / 1000f;
-		ballRotationSpeed *= BALL_ROTATION_AIR_RESISTANCE;
-		ballRotation += ballRotationSpeed * millistep / ITERS / 1000f * speedScale; */
+		velocityDelta.set(body.getLinearVelocity());
+		velocityDelta.subLocal(previousVelocity);
+		
+		if(velocityDelta.lengthSquared() < 0.00000009f) { // 0.0003^2
+			openLanding();
+		}
+		
+		previousVelocity.set(body.getLinearVelocity());
 	}
 	
-	private Vec2 landPosition;
+	/**
+	 * The difference between this velocity and the previous.
+	 * TODO: This solution is a bit rough, and won't work under fps changes.
+	 */
+	private Vec2 velocityDelta = new Vec2();
+	private Vec2 previousVelocity = new Vec2();
 	
-	public void openLanding() {
-		landPosition = new Vec2(itemC);
+	/**
+	 * True if open
+	 */
+	private boolean landingState = false;
+	
+	/**
+	 * Opens the landing gear. Returns true on success, false if already open.
+	 * @return
+	 */
+	public boolean openLanding() {
+		if(isLanded()) {
+			setLanded(true);
+			return false;
+		} else {
+			setLanded(true);
+			playerStateChangedBroadcast.onLanded();
+			return true;
+		}
 	}
-	public void closeLanding() {
-		landPosition = null;
+	/**
+	 * Closes the landing gear.
+	 * @return <code>true</code> on success, <code>false</code> if already closed.
+	 */
+	public boolean closeLanding() {
+		if(!isLanded()) {
+			setLanded(false);
+			return false;
+		} else {
+			setLanded(false);
+			playerStateChangedBroadcast.onLaunch();
+			return true;
+		}
 	}
 	
 	/**
@@ -95,6 +165,73 @@ public abstract class Player extends PlayerBase implements Moveable
 	
 	public void setNearestLandingPoint(final Vec2 planet) {}
 	
+	protected boolean isLanded() {
+		return landingState;
+	}
+
+	private void setLanded(boolean landingState) {
+		this.landingState = landingState;
+	}
+
 	float warpRotation = 0;
 	float warpScale = 1;
+	
+	/**
+	 * Events about the character.
+	 * @author william
+	 *
+	 */
+	public static interface PlayerStateChangedListener {
+		public void onLanded();
+		public void onLaunch();
+	}
+	
+	public final void registerPlayerStateChangedListener(PlayerStateChangedListener l) {
+		playerStateChangedBroadcastList.add(l);
+	}
+	
+	private final List<PlayerStateChangedListener> playerStateChangedBroadcastList = new LinkedList<Player.PlayerStateChangedListener>();
+	
+	protected PlayerStateChangedListener playerStateChangedBroadcast = new PlayerStateChangedListener() {
+		@Override
+		public void onLaunch() {
+			for(PlayerStateChangedListener l : playerStateChangedBroadcastList) {
+				l.onLaunch();
+			}
+		}
+		
+		@Override
+		public void onLanded() {
+			for(PlayerStateChangedListener l : playerStateChangedBroadcastList) {
+				l.onLanded();
+			}
+		}
+	};
+	
+	/**
+	 * Uses the alternate drawing position if necessary
+	 * @return an array length 2 containing the positions of both ears in gamespace.
+	 */
+	public abstract Vec2[] getEarAbsolutePositions();
+	
+	/**
+	 * Sets the alternate place to draw the character.
+	 * @param position A {@link Vec2}, or <code>null</code> to use actual position
+	 */
+	public void setAlternateDrawPosition(Vec2 position) {
+		alternateDrawPosition = position;
+		alternateDrawAngle = alternateDrawPosition != null ? VecHelper.angleFromDeg(alternateDrawPosition, itemC) : 0; // Player faces launcher.
+	}
+
+	public Vec2 getAlternateDrawPosition() {
+		return alternateDrawPosition;
+	}
+
+	protected float getAlternateDrawAngle() {
+		return alternateDrawAngle;
+	}
+
+	public float getBallRotation() {
+		return ballRotation;
+	}
 }

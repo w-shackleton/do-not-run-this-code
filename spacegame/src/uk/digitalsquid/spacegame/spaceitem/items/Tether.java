@@ -8,8 +8,6 @@ import org.jbox2d.dynamics.BodyType;
 import uk.digitalsquid.spacegame.spaceitem.assistors.Spring;
 import uk.digitalsquid.spacegamelib.SimulationContext;
 import uk.digitalsquid.spacegamelib.gl.Bezier;
-import uk.digitalsquid.spacegamelib.gl.Mesh;
-import uk.digitalsquid.spacegamelib.gl.RectMesh;
 import uk.digitalsquid.spacegamelib.spaceitem.SpaceItem;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Forceful;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Moveable;
@@ -34,17 +32,12 @@ public final class Tether extends SpaceItem implements Moveable, Forceful {
 	
 	private State state = State.DISABLED;
 	
-	private final Player player;
-
-	public Tether(SimulationContext context, Player player) {
-		super(context, new Vec2(), 0, BodyType.STATIC); // TODO: CHECK WHAT TO DO ETC>>>>>
+	public Tether(SimulationContext context) {
+		super(context, new Vec2(), 0, BodyType.STATIC);
 		tether = new Bezier(1, 1, 1, 1);
-		this.player = player;
 		
-		springCalc = new Spring(7, player.itemC.x, player.itemC.y, player.itemC.x, player.itemC.y, 1f);
+		springCalc = new Spring(7, 0, 0, 0, 0, 1f, 20f);
 	}
-	
-	Mesh fingerImg = new RectMesh(0, 0, 3f, 3f, 1, 0, 0, 1);
 
 	@Override
 	public void move(float millistep, float speedScale) {
@@ -53,11 +46,6 @@ public final class Tether extends SpaceItem implements Moveable, Forceful {
 
 	@Override
 	public void drawMove(float millistep, float speedscale) {
-		if(state == State.TETHERED)
-			springCalc.setEnds(getPosX(), getPosY(), player.itemC.x, player.itemC.y);
-		else
-			springCalc.setEnd(player.itemC.x, player.itemC.y); // Set same positions to 'hide' tether.
-		
 		springCalc.drawMove(millistep, speedscale);
 		
 		tether.setBezierPoints(springCalc.getSpringPoints());
@@ -65,17 +53,16 @@ public final class Tether extends SpaceItem implements Moveable, Forceful {
 
 	@Override
 	public void draw(GL10 gl, float worldZoom) {
-		if(state == State.TETHERED) fingerImg.draw(gl);
 		tether.draw(gl);
 	}
 
+	/**
+	 * Gets the force on the end of the spring
+	 * @param itemC NOT USED
+	 */
 	@Override
 	public Vec2 calculateRF(Vec2 itemC) {
 		if(state == State.DISABLED) return null;
-		/*double forceX = pos.x - itemC.x;
-		double forceY = pos.y - itemC.y;
-		
-		return new Vec2(forceX / 2, forceY / 2);*/
 		
 		return springCalc.calculateEndForce();
 	}
@@ -85,29 +72,32 @@ public final class Tether extends SpaceItem implements Moveable, Forceful {
 		return null;
 	}
 
-	@Override
-	public void calculateVelocityMutable(Vec2 itemC, Vec2 itemVC, float itemRadius) {
-	}
+	@Override public void calculateVelocityMutable(Vec2 itemC, Vec2 itemVC, float itemRadius) { }
 	
-	public void setTetherPos(Vec2 pos) {
-		setTetherPos(pos.x, pos.y);
+	public void disable() {
+		state = State.DISABLED;
 	}
 	
 	/**
-	 * Sets the on-screen (and gravity position from) position of the tether.
-	 * @param x
-	 * @param y
+	 * Turns the spring on and puts it in place
+	 * @param sx
+	 * @param sy
+	 * @param dx
+	 * @param dy
 	 */
-	public void setTetherPos(float x, float y) {
-		if(state != State.TETHERED) state = State.TETHERED;
-		
-		setPosX(x);
-		setPosY(y);
-		
-		fingerImg.setXY(x, y);
+	public void activate(float sx, float sy, float dx, float dy) {
+		state = State.TETHERED;
+		springCalc.setPosition(sx, sy, dx, dy);
 	}
 	
-	public void untether() {
-		state = State.DISABLED;
+	/**
+	 * Smoothly updates the spring's ends
+	 * @param sx
+	 * @param sy
+	 * @param dx
+	 * @param dy
+	 */
+	public void update(float sx, float sy, float dx, float dy) {
+		springCalc.setEnds(sx, sy, dx, dy);
 	}
 }

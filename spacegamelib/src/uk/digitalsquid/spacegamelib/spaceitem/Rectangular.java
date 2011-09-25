@@ -45,7 +45,7 @@ public abstract class Rectangular extends SpaceItem implements IsClickable
 	@Override
 	public boolean isClicked(float x, float y)
 	{
-		return CompuFuncs.PointInPolygon(poly.m_vertices, x, y);
+		return CompuFuncs.PointInPolygon(getRectPos(), x, y);
 	}
 	
 	private Vec2[] tmpRectPos;

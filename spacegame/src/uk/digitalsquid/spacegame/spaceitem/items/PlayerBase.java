@@ -16,7 +16,7 @@ public abstract class PlayerBase extends Spherical {
 	 */
 	public final Vec2 apparentRF = new Vec2();
 
-	public PlayerBase(SimulationContext context, Vec2 coord, float radius) {
+	public PlayerBase(SimulationContext context, Vec2 coord) {
 		super(context, coord, 10, BALL_RADIUS, BodyType.DYNAMIC);
 		body.setSleepingAllowed(false);
 		fixture.setRestitution(0.2f);

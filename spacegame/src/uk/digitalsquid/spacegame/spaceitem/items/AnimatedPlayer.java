@@ -68,6 +68,10 @@ public class AnimatedPlayer extends Player
 	private static final Vec2 lEar = new Vec2(-.7f, -.4f);
 	private static final Vec2 rEar = new Vec2(-.7f, .4f);
 	private static final Vec2 EAR_SIZE = new Vec2(2f, 1f);
+	/**
+	 * The end (bobble) of the ear, relative to it's rotation point
+	 */
+	private static final Vec2 EAR_END = new Vec2(-1.5f, 0f);
 	private static final float LEFT_EAR_RESTING_POSITION = 20;
 	private static final float RIGHT_EAR_RESTING_POSITION = -20;
 	private static final float EAR_ROTATING_AIR_RESISTANCE = 0.993f;
@@ -94,7 +98,7 @@ public class AnimatedPlayer extends Player
 	
 	public AnimatedPlayer(SimulationContext context, Vec2 coord, Vec2 velocity)
 	{
-		super(context, coord, BALL_RADIUS);
+		super(context, coord);
 		ball = new RectMesh(0, 0, BALL_RADIUS * 2, BALL_RADIUS * 2, R.drawable.ball);
 		
 		leftEye = new RectMesh((float)lEye.x, (float)lEye.y, EYE_RADIUS * 2, EYE_RADIUS * 2, R.drawable.eye);
@@ -120,8 +124,19 @@ public class AnimatedPlayer extends Player
 	}
 	
 	@Override
-	public void drawPlayer(GL10 gl, float worldZoom)
-	{
+	public void drawPlayerLanding(GL10 gl, float worldZoom) {
+		// Landing gear
+		gl.glPushMatrix();
+		float transitionFactor = (float)(landingPosition - LANDING_GEAR_OPEN_ROTATION) / (float)(LANDING_GEAR_CLOSED_ROTATION - LANDING_GEAR_OPEN_ROTATION);
+		gl.glRotatef(VecHelper.angleFromDeg(nearestPlanet, itemC) * (1 - transitionFactor) + getBallRotation() * transitionFactor, 0, 0, 1);
+		gl.glTranslatef(-landingDrawShiftX, 0, 0);
+		landingGearLeft.draw(gl);
+		landingGearRight.draw(gl);
+		gl.glPopMatrix();
+	}
+	
+	@Override
+	public void drawPlayer(GL10 gl, float worldZoom) {
 		// Calculation steps...
 		
 		lookToDistance.set(itemC);
@@ -148,25 +163,14 @@ public class AnimatedPlayer extends Player
 		eyePos.y += eyeDistanceToMove.y / EYE_MOVE_SPEED;
 		
 		eyeRotatedPos.set(eyePos);
-		CompuFuncs.rotateLocal(eyeRotatedPos, null, -ballRotation * DEG_TO_RAD);
+		CompuFuncs.rotateLocal(eyeRotatedPos, null, -getBallRotation() * DEG_TO_RAD);
+		
 		
 		// Draw
-		// Landing gear
-		
-		{
-			gl.glPushMatrix();
-			float transitionFactor = (float)(landingPosition - LANDING_GEAR_OPEN_ROTATION) / (float)(LANDING_GEAR_CLOSED_ROTATION - LANDING_GEAR_OPEN_ROTATION);
-			gl.glRotatef(VecHelper.angleFromDeg(itemC, nearestPlanet) * (1 - transitionFactor) + ballRotation * transitionFactor, 0, 0, 1);
-			gl.glTranslatef(-landingDrawShiftX, 0, 0);
-			landingGearLeft.draw(gl);
-			landingGearRight.draw(gl);
-			gl.glPopMatrix();
-		}
-		
 		
 		gl.glPushMatrix();
 		ballRotation = body.getAngle() * RAD_TO_DEG;
-		gl.glRotatef(ballRotation, 0, 0, 1);
+		gl.glRotatef(getBallRotation(), 0, 0, 1);
 		gl.glTranslatef(-landingDrawShiftX, 0, 0);
 		
 		ball.draw(gl);
@@ -213,24 +217,34 @@ public class AnimatedPlayer extends Player
 		eyeMoveToOnGame = point;
 	}
 	
-	private float landingDestinationPos = 0;
+	private float landingDestinationPos = 120;
 	
 	@Override
-	public final void openLanding() {
+	public final boolean openLanding() {
+		boolean ret = super.openLanding();
+		if(!ret) { // Already open
+			return ret; // Return early
+		}
 		if(landingDestinationPos != LANDING_GEAR_OPEN_ROTATION)
 			moveLandingTo(LANDING_GEAR_OPEN_ROTATION, LANDING_DRAW_SHIFT_TOTAL);
 		landingDestinationPos = LANDING_GEAR_OPEN_ROTATION;
+		return ret;
 	}
 	
 	@Override
-	public final void closeLanding() {
+	public final boolean closeLanding() {
+		boolean ret = super.closeLanding();
+		if(!ret) { // Already open
+			return ret; // Return early
+		}
 		if(landingDestinationPos != LANDING_GEAR_CLOSED_ROTATION)
 			moveLandingTo(LANDING_GEAR_CLOSED_ROTATION, 0);
 		landingDestinationPos = LANDING_GEAR_CLOSED_ROTATION;
+		return ret;
 	}
 	
-	private static final float LANDING_MOVE_ANIMATION_STEP = (float) (Math.PI * 0.004);
-	private static final int LANDING_DRAW_SHIFT_TOTAL = 14;
+	private static final float LANDING_MOVE_ANIMATION_STEP = (float) (Math.PI * 0.02);
+	private static final float LANDING_DRAW_SHIFT_TOTAL = 1.4f;
 	
 	private float landingAnimationMidPoint = 0;
 	private float landingAnimationScale = 0;
@@ -240,7 +254,7 @@ public class AnimatedPlayer extends Player
 	private float landingPosition = LANDING_GEAR_CLOSED_ROTATION;
 	private float landingDrawShiftX = 0;
 	
-	private final void moveLandingTo(int degrees, int moveTo) {
+	private final void moveLandingTo(int degrees, float moveTo) {
 		landingAnimation = 0;
 		landingAnimationScale = (degrees - landingPosition) / 2;
 		landingAnimationMidPoint = (degrees + landingPosition) / 2;
@@ -253,11 +267,11 @@ public class AnimatedPlayer extends Player
 	public void move(float millistep, float speedScale) {
 		super.move(millistep, speedScale);
 		
-		double leftEarFullRotation = ballRotation + lEarRotation;
-		double rightEarFullRotation = ballRotation + rEarRotation;
+		double leftEarFullRotation = getBallRotation() + lEarRotation;
+		double rightEarFullRotation = getBallRotation() + rEarRotation;
 		
-		double leftEarExternalForce  = CompuFuncs.RotateY(itemRF.x, itemRF.y, (float) ((180-leftEarFullRotation) / 180 * Math.PI));
-		double rightEarExternalForce = CompuFuncs.RotateY(itemRF.x, itemRF.y, (float) ((180-rightEarFullRotation) / 180 * Math.PI));
+		double leftEarExternalForce  = CompuFuncs.RotateY(itemRF.x + leftEarExtraForce.x,  itemRF.y + leftEarExtraForce.y,  (float) ((180-leftEarFullRotation ) / 180 * Math.PI));
+		double rightEarExternalForce = CompuFuncs.RotateY(itemRF.x + rightEarExtraForce.x, itemRF.y + rightEarExtraForce.y, (float) ((180-rightEarFullRotation) / 180 * Math.PI));
 		
 		double leftEarForce = LEFT_EAR_RESTING_POSITION - lEarRotation + leftEarExternalForce / 10f;
 		
@@ -290,6 +304,7 @@ public class AnimatedPlayer extends Player
 	
 	@Override
 	public void setNearestLandingPoint(final Vec2 planet) {
+		super.setNearestLandingPoint(planet);
 		if(landingAnimation >= Math.PI) { // If animation is in progress, don't set new planet pos, as it will disrupt smooth animation
 			nearestPlanet = planet;
 		}
@@ -297,4 +312,56 @@ public class AnimatedPlayer extends Player
 
 	@Override
 	public void drawMove(float millistep, float speedscale) { }
+	
+	private final Vec2 leftEarExtraForce = new Vec2(), rightEarExtraForce = new Vec2();
+	
+	/**
+	 * Sets any extra force on the left ear, making it bounce.
+	 * @param x
+	 * @param y
+	 */
+	public void setLeftEarExtraForce(float x, float y) {
+		leftEarExtraForce.x = x;
+		leftEarExtraForce.y = y;
+	}
+	
+	/**
+	 * Sets any extra force on the right ear, making it bounce.
+	 * @param x
+	 * @param y
+	 */
+	public void setRightEarExtraForce(float x, float y) {
+		rightEarExtraForce.x = x;
+		rightEarExtraForce.y = y;
+	}
+	
+	private final Vec2[] earAbsolutePositions = new Vec2[] {
+			new Vec2(),
+			new Vec2(),
+	};
+
+	@Override
+	public Vec2[] getEarAbsolutePositions() {
+		earAbsolutePositions[0].x = lEar.x + CompuFuncs.RotateX(EAR_END.x, EAR_END.y, lEarRotation * DEG_TO_RAD) - landingDrawShiftX;
+		earAbsolutePositions[0].y = lEar.y + CompuFuncs.RotateY(EAR_END.x, EAR_END.y, lEarRotation * DEG_TO_RAD);
+		earAbsolutePositions[1].x = rEar.x + CompuFuncs.RotateX(EAR_END.x, EAR_END.y, rEarRotation * DEG_TO_RAD) - landingDrawShiftX;
+		earAbsolutePositions[1].y = rEar.y + CompuFuncs.RotateY(EAR_END.x, EAR_END.y, rEarRotation * DEG_TO_RAD);
+		if(getAlternateDrawPosition() == null) {
+			CompuFuncs.rotateLocal(earAbsolutePositions[0], null, getBallRotation() * DEG_TO_RAD);
+			CompuFuncs.rotateLocal(earAbsolutePositions[1], null, getBallRotation() * DEG_TO_RAD);
+			earAbsolutePositions[0].x += itemC.x;
+			earAbsolutePositions[0].y += itemC.y;
+			earAbsolutePositions[1].x += itemC.x;
+			earAbsolutePositions[1].y += itemC.y;
+		} else {
+			CompuFuncs.rotateLocal(earAbsolutePositions[0], null, getAlternateDrawAngle() * DEG_TO_RAD);
+			CompuFuncs.rotateLocal(earAbsolutePositions[1], null, getAlternateDrawAngle() * DEG_TO_RAD);
+			earAbsolutePositions[0].x += getAlternateDrawPosition().x;
+			earAbsolutePositions[0].y += getAlternateDrawPosition().y;
+			earAbsolutePositions[1].x += getAlternateDrawPosition().x;
+			earAbsolutePositions[1].y += getAlternateDrawPosition().y;
+		}
+		
+		return earAbsolutePositions;
+	}
 }
