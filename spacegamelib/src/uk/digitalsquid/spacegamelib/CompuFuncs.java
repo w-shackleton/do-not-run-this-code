@@ -311,16 +311,4 @@ public class CompuFuncs
 	public static final float mod(float a, float div) {
 		return (a % div + div) % div;
 	}
-	
-	/**
-	 * Find the shortest distance of a point from a line
-	 * @param point The point to check
-	 * @param line A point on the line
-	 * @param angle The angle of the line in RADIANS
-	 * @return True if it's on the outwards side (0 degrees would be positive)
-	 */
-	public static final float distanceFromLine(Vec2 point, Vec2 line, float angle) {
-		Vec2 rotatedPoint = rotateCoord(point, line, -angle);
-		return line.y - point.y; // TODO: FIXME
-	}
 }

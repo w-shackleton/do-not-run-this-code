@@ -20,7 +20,6 @@ import uk.digitalsquid.spacegame.levels.SaxLoader;
 import uk.digitalsquid.spacegame.spaceitem.assistors.BgPoints;
 import uk.digitalsquid.spacegame.spaceitem.assistors.LaunchingMechanism;
 import uk.digitalsquid.spacegame.spaceitem.assistors.Simulation;
-import uk.digitalsquid.spacegame.spaceitem.assistors.Simulation.SimulationCallbackListener;
 import uk.digitalsquid.spacegame.spaceitem.items.AnimatedPlayer;
 import uk.digitalsquid.spacegame.spaceitem.items.Player;
 import uk.digitalsquid.spacegame.spaceitem.items.PlayerBase;
@@ -52,7 +51,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		super(context, attrs);
 	}
 	
-	public static abstract class ViewWorker extends DrawBaseView.ViewWorker implements SimulationCallbackListener, ContactListener
+	public static abstract class ViewWorker extends DrawBaseView.ViewWorker implements ContactListener
 	{
 		protected SimulationContext sim;
 		
@@ -195,7 +194,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			portal = new Portal(sim, level.portal);
 			// tether = new Tether(sim, p);
 			launch = new LaunchingMechanism(sim, p);
-			s = new Simulation(this);
+			s = new Simulation();
 			
 			for(int i = 0; i < screenPos.length; i++)
 				screenPos[i] = new Vec2();
@@ -388,14 +387,6 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 					p.setNearestLandingPoint(lowestPoint);
 				}
 			}
-		}
-		
-		@Override
-		public void onStop() {
-			if(state == GAME_STATE_MOVING) {
-				state = GAME_STATE_STOPPED;
-			}
-			p.openLanding();
 		}
 
 		boolean stopAnimation = false;

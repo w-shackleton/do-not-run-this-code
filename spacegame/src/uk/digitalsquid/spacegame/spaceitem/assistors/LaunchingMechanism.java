@@ -8,12 +8,12 @@ import uk.digitalsquid.spacegame.spaceitem.items.AnimatedPlayer;
 import uk.digitalsquid.spacegame.spaceitem.items.Player;
 import uk.digitalsquid.spacegame.spaceitem.items.PlayerBase;
 import uk.digitalsquid.spacegame.spaceitem.items.Tether;
-import uk.digitalsquid.spacegamelib.CompuFuncs;
 import uk.digitalsquid.spacegamelib.SimulationContext;
+import uk.digitalsquid.spacegamelib.VecHelper;
+import uk.digitalsquid.spacegamelib.spaceitem.SpaceItem;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.ExtendedClickable;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Forceful;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Moveable;
-import android.util.Log;
 
 /**
  * A class combining everything to do with firing the character.
@@ -57,28 +57,38 @@ public final class LaunchingMechanism implements Moveable, Player.PlayerStateCha
 			break;
 		}
 	}
+	
+	private float oldDist = Float.NaN;
 
 	@Override
 	public void drawMove(float millistep, float speedScale) {
 		switch(state) {
 		case ACCELERATING:
 		case ACCELERATING_P2:
-			p.setAlternateDrawPosition(playerSimulator.getPos());
+			float playerAngle = p.getAlternateDrawAngle(); // Get here to avoid 180 rotation in next step.
+			p.setAlternateDrawPosition(playerSimulator.getPos(), false);
 			updateSprings();
 			
-			if(CompuFuncs.distanceFromLine(playerSimulator.getPos(), p.getPos(), p.getBallRotation()) > 0) { // Until cutoff
+			float dist = VecHelper.dist(playerSimulator.getPos(), p.getPos());
+			if(oldDist == Float.NaN) oldDist = dist;
+			if(dist - oldDist > 0) { // Until cutoff
+				oldDist = Float.NaN;
 				// Go back to normal play
 				state = State.NONE;
 				p.getBody().setLinearVelocity(playerSimulator.getBody().getLinearVelocity());
-				p.setAlternateDrawPosition(null);
+				p.setAlternateDrawPosition(null, false);
 				if(p instanceof AnimatedPlayer) {
 					((AnimatedPlayer)p).setLeftEarExtraForce(0, 0);
 					((AnimatedPlayer)p).setRightEarExtraForce(0, 0);
 				}
 				p.closeLanding();
 				
+				p.getBody().m_sweep.a = playerAngle * SpaceItem.DEG_TO_RAD; // sweep=angle
+				
 				playerSimulator.dispose();
 				playerSimulator = null;
+			} else {
+				oldDist = dist;
 			}
 		case AIMING: // Both of these update here
 			left.drawMove(millistep, speedScale);
@@ -129,7 +139,7 @@ public final class LaunchingMechanism implements Moveable, Player.PlayerStateCha
 	@Override
 	public boolean isClicked(float x, float y) {
 		if(!playerLanded) return false; // Only when player has landed
-		if(Math.hypot(x - p.getPosX(), y - p.getPosY()) < 3) { // If near to player
+		if(Math.hypot(x - p.getPosX(), y - p.getPosY()) < 4) { // If near to player
 			return true;
 		}
 		return false;
@@ -147,12 +157,9 @@ public final class LaunchingMechanism implements Moveable, Player.PlayerStateCha
 		case ACCELERATING_P2:
 			Vec2 leftForce = left.calculateRF(null);
 			Vec2 rightForce = right.calculateRF(null);
-			float i = CompuFuncs.distanceFromLine(playerSimulator.getPos(), p.getPos(), p.getBallRotation());
-			if(CompuFuncs.distanceFromLine(playerSimulator.getPos(), p.getPos(), p.getBallRotation()) < -LAUNCH_FORCE_CUTOFF) { // Until cutoff
+			if(VecHelper.dist(playerSimulator.getPos(), p.getPos()) > LAUNCH_FORCE_CUTOFF) { // Until cutoff
 				if(leftForce != null && rightForce != null) playerSimulator.applyForce(leftForce.addLocal(rightForce)); // Return both forces
-				Log.v("SpaceGame", "Force" + i);
 			} else {
-				Log.v("SpaceGame", "NoForce" + i);
 				if(state == State.ACCELERATING) { // First time passing only
 					state = State.ACCELERATING_P2;
 					left.disable(); // Get rid of springs as they stop becoming used.
@@ -217,14 +224,7 @@ public final class LaunchingMechanism implements Moveable, Player.PlayerStateCha
 		if(state == State.AIMING) {
 			dragToPoint.x = x;
 			dragToPoint.y = y;
-			p.setAlternateDrawPosition(dragToPoint);
-			
-			float i = CompuFuncs.distanceFromLine(dragToPoint, p.getPos(), p.getBallRotation());
-			if(CompuFuncs.distanceFromLine(dragToPoint, p.getPos(), p.getBallRotation()) < 0) { // Until cutoff
-				Log.i("SpaceGame", "less" + i);
-			} else {
-				Log.i("SpaceGame", "more" + i);
-			}
+			p.setAlternateDrawPosition(dragToPoint, true);
 		}
 	}
 

@@ -218,16 +218,16 @@ public abstract class Player extends PlayerBase implements Moveable
 	 * Sets the alternate place to draw the character.
 	 * @param position A {@link Vec2}, or <code>null</code> to use actual position
 	 */
-	public void setAlternateDrawPosition(Vec2 position) {
+	public void setAlternateDrawPosition(Vec2 position, boolean updateAngle) {
 		alternateDrawPosition = position;
-		alternateDrawAngle = alternateDrawPosition != null ? VecHelper.angleFromDeg(alternateDrawPosition, itemC) : 0; // Player faces launcher.
+		if(updateAngle) alternateDrawAngle = alternateDrawPosition != null ? VecHelper.angleFromDeg(alternateDrawPosition, itemC) : 0; // Player faces launcher.
 	}
 
 	public Vec2 getAlternateDrawPosition() {
 		return alternateDrawPosition;
 	}
 
-	protected float getAlternateDrawAngle() {
+	public float getAlternateDrawAngle() {
 		return alternateDrawAngle;
 	}
 

@@ -16,22 +16,7 @@ import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Forceful;
 
 public final class Simulation {
 	
-	private final SimulationCallbackListener callbacks;
-	
 	public Simulation() {
-		this(null);
-	}
-	
-	public Simulation(SimulationCallbackListener callbacks) {
-		if(callbacks == null)
-			this.callbacks = new SimulationCallbackListener() {
-				@Override
-				public void wallBounced(float amount) { }
-				@Override
-				public void onStop() { }
-			};
-		else
-			this.callbacks = callbacks;
 	}
 	
 	public static final int ITERS = 1;
@@ -120,10 +105,5 @@ public final class Simulation {
 				context.world.step(millistep / ITERS / 1000f * SPEED_SCALE, 2, 2);
 			}
 		}
-	}
-
-	public static interface SimulationCallbackListener {
-		void wallBounced(float amount);
-		void onStop();
 	}
 }
