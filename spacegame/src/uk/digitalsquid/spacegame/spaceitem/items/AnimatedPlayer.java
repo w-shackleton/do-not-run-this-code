@@ -74,8 +74,10 @@ public class AnimatedPlayer extends Player
 	private static final Vec2 EAR_END = new Vec2(-1.5f, 0f);
 	private static final float LEFT_EAR_RESTING_POSITION = 20;
 	private static final float RIGHT_EAR_RESTING_POSITION = -20;
-	private static final float EAR_ROTATING_AIR_RESISTANCE = 0.993f;
+	private static final float EAR_ROTATING_AIR_RESISTANCE = 0.985f;
 	private static final float EAR_ROTATING_SPEED = 15;
+	private static final float EAR_FORCE_MULTIPLIER = 1f;
+	private static final float EAR_FORCE_PREMULTIPLIER = 2f;
 	private float lEarRotation = 30;
 	private float rEarRotation = -30;
 	private float lEarRotationSpeed = 0;
@@ -263,6 +265,9 @@ public class AnimatedPlayer extends Player
 		landingAnimationShiftScale = (moveTo - landingDrawShiftX) / 2;
 	}
 	
+	private Vec2 previousVelocity, deltaVelocity = new Vec2();
+	private static final float VELOCITY_FORCE_FACTOR = 100000f;
+	
 	@Override
 	public void move(float millistep, float speedScale) {
 		super.move(millistep, speedScale);
@@ -270,22 +275,40 @@ public class AnimatedPlayer extends Player
 		double leftEarFullRotation = getBallRotation() + lEarRotation;
 		double rightEarFullRotation = getBallRotation() + rEarRotation;
 		
-		double leftEarExternalForce  = CompuFuncs.RotateY(itemRF.x + leftEarExtraForce.x,  itemRF.y + leftEarExtraForce.y,  (float) ((180-leftEarFullRotation ) / 180 * Math.PI));
-		double rightEarExternalForce = CompuFuncs.RotateY(itemRF.x + rightEarExtraForce.x, itemRF.y + rightEarExtraForce.y, (float) ((180-rightEarFullRotation) / 180 * Math.PI));
+		// Get delta velocity as sort of force on ears
+		if(previousVelocity == null) previousVelocity = new Vec2(body.getLinearVelocity());
 		
-		double leftEarForce = LEFT_EAR_RESTING_POSITION - lEarRotation + leftEarExternalForce / 10f;
+		deltaVelocity.set(body.getLinearVelocity()); // delta = current - previous
+		deltaVelocity.subLocal(previousVelocity);
+		deltaVelocity.mul(VELOCITY_FORCE_FACTOR);
 		
-		lEarRotationSpeed += leftEarForce * millistep / ITERS / 1000f;
+		float forceX = (itemRF.x + leftEarExtraForce.x + deltaVelocity.x) * EAR_FORCE_PREMULTIPLIER;
+		float forceY = (itemRF.y + leftEarExtraForce.y + deltaVelocity.y) * EAR_FORCE_PREMULTIPLIER;
+		
+		// Work out angular force on ears.
+		double leftEarExternalForce  = CompuFuncs.RotateY(
+				forceX,
+				forceY,
+				(float) ((180-leftEarFullRotation ) / 180 * Math.PI));
+		double rightEarExternalForce = CompuFuncs.RotateY(
+				forceX,
+				forceY,
+				(float) ((180-rightEarFullRotation) / 180 * Math.PI));
+		
+		previousVelocity.set(body.getLinearVelocity());
+		
+		// Natural rotation + the force from earlier - torque, to make ears delay when body moves.
+		double leftEarForce = LEFT_EAR_RESTING_POSITION - lEarRotation + leftEarExternalForce - (getBodyGravityTorque() * 2);
+		
+		lEarRotationSpeed += leftEarForce * millistep / ITERS / 1000f * EAR_FORCE_MULTIPLIER;
 		lEarRotationSpeed *= EAR_ROTATING_AIR_RESISTANCE;
 		lEarRotation += lEarRotationSpeed * millistep / ITERS / 1000f * speedScale * EAR_ROTATING_SPEED;
-		lEarRotation = CompuFuncs.TrimMinMax(lEarRotation, lEarRotation - 45, lEarRotation + 45);
 		
-		double rightEarForce = RIGHT_EAR_RESTING_POSITION - rEarRotation + rightEarExternalForce / 10f;
+		double rightEarForce = RIGHT_EAR_RESTING_POSITION - rEarRotation + rightEarExternalForce - (getBodyGravityTorque() * 1);
 		
-		rEarRotationSpeed += rightEarForce * millistep / ITERS / 1000f;
+		rEarRotationSpeed += rightEarForce * millistep / ITERS / 1000f * EAR_FORCE_MULTIPLIER;
 		rEarRotationSpeed *= EAR_ROTATING_AIR_RESISTANCE;
 		rEarRotation += rEarRotationSpeed * millistep / ITERS / 1000f * speedScale * EAR_ROTATING_SPEED;
-		rEarRotation = CompuFuncs.TrimMinMax(rEarRotation, rEarRotation - 45, rEarRotation + 45);
 		
 		// Landing gear
 		if(landingAnimation < Math.PI) {

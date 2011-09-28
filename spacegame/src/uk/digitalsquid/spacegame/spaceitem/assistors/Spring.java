@@ -10,11 +10,11 @@ public final class Spring implements Moveable {
 	private float[] velocities;
 	private float[] forces;
 	private float[] masses;
-	private float[] springStiffness;
+	private float springPower;
 	
 	private final int numPoints;
 	
-	private final float springConstant;
+	private float springConstant;
 	
 	private boolean startLocked = true, endLocked = true;
 	
@@ -23,11 +23,10 @@ public final class Spring implements Moveable {
 		velocities = new float[pointsInSpring * 2];
 		forces = new float[pointsInSpring * 2];
 		masses = new float[pointsInSpring];
-		springStiffness = new float[pointsInSpring];
 		for(int i = 0; i < masses.length; i++) {
 			masses[i] = 1;
-			springStiffness[i] = springPower;
 		}
+		this.springPower = springPower;
 		numPoints = springPoints.length / 2;
 		this.springConstant = springConstant;
 		setPosition(startX, startY, finishX, finishY);
@@ -39,11 +38,10 @@ public final class Spring implements Moveable {
 		velocities = new float[pointsInSpring * 2];
 		forces = new float[pointsInSpring * 2];
 		masses = new float[pointsInSpring];
-		springStiffness = new float[pointsInSpring];
 		for(int i = 0; i < masses.length; i++) {
 			masses[i] = 1;
-			springStiffness[i] = 3;
 		}
+		springPower = 3;
 		numPoints = springPoints.length / 2;
 		this.springConstant = springConstant;
 		setPosition(startX, startY, finishX, finishY);
@@ -71,8 +69,8 @@ public final class Spring implements Moveable {
 			y2 = i == end ? y : springPoints[pointStart + 3];
 			
 			// Each spring distance * stiffness + dampener
-			forces[pointStart  ] = ((x1 - x) * springStiffness[i] + (x2 - x) * springStiffness[i] - (velocities[pointStart  ] * springConstant));
-			forces[pointStart+1] = ((y1 - y) * springStiffness[i] + (y2 - y) * springStiffness[i] - (velocities[pointStart+1] * springConstant));
+			forces[pointStart  ] = ((x1 - x) * springPower + (x2 - x) * springPower - (velocities[pointStart  ] * springConstant));
+			forces[pointStart+1] = ((y1 - y) * springPower + (y2 - y) * springPower - (velocities[pointStart+1] * springConstant));
 		}
 		
 		// All points except sometimes first and last
@@ -155,5 +153,21 @@ public final class Spring implements Moveable {
 		endForceCoord.x = forces[forces.length-2];
 		endForceCoord.y = forces[forces.length-1];
 		return endForceCoord;
+	}
+
+	public float getSpringConstant() {
+		return springConstant;
+	}
+
+	public void setSpringConstant(float springConstant) {
+		this.springConstant = springConstant;
+	}
+	
+	public float getSpringPower() {
+		return springPower;
+	}
+
+	public void setSpringPower(float springPower) {
+		this.springPower = springPower;
 	}
 }

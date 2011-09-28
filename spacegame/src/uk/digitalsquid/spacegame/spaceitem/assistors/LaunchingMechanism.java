@@ -151,12 +151,12 @@ public final class LaunchingMechanism implements Moveable, Player.PlayerStateCha
 	private static final float LAUNCH_FORCE_CUTOFF = 2f;
 
 	@Override
-	public Vec2 calculateRF(Vec2 itemC) {
+	public Vec2 calculateRF(Vec2 itemC, Vec2 itemV) {
 		switch(state) {
 		case ACCELERATING:
 		case ACCELERATING_P2:
-			Vec2 leftForce = left.calculateRF(null);
-			Vec2 rightForce = right.calculateRF(null);
+			Vec2 leftForce = left.calculateRF(null, null);
+			Vec2 rightForce = right.calculateRF(null, null);
 			if(VecHelper.dist(playerSimulator.getPos(), p.getPos()) > LAUNCH_FORCE_CUTOFF) { // Until cutoff
 				if(leftForce != null && rightForce != null) playerSimulator.applyForce(leftForce.addLocal(rightForce)); // Return both forces
 			} else {
@@ -172,10 +172,10 @@ public final class LaunchingMechanism implements Moveable, Player.PlayerStateCha
 			if(p instanceof AnimatedPlayer) {
 				AnimatedPlayer ap = (AnimatedPlayer) p;
 				updateSprings();
-				Vec2 leftForce2 = left.calculateRF(null);
-				Vec2 rightForce2 = right.calculateRF(null);
-				ap.setLeftEarExtraForce(leftForce2.x * 20, leftForce2.y * 20);
-				ap.setRightEarExtraForce(rightForce2.x * 20, rightForce2.y * 20);
+				Vec2 leftForce2 = left.calculateRF(null, null);
+				Vec2 rightForce2 = right.calculateRF(null, null);
+				ap.setLeftEarExtraForce(leftForce2.x * 2, leftForce2.y * 2);
+				ap.setRightEarExtraForce(rightForce2.x * 2, rightForce2.y * 2);
 			}
 			return null;
 		default:
@@ -206,6 +206,11 @@ public final class LaunchingMechanism implements Moveable, Player.PlayerStateCha
 			left.activate(dragFromPoint.x, dragFromPoint.y, dragFromPoint.x, dragFromPoint.y);
 			right.activate(dragFromPoint.x, dragFromPoint.y, dragFromPoint.x, dragFromPoint.y);
 			
+			left.setSpringPower(1.4f);
+			right.setSpringPower(1.4f);
+			left.setSpringConstant(1);
+			right.setSpringConstant(1);
+			
 			mouseMove(x, y); // Update on first down as well
 		}
 	}
@@ -231,6 +236,10 @@ public final class LaunchingMechanism implements Moveable, Player.PlayerStateCha
 	@Override
 	public void mouseUp(float x, float y) {
 		state = State.ACCELERATING;
+		left.setSpringConstant(1); // Make springs more springy.
+		left.setSpringPower(20); // Make springs more powerful.
+		right.setSpringConstant(1);
+		right.setSpringPower(20);
 		playerSimulator = new PlayerSimulator(context, new Vec2(p.getAlternateDrawPosition()));
 	}
 	
@@ -247,5 +256,10 @@ public final class LaunchingMechanism implements Moveable, Player.PlayerStateCha
 		}
 
 		@Override public void draw(GL10 gl, float worldZoom) { }
+	}
+
+	@Override
+	public boolean isForceExclusive() {
+		return false;
 	}
 }

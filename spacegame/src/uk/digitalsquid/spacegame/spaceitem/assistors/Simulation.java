@@ -46,6 +46,10 @@ public final class Simulation {
 		{
 			p.itemRF.setZero();
 			p.apparentRF.setZero();
+			/**
+			 * When true, indicates that something has an exclusive hold on the force, and that nothing else should apply force.
+			 */
+			boolean exclusiveForce = false;
 			for(SpaceItem obj : planetList)
 			{
 				if(!paused)
@@ -53,9 +57,13 @@ public final class Simulation {
 					if(obj instanceof Forceful)
 					{
 						Forceful item = (Forceful) obj;
-						if(gravOn) // Stage for gravity forces
+						if(gravOn && !exclusiveForce) // Stage for gravity forces
 						{
-							Vec2 tmp = item.calculateRF(p.itemC);
+							if(item.isForceExclusive()) {
+								exclusiveForce = true;
+								p.itemRF.setZero(); // Makes this force the only one.
+							}
+							Vec2 tmp = item.calculateRF(p.itemC, p.getVelocity());
 							if(tmp != null) p.itemRF.addLocal(tmp);
 						}
 						
@@ -77,12 +85,22 @@ public final class Simulation {
 			if(gravOn)
 			{
 				if(portal != null) {
-					Vec2 tmp = portal.calculateRF(p.itemC);
+					if(portal.isForceExclusive()) {
+						exclusiveForce = true;
+						p.itemRF.setZero(); // Makes this force the only one.
+						p.apparentRF.setZero();
+					}
+					Vec2 tmp = portal.calculateRF(p.itemC, p.getVelocity());
 					if(tmp != null) p.itemRF.addLocal(tmp);
 					if(tmp != null) p.apparentRF.addLocal(tmp);
 				}
 				if(launch != null) {
-					Vec2 tmp = launch.calculateRF(p.itemC);
+					if(launch.isForceExclusive()) {
+						exclusiveForce = true;
+						p.itemRF.setZero(); // Makes this force the only one.
+						p.apparentRF.setZero();
+					}
+					Vec2 tmp = launch.calculateRF(p.itemC, p.getVelocity());
 					if(tmp != null) tmp.mulLocal(10);
 					if(tmp != null) p.itemRF.addLocal(tmp);
 					if(tmp != null) p.apparentRF.subLocal(tmp);

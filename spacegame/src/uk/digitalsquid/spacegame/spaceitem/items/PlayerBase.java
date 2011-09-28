@@ -19,7 +19,7 @@ public abstract class PlayerBase extends Spherical {
 	public PlayerBase(SimulationContext context, Vec2 coord) {
 		super(context, coord, 10, BALL_RADIUS, BodyType.DYNAMIC);
 		body.setSleepingAllowed(false);
-		fixture.setRestitution(0.2f);
+		fixture.setRestitution(0.13f);
 		fixture.setFriction(0.95f);
 		fixture.setDensity(10);
 		body.setAngularDamping(0.2f);

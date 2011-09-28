@@ -12,9 +12,16 @@ public interface Forceful
 	/**
 	 * Calculate the force that this item puts upon the ball.
 	 * @param itemC	The item's position
+	 * @param itemV	The item's velocity
 	 * @return		The force created
 	 */
-	public Vec2 calculateRF(Vec2 itemC);
+	public Vec2 calculateRF(Vec2 itemC, Vec2 itemV);
+	
+	/**
+	 * Returns <code>true</code> when this body has exclusive force control - it will be the only thing exerting force.
+	 * @return
+	 */
+	public boolean isForceExclusive();
 	
 	/**
 	 * Calculate the new velocity of the ball, ie if it has collided with something,

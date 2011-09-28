@@ -13,6 +13,7 @@ import uk.digitalsquid.spacegamelib.gl.RectMesh;
 import uk.digitalsquid.spacegamelib.spaceitem.Gravitable;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Warpable;
+import android.util.Log;
 
 /**
  * Finishing portal for the game
@@ -22,7 +23,7 @@ import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Warpable;
 public class Portal extends Gravitable implements Moveable, Warpable {
 	
 	private static final float PORTAL_RADIUS = 7f;
-	private static final float PORTAL_DENSITY = 5f;
+	private static final float PORTAL_DENSITY = 2f;
 	private static final float PORTAL_NORMAL_DENSITY = 0;
 	private static final float PORTAL_NORMAL_RADIUS = 0;
 	
@@ -52,7 +53,7 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 	private float openingRadius = 0;
 	
 	public Portal(SimulationContext context, Vec2 coord) {
-		super(context, coord, 0.95f, PORTAL_NORMAL_DENSITY, PORTAL_NORMAL_RADIUS, BodyType.STATIC);
+		super(context, coord, 10f, PORTAL_NORMAL_DENSITY, PORTAL_NORMAL_RADIUS, BodyType.STATIC);
 		
 		img = new RectMesh((float)getPos().x, (float)getPos().y, 0, 0, R.drawable.portal);
 		opening = new RectMesh((float)getPos().x, (float)getPos().y, 0, 0, R.drawable.portal_opening);
@@ -177,5 +178,13 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 			return new WarpData(true);
 		}
 		return null;
+	}
+
+	@Override
+	public boolean isForceExclusive() {
+		if(status == Status.FINISHING || status == Status.FINISHED) {
+			Log.v("SpaceGame", "Exclusive");
+		}
+		return status == Status.FINISHING || status == Status.FINISHED; // Only when entering portal
 	}
 }

@@ -90,7 +90,7 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 	}
 
 	@Override
-	public Vec2 calculateRF(Vec2 itemC)
+	public Vec2 calculateRF(Vec2 itemC, Vec2 itemV)
 	{
 		if(CompuFuncs.PointInPolygon(getRectPos(), itemC))
 		{
@@ -147,4 +147,9 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 	
 	@Override
 	public void move(float millistep, float speedScale) { }
+
+	@Override
+	public boolean isForceExclusive() {
+		return false;
+	}
 }

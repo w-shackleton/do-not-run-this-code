@@ -46,6 +46,9 @@ public abstract class Player extends PlayerBase implements Moveable
 		gl.glPushMatrix();
 		gl.glTranslatef((float)itemC.x, (float)itemC.y, 0);
 		
+		gl.glScalef(warpScale, warpScale, 1);
+		gl.glRotatef(warpRotation, 0, 0, 1);
+		
 		drawPlayerLanding(gl, worldZoom);
 		
 		gl.glPopMatrix();
@@ -104,7 +107,8 @@ public abstract class Player extends PlayerBase implements Moveable
 			}
 		}
 		
-		body.applyTorque(ballMomentum / 100 * apparentRF.length());
+		bodyGravityTorque = ballMomentum / 100 * apparentRF.length();
+		body.applyTorque(bodyGravityTorque);
 		
 		velocityDelta.set(body.getLinearVelocity());
 		velocityDelta.subLocal(previousVelocity);
@@ -115,6 +119,11 @@ public abstract class Player extends PlayerBase implements Moveable
 		
 		previousVelocity.set(body.getLinearVelocity());
 	}
+	
+	/**
+	 * The torque experienced due to gravity.
+	 */
+	private float bodyGravityTorque;
 	
 	/**
 	 * The difference between this velocity and the previous.
@@ -233,5 +242,9 @@ public abstract class Player extends PlayerBase implements Moveable
 
 	public float getBallRotation() {
 		return ballRotation;
+	}
+
+	protected float getBodyGravityTorque() {
+		return bodyGravityTorque;
 	}
 }

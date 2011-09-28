@@ -61,7 +61,7 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 	}
 
 	@Override
-	public Vec2 calculateRF(Vec2 itemC) {
+	public Vec2 calculateRF(Vec2 itemC, Vec2 itemV) {
 		return null;
 	}
 
@@ -130,5 +130,10 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 	@Override
 	public Vec2 calculateVelocityImmutable(Vec2 itemPos, Vec2 itemV, float itemRadius) {
 		return null;
+	}
+
+	@Override
+	public boolean isForceExclusive() {
+		return false;
 	}
 }

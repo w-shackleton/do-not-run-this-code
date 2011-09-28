@@ -23,7 +23,7 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	private static final float BLACK_HOLE_ZOOM_SPEED = 1.01f;
 	public static final float BLACK_HOLE_ZOOM_POWER = 1.10f;
 	private static final int BLACK_HOLE_ZOOM_WAIT = 100;
-	private static final float BLACK_HOLE_CAPTURE_DIST = 2 * BLACK_HOLE_RADIUS;
+	private static final float BLACK_HOLE_CAPTURE_DIST = BLACK_HOLE_RADIUS;
 
 	protected static final int BH_PULSES = 20;
 	
@@ -40,7 +40,7 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	
 	public BlackHole(SimulationContext context, Vec2 coord)
 	{
-		super(context, coord, 0.95f, BLACK_HOLE_DENSITY, BLACK_HOLE_RADIUS, BodyType.STATIC);
+		super(context, coord, 100, BLACK_HOLE_DENSITY, BLACK_HOLE_RADIUS, BodyType.STATIC);
 		
 		bhImage = new RectMesh(getPosX(), getPosY(), (float)getRadius() * 4, (float)getRadius() * 4, R.drawable.bh);
 		bhP2Image = new RectMesh(getPosX(), getPosY(), (float)getRadius() * 4, (float)getRadius() * 4, R.drawable.bhp2);
@@ -123,16 +123,12 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	
 	@Override
 	public Vec2 calculateVelocityImmutable(Vec2 itemC, Vec2 itemVC, float itemRadius) {
-		Vec2 d = super.calculateVelocityImmutable(itemC, itemVC, itemRadius);
-		
-		if(bhActivated) {
-			if(d == null) {
-				return new Vec2();
-			} else {
-				return d;
-			}
-		}
-		
-		return d;
+		return super.calculateVelocityImmutable(itemC, itemVC, itemRadius);
+	}
+
+	@Override
+	public boolean isForceExclusive() {
+		if(bhActivated) return true;
+		return false;
 	}
 }

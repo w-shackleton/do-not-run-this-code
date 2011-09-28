@@ -9,7 +9,7 @@ import android.os.Environment;
 
 public class CompuFuncs
 {
-	public static final double GRAVCONST = 1f;
+	public static final float GRAVCONST = 1f;
 	
 	/**
 	 * Computes the force between a massive body and the player
@@ -28,14 +28,14 @@ public class CompuFuncs
 		float r = (float) Math.sqrt((planet.x - item.x) * (planet.x - item.x) + (planet.y - item.y) * (planet.y - item.y)); // Distance between objects
 		
 		if((planet.x - item.x) * (planet.x - item.x) + (planet.y - item.y) * (planet.y - item.y) < planetRad * planetRad)
-			planetRad = r;
+			planetMass *= r / planetRad; // scale down
 		
 		outForce.x =
-			(float) (GRAVCONST * (planet.x - item.x) *
+			(GRAVCONST * (planet.x - item.x) *
 			planetMass /
 			(r * r));
 		outForce.y =
-			(float) (GRAVCONST * (planet.y - item.y) * 
+			(GRAVCONST * (planet.y - item.y) * 
 			planetMass / 
 			(r * r));
 	}
@@ -183,36 +183,6 @@ public class CompuFuncs
 		//Log.v("SpaceGame", " ");
 		return c;
 	}
-	/*public static final boolean PointInPolygon(Coord points[], Coord point)
-	{
-		int i, j;
-		boolean c = false;
-		for (i = 0, j = points.length - 1; i < points.length; j = i++)
-		{
-			if (( ((points[i].y<=point.y) && (point.y<points[i].y)) || ((points[i].y<=point.y) && (point.y<points[i].y)) ) &&
-					(point.x < (points[j].x - points[i].x) * (point.y - points[j].y) / (points[j].y - points[i].y) + points[i].x))
-				c = !c;
-		}
-		return c;
-	}*/
-	
-	/*public static final Paint mkPaint(int r, int g, int b)
-	{
-		Paint p = new Paint();
-		p.setARGB(255, r, g, b);
-		p.setAntiAlias(StaticInfo.Antialiasing);
-		p.setStrokeWidth(2);
-		return p;
-	}
-	
-	public static final Paint mkPaint(int a, int r, int g, int b)
-	{
-		Paint p = new Paint();
-		p.setARGB(a, r, g, b);
-		p.setAntiAlias(StaticInfo.Antialiasing);
-		p.setStrokeWidth(2);
-		return p;
-	}*/
 	
 	public static final String decodeIStream(InputStream in) throws IOException
 	{

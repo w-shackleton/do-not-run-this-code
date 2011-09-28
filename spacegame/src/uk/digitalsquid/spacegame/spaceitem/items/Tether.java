@@ -36,7 +36,7 @@ public final class Tether extends SpaceItem implements Moveable, Forceful {
 		super(context, new Vec2(), 0, BodyType.STATIC);
 		tether = new Bezier(1, 1, 1, 1);
 		
-		springCalc = new Spring(7, 0, 0, 0, 0, 1f, 20f);
+		springCalc = new Spring(7, 0, 0, 0, 0, 3f, 20f);
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public final class Tether extends SpaceItem implements Moveable, Forceful {
 	 * @param itemC NOT USED
 	 */
 	@Override
-	public Vec2 calculateRF(Vec2 itemC) {
+	public Vec2 calculateRF(Vec2 itemC, Vec2 itemV) {
 		if(state == State.DISABLED) return null;
 		
 		return springCalc.calculateEndForce();
@@ -99,5 +99,18 @@ public final class Tether extends SpaceItem implements Moveable, Forceful {
 	 */
 	public void update(float sx, float sy, float dx, float dy) {
 		springCalc.setEnds(sx, sy, dx, dy);
+	}
+	
+	public void setSpringConstant(float springConstant) {
+		springCalc.setSpringConstant(springConstant);
+	}
+	
+	public void setSpringPower(float springPower) {
+		springCalc.setSpringPower(springPower);
+	}
+
+	@Override
+	public boolean isForceExclusive() {
+		return false;
 	}
 }

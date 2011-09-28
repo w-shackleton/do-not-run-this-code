@@ -138,4 +138,9 @@ public class Planet extends Gravitable
 			fgType = fg;
 		}
 	}
+
+	@Override
+	public boolean isForceExclusive() {
+		return false;
+	}
 }
