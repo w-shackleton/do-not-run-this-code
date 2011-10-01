@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 
 public final class Prefs {
 	
+	@SuppressWarnings("unused")
 	private final SharedPreferences pref;
 	
 	public Prefs(Context context) {

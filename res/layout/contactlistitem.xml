@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent" android:orientation="horizontal">
+    <QuickContactBadge android:layout_width="50dip" android:layout_height="50dip" android:layout_marginTop="5dip" android:layout_marginBottom="5dip" android:layout_marginLeft="5dip" android:id="@+id/picture"></QuickContactBadge>
+    <TextView android:text="TextView" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="match_parent" android:layout_margin="5dip" android:gravity="center_vertical" android:id="@+id/contactname" android:layout_weight="1"></TextView>
+    <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/addphoto" android:id="@+id/addphoto"></Button>
+    
+</LinearLayout>

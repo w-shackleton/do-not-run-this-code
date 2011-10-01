@@ -26,10 +26,10 @@ public final class DBGroup extends DBSubclass {
 	}
 	
 	/**
-	 * Gets the ID numbers of the groups the user wants to view.
+	 * Gets the ID numbers of the groups the user wants to hide.
 	 * @return
 	 */
-	public List<Integer> getSelectedGroupIds() {
+	public List<Integer> getHiddenGroupIds() {
 		List<Integer> ids = new ArrayList<Integer>();
 		
 		Cursor cur = db.query(GROUPS, new String[] {GROUPS_ID}, null, null, null, null, null);
@@ -42,7 +42,7 @@ public final class DBGroup extends DBSubclass {
 		return ids;
 	}
 	
-	public synchronized void setSelectedGroupIds(List<Integer> ids) {
+	public synchronized void setHiddenGroupIds(List<Integer> ids) {
 		db.beginTransaction();
 		try {
 			db.delete(GROUPS, null, null); // Remove old list.
