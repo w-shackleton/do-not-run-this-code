@@ -86,11 +86,14 @@ public class PhotoManager implements Config {
 			
 			@Override
 			protected void onPostExecute(ByteArray result) {
+				/*
 				ContentValues values = new ContentValues();
 				values.put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE);
-				values.put(ContactsContract.CommonDataKinds.Photo.CONTACT_ID, contactId);
+				values.put(ContactsContract.CommonDataKinds.Photo.RAW_CONTACT_ID, contactId);
 				values.put(ContactsContract.CommonDataKinds.Photo.PHOTO, result.data);
 				cr.insert(ContactsContract.Data.CONTENT_URI, values);
+				*/
+				// TODO: Get raw contact ID
 				
 				onDone.run();
 			}

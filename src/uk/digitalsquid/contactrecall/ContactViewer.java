@@ -22,7 +22,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -171,7 +170,7 @@ public class ContactViewer extends Activity implements ContactChangeListener {
 		            convertView = inflater.inflate(R.layout.contactlistitem, null);
 		        }
 		        
-		        Contact contact = contacts.get(position);
+		        final Contact contact = contacts.get(position);
 		        
 		        // Fill
 		        TextView name = (TextView) convertView.findViewById(R.id.contactname);
@@ -182,8 +181,9 @@ public class ContactViewer extends Activity implements ContactChangeListener {
 					@Override
 					public void onClick(View v) {
 						// Start camera activity to take new picture
-						Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-						startActivityForResult(camera, ACTIVITY_PICTURE_RESULT);
+						Intent intent = new Intent(ContactViewer.this, PhotoCapture.class);
+						intent.putExtra("contactId", contact.getId());
+						startActivityForResult(intent, ACTIVITY_PICTURE_RESULT);
 					}
 				});
 		        
@@ -284,17 +284,8 @@ public class ContactViewer extends Activity implements ContactChangeListener {
 		if(resultCode == RESULT_OK) {
 			switch(requestCode) {
 			case ACTIVITY_PICTURE_RESULT:
-				if(data == null) break;
-				if(data.getExtras() == null) break;
-				Bitmap image = (Bitmap) data.getExtras().get("data");
-				
-				if(image != null) {
-					app.getPhotos().saveImageToContactAsync(image, -1, new Runnable() {
-						@Override
-						public void run() {
-						}
-					});
-				}
+				app.getContacts().refresh(); // Refresh to show new image
+				onContactsChanged(app.getContacts().getContacts());
 				break;
 			}
 		}
