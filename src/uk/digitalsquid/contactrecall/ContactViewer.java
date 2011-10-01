@@ -3,6 +3,9 @@ package uk.digitalsquid.contactrecall;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import uk.digitalsquid.contactrecall.mgr.Contact;
 import uk.digitalsquid.contactrecall.mgr.ContactManager.ContactChangeListener;
@@ -13,10 +16,13 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,7 +57,11 @@ public class ContactViewer extends Activity implements ContactChangeListener {
 		lv.setAdapter(contactAdapter);
 		
 		app.getContacts().registerChangeListener(this);
+		
+		photoLoader.execute();
 	}
+	
+	private static final int ACTIVITY_PICTURE_RESULT = 1;
 	
 	private List<Contact> contacts;
 	
@@ -65,6 +75,7 @@ public class ContactViewer extends Activity implements ContactChangeListener {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		photoLoader.cancel(true);
 		app.getContacts().unregisterChangeListener(this);
 	}
 	
@@ -167,10 +178,25 @@ public class ContactViewer extends Activity implements ContactChangeListener {
 		        QuickContactBadge badge = (QuickContactBadge) convertView.findViewById(R.id.picture);
 		        Button addPhoto = (Button) convertView.findViewById(R.id.addphoto);
 		        
+		        addPhoto.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// Start camera activity to take new picture
+						Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+						startActivityForResult(camera, ACTIVITY_PICTURE_RESULT);
+					}
+				});
+		        
 		        name.setText(contact.getDisplayName());
 		        
-		        Bitmap image = contact.getPhoto(app.getContacts());
-		        badge.setImageBitmap(image);
+		        badge.setImageBitmap(null);
+		        try {
+			        PhotoLoadRequest req = new PhotoLoadRequest(contact, badge);
+					photoLoadQueue.put(req); // Queue up load and decode.
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+		        
 		        badge.assignContactUri(Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, String.valueOf(contact.getId())));
             }
 
@@ -207,4 +233,70 @@ public class ContactViewer extends Activity implements ContactChangeListener {
 		contactAdapter.setContacts(newContacts);
 		contacts = newContacts;
 	};
+	
+	/**
+	 * A request to load a photo
+	 * @author william
+	 *
+	 */
+	private class PhotoLoadRequest {
+		final Contact source;
+		final QuickContactBadge destination;
+		
+		Bitmap bitmap;
+		
+		public PhotoLoadRequest(Contact source, QuickContactBadge dest) {
+			this.source = source;
+			destination = dest;
+		}
+	}
+	
+	private BlockingQueue<PhotoLoadRequest> photoLoadQueue = new LinkedBlockingQueue<PhotoLoadRequest>(4);
+	
+	private AsyncTask<Void, PhotoLoadRequest, Void> photoLoader = new AsyncTask<Void, ContactViewer.PhotoLoadRequest, Void>() {
+		@Override
+		protected Void doInBackground(Void... params) {
+			while(!isCancelled()) {
+				try {
+					PhotoLoadRequest req = photoLoadQueue.poll(1000, TimeUnit.MILLISECONDS);
+					if(req != null) {
+				        req.bitmap = req.source.getPhoto(app.getPhotos());
+				        publishProgress(req);
+					}
+				} catch (InterruptedException e) {
+				}
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onProgressUpdate(PhotoLoadRequest... args) {
+			super.onProgressUpdate(args);
+			if(args[0].bitmap != null) args[0].destination.setImageBitmap(args[0].bitmap);
+		}
+	};
+	
+	// Picture finished
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		if(resultCode == RESULT_OK) {
+			switch(requestCode) {
+			case ACTIVITY_PICTURE_RESULT:
+				if(data == null) break;
+				if(data.getExtras() == null) break;
+				Bitmap image = (Bitmap) data.getExtras().get("data");
+				
+				if(image != null) {
+					app.getPhotos().saveImageToContactAsync(image, -1, new Runnable() {
+						@Override
+						public void run() {
+						}
+					});
+				}
+				break;
+			}
+		}
+	}
 }

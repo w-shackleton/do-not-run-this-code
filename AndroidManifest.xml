@@ -15,6 +15,7 @@
             </intent-filter>
         </activity>
         <activity android:name="ContactViewer" android:label="@string/viewcontacts"></activity>
+        <activity android:label="@string/capturephoto" android:name="PhotoCapture"></activity>
 
     </application>
 </manifest>

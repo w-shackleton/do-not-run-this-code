@@ -40,7 +40,7 @@ public class Contact {
 	/**
 	 * Loads the photo from the given manager. Returns the first one.
 	 */
-	public Bitmap getPhoto(ContactManager mgr) {
+	public Bitmap getPhoto(PhotoManager mgr) {
 		return mgr.getContactPicture(id);
 	}
 }

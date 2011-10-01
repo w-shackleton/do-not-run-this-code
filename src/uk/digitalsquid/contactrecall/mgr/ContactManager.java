@@ -14,7 +14,6 @@ import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -90,25 +89,6 @@ public final class ContactManager implements Config {
 	
 	public List<Contact> getContacts() {
 		return contacts;
-	}
-	
-	/**
-	 * Gets and loads the picture(s) for a given contact ID
-	 * @param idNum
-	 */
-	public Bitmap getContactPicture(int idNum) {
-		Cursor cur = cr.query(ContactsContract.Data.CONTENT_URI,
-				new String[] { ContactsContract.CommonDataKinds.Photo.PHOTO },
-				ContactsContract.Data.MIMETYPE + " = ? AND " + ContactsContract.Data.CONTACT_ID + "= ?",
-				new String[] { ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE, String.valueOf(idNum) },
-				null);
-		final int photoCol = cur.getColumnIndex(ContactsContract.CommonDataKinds.Photo.PHOTO);
-		while(cur.moveToNext()) {
-			byte[] data = cur.getBlob(photoCol);
-			if(data == null) continue;
-			return BitmapFactory.decodeByteArray(data, 0, data.length);
-		}
-		return null;
 	}
 
 	private final ContentObserver observer = new ContentObserver(new Handler()) {
