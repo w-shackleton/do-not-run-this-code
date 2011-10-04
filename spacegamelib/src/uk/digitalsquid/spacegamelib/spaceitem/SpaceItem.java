@@ -9,8 +9,9 @@ import org.jbox2d.dynamics.BodyType;
 
 import uk.digitalsquid.spacegamelib.SimulationContext;
 
-public abstract class SpaceItem
-{
+public abstract class SpaceItem {
+	public static final float BALL_RADIUS = 1.4f;
+	
 	/**
 	 * Multiply a number of degrees by this to convert it to radians
 	 */

@@ -3,7 +3,6 @@ package uk.digitalsquid.spacegamelib.spaceitem;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyType;
 
-import uk.digitalsquid.spacegame.spaceitem.items.AnimatedPlayer;
 import uk.digitalsquid.spacegamelib.CompuFuncs;
 import uk.digitalsquid.spacegamelib.SimulationContext;
 import uk.digitalsquid.spacegamelib.VecHelper;
@@ -28,7 +27,7 @@ public abstract class Gravitable extends Spherical implements Forceful
 		// float size = body.getFixtureList().m_shape.m_radius * body.getFixtureList().m_shape.m_radius;
 		float size = body.getFixtureList().m_shape.m_radius * 4; // Relative pulls are less - large planets exert a less extreme force.
 		CompuFuncs.computeForce(tmpRF, body.getPosition(), size * body.getFixtureList().getDensity(), getRadius(), itemC);
-		if(VecHelper.dist(getPos(), itemC) < getRadius() + AnimatedPlayer.BALL_RADIUS) { // If inside
+		if(VecHelper.dist(getPos(), itemC) < getRadius() + BALL_RADIUS) { // If inside
 			tmpRF.x -= itemV.x * internalResistanceCoefficient;
 			tmpRF.y -= itemV.y * internalResistanceCoefficient; // Apply damping
 		}

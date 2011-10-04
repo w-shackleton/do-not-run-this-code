@@ -9,7 +9,7 @@ import android.os.Environment;
 
 public class CompuFuncs
 {
-	public static final float GRAVCONST = 1f;
+	public static final float GRAVCONST = 4f;
 	
 	/**
 	 * Computes the force between a massive body and the player
@@ -33,11 +33,11 @@ public class CompuFuncs
 		outForce.x =
 			(GRAVCONST * (planet.x - item.x) *
 			planetMass /
-			(r * r));
+			(r * r * (float)Math.sqrt(r)));
 		outForce.y =
 			(GRAVCONST * (planet.y - item.y) * 
 			planetMass / 
-			(r * r));
+			(r * r * (float)Math.sqrt(r)));
 	}
 	
 	public static final double TrimMin(double num, double min)
