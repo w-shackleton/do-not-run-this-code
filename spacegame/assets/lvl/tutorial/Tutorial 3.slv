@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<level>
+    <name>Walls</name>
+    <creator>Will</creator>
+    <start x="-300.7" y="-2.7" />
+    <bounds x="1000" y="1000" />
+    <portal x="248.827" y="276.184" />
+    <stars value="10" />
+    <items>
+        <planet x="-64" y="292" radius="88.5781" type="2" />
+        <wall x="3" y="82" sx="480" sy="16" rotation="9.74028" />
+        <wall x="-361.3" y="-7.4" sx="80" sy="16" rotation="-76.7763" />
+        <wall x="14.9" y="13.5" sx="480" sy="16" rotation="11.4592" />
+        <wall x="-286.5" y="-45.9" sx="140" sy="16" rotation="-0" />
+        <wall x="-294.4" y="39.8" sx="120" sy="16" rotation="-0" />
+        <star x="332.4" y="3.5" radius="15" />
+        <star x="84.9" y="76.1" radius="15" />
+        <star x="-66.9" y="20" radius="15" />
+        <star x="-182.4" y="22.2" radius="15" />
+        <wall x="286.2" y="-98.8" sx="320" sy="16" rotation="-74.4845" />
+        <wall x="409.4" y="-252.8" sx="180" sy="16" rotation="-0" />
+        <wall x="-336.5" y="271.153" sx="460" sy="16" rotation="-81.933" />
+    </items>
+</level>

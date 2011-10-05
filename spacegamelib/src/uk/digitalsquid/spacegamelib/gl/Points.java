@@ -82,6 +82,9 @@ public class Points {
 		
 		gl.glPointSize(pointSize);
 	    
+		gl.glEnable(GL10.GL_BLEND); // Only if alpha present?
+	    gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+	    
 		gl.glColor4f(mRGBA[0], mRGBA[1], mRGBA[2], mRGBA[3]);
 		
 		gl.glTranslatef(x, y, 0);
@@ -92,7 +95,7 @@ public class Points {
 		// Disable the vertices buffer.
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 
-		// gl.glDisable(GL10.GL_BLEND);
+		gl.glDisable(GL10.GL_BLEND);
 
 		gl.glRotatef(-rz, 0, 0, 1);
 		gl.glTranslatef(-x, -y, 0);

@@ -2,13 +2,13 @@
 <level>
     <name>Easy start</name>
     <creator>Will</creator>
-    <start x="201.607646" y="-77.076542" />
-    <bounds x="1000.000000" y="1000.000000" />
-    <portal x="-85.478454" y="131.411469" />
+    <start x="201.608" y="-77.0765" />
+    <bounds x="1000" y="1000" />
+    <portal x="-85.4785" y="131.411" />
     <stars value="1" />
     <items>
-        <planet x="217.272720" y="-30.406690" radius="40.000000" type="3" />
-        <planet x="114.665074" y="182.397133" radius="96.385822" type="4" />
-        <star x="-15.000000" y="-43.000000" radius="15.000000" />
+        <star x="-15" y="-43" radius="15" />
+        <planet x="222" y="-33" radius="37.5657" type="0" />
+        <planet x="112" y="210" radius="129.687" type="2" />
     </items>
 </level>

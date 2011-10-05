@@ -11,8 +11,8 @@ public final class BgPoints extends Points {
 	 * @param insideWidth Diameter of area to place points
 	 * @param insideHeight Diameter of area to place points
 	 */
-	public BgPoints(int numOfPoints, int insideWidth, int insideHeight) {
-		super(0, 0, genNewVertices(numOfPoints, insideWidth, insideHeight), 1, 1, 1, 1);
+	public BgPoints(int numOfPoints, int insideWidth, int insideHeight, float alpha) {
+		super(0, 0, genNewVertices(numOfPoints, insideWidth, insideHeight), 1, 1, 1, alpha);
 	}
 
 	/**

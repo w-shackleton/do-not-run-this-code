@@ -108,7 +108,8 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 
 		private int BG_POINTS_PER_AREA = 1000;
 
-		private BgPoints bgPoints;
+		private BgPoints[] bgPoints;
+		
 		protected Vec2 avgPos = new Vec2();
 		
 		protected static final int SCROLL_SPEED = 20;
@@ -200,8 +201,14 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 				screenPos[i] = new Vec2();
 			
 			// BG Points
-			BG_POINTS_PER_AREA = (int) level.bounds.length() * 30;
-			bgPoints = new BgPoints(BG_POINTS_PER_AREA, (int)level.bounds.x, (int)level.bounds.y);
+			BG_POINTS_PER_AREA = (int) level.bounds.length() * 5;
+			bgPoints = new BgPoints[6];
+			bgPoints[0] = new BgPoints(BG_POINTS_PER_AREA, (int)level.bounds.x, (int)level.bounds.y, 0.1f);
+			bgPoints[1] = new BgPoints(BG_POINTS_PER_AREA, (int)level.bounds.x, (int)level.bounds.y, 0.2f);
+			bgPoints[2] = new BgPoints(BG_POINTS_PER_AREA, (int)level.bounds.x, (int)level.bounds.y, 0.4f);
+			bgPoints[3] = new BgPoints(BG_POINTS_PER_AREA, (int)level.bounds.x, (int)level.bounds.y, 0.5f);
+			bgPoints[4] = new BgPoints(BG_POINTS_PER_AREA, (int)level.bounds.x, (int)level.bounds.y, 0.6f);
+			bgPoints[5] = new BgPoints(BG_POINTS_PER_AREA, (int)level.bounds.x, (int)level.bounds.y, 0.75f);
 			
 			startTime = System.currentTimeMillis();
 		}
@@ -419,7 +426,9 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			
 			if(StaticInfo.Starfield)
 			{
-				bgPoints.draw(gl);
+				for(BgPoints p : bgPoints) {
+					p.draw(gl);
+				}
 			}
 			
 			// Object draw
