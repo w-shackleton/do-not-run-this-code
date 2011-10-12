@@ -15,6 +15,7 @@ Spherical::Spherical(EditorCallbacks &callbacks, double sx, double sy, double sr
 	min(min),
 	max(max)
 {
+	isGridSnapped = false;
 }
 
 Spherical::Spherical(EditorCallbacks &callbacks, TiXmlElement &item, double min, double max) :
@@ -23,6 +24,7 @@ Spherical::Spherical(EditorCallbacks &callbacks, TiXmlElement &item, double min,
 	max(max)
 {
 	item.QueryDoubleAttribute("radius", &radius);
+	isGridSnapped = false;
 }
 
 void Spherical::saveXMLChild(TiXmlElement* item)

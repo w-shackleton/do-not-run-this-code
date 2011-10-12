@@ -49,8 +49,8 @@ void SpaceItem::saveXML(TiXmlElement& parent)
 
 void SpaceItem::saveXMLChild(TiXmlElement* item)
 {
-	item->SetDoubleAttribute("x", x);
-	item->SetDoubleAttribute("y", -y);
+	item->SetDoubleAttribute("x", getX());
+	item->SetDoubleAttribute("y", -getY());
 }
 
 void SpaceItem::onCMenuItemClick(int id)

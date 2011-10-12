@@ -14,6 +14,7 @@ Rectangular::Rectangular(EditorCallbacks &callbacks, double x, double y, double 
 	max(max)
 {
 	cornerMatrix = Cairo::identity_matrix();
+	isGridSnapped = true;
 }
 
 Rectangular::Rectangular(EditorCallbacks &callbacks, TiXmlElement &item, Misc::Point min, Misc::Point max) :
@@ -27,6 +28,8 @@ Rectangular::Rectangular(EditorCallbacks &callbacks, TiXmlElement &item, Misc::P
 	item.QueryDoubleAttribute("rotation", &rotation);
 	rotation = -rotation;
 	rotation *= M_PI / 180;
+
+	isGridSnapped = true;
 }
 
 bool Rectangular::isClicked(int cx, int cy)
@@ -39,12 +42,12 @@ bool Rectangular::isBorderClicked(int cx, int cy)
 	// Temporarily resize rectangle to check if border was clicked
 	sx += BORDER_CLICK_SIZE;
 	sy += BORDER_CLICK_SIZE;
-	updateCornerPoints();
+	updateCornerPoints(true);
 	bool inOut = Misc::pointInPolygon(cornerPoints, Misc::Point(cx, cy));
 
 	sx -= BORDER_CLICK_SIZE * 2;
 	sy -= BORDER_CLICK_SIZE * 2;
-	updateCornerPoints();
+	updateCornerPoints(true);
 	bool inIn = Misc::pointInPolygon(cornerPoints, Misc::Point(cx, cy));
 
 	sx += BORDER_CLICK_SIZE;
@@ -52,7 +55,7 @@ bool Rectangular::isBorderClicked(int cx, int cy)
 
 	borderSelectedType = EdgeX_selected;
 
-	updateCornerPoints();
+	updateCornerPoints(false);
 
 	double px = cx, py = cy;
 	for(int i = 0; i < cornerPoints.size(); i++)
@@ -88,20 +91,27 @@ bool Rectangular::isBorderClicked(int cx, int cy)
 void Rectangular::updateCornerMatrix()
 {
 	cornerMatrix = Cairo::identity_matrix();
-	cornerMatrix.translate(x, y);
-	cornerMatrix.rotate(rotation);
+	cornerMatrix.translate(getX(), getY());
+	cornerMatrix.rotate(getRotation());
 }
 
-void Rectangular::updateCornerPoints()
+void Rectangular::updateCornerPoints(bool actualPositions)
 {
 	updateCornerMatrix();
 
 	// Put points into vector
 	cornerPoints.clear();
-	cornerPoints.push_back(Misc::Point(- (sx / 2), - (sy / 2)));
-	cornerPoints.push_back(Misc::Point(+ (sx / 2), - (sy / 2)));
-	cornerPoints.push_back(Misc::Point(+ (sx / 2), + (sy / 2)));
-	cornerPoints.push_back(Misc::Point(- (sx / 2), + (sy / 2)));
+	if(actualPositions) {
+		cornerPoints.push_back(Misc::Point(- (sx / 2), - (sy / 2)));
+		cornerPoints.push_back(Misc::Point(+ (sx / 2), - (sy / 2)));
+		cornerPoints.push_back(Misc::Point(+ (sx / 2), + (sy / 2)));
+		cornerPoints.push_back(Misc::Point(- (sx / 2), + (sy / 2)));
+	} else {
+		cornerPoints.push_back(Misc::Point(- (getSX() / 2), - (getSY() / 2)));
+		cornerPoints.push_back(Misc::Point(+ (getSX() / 2), - (getSY() / 2)));
+		cornerPoints.push_back(Misc::Point(+ (getSX() / 2), + (getSY() / 2)));
+		cornerPoints.push_back(Misc::Point(- (getSX() / 2), + (getSY() / 2)));
+	}
 
 	//for(int i = 0; i < cornerPoints.size(); i++)
 	//{
@@ -122,9 +132,9 @@ void Rectangular::updateCornerPoints()
 void Rectangular::saveXMLChild(TiXmlElement* item)
 {
 	SpaceItem::saveXMLChild(item);
-	item->SetDoubleAttribute("sx", sx);
-	item->SetDoubleAttribute("sy", sy);
-	item->SetDoubleAttribute("rotation", -rotation * 180 / M_PI);
+	item->SetDoubleAttribute("sx", getSX());
+	item->SetDoubleAttribute("sy", getSY());
+	item->SetDoubleAttribute("rotation", -getRotation() * 180 / M_PI);
 }
 
 void Rectangular::moveBorder(int dx, int dy)
@@ -162,13 +172,13 @@ void Rectangular::scale(int r)
 {
 	if(r < 0)
 	{
-		sx += 20;
-		sy += 20;
+		sx += GRID_SIZE;
+		sy += GRID_SIZE;
 	}
 	else if(r > 0)
 	{
-		sx -= 20;
-		sy -= 20;
+		sx -= GRID_SIZE;
+		sy -= GRID_SIZE;
 	}
 	Misc::trimMinMax(sx, min.x, max.x);
 	Misc::trimMinMax(sy, min.y, max.y);
@@ -177,6 +187,11 @@ void Rectangular::scale(int r)
 void Rectangular::rotate(double r)
 {
 	rotation += r * ROTATION_MULTIPLIER;
+}
+
+double Rectangular::getRotation() {
+	if(isGridSnapped) return floor(rotation / M_PI * 4) * M_PI / 4;
+	return rotation;
 }
 
 bool Rectangular::intersects(SpaceItem& second)

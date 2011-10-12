@@ -43,7 +43,7 @@ void Vortex::saveXMLChild(TiXmlElement* item)
 
 void Vortex::draw(Cairo::RefPtr<Cairo::Context> &cr)
 {
-	cr->translate(x, y);
+	cr->translate(getX(), getY());
 	cr->rotate(rotation);
 //	cr->scale(sx / (double)IMG_SIZE_X, sy / (double)IMG_SIZE_Y); // This actually looks better without this scale
 
@@ -57,7 +57,7 @@ void Vortex::draw(Cairo::RefPtr<Cairo::Context> &cr)
 
 //	cr->scale((double)IMG_SIZE_X / sx, (double)IMG_SIZE_Y / sy);
 	cr->rotate(-rotation);
-	cr->translate(-x, -y);
+	cr->translate(-getX(), -getY());
 }
 
 void Vortex::onCMenuItemClick(int id)

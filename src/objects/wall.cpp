@@ -2,9 +2,9 @@
 
 using namespace Objects;
 
-#define RECT_SIZE_Y 16
+#define RECT_SIZE_Y GRID_SIZE_2
 #define RECT_MIN_X 80
-#define RECT_MAX_X 1000
+#define RECT_MAX_X 1200
 
 #define IMG_SIZE 32
 
@@ -32,23 +32,23 @@ void Wall::saveXMLChild(TiXmlElement* item)
 
 void Wall::draw(Cairo::RefPtr<Cairo::Context> &cr)
 {
-	cr->translate(x, y);
-	cr->rotate(rotation);
+	cr->translate(getX(), getY());
+	cr->rotate(getRotation());
 	cr->scale(.5, .5);
 
-	cr->set_source(wall, -RECT_MAX_X, -sy);
-	cr->rectangle(-sx + IMG_SIZE, -sy, (sx - IMG_SIZE) * 2, sy * 2);
+	cr->set_source(wall, -RECT_MAX_X, -getSY());
+	cr->rectangle(-getSX() + IMG_SIZE, -getSY(), (getSX() - IMG_SIZE) * 2, getSY() * 2);
 	cr->fill();
 
 	for(int i = 0; i < 2; i++) // draw on both sides by rotating round
 	{
 		cr->rotate(M_PI);
-		cr->set_source(wallside, -sx, -sy);
-		cr->rectangle( -sx, -sy, IMG_SIZE, IMG_SIZE);
+		cr->set_source(wallside, -getSX(), -getSY());
+		cr->rectangle( -getSX(), -getSY(), IMG_SIZE, IMG_SIZE);
 		cr->fill();
 	}
 
 	cr->scale(2, 2);
-	cr->rotate(-rotation);
-	cr->translate(-x, -y);
+	cr->rotate(-getRotation());
+	cr->translate(-getX(), -getY());
 }

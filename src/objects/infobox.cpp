@@ -2,8 +2,8 @@
 
 using namespace Objects;
 
-#define INFOBOX_SIZE_X 50
-#define INFOBOX_SIZE_Y 40
+#define INFOBOX_SIZE_X 80
+#define INFOBOX_SIZE_Y 56
 
 #include "../misc/data.hpp"
 
@@ -35,7 +35,7 @@ InfoBox::InfoBox(EditorCallbacks &callbacks, TiXmlElement &item) :
 
 void InfoBox::draw(Cairo::RefPtr<Cairo::Context> &cr)
 {
-	cr->translate(x, y);
+	cr->translate(getX(), getY());
 	cr->rotate(rotation);
 	cr->scale(.5, .5);
 
@@ -43,12 +43,12 @@ void InfoBox::draw(Cairo::RefPtr<Cairo::Context> &cr)
 	//cr->rectangle( - (sx / 2),  - (sy / 2), sx, sy);
 	//cr->fill();
 
-	cr->set_source(img, -sx, -sy);
-	cr->rectangle(-sx, -sy, sx * 2, sy * 2); cr->fill();
+	cr->set_source(img, -getSX(), -getSY());
+	cr->rectangle(-getSX(), -getSY(), getSX() * 2, getSY() * 2); cr->fill();
 
 	cr->scale(2, 2);
 	cr->rotate(-rotation);
-	cr->translate(-x, -y);
+	cr->translate(-getX(), -getY());
 }
 
 void InfoBox::saveXMLChild(TiXmlElement* item)

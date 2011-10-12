@@ -22,7 +22,7 @@ void LevelBounds::saveXMLChild(TiXmlElement* item)
 
 void LevelBounds::draw(Cairo::RefPtr<Cairo::Context> &cr)
 {
-	cr->translate(x, y);
+	cr->translate(getX(), getY());
 //	cr->rotate(rotation);
 //	cr->scale(.5, .5);
 
@@ -37,7 +37,7 @@ void LevelBounds::draw(Cairo::RefPtr<Cairo::Context> &cr)
 
 //	cr->scale(2, 2);
 //	cr->rotate(-rotation);
-	cr->translate(-x, -y);
+	cr->translate(-getX(), -getY());
 }
 
 bool LevelBounds::isClicked(int cx, int cy)

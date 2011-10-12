@@ -35,7 +35,7 @@ void Player::saveXMLChild(TiXmlElement* item)
 
 void Player::draw(Cairo::RefPtr<Cairo::Context> &cr)
 {
-	cr->translate(x, y);
+	cr->translate(getX(), getY());
 	cr->rotate(rotation);
 	cr->scale((float)PLAYER_SIZE_X / IMG_SIZE_X, (float)PLAYER_SIZE_X / IMG_SIZE_X);
 
@@ -45,5 +45,5 @@ void Player::draw(Cairo::RefPtr<Cairo::Context> &cr)
 
 	cr->scale((float)IMG_SIZE_X / PLAYER_SIZE_X, (float)IMG_SIZE_X / PLAYER_SIZE_X);
 	cr->rotate(-rotation);
-	cr->translate(-x, -y);
+	cr->translate(-getX(), -getY());
 }

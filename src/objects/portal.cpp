@@ -31,7 +31,7 @@ void Portal::saveXMLChild(TiXmlElement* item)
 
 void Portal::draw(Cairo::RefPtr<Cairo::Context> &cr)
 {
-	cr->translate(x, y);
+	cr->translate(getX(), getY());
 //	cr->rotate(rotation);
 	cr->scale(radius / IMG_RADIUS, radius / IMG_RADIUS);
 
@@ -41,5 +41,5 @@ void Portal::draw(Cairo::RefPtr<Cairo::Context> &cr)
 
 	cr->scale(IMG_RADIUS / radius, IMG_RADIUS / radius);
 //	cr->rotate(-rotation);
-	cr->translate(-x, -y);
+	cr->translate(-getX(), -getY());
 }

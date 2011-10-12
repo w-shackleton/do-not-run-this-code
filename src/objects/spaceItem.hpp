@@ -14,6 +14,9 @@
 #define BORDER_CLICK_SIZE 8
 #define ROTATION_MULTIPLIER 0.01 /* Arbitary value, purely for user interactivity */
 
+#define GRID_SIZE 8 /* Size of grid objects */
+#define GRID_SIZE_2 16
+
 namespace Objects
 {
 	class SpaceItem : public Misc::Point
@@ -50,10 +53,30 @@ namespace Objects
 			bool recycle;
 			bool isIntersecting;
 
+			/**
+			 * If true, objects will snap to grid.
+			 */
+			bool isGridSnapped;
+
 			virtual void onCMenuItemClick(int id);
 
 			virtual bool intersects(SpaceItem& second) = 0;
 			virtual bool insideBounds(double sx, double sy) = 0;
+
+			/**
+			 * Gets the stepped X coord of the object.
+			 */
+			inline double getX() {
+				if(isGridSnapped) return floor(x / GRID_SIZE) * GRID_SIZE;
+				return x;
+			}
+			/**
+			 * Gets the stepped Y coord of the object.
+			 */
+			inline double getY() {
+				if(isGridSnapped) return floor(y / GRID_SIZE) * GRID_SIZE;
+				return y;
+			}
 	};
 	enum
 	{
