@@ -9,6 +9,7 @@
 #include<spherical.hpp>
 #include<wall.hpp>
 #include<blackhole.hpp>
+#include<blockpiece.hpp>
 
 #include<star.hpp>
 #include<player.hpp>

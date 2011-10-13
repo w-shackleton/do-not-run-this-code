@@ -19,11 +19,17 @@ BEGIN_EVENT_TABLE(SpaceFrame, wxFrame)
 	EVT_BUTTON(SpaceFrame::ID_tb_c_blackhole, SpaceFrame::OnCreateBlackHole)
 	EVT_BUTTON(SpaceFrame::ID_tb_c_star, SpaceFrame::OnCreateStar)
 
+	EVT_BUTTON(SpaceFrame::ID_tb_c_blockcenter, SpaceFrame::OnCreateBlockCenter)
+	EVT_BUTTON(SpaceFrame::ID_tb_c_blockedge, SpaceFrame::OnCreateBlockEdge)
+
 	EVT_MENU(SpaceFrame::ID_tb_c_planet, SpaceFrame::OnCreatePlanet)
 	EVT_MENU(SpaceFrame::ID_tb_c_infobox, SpaceFrame::OnCreateInfoBox)
 	EVT_MENU(SpaceFrame::ID_tb_c_wall, SpaceFrame::OnCreateWall)
 	EVT_MENU(SpaceFrame::ID_tb_c_vortex, SpaceFrame::OnCreateVortex)
 	EVT_MENU(SpaceFrame::ID_tb_c_blackhole, SpaceFrame::OnCreateBlackHole)
+
+	EVT_MENU(SpaceFrame::ID_tb_c_blockcenter, SpaceFrame::OnCreateBlockCenter)
+	EVT_MENU(SpaceFrame::ID_tb_c_blockedge, SpaceFrame::OnCreateBlockEdge)
 END_EVENT_TABLE()
 
 #include <iostream>
@@ -106,6 +112,9 @@ void SpaceFrame::init(string filename, bool newLevel)
 	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_wall, _("Create Wall")));
 	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_vortex, _("Create Vortex")));
 	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_blackhole, _("Create Black Hole")));
+
+	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_blockcenter, _("Block")));
+	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_blockedge, _("Block Edge")));
 	for(list<wxButton *>::iterator it = tbButtons.begin(); it != tbButtons.end(); it++)
 	{
 		toolbar->AddControl(*it);
@@ -256,6 +265,24 @@ void SpaceFrame::OnCreateBlackHole(wxCommandEvent& event)
 	lmanager.objs.push_back(new Objects::BlackHole(*spacePanel, pos.GetWidth(), pos.GetHeight()));
 	spacePanel->redraw();
 }
+
+void SpaceFrame::OnCreateBlockCenter(wxCommandEvent& event)
+{
+	wxSize pos = spacePanel->getMovedPos() + spacePanel->GetSize() / 2;
+	lmanager.objs.push_back(new Objects::Block(*spacePanel, pos.GetWidth(), pos.GetHeight(),
+				GRID_SIZE_2, GRID_SIZE_2, Objects::BLOCK_CENTER));
+	spacePanel->redraw();
+	cout << "Center" << endl;
+}
+
+void SpaceFrame::OnCreateBlockEdge(wxCommandEvent& event)
+{
+	wxSize pos = spacePanel->getMovedPos() + spacePanel->GetSize() / 2;
+	lmanager.objs.push_back(new Objects::Block(*spacePanel, pos.GetWidth(), pos.GetHeight(),
+				GRID_SIZE_2, GRID_SIZE_2, Objects::BLOCK_EDGE));
+	spacePanel->redraw();
+}
+
 
 void SpaceFrame::OnCreateStar(wxCommandEvent& event)
 {

@@ -74,8 +74,9 @@ am_libobjects_la_OBJECTS = libobjects_la-player.lo \
 	libobjects_la-infobox.lo libobjects_la-vortex.lo \
 	libobjects_la-rectangular.lo libobjects_la-planet.lo \
 	libobjects_la-blackhole.lo libobjects_la-spherical.lo \
-	libobjects_la-spaceItem.lo libobjects_la-infoboxEditor.lo \
-	libobjects_la-sliderEditor.lo libobjects_la-planetEditor.lo
+	libobjects_la-blockpiece.lo libobjects_la-spaceItem.lo \
+	libobjects_la-infoboxEditor.lo libobjects_la-sliderEditor.lo \
+	libobjects_la-planetEditor.lo
 libobjects_la_OBJECTS = $(am_libobjects_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -286,6 +287,7 @@ libobjects_la_SOURCES = \
 		planet.cpp	planet.hpp	\
 		blackhole.cpp	blackhole.hpp	\
 		spherical.cpp	spherical.hpp	\
+		blockpiece.cpp	blockpiece.hpp	\
 		spaceItem.cpp	spaceItem.hpp	\
 		spaceItems.hpp			\
 		infoboxEditor.cpp	infoboxEditor.hpp	\
@@ -370,6 +372,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-blackhole.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-blockpiece.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-infobox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-infoboxEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjects_la-levelBounds.Plo@am__quote@
@@ -496,6 +499,14 @@ libobjects_la-spherical.lo: spherical.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='spherical.cpp' object='libobjects_la-spherical.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -c -o libobjects_la-spherical.lo `test -f 'spherical.cpp' || echo '$(srcdir)/'`spherical.cpp
+
+libobjects_la-blockpiece.lo: blockpiece.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -MT libobjects_la-blockpiece.lo -MD -MP -MF $(DEPDIR)/libobjects_la-blockpiece.Tpo -c -o libobjects_la-blockpiece.lo `test -f 'blockpiece.cpp' || echo '$(srcdir)/'`blockpiece.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libobjects_la-blockpiece.Tpo $(DEPDIR)/libobjects_la-blockpiece.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='blockpiece.cpp' object='libobjects_la-blockpiece.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -c -o libobjects_la-blockpiece.lo `test -f 'blockpiece.cpp' || echo '$(srcdir)/'`blockpiece.cpp
 
 libobjects_la-spaceItem.lo: spaceItem.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libobjects_la_CXXFLAGS) $(CXXFLAGS) -MT libobjects_la-spaceItem.lo -MD -MP -MF $(DEPDIR)/libobjects_la-spaceItem.Tpo -c -o libobjects_la-spaceItem.lo `test -f 'spaceItem.cpp' || echo '$(srcdir)/'`spaceItem.cpp

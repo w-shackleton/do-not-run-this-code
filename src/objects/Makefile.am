@@ -13,6 +13,7 @@ libobjects_la_SOURCES = \
 		planet.cpp	planet.hpp	\
 		blackhole.cpp	blackhole.hpp	\
 		spherical.cpp	spherical.hpp	\
+		blockpiece.cpp	blockpiece.hpp	\
 		spaceItem.cpp	spaceItem.hpp	\
 		spaceItems.hpp			\
 		infoboxEditor.cpp	infoboxEditor.hpp	\
