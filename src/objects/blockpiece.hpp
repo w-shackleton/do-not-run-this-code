@@ -24,6 +24,7 @@ namespace Objects
 
 			int type;
 
+			Cairo::RefPtr<Cairo::SurfacePattern> pattern;
 			Cairo::RefPtr<Cairo::ImageSurface> image;
 		private:
 			void loadImageForType(int type);

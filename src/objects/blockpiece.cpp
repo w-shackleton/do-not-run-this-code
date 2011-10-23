@@ -3,6 +3,7 @@
 using namespace Objects;
 using namespace std;
 using namespace Misc;
+using namespace Cairo;
 
 #include "../misc/data.hpp"
 
@@ -11,6 +12,9 @@ Block::Block(EditorCallbacks &callbacks, double x, double y, double sx, double s
 	type(type)
 {
 	loadImageForType(type);
+	RefPtr<Surface> s = RefPtr<Surface>::cast_dynamic(image);
+	pattern = Cairo::SurfacePattern::create(s);
+	pattern->set_extend(EXTEND_REPEAT);
 }
 
 Block::Block(EditorCallbacks &callbacks, TiXmlElement &item) :
@@ -18,6 +22,9 @@ Block::Block(EditorCallbacks &callbacks, TiXmlElement &item) :
 {
 	item.QueryIntAttribute("type", &type);
 	loadImageForType(type);
+	RefPtr<Surface> s = RefPtr<Surface>::cast_dynamic(image);
+	pattern = Cairo::SurfacePattern::create(s);
+	pattern->set_extend(EXTEND_REPEAT);
 }
 
 void Block::saveXMLChild(TiXmlElement* item)
@@ -28,12 +35,12 @@ void Block::saveXMLChild(TiXmlElement* item)
 
 void Block::draw(Cairo::RefPtr<Cairo::Context> &cr)
 {
-	cout << "Block draw" << endl;
 	cr->translate(getX(), getY());
 	cr->rotate(getRotation());
 	cr->scale(.5, .5);
 
-	cr->set_source(image, -getSX(), -getSY());
+	pattern->set_matrix(translation_matrix(-getSX(), -getSY()));
+	cr->set_source(pattern);
 	cr->rectangle(-getSX(), -getSY(), getSX() * 2, getSY() * 2);
 	cr->fill();
 
@@ -71,6 +78,6 @@ Misc::Point Block::getMaxSizeForType(int type) {
 	case BLOCK_EDGE:
 		return Point(GRID_SIZE_2 * 100, GRID_SIZE_2);
 	case BLOCK_FADE:
-		return Point(GRID_SIZE_2, GRID_SIZE_2 * 100);
+		return Point(GRID_SIZE_2 * 100, GRID_SIZE_2);
 	}
 }

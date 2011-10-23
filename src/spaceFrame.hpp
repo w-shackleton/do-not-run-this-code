@@ -41,8 +41,13 @@ class SpaceFrame: public wxFrame
 			ID_tb_c_wall,
 			ID_tb_c_vortex,
 			ID_tb_c_blackhole,
-			ID_tb_c_blockcenter,
-			ID_tb_c_blockedge,
+
+			ID_tb_c_blocks,
+
+			ID_block_center,
+			ID_block_corner,
+			ID_block_edge,
+			ID_block_fade,
 
 			ID_tb_c_star,
 		};
@@ -73,8 +78,10 @@ class SpaceFrame: public wxFrame
 		void OnCreateWall(wxCommandEvent& event);
 		void OnCreateVortex(wxCommandEvent& event);
 		void OnCreateBlackHole(wxCommandEvent& event);
-		void OnCreateBlockCenter(wxCommandEvent& event);
-		void OnCreateBlockEdge(wxCommandEvent& event);
+
+		void OnCreateBlock(wxCommandEvent& event);
+		void OnCreateBlockPart(wxCommandEvent& event);
+
 		void OnCreateStar(wxCommandEvent& event);
 
 		/* Returns false if action should be cancelled */

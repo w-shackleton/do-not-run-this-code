@@ -19,8 +19,7 @@ BEGIN_EVENT_TABLE(SpaceFrame, wxFrame)
 	EVT_BUTTON(SpaceFrame::ID_tb_c_blackhole, SpaceFrame::OnCreateBlackHole)
 	EVT_BUTTON(SpaceFrame::ID_tb_c_star, SpaceFrame::OnCreateStar)
 
-	EVT_BUTTON(SpaceFrame::ID_tb_c_blockcenter, SpaceFrame::OnCreateBlockCenter)
-	EVT_BUTTON(SpaceFrame::ID_tb_c_blockedge, SpaceFrame::OnCreateBlockEdge)
+	EVT_BUTTON(SpaceFrame::ID_tb_c_blocks, SpaceFrame::OnCreateBlock)
 
 	EVT_MENU(SpaceFrame::ID_tb_c_planet, SpaceFrame::OnCreatePlanet)
 	EVT_MENU(SpaceFrame::ID_tb_c_infobox, SpaceFrame::OnCreateInfoBox)
@@ -28,8 +27,15 @@ BEGIN_EVENT_TABLE(SpaceFrame, wxFrame)
 	EVT_MENU(SpaceFrame::ID_tb_c_vortex, SpaceFrame::OnCreateVortex)
 	EVT_MENU(SpaceFrame::ID_tb_c_blackhole, SpaceFrame::OnCreateBlackHole)
 
-	EVT_MENU(SpaceFrame::ID_tb_c_blockcenter, SpaceFrame::OnCreateBlockCenter)
-	EVT_MENU(SpaceFrame::ID_tb_c_blockedge, SpaceFrame::OnCreateBlockEdge)
+	EVT_MENU(SpaceFrame::ID_tb_c_blocks, SpaceFrame::OnCreateBlock)
+
+	/**
+	 * These entries appear in the context menu created by ID_tb_c_blocks
+	 */
+	EVT_MENU(SpaceFrame::ID_block_center, SpaceFrame::OnCreateBlockPart)
+	EVT_MENU(SpaceFrame::ID_block_corner, SpaceFrame::OnCreateBlockPart)
+	EVT_MENU(SpaceFrame::ID_block_edge, SpaceFrame::OnCreateBlockPart)
+	EVT_MENU(SpaceFrame::ID_block_fade, SpaceFrame::OnCreateBlockPart)
 END_EVENT_TABLE()
 
 #include <iostream>
@@ -113,8 +119,8 @@ void SpaceFrame::init(string filename, bool newLevel)
 	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_vortex, _("Create Vortex")));
 	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_blackhole, _("Create Black Hole")));
 
-	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_blockcenter, _("Block")));
-	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_blockedge, _("Block Edge")));
+	tbButtons.push_back(new wxButton(toolbar, ID_tb_c_blocks, _("Block parts")));
+
 	for(list<wxButton *>::iterator it = tbButtons.begin(); it != tbButtons.end(); it++)
 	{
 		toolbar->AddControl(*it);
@@ -266,20 +272,34 @@ void SpaceFrame::OnCreateBlackHole(wxCommandEvent& event)
 	spacePanel->redraw();
 }
 
-void SpaceFrame::OnCreateBlockCenter(wxCommandEvent& event)
-{
-	wxSize pos = spacePanel->getMovedPos() + spacePanel->GetSize() / 2;
-	lmanager.objs.push_back(new Objects::Block(*spacePanel, pos.GetWidth(), pos.GetHeight(),
-				GRID_SIZE_2, GRID_SIZE_2, Objects::BLOCK_CENTER));
-	spacePanel->redraw();
-	cout << "Center" << endl;
+void SpaceFrame::OnCreateBlock(wxCommandEvent& event) {
+	wxMenu *menu = new wxMenu;
+	menu->Append(ID_block_center, _("Center piece"));
+	menu->Append(ID_block_corner, _("Corner"));
+	menu->Append(ID_block_edge, _("Edge"));
+	menu->Append(ID_block_fade, _("Faded edge"));
+	PopupMenu(menu);
 }
 
-void SpaceFrame::OnCreateBlockEdge(wxCommandEvent& event)
-{
-	wxSize pos = spacePanel->getMovedPos() + spacePanel->GetSize() / 2;
+void SpaceFrame::OnCreateBlockPart(wxCommandEvent& event) {
+	Objects::BlockType type;
+	switch(event.GetId()) {
+		case ID_block_center:
+			type = Objects::BLOCK_CENTER;
+			break;
+		case ID_block_corner:
+			type = Objects::BLOCK_CORNER;
+			break;
+		case ID_block_edge:
+			type = Objects::BLOCK_EDGE;
+			break;
+		case ID_block_fade:
+			type = Objects::BLOCK_FADE;
+			break;
+	}
+	wxSize pos = spacePanel->getMovedPos() + (spacePanel->GetSize() / 2);
 	lmanager.objs.push_back(new Objects::Block(*spacePanel, pos.GetWidth(), pos.GetHeight(),
-				GRID_SIZE_2, GRID_SIZE_2, Objects::BLOCK_EDGE));
+				GRID_SIZE_2, GRID_SIZE_2, type));
 	spacePanel->redraw();
 }
 
