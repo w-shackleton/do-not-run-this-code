@@ -13,7 +13,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.os.Handler;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -85,6 +84,36 @@ public final class ContactManager implements Config {
 			if(list.contains(contactId)) return true;
 		}
 		return false;
+	}
+	
+	public LinkedList<RawContact> getRawContacts(int contactId) {
+		Cursor cur = cr.query(ContactsContract.RawContacts.CONTENT_URI,
+				new String[] {
+					ContactsContract.RawContacts.ACCOUNT_NAME,
+					ContactsContract.RawContacts.CONTACT_ID,
+					ContactsContract.RawContacts._ID,
+				}, "contact_id=?", new String[] {
+					String.valueOf(contactId),
+				}, null);
+		
+		if(cur.getCount() > 0) {
+			int colAccountName = cur.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME);
+			int colContactId = cur.getColumnIndex(ContactsContract.RawContacts.CONTACT_ID);
+			int colRawId = cur.getColumnIndex(ContactsContract.RawContacts._ID);
+			
+			LinkedList<RawContact> contacts = new LinkedList<RawContact>();
+			
+			while(cur.moveToNext()) {
+				RawContact contact = new RawContact();
+				contact.setAccountName(cur.getString(colAccountName));
+				contact.setContactId(cur.getInt(colContactId));
+				contact.setId(cur.getInt(colRawId));
+				
+				contacts.add(contact);
+			}
+			return contacts;
+		}
+		return new LinkedList<RawContact>();
 	}
 	
 	public List<Contact> getContacts() {
