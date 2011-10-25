@@ -6,14 +6,14 @@ using namespace Objects;
 #define RECT_MIN_X 80
 #define RECT_MAX_X 1200
 
-#define IMG_SIZE 32
+#define IMG_SIZE 64
 
 #include "../misc/data.hpp"
 
 Wall::Wall(EditorCallbacks &callbacks, double x, double y, double sx, double rotation) :
 	Rectangular(callbacks, x, y, sx, RECT_SIZE_Y, rotation, Misc::Point(RECT_MIN_X, RECT_SIZE_Y), Misc::Point(RECT_MAX_X, RECT_SIZE_Y))
 {
-	wallside = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("wallside.png"));
+	wallside = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("block/walljoin.png"));
 	wall= Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("wall.png"));
 }
 
@@ -21,7 +21,7 @@ Wall::Wall(EditorCallbacks &callbacks, TiXmlElement &item) :
 	Rectangular(callbacks, item, Misc::Point(RECT_MIN_X, RECT_SIZE_Y), Misc::Point(RECT_MAX_X, RECT_SIZE_Y))
 {
 	sy = RECT_SIZE_Y;
-	wallside = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("wallside.png"));
+	wallside = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("block/walljoin.png"));
 	wall= Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("wall.png"));
 }
 

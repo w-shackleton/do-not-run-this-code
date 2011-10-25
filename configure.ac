@@ -67,6 +67,7 @@ AS_IF([wx-config --basename | grep gtk], [
 AC_CONFIG_FILES([
 Makefile
 data/Makefile
+data/block/Makefile
 src/Makefile
 src/objects/Makefile
 src/misc/Makefile

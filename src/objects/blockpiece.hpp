@@ -12,14 +12,19 @@ namespace Objects
 		BLOCK_FADE
 	};
 
+	/**
+	 * A block item, in a square grid.
+	 */
 	class Block : public Rectangular
 	{
 		public:
 			Block(EditorCallbacks &callbacks, double x, double y, double sx, double sy, int type);
 			Block(EditorCallbacks &callbacks, TiXmlElement &item);
 			void draw(Cairo::RefPtr<Cairo::Context> &cr);
+
+			void onCMenuItemClick(int id);
 		protected:
-			inline std::string getName() { return "wall"; }
+			inline std::string getName() { return "block"; }
 			void saveXMLChild(TiXmlElement* item);
 
 			int type;
@@ -30,6 +35,11 @@ namespace Objects
 			void loadImageForType(int type);
 			static Misc::Point getMinSizeForType(int type);
 			static Misc::Point getMaxSizeForType(int type);
+
+			void setupContext();
+
+			wxMenuItem* hasVortexMenuItem;
+			bool hasVortex;
 	};
 };
 

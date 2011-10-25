@@ -11,11 +11,11 @@
 #include <wx/menu.h>
 #include <wx/event.h>
 
-#define BORDER_CLICK_SIZE 8
-#define ROTATION_MULTIPLIER 0.01 /* Arbitary value, purely for user interactivity */
+#define BORDER_CLICK_SIZE 5
+#define ROTATION_MULTIPLIER 0.02 /* Arbitary value, purely for user interactivity */
 
-#define GRID_SIZE 8 /* Size of grid objects */
-#define GRID_SIZE_2 16
+#define GRID_SIZE 16 /* Size of grid objects */
+#define GRID_SIZE_2 (GRID_SIZE * 2)
 
 namespace Objects
 {

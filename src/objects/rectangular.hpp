@@ -56,14 +56,14 @@ namespace Objects
 			 * Gets the stepped X coord of the object.
 			 */
 			inline double getSX() {
-				if(isGridSnapped) return floor(sx / GRID_SIZE_2) * GRID_SIZE_2;
+				if(isGridSnapped) return round(sx / GRID_SIZE_2) * GRID_SIZE_2;
 				return sx;
 			}
 			/**
 			 * Gets the stepped Y coord of the object.
 			 */
 			inline double getSY() {
-				if(isGridSnapped) return floor(sy / GRID_SIZE_2) * GRID_SIZE_2;
+				if(isGridSnapped) return round(sy / GRID_SIZE_2) * GRID_SIZE_2;
 				return sy;
 			}
 

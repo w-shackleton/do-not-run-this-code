@@ -15643,7 +15643,7 @@ fi
 # Checks for typedefs, structures, and compiler characteristics.
 
 # Checks for library functions.
-ac_config_files="$ac_config_files Makefile data/Makefile src/Makefile src/objects/Makefile src/misc/Makefile src/levelrw/Makefile"
+ac_config_files="$ac_config_files Makefile data/Makefile data/block/Makefile src/Makefile src/objects/Makefile src/misc/Makefile src/levelrw/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -16764,6 +16764,7 @@ do
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "data/Makefile") CONFIG_FILES="$CONFIG_FILES data/Makefile" ;;
+    "data/block/Makefile") CONFIG_FILES="$CONFIG_FILES data/block/Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "src/objects/Makefile") CONFIG_FILES="$CONFIG_FILES src/objects/Makefile" ;;
     "src/misc/Makefile") CONFIG_FILES="$CONFIG_FILES src/misc/Makefile" ;;

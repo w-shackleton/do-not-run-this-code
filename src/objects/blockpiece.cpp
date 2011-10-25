@@ -9,22 +9,55 @@ using namespace Cairo;
 
 Block::Block(EditorCallbacks &callbacks, double x, double y, double sx, double sy, int type) :
 	Rectangular(callbacks, x, y, sx, sy, rotation, getMinSizeForType(type), getMaxSizeForType(type)),
-	type(type)
+	type(type),
+	hasVortexMenuItem(NULL),
+	hasVortex(true) // True by default
 {
 	loadImageForType(type);
 	RefPtr<Surface> s = RefPtr<Surface>::cast_dynamic(image);
 	pattern = Cairo::SurfacePattern::create(s);
 	pattern->set_extend(EXTEND_REPEAT);
+
+	setupContext();
 }
 
 Block::Block(EditorCallbacks &callbacks, TiXmlElement &item) :
-	Rectangular(callbacks, item, getMinSizeForType(type), getMaxSizeForType(type))
+	Rectangular(callbacks, item, getMinSizeForType(type), getMaxSizeForType(type)),
+	hasVortexMenuItem(NULL),
+	hasVortex(true)
 {
 	item.QueryIntAttribute("type", &type);
+	item.QueryBoolAttribute("hasVortex", &hasVortex);
 	loadImageForType(type);
 	RefPtr<Surface> s = RefPtr<Surface>::cast_dynamic(image);
 	pattern = Cairo::SurfacePattern::create(s);
 	pattern->set_extend(EXTEND_REPEAT);
+
+	setupContext();
+}
+
+void Block::setupContext() {
+	switch(type) {
+		case BLOCK_CENTER:
+		case BLOCK_FADE:
+			break;
+		case BLOCK_EDGE:
+		case BLOCK_CORNER:
+			hasVortexMenuItem = contextMenu->AppendCheckItem(contextMenuNextAvailableSlot++, _("&Has vortex above surface"));
+			hasVortexMenuItem->Check(hasVortex);
+			break;
+	}
+}
+
+void Block::onCMenuItemClick(int id) {
+	SpaceItem::onCMenuItemClick(id);
+	switch(id) {
+		case ID_CMenu_2:
+			if(hasVortexMenuItem) {
+				hasVortex = hasVortexMenuItem->IsChecked();
+			}
+			break;
+	}
 }
 
 void Block::saveXMLChild(TiXmlElement* item)
@@ -52,16 +85,16 @@ void Block::draw(Cairo::RefPtr<Cairo::Context> &cr)
 void Block::loadImageForType(int type) {
 	switch(type) {
 	case BLOCK_CENTER:
-		image = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("blockcenter.png"));
+		image = ImageSurface::create_from_png(Data::getFilePath("block/center.png"));
 		break;
 	case BLOCK_CORNER:
-		image = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("blockcorner.png"));
+		image = ImageSurface::create_from_png(Data::getFilePath("block/corner1.png"));
 		break;
 	case BLOCK_EDGE:
-		image = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("blockedge.png"));
+		image = ImageSurface::create_from_png(Data::getFilePath("block/edge1.png"));
 		break;
 	case BLOCK_FADE:
-		image = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("blockfade.png"));
+		image = ImageSurface::create_from_png(Data::getFilePath("block/fade1.png"));
 		break;
 	}
 }

@@ -44,19 +44,19 @@ void Vortex::saveXMLChild(TiXmlElement* item)
 void Vortex::draw(Cairo::RefPtr<Cairo::Context> &cr)
 {
 	cr->translate(getX(), getY());
-	cr->rotate(rotation);
+	cr->rotate(getRotation());
 //	cr->scale(sx / (double)IMG_SIZE_X, sy / (double)IMG_SIZE_Y); // This actually looks better without this scale
 
 //	cr->set_source(img, -IMG_SIZE_X / 2, -IMG_SIZE_Y / 2); // Old method
 //	cr->rectangle( - (IMG_SIZE_X / 2),  - (IMG_SIZE_Y / 2), IMG_SIZE_X, IMG_SIZE_Y); cr->fill();
 	cr->set_source(img, -IMG_SIZE_X / 2, -IMG_SIZE_Y / 2);
-	cr->rectangle( - (sx / 2),  - (sy / 2), sx, sy); cr->fill();
+	cr->rectangle( - (getSX() / 2),  - (getSY() / 2), getSX(), getSY()); cr->fill();
 
 	cr->set_source_rgb(0, 0, 0);
-	cr->rectangle( - (sx / 2),  - (sy / 2), sx, sy); cr->stroke();
+	cr->rectangle( - (getSX() / 2),  - (getSY() / 2), getSX(), getSY()); cr->stroke();
 
 //	cr->scale((double)IMG_SIZE_X / sx, (double)IMG_SIZE_Y / sy);
-	cr->rotate(-rotation);
+	cr->rotate(-getRotation());
 	cr->translate(-getX(), -getY());
 }
 

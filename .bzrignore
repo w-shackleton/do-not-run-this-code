@@ -14,3 +14,4 @@ src/spaceedit.exe
 testout.slv
 src/spaceedit.res
 winexport
+Makefile.in
