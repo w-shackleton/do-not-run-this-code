@@ -36,6 +36,9 @@ BEGIN_EVENT_TABLE(SpaceFrame, wxFrame)
 	EVT_MENU(SpaceFrame::ID_block_corner, SpaceFrame::OnCreateBlockPart)
 	EVT_MENU(SpaceFrame::ID_block_edge, SpaceFrame::OnCreateBlockPart)
 	EVT_MENU(SpaceFrame::ID_block_fade, SpaceFrame::OnCreateBlockPart)
+
+	EVT_MENU(SpaceFrame::ID_block_walljoin1, SpaceFrame::OnCreateBlockPart)
+	EVT_MENU(SpaceFrame::ID_block_walljoin2, SpaceFrame::OnCreateBlockPart)
 END_EVENT_TABLE()
 
 #include <iostream>
@@ -278,6 +281,8 @@ void SpaceFrame::OnCreateBlock(wxCommandEvent& event) {
 	menu->Append(ID_block_corner, _("Corner"));
 	menu->Append(ID_block_edge, _("Edge"));
 	menu->Append(ID_block_fade, _("Faded edge"));
+	menu->Append(ID_block_walljoin1, _("Right wall join"));
+	menu->Append(ID_block_walljoin2, _("Left wall join"));
 	PopupMenu(menu);
 }
 
@@ -295,6 +300,12 @@ void SpaceFrame::OnCreateBlockPart(wxCommandEvent& event) {
 			break;
 		case ID_block_fade:
 			type = Objects::BLOCK_FADE;
+			break;
+		case ID_block_walljoin1:
+			type = Objects::BLOCK_WALLJOIN1;
+			break;
+		case ID_block_walljoin2:
+			type = Objects::BLOCK_WALLJOIN2;
 			break;
 	}
 	wxSize pos = spacePanel->getMovedPos() + (spacePanel->GetSize() / 2);

@@ -9,7 +9,10 @@ namespace Objects
 		BLOCK_CENTER,
 		BLOCK_EDGE,
 		BLOCK_CORNER,
-		BLOCK_FADE
+		BLOCK_FADE,
+
+		BLOCK_WALLJOIN1,
+		BLOCK_WALLJOIN2,
 	};
 
 	/**

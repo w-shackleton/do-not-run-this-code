@@ -4,6 +4,8 @@ Makefile
 *.lo
 .deps
 .libs
+TAGS
+tags
 config.h
 config.log
 config.status

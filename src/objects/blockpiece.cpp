@@ -64,6 +64,7 @@ void Block::saveXMLChild(TiXmlElement* item)
 {
 	Rectangular::saveXMLChild(item);
 	item->SetAttribute("type", type);
+	item->SetAttribute("hasVortex", hasVortex);
 }
 
 void Block::draw(Cairo::RefPtr<Cairo::Context> &cr)
@@ -96,6 +97,12 @@ void Block::loadImageForType(int type) {
 	case BLOCK_FADE:
 		image = ImageSurface::create_from_png(Data::getFilePath("block/fade1.png"));
 		break;
+	case BLOCK_WALLJOIN1:
+		image = ImageSurface::create_from_png(Data::getFilePath("block/walljoin1.png"));
+		break;
+	case BLOCK_WALLJOIN2:
+		image = ImageSurface::create_from_png(Data::getFilePath("block/walljoin2.png"));
+		break;
 	}
 }
 Misc::Point Block::getMinSizeForType(int type) {
@@ -112,5 +119,8 @@ Misc::Point Block::getMaxSizeForType(int type) {
 		return Point(GRID_SIZE_2 * 100, GRID_SIZE_2);
 	case BLOCK_FADE:
 		return Point(GRID_SIZE_2 * 100, GRID_SIZE_2);
+	case BLOCK_WALLJOIN1:
+	case BLOCK_WALLJOIN2:
+		return Point(GRID_SIZE_2, GRID_SIZE_2);
 	}
 }
