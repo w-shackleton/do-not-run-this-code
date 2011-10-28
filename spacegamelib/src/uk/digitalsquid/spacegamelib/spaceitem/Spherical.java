@@ -28,8 +28,7 @@ public abstract class Spherical extends SpaceItem implements IsClickable
 	}
 	
 	@Override
-	public boolean isClicked(float x, float y)
-	{
+	public boolean isClicked(float x, float y) {
 		return Math.hypot(getPos().x - x, getPos().y - y) < getRadius();
 	}
 	
