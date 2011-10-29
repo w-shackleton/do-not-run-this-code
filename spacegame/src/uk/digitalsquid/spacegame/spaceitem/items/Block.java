@@ -2,6 +2,7 @@ package uk.digitalsquid.spacegame.spaceitem.items;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
@@ -31,17 +32,20 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
 	protected RectMesh mesh;
 
 	public Block(SimulationContext context, Vec2 pos, Vec2 size, float angle, BlockDef def) {
-		super(context, pos, angle, BodyType.DYNAMIC);
+		super(context, pos, angle, BodyType.STATIC);
 		
 		setSize(size, def.getMinSize(), def.getMaxSize());
 		
-		FixtureDef fixtureDef = new FixtureDef();
-		fixtureDef.shape = def.getShape();
-		fixtureDef.density = 1;
-		fixtureDef.friction = def.getFriction();
-		fixtureDef.restitution = def.getRestitution();
-		fixture = body.createFixture(fixtureDef);
-		fixture.setUserData(this);
+		Shape shape = def.getShape(size);
+		if(shape != null) {
+			FixtureDef fixtureDef = new FixtureDef();
+			fixtureDef.shape = shape;
+			fixtureDef.density = 1;
+			fixtureDef.friction = def.getFriction();
+			fixtureDef.restitution = def.getRestitution();
+			fixture = body.createFixture(fixtureDef);
+			fixture.setUserData(this);
+		}
 		
 		if(def.getImageId() != -1) {
 			mesh = new RectMesh(pos.x, pos.y, size.x, size.y, def.getImageId());

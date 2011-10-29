@@ -22,9 +22,12 @@ public abstract class BlockDef {
 	
 	/**
 	 * Gets the smallest size of the block, where 1 unit is a grid square. Should not cache its result.
+	 * Default is (1, 1)
 	 * @return
 	 */
-	protected abstract Vec2 getUnscaledMinSize();
+	protected Vec2 getUnscaledMinSize() {
+		return new Vec2(1, 1);
+	}
 	
 	/**
 	 * Gets the largest size of the block, where 1 unit is a grid square. Should not cache its result.
@@ -50,9 +53,10 @@ public abstract class BlockDef {
 	
 	/**
 	 * Returns the shape of this definition, as it should appear to the physics engine. Should not cache the result.
+	 * @param size The scaled size of the object - used to work out how big the shape should be. Shape should be centered over origin.
 	 * @return
 	 */
-	public abstract Shape getShape();
+	public abstract Shape getShape(Vec2 size);
 	
 	/**
 	 * Creates a block from this definition. Use this factory method, as returned type may be a child type in some cases.
@@ -74,7 +78,33 @@ public abstract class BlockDef {
 		if(defs == null) {
 			defs = new HashMap<Integer, BlockDef>();
 			
-			// TODO: Define blocks!
+			// BLOCK_CENTER
+			defs.put(0, new BlockDef() {
+				@Override
+				protected Vec2 getUnscaledMaxSize() {
+					return new Vec2(100, 100);
+				}
+				
+				@Override
+				public Shape getShape(Vec2 size) {
+					return null; // No shape - center should never be hit.
+				}
+				
+				@Override
+				public float getRestitution() {
+					return 0;
+				}
+				
+				@Override
+				public int getImageId() {
+					return uk.digitalsquid.spacegame.R.drawable.block_center;
+				}
+				
+				@Override
+				public float getFriction() {
+					return 0;
+				}
+			});
 		}
 		return defs.get(id);
 	}
