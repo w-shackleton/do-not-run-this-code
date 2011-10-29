@@ -9,6 +9,7 @@ import org.jbox2d.dynamics.FixtureDef;
 
 import uk.digitalsquid.spacegamelib.CompuFuncs;
 import uk.digitalsquid.spacegamelib.SimulationContext;
+import uk.digitalsquid.spacegamelib.gl.RectMesh;
 import uk.digitalsquid.spacegamelib.spaceitem.SpaceItem;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Forceful;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.IsClickable;
@@ -26,6 +27,8 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
 	protected Vec2 size;
 	
 	protected Fixture fixture;
+	
+	protected RectMesh mesh;
 
 	public Block(SimulationContext context, Vec2 pos, Vec2 size, float angle, BlockDef def) {
 		super(context, pos, angle, BodyType.DYNAMIC);
@@ -39,6 +42,21 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
 		fixtureDef.restitution = def.getRestitution();
 		fixture = body.createFixture(fixtureDef);
 		fixture.setUserData(this);
+		
+		if(def.getImageId() != -1) {
+			mesh = new RectMesh(pos.x, pos.y, size.x, size.y, def.getImageId());
+			
+			// Since this is a repeating texture, custom tex coords must be set.
+			final float coordSizeX = 1 / (size.x / BlockDef.GRID_SIZE); // This will be between 0 and 1
+			final float coordSizeY = 1 / (size.y / BlockDef.GRID_SIZE); // This will be between 0 and 1
+			final float[] texCoords = 
+					{0,			coordSizeY,
+					coordSizeX,	coordSizeY,
+					0,			0,
+                    coordSizeX,	0};
+			mesh.setRepeatingTexture(true);
+			mesh.setTextureCoordinates(texCoords);
+		}
 	}
 	
 	/**
@@ -101,5 +119,6 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
 
 	@Override
 	public void draw(GL10 gl, float worldZoom) {
+		mesh.draw(gl);
 	}
 }

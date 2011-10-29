@@ -108,7 +108,7 @@ public class Mesh {
 	    
 		gl.glColor4f(mRGBA[0], mRGBA[1], mRGBA[2], mRGBA[3]);
 		
-		if(resId != -1 && textureId == -1) textureId = TextureManager.getTexture(gl, resId);
+		if(resId != -1 && textureId == -1) textureId = TextureManager.getTexture(gl, resId, repeating);
 
 		if (textureId != -1 && textureBuffer != null) {
 			
@@ -172,7 +172,7 @@ public class Mesh {
 	 * 
 	 * @param indices
 	 */
-	protected final void setIndices(short[] indices) {
+	public final void setIndices(short[] indices) {
 		// short is 2 bytes, therefore we multiply the number if
 		// vertices with 2.
 		ByteBuffer ibb = ByteBuffer.allocateDirect(indices.length * 2);
@@ -188,7 +188,7 @@ public class Mesh {
 	 * 
 	 * @param textureCoords
 	 */
-	protected final void setTextureCoordinates(float[] textureCoords) {
+	public final void setTextureCoordinates(float[] textureCoords) {
 		// float is 4 bytes, therefore we multiply the number if
 		// vertices with 4.
 		ByteBuffer byteBuf = ByteBuffer
@@ -245,5 +245,15 @@ public class Mesh {
 	 */
 	protected final void setTextureId(int texId) {
 		textureId = texId;
+	}
+	
+	protected boolean repeating = false;
+	
+	/**
+	 * If set to true, the texture will repeat. Must be set before the first render cycle, for this is when images are loaded.
+	 * @param repeating
+	 */
+	public final void setRepeatingTexture(boolean repeating) {
+		this.repeating = repeating;
 	}
 }

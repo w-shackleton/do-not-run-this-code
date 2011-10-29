@@ -43,6 +43,12 @@ public abstract class BlockDef {
 	public abstract float getFriction();
 	
 	/**
+	 * If the block has a picture, returns the image ID. Otherwise, return -1.
+	 * @return
+	 */
+	public abstract int getImageId();
+	
+	/**
 	 * Returns the shape of this definition, as it should appear to the physics engine. Should not cache the result.
 	 * @return
 	 */

@@ -80,7 +80,24 @@ public class TextureManager {
 		System.gc();
 	}
 	
+	/**
+	 * Gets and loads a texture.
+	 * @param gl
+	 * @param resId
+	 * @return
+	 */
 	public static final int getTexture(GL10 gl, int resId) {
+		return getTexture(gl, resId, false);
+	}
+	
+	/**
+	 * Loads and gets a texture.
+	 * @param gl
+	 * @param resId
+	 * @param repeatPattern If true, the created texture will repeat itself. Note that if the same texture is loaded twice, they will both have the same repeat property.
+	 * @return
+	 */
+	public static final int getTexture(GL10 gl, int resId, boolean repeatPattern) {
 		if(!initialised) throw new IllegalStateException("Texture Manager not initialised");
 		
 		if(data.containsKey(resId)) {
@@ -97,10 +114,10 @@ public class TextureManager {
 		
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D,
                 GL10.GL_TEXTURE_WRAP_S,
-                GL10.GL_CLAMP_TO_EDGE);
+                repeatPattern ? GL10.GL_REPEAT : GL10.GL_CLAMP_TO_EDGE);
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D,
                 GL10.GL_TEXTURE_WRAP_T,
-                GL10.GL_CLAMP_TO_EDGE);
+                repeatPattern ? GL10.GL_REPEAT : GL10.GL_CLAMP_TO_EDGE);
 		// Scale up if the texture if smaller.
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D,
 		                   GL10.GL_TEXTURE_MAG_FILTER,
