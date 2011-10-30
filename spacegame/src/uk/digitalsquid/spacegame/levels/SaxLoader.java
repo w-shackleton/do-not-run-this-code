@@ -5,6 +5,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import uk.digitalsquid.spacegame.spaceitem.items.BlackHole;
+import uk.digitalsquid.spacegame.spaceitem.items.BlockDef;
 import uk.digitalsquid.spacegame.spaceitem.items.GravityField;
 import uk.digitalsquid.spacegame.spaceitem.items.InfoBox;
 import uk.digitalsquid.spacegame.spaceitem.items.Planet;
@@ -26,7 +27,7 @@ import android.util.Xml;
  */
 public class SaxLoader
 {
-	protected static final float LOAD_SCALE = 0.1f;
+	public static final float LOAD_SCALE = 0.1f;
 	
 	private static final String ROOT = "level";
 	
@@ -50,6 +51,7 @@ public class SaxLoader
 	// private static final String ITEMS_TELEPORTER = "teleporter";
 	private static final String ITEMS_WALL = "wall";
 	private static final String ITEMS_STAR = "star";
+	private static final String ITEMS_BLOCK = "block";
 
 	private static final String ITEMS_KEY_ROTATION = "rotation";
 	private static final String ITEMS_KEY_POWER = "power";
@@ -244,6 +246,23 @@ public class SaxLoader
 						getCoord(attributes)));
 			}
 		});
+		
+		items.getChild(ITEMS_BLOCK).setStartElementListener(new StartElementListener()
+		{
+			@Override
+			public void start(Attributes attributes)
+			{
+				final int blockId = getInt(attributes, "type", 0);
+				BlockDef def = BlockDef.getBlockDef(blockId);
+				if(def == null) return;
+				level.planetList.add(def.create(
+						context,
+						getCoord(attributes),
+						getSCoord(attributes),
+						getFloat(attributes, ITEMS_KEY_ROTATION, 0)
+						));
+			}
+		});
 	}
 	
 	/**
@@ -326,7 +345,7 @@ public class SaxLoader
 	}
 	
 	/**
-	 * Get a {@link Vec2} with the x and y values from attributes
+	 * Get a {@link Vec2} with the sx and sy values from attributes
 	 * @param attributes The SAX Attributes from which to get the values
 	 * @return A new {@link Vec2} containing the values.
 	 */

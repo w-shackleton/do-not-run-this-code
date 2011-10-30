@@ -31,7 +31,15 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
 	
 	protected RectMesh mesh;
 
-	public Block(SimulationContext context, Vec2 pos, Vec2 size, float angle, BlockDef def) {
+	/**
+	 * Protected constructor. Use BlockDef.create
+	 * @param context
+	 * @param pos
+	 * @param size
+	 * @param angle
+	 * @param def
+	 */
+	Block(SimulationContext context, Vec2 pos, Vec2 size, float angle, BlockDef def) {
 		super(context, pos, angle, BodyType.STATIC);
 		
 		setSize(size, def.getMinSize(), def.getMaxSize());
@@ -51,8 +59,10 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
 			mesh = new RectMesh(pos.x, pos.y, size.x, size.y, def.getImageId());
 			
 			// Since this is a repeating texture, custom tex coords must be set.
-			final float coordSizeX = 1 / (size.x / BlockDef.GRID_SIZE); // This will be between 0 and 1
-			final float coordSizeY = 1 / (size.y / BlockDef.GRID_SIZE); // This will be between 0 and 1
+			//*
+			Vec2 imageRelativeSize = def.getImageRelativeSize();
+			final float coordSizeX = size.x / BlockDef.GRID_SIZE / imageRelativeSize.x;
+			final float coordSizeY = size.y / BlockDef.GRID_SIZE / imageRelativeSize.y;
 			final float[] texCoords = 
 					{0,			coordSizeY,
 					coordSizeX,	coordSizeY,
@@ -60,6 +70,7 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
                     coordSizeX,	0};
 			mesh.setRepeatingTexture(true);
 			mesh.setTextureCoordinates(texCoords);
+			//*/
 		}
 	}
 	
@@ -123,6 +134,10 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
 
 	@Override
 	public void draw(GL10 gl, float worldZoom) {
-		mesh.draw(gl);
+		if(mesh != null) {
+			mesh.setXY(getPosX(), getPosY());
+			mesh.setRotation(getRotation());
+			mesh.draw(gl);
+		}
 	}
 }

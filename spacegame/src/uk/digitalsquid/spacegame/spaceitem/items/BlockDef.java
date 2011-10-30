@@ -3,9 +3,11 @@ package uk.digitalsquid.spacegame.spaceitem.items;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 
+import uk.digitalsquid.spacegame.levels.SaxLoader;
 import uk.digitalsquid.spacegamelib.SimulationContext;
 
 
@@ -15,10 +17,20 @@ import uk.digitalsquid.spacegamelib.SimulationContext;
  *
  */
 public abstract class BlockDef {
+	
+	/**
+	 * The grid size according to images.
+	 */
+	public static final float IMAGE_GRID_SIZE = 32;
+	
+	/**
+	 * The positioning block size of grid items
+	 */
+	public static final float GRID_SIZE = 16 * SaxLoader.LOAD_SCALE;
 	/**
 	 * The size of grid items
 	 */
-	public static final float GRID_SIZE = 16;
+	public static final float GRID_SIZE_2 = GRID_SIZE * 2;
 	
 	/**
 	 * Gets the smallest size of the block, where 1 unit is a grid square. Should not cache its result.
@@ -36,10 +48,10 @@ public abstract class BlockDef {
 	protected abstract Vec2 getUnscaledMaxSize();
 	
 	public Vec2 getMinSize() {
-		return getUnscaledMinSize().mulLocal(GRID_SIZE);
+		return getUnscaledMinSize().mulLocal(GRID_SIZE_2);
 	}
 	public Vec2 getMaxSize() {
-		return getUnscaledMaxSize().mulLocal(GRID_SIZE);
+		return getUnscaledMaxSize().mulLocal(GRID_SIZE_2);
 	}
 	
 	public abstract float getRestitution();
@@ -50,6 +62,12 @@ public abstract class BlockDef {
 	 * @return
 	 */
 	public abstract int getImageId();
+	
+	/**
+	 * Gets the size of the image at getImageId relative to {@link #IMAGE_GRID_SIZE}
+	 * @return
+	 */
+	public abstract Vec2 getImageRelativeSize();
 	
 	/**
 	 * Returns the shape of this definition, as it should appear to the physics engine. Should not cache the result.
@@ -100,9 +118,113 @@ public abstract class BlockDef {
 					return uk.digitalsquid.spacegame.R.drawable.block_center;
 				}
 				
+				public Vec2 getImageRelativeSize() {
+					return new Vec2(2, 2);
+				}
+				
 				@Override
 				public float getFriction() {
 					return 0;
+				}
+			});
+			// BLOCK_EDGE
+			defs.put(1, new BlockDef() {
+				@Override
+				protected Vec2 getUnscaledMaxSize() {
+					return new Vec2(100, 1);
+				}
+				
+				@Override
+				public Shape getShape(Vec2 size) {
+					PolygonShape shape = new PolygonShape();
+					shape.setAsBox(size.x / 2, size.y / 2);
+					return shape;
+				}
+				
+				@Override
+				public float getRestitution() {
+					return 0.7f;
+				}
+				
+				@Override
+				public int getImageId() {
+					return uk.digitalsquid.spacegame.R.drawable.block_edge1;
+				}
+				
+				public Vec2 getImageRelativeSize() {
+					return new Vec2(4, 2);
+				}
+				
+				@Override
+				public float getFriction() {
+					return 0.6f;
+				}
+			});
+			// BLOCK_CORNER
+			defs.put(2, new BlockDef() {
+				@Override
+				protected Vec2 getUnscaledMaxSize() {
+					return new Vec2(1, 1);
+				}
+				
+				@Override
+				public Shape getShape(Vec2 size) {
+					PolygonShape shape = new PolygonShape();
+					shape.setAsBox(size.x / 2, size.y / 2);
+					return shape;
+				}
+				
+				@Override
+				public float getRestitution() {
+					return 0.7f;
+				}
+				
+				@Override
+				public int getImageId() {
+					return uk.digitalsquid.spacegame.R.drawable.block_corner1;
+				}
+				
+				public Vec2 getImageRelativeSize() {
+					return new Vec2(2, 2);
+				}
+				
+				@Override
+				public float getFriction() {
+					return 0.6f;
+				}
+			});
+			// BLOCK_FADE
+			defs.put(3, new BlockDef() {
+				@Override
+				protected Vec2 getUnscaledMaxSize() {
+					return new Vec2(100, 1);
+				}
+				
+				@Override
+				public Shape getShape(Vec2 size) {
+					// TODO: Do something here?
+					PolygonShape shape = new PolygonShape();
+					shape.setAsBox(size.x / 2, size.y / 2);
+					return shape;
+				}
+				
+				@Override
+				public float getRestitution() {
+					return 0.1f;
+				}
+				
+				@Override
+				public int getImageId() {
+					return uk.digitalsquid.spacegame.R.drawable.block_fade1;
+				}
+				
+				public Vec2 getImageRelativeSize() {
+					return new Vec2(4, 2);
+				}
+				
+				@Override
+				public float getFriction() {
+					return 1f;
 				}
 			});
 		}
