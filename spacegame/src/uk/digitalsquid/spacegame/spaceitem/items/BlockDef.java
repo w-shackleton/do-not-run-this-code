@@ -6,8 +6,10 @@ import java.util.Map;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
 
 import uk.digitalsquid.spacegame.levels.SaxLoader;
+import uk.digitalsquid.spacegame.spaceitem.assistors.Geometry;
 import uk.digitalsquid.spacegamelib.SimulationContext;
 
 
@@ -74,15 +76,15 @@ public abstract class BlockDef {
 	 * @param size The scaled size of the object - used to work out how big the shape should be. Shape should be centered over origin.
 	 * @return
 	 */
-	public abstract Shape getShape(Vec2 size);
+	public abstract Shape getShape(Body body, Vec2 size);
 	
 	/**
 	 * Creates a block from this definition. Use this factory method, as returned type may be a child type in some cases.
 	 * The default implementation creates a normal block with this def.
 	 * @return
 	 */
-	public Block create(SimulationContext context, Vec2 pos, Vec2 size, float angle) {
-		return new Block(context, pos, size, angle, this);
+	public Block create(SimulationContext context, Vec2 pos, Vec2 size, float angle, boolean hasVortex) {
+		return new Block(context, pos, size, angle, hasVortex, this);
 	}
 	
 	private static Map<Integer, BlockDef> defs;
@@ -104,7 +106,7 @@ public abstract class BlockDef {
 				}
 				
 				@Override
-				public Shape getShape(Vec2 size) {
+				public Shape getShape(Body body, Vec2 size) {
 					return null; // No shape - center should never be hit.
 				}
 				
@@ -135,7 +137,7 @@ public abstract class BlockDef {
 				}
 				
 				@Override
-				public Shape getShape(Vec2 size) {
+				public Shape getShape(Body body, Vec2 size) {
 					PolygonShape shape = new PolygonShape();
 					shape.setAsBox(size.x / 2, size.y / 2);
 					return shape;
@@ -168,10 +170,8 @@ public abstract class BlockDef {
 				}
 				
 				@Override
-				public Shape getShape(Vec2 size) {
-					PolygonShape shape = new PolygonShape();
-					shape.setAsBox(size.x / 2, size.y / 2);
-					return shape;
+				public Shape getShape(Body body, Vec2 size) {
+					return Geometry.createArc(body, -size.x / 2, -size.y / 2, size.x, 0f, (float)Math.PI / 2);
 				}
 				
 				@Override
@@ -201,7 +201,7 @@ public abstract class BlockDef {
 				}
 				
 				@Override
-				public Shape getShape(Vec2 size) {
+				public Shape getShape(Body body, Vec2 size) {
 					// TODO: Do something here?
 					PolygonShape shape = new PolygonShape();
 					shape.setAsBox(size.x / 2, size.y / 2);

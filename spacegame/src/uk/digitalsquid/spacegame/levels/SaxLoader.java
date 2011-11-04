@@ -253,13 +253,15 @@ public class SaxLoader
 			public void start(Attributes attributes)
 			{
 				final int blockId = getInt(attributes, "type", 0);
+				final boolean hasVortex = getBoolean(attributes, "hasVortex", true);
 				BlockDef def = BlockDef.getBlockDef(blockId);
 				if(def == null) return;
 				level.planetList.add(def.create(
 						context,
 						getCoord(attributes),
 						getSCoord(attributes),
-						getFloat(attributes, ITEMS_KEY_ROTATION, 0)
+						getFloat(attributes, ITEMS_KEY_ROTATION, 0),
+						hasVortex
 						));
 			}
 		});
@@ -372,9 +374,23 @@ public class SaxLoader
 	 */
 	private static final int getInt(Attributes attributes, String key, int defaultValue)
 	{
+		try {
+			return Integer.valueOf(attributes.getValue(key));
+		}
+		catch(NumberFormatException e) {
+			errorOccurred = true;
+			return defaultValue;
+		}
+		catch(NullPointerException e) {
+			errorOccurred = true;
+			return defaultValue;
+		}
+	}
+	
+	private static final boolean getBoolean(Attributes attributes, String key, boolean defaultValue) {
 		try
 		{
-			return Integer.valueOf(attributes.getValue(key));
+			return Boolean.valueOf(attributes.getValue(key));
 		}
 		catch(NumberFormatException e) {
 			errorOccurred = true;

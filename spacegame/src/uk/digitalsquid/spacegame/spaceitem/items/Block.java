@@ -30,6 +30,8 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
 	protected Fixture fixture;
 	
 	protected RectMesh mesh;
+	
+	protected final boolean hasVortex;
 
 	/**
 	 * Protected constructor. Use BlockDef.create
@@ -39,12 +41,13 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
 	 * @param angle
 	 * @param def
 	 */
-	Block(SimulationContext context, Vec2 pos, Vec2 size, float angle, BlockDef def) {
+	Block(SimulationContext context, Vec2 pos, Vec2 size, float angle, boolean hasVortex, BlockDef def) {
 		super(context, pos, angle, BodyType.STATIC);
+		this.hasVortex = hasVortex;
 		
 		setSize(size, def.getMinSize(), def.getMaxSize());
 		
-		Shape shape = def.getShape(size);
+		Shape shape = def.getShape(body, this.size);
 		if(shape != null) {
 			FixtureDef fixtureDef = new FixtureDef();
 			fixtureDef.shape = shape;
@@ -81,9 +84,10 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
 	 * @param size
 	 * @param angle
 	 */
-	Block(SimulationContext context, Vec2 pos, Vec2 size, float angle) {
+	Block(SimulationContext context, Vec2 pos, Vec2 size, float angle, boolean hasVortex) {
 		super(context, pos, angle, BodyType.DYNAMIC);
 		this.size = size;
+		this.hasVortex = hasVortex;
 	}
 	
 	/**
