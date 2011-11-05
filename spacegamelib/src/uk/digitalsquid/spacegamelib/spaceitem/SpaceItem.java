@@ -7,20 +7,11 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 
+import uk.digitalsquid.spacegamelib.Constants;
 import uk.digitalsquid.spacegamelib.SimulationContext;
 
-public abstract class SpaceItem {
+public abstract class SpaceItem implements Constants {
 	public static final float BALL_RADIUS = 1.4f;
-	
-	/**
-	 * Multiply a number of degrees by this to convert it to radians
-	 */
-	public static final float DEG_TO_RAD = (float) (Math.PI / 180);
-	
-	/**
-	 * Multiply a number of radians by this to convert it to degrees
-	 */
-	public static final float RAD_TO_DEG = (float) (180 / Math.PI);
 	
 	/**
 	 * The group for things which should collide with the player
@@ -41,6 +32,13 @@ public abstract class SpaceItem {
 	
 	protected final Body body;
 	
+	/**
+	 * Constructs a new {@link SpaceItem}
+	 * @param context
+	 * @param pos
+	 * @param angle The angle of rotation in DEGREES
+	 * @param type
+	 */
 	public SpaceItem(SimulationContext context, Vec2 pos, float angle, BodyType type) {
 		this.context = context;
 		BodyDef def = new BodyDef();

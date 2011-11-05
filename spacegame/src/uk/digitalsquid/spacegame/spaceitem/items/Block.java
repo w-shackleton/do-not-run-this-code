@@ -8,6 +8,7 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 
+import uk.digitalsquid.spacegame.spaceitem.blocks.BlockVortex;
 import uk.digitalsquid.spacegamelib.CompuFuncs;
 import uk.digitalsquid.spacegamelib.SimulationContext;
 import uk.digitalsquid.spacegamelib.gl.RectMesh;
@@ -32,6 +33,8 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
 	protected RectMesh mesh;
 	
 	protected final boolean hasVortex;
+	
+	protected BlockVortex vortex;
 
 	/**
 	 * Protected constructor. Use BlockDef.create
@@ -57,6 +60,8 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
 			fixture = body.createFixture(fixtureDef);
 			fixture.setUserData(this);
 		}
+		
+		if(hasVortex) vortex = def.getVortex(getPos(), size, angle * DEG_TO_RAD); // Could still be null
 		
 		if(def.getImageId() != -1) {
 			mesh = new RectMesh(pos.x, pos.y, size.x, size.y, def.getImageId());

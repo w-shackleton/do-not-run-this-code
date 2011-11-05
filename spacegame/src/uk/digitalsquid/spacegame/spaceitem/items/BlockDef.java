@@ -10,6 +10,8 @@ import org.jbox2d.dynamics.Body;
 
 import uk.digitalsquid.spacegame.levels.SaxLoader;
 import uk.digitalsquid.spacegame.spaceitem.assistors.Geometry;
+import uk.digitalsquid.spacegame.spaceitem.blocks.BlockVortex;
+import uk.digitalsquid.spacegamelib.CompuFuncs;
 import uk.digitalsquid.spacegamelib.SimulationContext;
 
 
@@ -79,6 +81,15 @@ public abstract class BlockDef {
 	public abstract Shape getShape(Body body, Vec2 size);
 	
 	/**
+	 * 
+	 * @param pos
+	 * @param size
+	 * @param angle in RADIANS
+	 * @return
+	 */
+	public abstract BlockVortex getVortex(Vec2 pos, Vec2 size, float angle);
+	
+	/**
 	 * Creates a block from this definition. Use this factory method, as returned type may be a child type in some cases.
 	 * The default implementation creates a normal block with this def.
 	 * @return
@@ -128,6 +139,11 @@ public abstract class BlockDef {
 				public float getFriction() {
 					return 0;
 				}
+
+				@Override // No vortexes for center
+				public BlockVortex getVortex(Vec2 pos, Vec2 size, float angle) {
+					return null;
+				}
 			});
 			// BLOCK_EDGE
 			defs.put(1, new BlockDef() {
@@ -161,6 +177,15 @@ public abstract class BlockDef {
 				public float getFriction() {
 					return 0.6f;
 				}
+
+				@Override
+				public BlockVortex getVortex(Vec2 pos, Vec2 size, float angle) {
+					Vec2 vortexCenter = size.sub(new Vec2(0, -GRID_SIZE_2));
+					CompuFuncs.rotateLocal(vortexCenter, pos, angle);
+					Vec2 vortexSize = new Vec2(size);
+					vortexSize.x = GRID_SIZE_2;
+					return new BlockVortex(vortexCenter, vortexSize, angle);
+				}
 			});
 			// BLOCK_CORNER
 			defs.put(2, new BlockDef() {
@@ -191,6 +216,12 @@ public abstract class BlockDef {
 				@Override
 				public float getFriction() {
 					return 0.6f;
+				}
+
+				@Override
+				public BlockVortex getVortex(Vec2 pos, Vec2 size, float angle) {
+					// TODO Write corner vortex
+					return null;
 				}
 			});
 			// BLOCK_FADE
@@ -225,6 +256,11 @@ public abstract class BlockDef {
 				@Override
 				public float getFriction() {
 					return 1f;
+				}
+
+				@Override
+				public BlockVortex getVortex(Vec2 pos, Vec2 size, float angle) {
+					return null;
 				}
 			});
 		}
