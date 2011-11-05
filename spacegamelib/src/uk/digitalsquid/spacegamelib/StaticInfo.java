@@ -6,7 +6,7 @@ import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-public final class StaticInfo {
+public final class StaticInfo implements Constants {
 	public static boolean Antialiasing;
 	public static boolean Starfield;
 	
@@ -21,7 +21,7 @@ public final class StaticInfo {
 		try {
 			Fonts.bangers = Typeface.createFromAsset(context.getAssets(), "fonts/bangers_custom.ttf");
 		} catch (RuntimeException e) {
-			Log.e("SpaceGame", "Couldn't load fonts", e);
+			Log.e(TAG, "Can't load fonts", e);
 		}
 	}
 	

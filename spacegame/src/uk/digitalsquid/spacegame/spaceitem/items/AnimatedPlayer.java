@@ -147,7 +147,7 @@ public class AnimatedPlayer extends Player
 		float lookLength = lookToDistance.length();
 		float lookAngle = VecHelper.angleRad(lookToDistance);
 		
-		lookLength = CompuFuncs.TrimMinMax(lookLength, -LOOKTO_DISTANCE_AFFECTOR, LOOKTO_DISTANCE_AFFECTOR);
+		lookLength = CompuFuncs.trimMinMax(lookLength, -LOOKTO_DISTANCE_AFFECTOR, LOOKTO_DISTANCE_AFFECTOR);
 		lookLength *= (float)EYE_MOVE_AMOUNT / (float)LOOKTO_DISTANCE_AFFECTOR;
 
 		//float eyeMovePosX = (float) ((Math.abs(lookToDistance.x) < LOOKTO_DISTANCE_AFFECTOR) ? (float) (lookToDistance.x / LOOKTO_DISTANCE_AFFECTOR * EYE_MOVE_AMOUNT) : EYE_MOVE_AMOUNT * Math.signum(lookToDistance.x));
@@ -155,7 +155,7 @@ public class AnimatedPlayer extends Player
 		eyeMoveTo.x = (float) (Math.cos(lookAngle) * lookLength); // Reapply angle
 		eyeMoveTo.y = (float) (Math.sin(lookAngle) * lookLength);
 		
-		// Log.v("SpaceGame", "X: " + eyeMoveTo.x + ", Y: " + eyeMoveTo.y);
+		// Log.v(TAG, "X: " + eyeMoveTo.x + ", Y: " + eyeMoveTo.y);
 		
 		//eyeMoveTo.x = eyeMovePosX; // CompuFuncs.RotateX(eyeMovePosX, eyeMovePosY, ballRotation * DEG_TO_RAD);
 		//eyeMoveTo.y = eyeMovePosY; //CompuFuncs.RotateY(eyeMovePosX, eyeMovePosY, ballRotation * DEG_TO_RAD);
@@ -286,11 +286,11 @@ public class AnimatedPlayer extends Player
 		float forceY = (itemRF.y + leftEarExtraForce.y + deltaVelocity.y) * EAR_FORCE_PREMULTIPLIER;
 		
 		// Work out angular force on ears.
-		double leftEarExternalForce  = CompuFuncs.RotateY(
+		double leftEarExternalForce  = CompuFuncs.rotateY(
 				forceX,
 				forceY,
 				(float) ((180-leftEarFullRotation ) / 180 * Math.PI));
-		double rightEarExternalForce = CompuFuncs.RotateY(
+		double rightEarExternalForce = CompuFuncs.rotateY(
 				forceX,
 				forceY,
 				(float) ((180-rightEarFullRotation) / 180 * Math.PI));
@@ -365,10 +365,10 @@ public class AnimatedPlayer extends Player
 
 	@Override
 	public Vec2[] getEarAbsolutePositions() {
-		earAbsolutePositions[0].x = lEar.x + CompuFuncs.RotateX(EAR_END.x, EAR_END.y, lEarRotation * DEG_TO_RAD) - landingDrawShiftX;
-		earAbsolutePositions[0].y = lEar.y + CompuFuncs.RotateY(EAR_END.x, EAR_END.y, lEarRotation * DEG_TO_RAD);
-		earAbsolutePositions[1].x = rEar.x + CompuFuncs.RotateX(EAR_END.x, EAR_END.y, rEarRotation * DEG_TO_RAD) - landingDrawShiftX;
-		earAbsolutePositions[1].y = rEar.y + CompuFuncs.RotateY(EAR_END.x, EAR_END.y, rEarRotation * DEG_TO_RAD);
+		earAbsolutePositions[0].x = lEar.x + CompuFuncs.rotateX(EAR_END.x, EAR_END.y, lEarRotation * DEG_TO_RAD) - landingDrawShiftX;
+		earAbsolutePositions[0].y = lEar.y + CompuFuncs.rotateY(EAR_END.x, EAR_END.y, lEarRotation * DEG_TO_RAD);
+		earAbsolutePositions[1].x = rEar.x + CompuFuncs.rotateX(EAR_END.x, EAR_END.y, rEarRotation * DEG_TO_RAD) - landingDrawShiftX;
+		earAbsolutePositions[1].y = rEar.y + CompuFuncs.rotateY(EAR_END.x, EAR_END.y, rEarRotation * DEG_TO_RAD);
 		if(getAlternateDrawPosition() == null) {
 			CompuFuncs.rotateLocal(earAbsolutePositions[0], null, getBallRotation() * DEG_TO_RAD);
 			CompuFuncs.rotateLocal(earAbsolutePositions[1], null, getBallRotation() * DEG_TO_RAD);

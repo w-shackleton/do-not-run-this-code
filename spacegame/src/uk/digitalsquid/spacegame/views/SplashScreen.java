@@ -128,17 +128,17 @@ public class SplashScreen extends DrawBaseView<SplashScreen.ViewWorker>
 			@Override
 			public void run()
 			{
-				Log.i("SpaceGame", "Initialising various game components...");
+				Log.i(TAG, "Initialising various game components...");
 				// BounceVibrate.initialise(context);
 				StaticInfo.initialise(context);
-				Log.i("SpaceGame", "Loading XML parser...");
+				Log.i(TAG, "Loading XML parser...");
 				SaxLoader.initialise();
 				SaxInfoLoader.initialise();
-				Log.i("SpaceGame", "Loading Level Loaders...");
+				Log.i(TAG, "Loading Level Loaders...");
 				lmanager.initialise();
-				Log.i("SpaceGame", "Loading Sounds...");
+				Log.i(TAG, "Loading Sounds...");
 				SoundManager.initialise(context);
-				Log.i("SpaceGame", "Loaded.");
+				Log.i(TAG, "Loaded.");
 			}
 		}
 

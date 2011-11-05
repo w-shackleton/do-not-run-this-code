@@ -40,37 +40,28 @@ public class CompuFuncs
 			(r * r * (float)Math.sqrt(r)));
 	}
 	
-	public static final double TrimMin(double num, double min)
+	public static final double trimMin(double num, double min)
 	{
 		if(num < min)
 			return min;
 		return num;
 	}
 	
-	public static final int TrimMin(int num, int min)
+	public static final int trimMin(int num, int min)
 	{
 		if(num < min)
 			return min;
 		return num;
 	}
 	
-	public static final double TrimMax(double num, double max)
+	public static final double trimMax(double num, double max)
 	{
 		if(num > max)
 			return max;
 		return num;
 	}
 	
-	public static final double TrimMinMax(double num, double min, double max)
-	{
-		if(num < min)
-			return min;
-		if(num > max)
-			return max;
-		return num;
-	}
-	
-	public static final float TrimMinMax(float num, float min, float max)
+	public static final double trimMinMax(double num, double min, double max)
 	{
 		if(num < min)
 			return min;
@@ -79,12 +70,21 @@ public class CompuFuncs
 		return num;
 	}
 	
-	public static final float RotateX(float x, float y, float rot)
+	public static final float trimMinMax(float num, float min, float max)
+	{
+		if(num < min)
+			return min;
+		if(num > max)
+			return max;
+		return num;
+	}
+	
+	public static final float rotateX(float x, float y, float rot)
 	{
 		return (float) (Math.sqrt((x * x) + (y * y)) * Math.cos(rot + Math.atan2(y, x)));
 	}
 	
-	public static final float RotateY(float x, float y, float rot)
+	public static final float rotateY(float x, float y, float rot)
 	{
 		return (float) (Math.sqrt((x * x) + (y * y)) * Math.sin(rot + Math.atan2(y, x)));
 	}
@@ -99,11 +99,11 @@ public class CompuFuncs
 	{
 		if(orig != null)
 			return new Vec2(
-					orig.x + CompuFuncs.RotateX(point.x - orig.x, point.y - orig.y, rot),
-					orig.y + CompuFuncs.RotateY(point.x - orig.x, point.y - orig.y, rot));
+					orig.x + CompuFuncs.rotateX(point.x - orig.x, point.y - orig.y, rot),
+					orig.y + CompuFuncs.rotateY(point.x - orig.x, point.y - orig.y, rot));
 		return new Vec2(
-				CompuFuncs.RotateX(point.x, point.y, rot),
-				CompuFuncs.RotateY(point.x, point.y, rot));
+				CompuFuncs.rotateX(point.x, point.y, rot),
+				CompuFuncs.rotateY(point.x, point.y, rot));
 	}
 	
 	/**
@@ -115,18 +115,18 @@ public class CompuFuncs
 	public static final void rotateLocal(Vec2 point, Vec2 orig, float rot)
 	{
 		if(orig != null) {
-			float tx = orig.x + CompuFuncs.RotateX(point.x - orig.x, point.y - orig.y, rot);
-			point.y = orig.y + CompuFuncs.RotateY(point.x - orig.x, point.y - orig.y, rot);
+			float tx = orig.x + CompuFuncs.rotateX(point.x - orig.x, point.y - orig.y, rot);
+			point.y = orig.y + CompuFuncs.rotateY(point.x - orig.x, point.y - orig.y, rot);
 			point.x = tx;
 		} else {
-			float tx = CompuFuncs.RotateX(point.x, point.y, rot);
-			point.y = CompuFuncs.RotateY(point.x, point.y, rot);
+			float tx = CompuFuncs.rotateX(point.x, point.y, rot);
+			point.y = CompuFuncs.rotateY(point.x, point.y, rot);
 			point.x = tx;
 		}
 	}
 	
 	
-	public static final Vec2[] RotateCoords(Vec2[] old, Vec2 orig, float rot)
+	public static final Vec2[] rotateCoords(Vec2[] old, Vec2 orig, float rot)
 	{
 		Vec2[] ret = new Vec2[old.length];
 		for(int i = 0; i < old.length; i++)
@@ -137,50 +137,33 @@ public class CompuFuncs
 	/**
 	 * Check if point is inside the polygon points
 	 */
-	public static final boolean PointInPolygon(Vec2 points[], Vec2 point)
+	public static final boolean pointInPolygon(Vec2 points[], Vec2 point)
 	{
 		int i, j;
 		boolean c = false;
 		
 		for (i = 0, j = points.length - 1; i < points.length; j = i++)
 		{
-			//Log.v("SpaceGame", "" + i + ": " + points[i] + ", " + j + ": " + points[j]);
 			if (( ((points[i].y<=point.y) && (point.y<points[j].y)) || ((points[j].y<=point.y) && (point.y<points[i].y)) ) &&
 					(point.x < (points[j].x - points[i].x) * (point.y - points[i].y) / (points[j].y - points[i].y) + points[i].x))
-			//{
 				c = !c;
-			//	Log.v("SpaceGame", "          is ON  line");
-			//}
-			//else
-				//Log.v("SpaceGame", "          is OFF line");
 		}
-		//Log.v("SpaceGame", " ");
-		//Log.v("SpaceGame", " ");
 		return c;
 	}
 	
-	/**
-	 * Check if point is inside the polygon points
+	/**TAGif point is inside the polygon points
 	 */
-	public static final boolean PointInPolygon(Vec2 points[], float pointx, float pointy)
+	public static final boolean pointInPolygon(Vec2 points[], float pointx, float pointy)
 	{
 		int i, j;
 		boolean c = false;
 		
 		for (i = 0, j = points.length - 1; i < points.length; j = i++)
 		{
-			//Log.v("SpaceGame", "" + i + ": " + points[i] + ", " + j + ": " + points[j]);
 			if (( ((points[i].y<=pointy) && (pointy<points[j].y)) || ((points[j].y<=pointy) && (pointy<points[i].y)) ) &&
 					(pointx < (points[j].x - points[i].x) * (pointy - points[i].y) / (points[j].y - points[i].y) + points[i].x))
-			//{
 				c = !c;
-			//	Log.v("SpaceGame", "          is ON  line");
-			//}
-			//else
-				//Log.v("SpaceGame", "          is OFF line");
 		}
-		//Log.v("SpaceGame", " ");
-		//Log.v("SpaceGame", " ");
 		return c;
 	}
 	

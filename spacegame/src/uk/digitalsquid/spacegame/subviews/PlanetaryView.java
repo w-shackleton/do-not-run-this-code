@@ -151,7 +151,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		@Override
 		protected void initialiseOnThread()
 		{
-			Log.i("SpaceGame", "Loading level...");
+			Log.i(TAG, "Loading level...");
 			
 			World world = new World(new Vec2(), true);
 			sim = new SimulationContext(context, world);
@@ -161,11 +161,11 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			try {
 				level = SaxLoader.parse(sim, CompuFuncs.decodeIStream(xml));
 			} catch (SAXException e) {
-				Log.e("SpaceGame", "Error parsing level: error in data. (Message: " + e.getMessage() + ")");
+				Log.e(TAG, "Error parsing level: error in data. (Message: " + e.getMessage() + ")");
 				e.printStackTrace();
 				loadError = true;
 			} catch (IOException e) {
-				Log.e("SpaceGame", "Error loading level from data source. (Message: " + e.getMessage() + ")");
+				Log.e(TAG, "Error loading level from data source. (Message: " + e.getMessage() + ")");
 				e.printStackTrace();
 				loadError = true;
 			}
@@ -460,7 +460,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		protected void postdraw(GL10 gl)
 		{
 			// Apply warpData, part 2. Part 1 is not done here, but in a non-abstract class, in scale()
-			warpDataPaint.setAlpha((float) CompuFuncs.TrimMax(warpData.fade / 256, 1));
+			warpDataPaint.setAlpha((float) CompuFuncs.trimMax(warpData.fade / 256, 1));
 			if(warpDataPaint.getAlpha() != 0) {
 				warpDataPaint.draw(gl);
 			}
@@ -474,7 +474,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		@Override
 		public synchronized void saveState(Bundle bundle)
 		{
-			Log.v("SpaceGame", "State Saved");
+			Log.v(TAG, "State Saved");
 			bundle.putSerializable("p.itemC", p.itemC);
 			bundle.putSerializable("p.itemVC", p.getVelocity());
 			bundle.putSerializable("avgPos", avgPos);
@@ -487,7 +487,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		@Override
 		public synchronized void restoreState(Bundle bundle)
 		{
-			Log.v("SpaceGame", "State Restored");
+			Log.v(TAG, "State Restored");
 			
 			p.itemC.set((Vec2) bundle.getSerializable("p.itemC"));
 			p.setVelocity((Vec2) bundle.getSerializable("p.itemVC"));

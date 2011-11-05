@@ -45,7 +45,7 @@ public abstract class Rectangular extends SpaceItem implements IsClickable
 	@Override
 	public boolean isClicked(float x, float y)
 	{
-		return CompuFuncs.PointInPolygon(getRectPos(), x, y);
+		return CompuFuncs.pointInPolygon(getRectPos(), x, y);
 	}
 	
 	private Vec2[] tmpRectPos;
@@ -62,18 +62,17 @@ public abstract class Rectangular extends SpaceItem implements IsClickable
 			tmpRectPos[2] = new Vec2();
 			tmpRectPos[3] = new Vec2();
 		}
-		tmpRectPos[0].x = getPosX() + CompuFuncs.RotateX(-size.x / 2, -size.y / 2, getRotation() * DEG_TO_RAD);
-		tmpRectPos[0].y = getPosY() + CompuFuncs.RotateY(-size.x / 2, -size.y / 2, getRotation() * DEG_TO_RAD);
-		tmpRectPos[1].x = getPosX() + CompuFuncs.RotateX(+size.x / 2, -size.y / 2, getRotation() * DEG_TO_RAD);
-		tmpRectPos[1].y = getPosY() + CompuFuncs.RotateY(+size.x / 2, -size.y / 2, getRotation() * DEG_TO_RAD);
-		tmpRectPos[2].x = getPosX() + CompuFuncs.RotateX(+size.x / 2, +size.y / 2, getRotation() * DEG_TO_RAD);
-		tmpRectPos[2].y = getPosY() + CompuFuncs.RotateY(+size.x / 2, +size.y / 2, getRotation() * DEG_TO_RAD);
-		tmpRectPos[3].x = getPosX() + CompuFuncs.RotateX(-size.x / 2, +size.y / 2, getRotation() * DEG_TO_RAD);
-		tmpRectPos[3].y = getPosY() + CompuFuncs.RotateY(-size.x / 2, +size.y / 2, getRotation() * DEG_TO_RAD);
-		/*Log.v("SpaceGame", "0: " + ret[0]);
-		Log.v("SpaceGame", "1: " + ret[1]);
-		Log.v("SpaceGame", "2: " + ret[2]);
-		Log.v("SpaceGame", "3: " + ret[3]);*/
+		tmpRectPos[0].x = getPosX() + CompuFuncs.rotateX(-size.x / 2, -size.y / 2, getRotation() * DEG_TO_RAD);
+		tmpRectPos[0].y = getPosY() + CompuFuncs.rotateY(-size.x / 2, -size.y / 2, getRotation() * DEG_TO_RAD);
+		tmpRectPos[1].x = getPosX() + CompuFuncs.rotateX(+size.x / 2, -size.y / 2, getRotation() * DEG_TO_RAD);
+		tmpRectPos[1].y = getPosY() + CompuFuncs.rotateY(+size.x / 2, -size.y / 2, getRotation() * DEG_TO_RAD);
+		tmpRectPos[2].x = getPosX() + CompuFuncs.rotateX(+size.x / 2, +size.y / 2, getRotation() * DEG_TO_RAD);
+		tmpRectPos[2].y = getPosY() + CompuFuncs.rotateY(+size.x / 2, +size.y / 2, getRotation() * DEG_TO_RAD);
+		tmpRectPos[3].x = getPosX() + CompuFuncs.rotateX(-size.x / 2, +size.y / 2, getRotation() * DEG_TO_RAD);
+		tmpRectPos[3].y = getPosY() + CompuFuncs.rotateY(-size.x / 2, +size.y / 2, getRotation() * DEG_TO_RAD);
+		/*Log.v(TAG+ ret[0]);
+		Log.v(TAG, "1:TAG);
+		Log.v(TAG, "2: " + retTAG.v(TAG, "3: " + ret[3]);*/
 		return tmpRectPos;
 	}
 	

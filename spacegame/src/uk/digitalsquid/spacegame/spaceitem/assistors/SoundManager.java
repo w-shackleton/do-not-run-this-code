@@ -60,7 +60,7 @@ public final class SoundManager {
 		if(amount < 0.1) return; // Ignore quiet stuff
 	    float streamVolumeCurrent = mgr.getStreamVolume(AudioManager.STREAM_MUSIC);
 	    float streamVolumeMax = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC);    
-	    float volume = streamVolumeCurrent / streamVolumeMax * CompuFuncs.TrimMinMax(amount, 0, 1);
+	    float volume = streamVolumeCurrent / streamVolumeMax * CompuFuncs.trimMinMax(amount, 0, 1);
 	    
 	    soundPool.play(soundPoolMap.get(sound), volume, volume, 1, 0, 1f);     
 	}

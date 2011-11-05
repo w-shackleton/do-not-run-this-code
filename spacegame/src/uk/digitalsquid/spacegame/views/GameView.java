@@ -139,7 +139,7 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 					{
 						if(message.display)
 						{
-							Log.v("SpaceGame", "Opening info box...");
+							Log.v(TAG, "Opening info box...");
 							message.display = false;
 							Message m = Message.obtain();
 							m.what = GameViewLayout.GVL_MSG_INFOBOX;
@@ -214,7 +214,7 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 					if(item.isClicked(tmpData[0], tmpData[1]))
 					{
 						item.onClick(tmpData[0], tmpData[1]);
-						Log.v("SpaceGame", "Item clicked");
+						Log.v(TAG, "Item clicked");
 						return;
 					}
 				}
@@ -254,8 +254,8 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 			m.what = MESSAGE_END_GAME;
 			m.arg1 = warpData.endReason;
 			
-			Log.v("SpaceGame", "Start time: " + startTime + ", Finish time: " + finishTime + ".");
-			Log.i("SpaceGame", "Level took " + ((long) (finishTime - startTime)) + " millis");
+			Log.v(TAG, "Start time: " + startTime + ", Finish time: " + finishTime + ".");
+			Log.i(TAG, "Level took " + ((long) (finishTime - startTime)) + " millis");
 			LevelSummary sum = new LevelSummary(level.starsToCollect, starCount.getStarCount(), (int)((long) (finishTime - startTime)));
 			m.obj = sum;
 			msgHandler.sendMessage(m);

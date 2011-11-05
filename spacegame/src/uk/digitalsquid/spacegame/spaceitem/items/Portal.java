@@ -183,7 +183,7 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 	@Override
 	public boolean isForceExclusive() {
 		if(status == Status.FINISHING || status == Status.FINISHED) {
-			Log.v("SpaceGame", "Exclusive");
+			Log.v(TAG, "Exclusive");
 		}
 		return status == Status.FINISHING || status == Status.FINISHED; // Only when entering portal
 	}

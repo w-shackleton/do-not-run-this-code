@@ -3,6 +3,7 @@ package uk.digitalsquid.spacegame.subviews;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import uk.digitalsquid.spacegamelib.Constants;
 import uk.digitalsquid.spacegamelib.StaticInfo;
 import uk.digitalsquid.spacegamelib.gl.TextureManager;
 import android.content.Context;
@@ -11,7 +12,7 @@ import android.opengl.GLU;
 import android.os.Bundle;
 import android.util.AttributeSet;
 
-public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends GLSurfaceView
+public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends GLSurfaceView implements Constants
 {
 	protected final Context context;
 	protected VT thread;

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import org.xml.sax.SAXException;
 
 import uk.digitalsquid.spacegamelib.CompuFuncs;
+import uk.digitalsquid.spacegamelib.Constants;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -26,8 +27,7 @@ import android.util.Log;
  * @author william
  * 
  */
-public class LevelManager
-{
+public class LevelManager implements Constants {
 	final DbStorage db;
 	final Context context;
 	final AssetManager am;
@@ -47,24 +47,24 @@ public class LevelManager
 		} catch (IOException e)
 		{
 			e.printStackTrace();
-			Log.e("SpaceGame", "Error finding levels: " + e.getMessage());
+			Log.e(TAG, "Error finding levels: " + e.getMessage());
 		} catch (NotFoundException e)
 		{
 			e.printStackTrace();
-			Log.e("SpaceGame", "Error loading level from resources: "
+			Log.e(TAG, "Error loading level from resources: "
 					+ e.getMessage());
 		} catch (IllegalArgumentException e)
 		{
 			e.printStackTrace();
-			Log.e("SpaceGame", "IllegalArgumentException: " + e.getMessage());
+			Log.e(TAG, "IllegalArgumentException: " + e.getMessage());
 		} catch (SAXException e)
 		{
 			e.printStackTrace();
-			Log.e("SpaceGame", "Error loading XML Data: " + e.getMessage());
+			Log.e(TAG, "Error loading XML Data: " + e.getMessage());
 		} catch (IllegalAccessException e)
 		{
 			e.printStackTrace();
-			Log.e("SpaceGame", "IllegalAccessException: " + e.getMessage());
+			Log.e(TAG, "IllegalAccessException: " + e.getMessage());
 		}
 	}
 
@@ -79,7 +79,7 @@ public class LevelManager
 		String[] levelSets = am.list("lvl");
 		
 		for(String levelSet : levelSets) {
-			Log.v("SpaceGame", "Found levelset at " + levelSet);
+			Log.v(TAG, "Found levelset at " + levelSet);
 			
 			lSetInfo.filename = BUILTIN_PREFIX + levelSet;
 			lSetInfo.author = "";
@@ -96,12 +96,12 @@ public class LevelManager
 						lSetInfo.author = lineparts[1];
 				}
 			} catch(IOException e) {
-				Log.i("SpaceGame", "Error processing levelset in " + levelSet);
+				Log.i(TAG, "Error processing levelset in " + levelSet);
 				break;
 			}
 			if(db.CheckLevelSetNotExists(lSetInfo.filename))
 			{
-				Log.v("SpaceGame", "Levelset " + lInfo.set
+				Log.v(TAG, "Levelset " + lInfo.set
 						+ " doesn't exist in DB, creating...");
 				db.InsertLevelSetInfo(lSetInfo);
 			}
@@ -122,11 +122,11 @@ public class LevelManager
 				}
 				lInfo.filename = lInfo.filename.substring(0, lInfo.filename.lastIndexOf(" "));
 				
-				Log.i("SpaceGame", "Checking level " + lInfo.filename + " in level set " + lInfo.set);
+				Log.i(TAG, "Checking level " + lInfo.filename + " in level set " + lInfo.set);
 				
 				if(db.CheckLevelNotExists(lInfo.filename, lInfo.fileNumber, lInfo.set))
 				{
-					Log.v("SpaceGame", "Level " + lInfo.filename
+					Log.v(TAG, "Level " + lInfo.filename
 							+ " doesn't exist in DB, creating...");
 					SaxInfoLoader.LevelInfo info = SaxInfoLoader
 							.parse(CompuFuncs.decodeIStream(am.open("lvl/" + levelSet + "/" + lInfo.filename + " " + lInfo.fileNumber + ".slv")));
@@ -138,12 +138,12 @@ public class LevelManager
 			}
 		}
 
-		Log.i("SpaceGame",
+		Log.i(TAG,
 				"Checking for items in database which aren't available...");
 		db.CheckDatabaseValidity(am);
 
 		db.getWritableDatabase().close();
-		Log.i("SpaceGame", "Finished updating database");
+		Log.i(TAG, "Finished updating database");
 	}
 	
 	void displayFiles (AssetManager mgr, String path) {
@@ -153,12 +153,12 @@ public class LevelManager
 	        {
 	            for (int i=0; i<list.length; ++i)
                 {
-                    Log.v("SpaceGame", path + "/" + list[i]);
+                    Log.v(TAG, path + "/" + list[i]);
                     displayFiles(mgr, path + "/" + list[i]);
                 }
             }
 	        else {
-		    	Log.v("SpaceGame", path + " is a file");
+		    	Log.v(TAG, path + " is a file");
 	        }
 	    } catch (IOException e) {
 	    }
@@ -173,7 +173,7 @@ public class LevelManager
 	public InputStream getLevelIStream(LevelExtendedInfo info) throws IOException {
 		if(info.set.startsWith(BUILTIN_PREFIX)) {
 			String setFilePath = info.set.replace(BUILTIN_PREFIX, ""); // Remove it
-			Log.v("SpaceGame", "Opening level at path " + "lvl/" + setFilePath + "/" + info.filename + " " + info.fileNumber + ".slv");
+			Log.v(TAG, "Opening level at path " + "lvl/" + setFilePath + "/" + info.filename + " " + info.fileNumber + ".slv");
 			return am.open("lvl/" + setFilePath + "/" + info.filename + " " + info.fileNumber + ".slv");
 		}
 		return null;
@@ -229,9 +229,9 @@ public class LevelManager
 				db.execSQL(DB_SETS_CREATE);
 			} catch (SQLException e)
 			{
-				Log.e("SpaceGame", "SQL Error: " + e.getMessage());
+				Log.e(TAG, "SQL Error: " + e.getMessage());
 			}
-			Log.i("SpaceGame", "Created database");
+			Log.i(TAG, "Created database");
 		}
 
 		@Override
@@ -316,7 +316,7 @@ public class LevelManager
 					if(file.endsWith(".slv")) isEmpty = false;
 				}
 				if(isEmpty) {
-					Log.i("SpaceGame", "Deleting level set " + foldername);
+					Log.i(TAG, "Deleting level set " + foldername);
 					DeleteLevelSet(foldername);
 				}
 			}
@@ -376,7 +376,7 @@ public class LevelManager
 				}
 			} catch (SQLiteException e)
 			{
-				Log.e("SpaceGame", "SQLite Database Error: "
+				Log.e(TAG, "SQLite Database Error: "
 						+ e.getLocalizedMessage());
 			} finally {
 				if(c != null) c.close();
@@ -396,7 +396,7 @@ public class LevelManager
 		
 		protected void resetDB()
 		{
-			Log.i("SpaceGame", "Deleting all data from DB...");
+			Log.i(TAG, "Deleting all data from DB...");
 			getWritableDatabase().delete(DB_LEVELS_NAME, null, null);
 			getWritableDatabase().delete(DB_SETS_NAME, null, null);
 			getWritableDatabase().close();

@@ -114,7 +114,7 @@ public class Star extends Spherical implements LevelAffectable, Forceful, Static
 			
 			float distFromDest = (float) Math.hypot(animX - animDestX, animY - animDestY);
 			float opacity = 1;
-			if(distFromDest < 12.8f) opacity = (float) CompuFuncs.TrimMin((distFromDest - 6.4f) / 6.4f, 0);
+			if(distFromDest < 12.8f) opacity = (float) CompuFuncs.trimMin((distFromDest - 6.4f) / 6.4f, 0);
 			if(opacity == 0) {
 				drawingP2 = false;
 				sendFinishedStatus = true;

@@ -10,6 +10,7 @@ import uk.digitalsquid.spacegame.views.LevelSelectLayout;
 import uk.digitalsquid.spacegame.views.LevelSetSelectLayout;
 import uk.digitalsquid.spacegame.views.MainMenuLayout;
 import uk.digitalsquid.spacegame.views.SplashScreen;
+import uk.digitalsquid.spacegamelib.Constants;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Warpable.WarpData;
 import android.app.Activity;
 import android.app.Dialog;
@@ -25,7 +26,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-public class Spacegame extends Activity
+public class Spacegame extends Activity implements Constants
 {
 	protected GameViewLayout sview = null;
 	protected SplashScreen splash = null;
@@ -73,7 +74,7 @@ public class Spacegame extends Activity
         if(sview != null)
         	sview.restoreState(savedInstanceState);
         
-        Log.v("SpaceGame", "Started");
+        Log.v(TAG, "Started");
     }
 
 	public static final int MESSAGE_END_LEVEL = 1;
@@ -98,7 +99,7 @@ public class Spacegame extends Activity
 				activateView(Views.MAIN_MENU);
 				break;
 			case MESSAGE_MAIN_MENU_FINISHED:
-				Log.i("SpaceGame", "Starting game...");
+				Log.i(TAG, "Starting game...");
 				activateView(Views.MENU_LEVELSET_SELECT);
 				break;
 			case MESSAGE_QUIT:

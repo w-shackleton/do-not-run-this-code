@@ -58,9 +58,9 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 		if(rGen == null)
 			rGen = new Random();
 		
-		this.size.x = CompuFuncs.TrimMinMax(this.size.x, VORTEX_SIZE_MIN, VORTEX_SIZE_MAX);
-		this.size.y = CompuFuncs.TrimMinMax(this.size.y, VORTEX_SIZE_MIN, VORTEX_SIZE_MAX);
-		this.speed = CompuFuncs.TrimMinMax(speed, VORTEX_POW_MIN, VORTEX_POW_MAX);
+		this.size.x = CompuFuncs.trimMinMax(this.size.x, VORTEX_SIZE_MIN, VORTEX_SIZE_MAX);
+		this.size.y = CompuFuncs.trimMinMax(this.size.y, VORTEX_SIZE_MIN, VORTEX_SIZE_MAX);
+		this.speed = CompuFuncs.trimMinMax(speed, VORTEX_POW_MIN, VORTEX_POW_MAX);
 		
 		bg = new RectMesh(getPosX(), getPosY(), (float)size.x, (float)size.y, 0, 0, 0, 1);
 		bg.setRotation(rotation);
@@ -92,15 +92,15 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 	@Override
 	public Vec2 calculateRF(Vec2 itemC, Vec2 itemV)
 	{
-		if(CompuFuncs.PointInPolygon(getRectPos(), itemC))
+		if(CompuFuncs.pointInPolygon(getRectPos(), itemC))
 		{
-			//Log.v("SpaceGame", "Y");
+			//Log.v(TAG, "Y");
 			return new Vec2(
 					(float)Math.cos(getRotation() * DEG_TO_RAD) * speed * GRAVITY_SPEED,
 					(float)Math.sin(getRotation() * DEG_TO_RAD) * speed * GRAVITY_SPEED);
 		}
 		//else
-			//Log.v("SpaceGame", "N");
+			//Log.v(TAG, "N");
 		return null;
 	}
 	
@@ -125,8 +125,8 @@ public class GravityField extends Rectangular implements Forceful, Moveable
 				fb.put(i * 6 + 4, newY);
 			}
 			
-			fb.put(i * 6 + 0, (float) (-Math.cos(CompuFuncs.TrimMin(untranslatedPoints[i]					 , 0))		 * size.x / 2));
-			fb.put(i * 6 + 3, (float) (-Math.cos(CompuFuncs.TrimMax(untranslatedPoints[i] + LINE_LENGTH_IN_PI, Math.PI)) * size.x / 2));
+			fb.put(i * 6 + 0, (float) (-Math.cos(CompuFuncs.trimMin(untranslatedPoints[i]					 , 0))		 * size.x / 2));
+			fb.put(i * 6 + 3, (float) (-Math.cos(CompuFuncs.trimMax(untranslatedPoints[i] + LINE_LENGTH_IN_PI, Math.PI)) * size.x / 2));
 		}
 	}
 	

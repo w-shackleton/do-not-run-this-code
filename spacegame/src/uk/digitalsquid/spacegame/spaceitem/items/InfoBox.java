@@ -62,7 +62,7 @@ public class InfoBox extends Rectangular implements Messageable, Clickable
 	@Override
 	public MessageInfo sendMessage()
 	{
-		//Log.v("SpaceGame", "showNow: " + showNow);
+		//Log.v(TAG, "showNow: " + showNow);
 		// TODO: Delete showNow since message display setting reset in GameView?
 		messageInfo.display = showNow; // Only display once (possibly obsoleted by code in Messageable caller in GameView)
 		showNow = false;
@@ -72,7 +72,7 @@ public class InfoBox extends Rectangular implements Messageable, Clickable
 	@Override
 	public void onClick(float x, float y)
 	{
-		Log.v("SpaceGame", "Loading info box...");
+		Log.v(TAG, "Loading info box...");
 		showNow = true;
 	}
 }

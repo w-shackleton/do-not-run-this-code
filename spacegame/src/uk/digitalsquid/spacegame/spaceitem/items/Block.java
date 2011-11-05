@@ -103,8 +103,8 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
 	 */
 	void setSize(Vec2 size, Vec2 min, Vec2 max) {
 		this.size = size;
-		this.size.x = CompuFuncs.TrimMinMax(size.x, min.x, max.x);
-		this.size.y = CompuFuncs.TrimMinMax(size.y, min.y, max.y);
+		this.size.x = CompuFuncs.trimMinMax(size.x, min.x, max.x);
+		this.size.y = CompuFuncs.trimMinMax(size.y, min.y, max.y);
 	}
 
 	@Override

@@ -49,7 +49,7 @@ public class Planet extends Gravitable
 			}
 		}
 		
-		setRadius(CompuFuncs.TrimMinMax(getRadius(), type.minSize, type.maxSize));
+		setRadius(CompuFuncs.trimMinMax(getRadius(), type.minSize, type.maxSize));
 		
 		if(type.fgType == FgType.image)
 		{

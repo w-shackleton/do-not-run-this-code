@@ -112,7 +112,7 @@ public final class Simulation {
 			
 			if(!paused)
 			{
-				gravityEffectMultiplier = CompuFuncs.TrimMinMax(gravityEffectMultiplier, -0.1f, 1);
+				gravityEffectMultiplier = CompuFuncs.trimMinMax(gravityEffectMultiplier, -0.1f, 1);
 				gravityEffectMultiplier = (gravityEffectMultiplier - 1) * 0.99f + 1; // Slowly reset to 1
 				p.itemRF.mulLocal(gravityEffectMultiplier);
 				
