@@ -5,7 +5,12 @@ import java.util.List;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import org.jbox2d.callbacks.ContactImpulse;
+import org.jbox2d.callbacks.ContactListener;
+import org.jbox2d.collision.Manifold;
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Fixture;
+import org.jbox2d.dynamics.contacts.Contact;
 
 import uk.digitalsquid.spacegame.spaceitem.assistors.Simulation;
 import uk.digitalsquid.spacegamelib.CompuFuncs;
@@ -22,9 +27,9 @@ public abstract class Player extends PlayerBase implements Moveable
 	protected float ballRotationSpeed = 0;
 	protected float ballMomentum = 0;
 	
-	public Player(SimulationContext context, Vec2 coord)
-	{
+	public Player(SimulationContext context, Vec2 coord) {
 		super(context, coord);
+		body.getWorld().setContactListener(contactListener);
 	}
 	
 	/**
@@ -113,7 +118,8 @@ public abstract class Player extends PlayerBase implements Moveable
 		velocityDelta.set(body.getLinearVelocity());
 		velocityDelta.subLocal(previousVelocity);
 		
-		if(velocityDelta.lengthSquared() < 0.00000009f) { // 0.0003^2
+		if(velocityDelta.lengthSquared() < 0.00000009f &&
+				body.getLinearVelocity().lengthSquared() < 0.04f) { // 0.0003^2
 			openLanding();
 		}
 		
@@ -173,6 +179,34 @@ public abstract class Player extends PlayerBase implements Moveable
 	public void lookTo(Vec2 point) {}
 	
 	public void setNearestLandingPoint(final Vec2 planet) {}
+	/**
+	 * Computes the landing point from the contacts the player's body has.
+	 */
+	void computeLandingPoint() {
+	}
+	
+	private ContactListener contactListener = new ContactListener() {
+		@Override
+		public void preSolve(Contact contact, Manifold oldManifold) {
+		}
+		@Override
+		public void postSolve(Contact contact, ContactImpulse impulse) {
+		}
+		@Override
+		public void endContact(Contact contact) {
+		}
+		@Override
+		public void beginContact(Contact contact) {
+			Fixture iter = body.getFixtureList();
+			do {
+				if(
+						contact.getFixtureA().equals(iter) ||
+						contact.getFixtureB().equals(iter)) { // Contact is ours
+					// TODO: Work this out!
+				}
+			} while((iter = iter.getNext()) != null);
+		}
+	};
 	
 	protected boolean isLanded() {
 		return landingState;

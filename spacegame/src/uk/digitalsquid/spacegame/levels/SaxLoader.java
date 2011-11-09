@@ -253,7 +253,7 @@ public class SaxLoader
 			public void start(Attributes attributes)
 			{
 				final int blockId = getInt(attributes, "type", 0);
-				final boolean hasVortex = getBoolean(attributes, "hasVortex", true);
+				final boolean hasVortex = getInt(attributes, "hasVortex", 0) != 0;
 				BlockDef def = BlockDef.getBlockDef(blockId);
 				if(def == null) return;
 				level.planetList.add(def.create(
@@ -387,6 +387,7 @@ public class SaxLoader
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private static final boolean getBoolean(Attributes attributes, String key, boolean defaultValue) {
 		try
 		{

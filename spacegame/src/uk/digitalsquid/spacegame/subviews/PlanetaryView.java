@@ -354,12 +354,16 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			}
 		}
 		
+		/**
+		 * Sets the points in the game where the player should look towards.
+		 */
 		private void setNearestLookPoint() {
+			// Firstly, set looking point. Currently only uses stars.
 			{
 				double lowestDist = -1;
 				Vec2 lowestPoint = null;
 				for(SpaceItem item : planetList) {
-					if(item.getClass().equals(Star.class)) {
+					if(item instanceof Star) {
 						if(lowestDist == -1) lowestDist = VecHelper.dist(item.getPos(), p.itemC);
 						double thisDist = VecHelper.dist(item.getPos(), p.itemC);
 						if(thisDist < lowestDist) {
@@ -370,7 +374,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 				}
 				
 				if(lowestPoint != null) {
-					p.lookTo(lowestPoint);
+					p.lookTo(lowestPoint); // Set point if found
 				}
 			}
 			

@@ -114,6 +114,7 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
 
 	@Override
 	public Vec2 calculateRF(Vec2 itemC, Vec2 itemV) {
+		if(vortex != null) return vortex.calculateRF(itemC, itemV);
 		return null;
 	}
 
@@ -148,5 +149,6 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
 			mesh.setRotation(getRotation());
 			mesh.draw(gl);
 		}
+		if(vortex != null) vortex.draw(gl);
 	}
 }

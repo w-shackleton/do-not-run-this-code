@@ -4,6 +4,8 @@ import javax.microedition.khronos.opengles.GL10;
 
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.common.Mat22;
+import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
 
 import uk.digitalsquid.spacegamelib.CompuFuncs;
@@ -21,6 +23,11 @@ public class BlockVortex implements Constants, Forceful {
 		LINEAR,
 		ANGULAR
 	}
+	
+	/**
+	 * Identity transform
+	 */
+	private static final Transform transform = new Transform(new Vec2(), new Mat22(1, 0, 0, 1));
 	
 	protected final Shape catchArea;
 	
@@ -68,12 +75,13 @@ public class BlockVortex implements Constants, Forceful {
 	}
 	
 	private Vec2 force = new Vec2();
-	private static final Vec2 FORCE_MAGNITUDE = new Vec2(-2, 0);
+	private static final float FORCE_MAGNITUDE = 12f;
+	private static final Vec2 LINEAR_FORCE = new Vec2(0, -FORCE_MAGNITUDE);
 	
 	@Override
 	public Vec2 calculateRF(Vec2 itemC, Vec2 itemV) {
-		if(catchArea.testPoint(null, itemC)) {
-			force.set(FORCE_MAGNITUDE);
+		if(catchArea.testPoint(transform, itemC)) {
+			force.set(LINEAR_FORCE);
 			CompuFuncs.rotateLocal(force, null, angle);
 			return force;
 		}

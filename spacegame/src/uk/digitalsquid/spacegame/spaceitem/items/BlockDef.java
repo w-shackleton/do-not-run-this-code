@@ -180,10 +180,10 @@ public abstract class BlockDef {
 
 				@Override
 				public BlockVortex getVortex(Vec2 pos, Vec2 size, float angle) {
-					Vec2 vortexCenter = size.sub(new Vec2(0, -GRID_SIZE_2));
+					Vec2 vortexCenter = pos.add(new Vec2(0, GRID_SIZE_2));
 					CompuFuncs.rotateLocal(vortexCenter, pos, angle);
 					Vec2 vortexSize = new Vec2(size);
-					vortexSize.x = GRID_SIZE_2;
+					vortexSize.y = GRID_SIZE_2;
 					return new BlockVortex(vortexCenter, vortexSize, angle);
 				}
 			});
