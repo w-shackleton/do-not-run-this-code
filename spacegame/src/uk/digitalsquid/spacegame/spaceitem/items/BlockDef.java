@@ -9,10 +9,10 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 
 import uk.digitalsquid.spacegame.levels.SaxLoader;
-import uk.digitalsquid.spacegame.spaceitem.assistors.Geometry;
 import uk.digitalsquid.spacegame.spaceitem.blocks.BlockVortex;
-import uk.digitalsquid.spacegamelib.CompuFuncs;
+import uk.digitalsquid.spacegamelib.Geometry;
 import uk.digitalsquid.spacegamelib.SimulationContext;
+import uk.digitalsquid.spacegamelib.VecHelper;
 
 
 /**
@@ -75,6 +75,7 @@ public abstract class BlockDef {
 	
 	/**
 	 * Returns the shape of this definition, as it should appear to the physics engine. Should not cache the result.
+	 * The resulting shape shouldn't be rotated.
 	 * @param size The scaled size of the object - used to work out how big the shape should be. Shape should be centered over origin.
 	 * @return
 	 */
@@ -181,7 +182,7 @@ public abstract class BlockDef {
 				@Override
 				public BlockVortex getVortex(Vec2 pos, Vec2 size, float angle) {
 					Vec2 vortexCenter = pos.add(new Vec2(0, GRID_SIZE_2));
-					CompuFuncs.rotateLocal(vortexCenter, pos, angle);
+					VecHelper.rotateLocal(vortexCenter, pos, angle);
 					Vec2 vortexSize = new Vec2(size);
 					vortexSize.y = GRID_SIZE_2;
 					return new BlockVortex(vortexCenter, vortexSize, angle);
@@ -220,8 +221,9 @@ public abstract class BlockDef {
 
 				@Override
 				public BlockVortex getVortex(Vec2 pos, Vec2 size, float angle) {
-					// TODO Write corner vortex
-					return null;
+					Vec2 origin = new Vec2(pos.x - GRID_SIZE, pos.y - GRID_SIZE); // Bottom corner
+					VecHelper.rotateLocal(origin, pos, angle);
+					return new BlockVortex(origin, angle, (float)Math.PI / 2 /* 90 */, size.x + GRID_SIZE_2);
 				}
 			});
 			// BLOCK_FADE

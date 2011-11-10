@@ -8,8 +8,10 @@ import org.jbox2d.common.Mat22;
 import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
 
-import uk.digitalsquid.spacegamelib.CompuFuncs;
 import uk.digitalsquid.spacegamelib.Constants;
+import uk.digitalsquid.spacegamelib.Geometry;
+import uk.digitalsquid.spacegamelib.VecHelper;
+import uk.digitalsquid.spacegamelib.gl.Mesh;
 import uk.digitalsquid.spacegamelib.gl.RectMesh;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Forceful;
 
@@ -45,10 +47,7 @@ public class BlockVortex implements Constants, Forceful {
 	 * The size in RADIANS of an angular block
 	 */
 	protected float angularSize;
-	/**
-	 * The minimum width of the arc
-	 */
-	protected float angularYmin;
+	
 	/**
 	 * The maximum width of the arc
 	 */
@@ -73,6 +72,31 @@ public class BlockVortex implements Constants, Forceful {
 		tmpDraw = new RectMesh(center.x, center.y, size.x, size.y, 1, 1, 0, 1);
 		tmpDraw.setRotation(angle * RAD_TO_DEG);
 	}
+	/**
+	 * Constructs a arc based vortex. Note that there is no minimum value for the arc as this would make the shape concave, and anger Box2D
+	 * 
+	 * @param center Where the arc starts from
+	 * @param angle The rotation in RADIANS from the start position
+	 * @param angularSize The size in RADIANS of the arc
+	 * @param size The radius of the arc
+	 */
+	public BlockVortex(Vec2 center, float angle, float angularSize, float size) {
+		type = VortexType.ANGULAR;
+		pos = center;
+		this.angularSize = angularSize;
+		this.angle = angle;
+		
+		catchArea = Geometry.createArc(null, center.x, center.y, size, angle, angle+angularSize);
+		Vec2[] vec2s = ((PolygonShape)catchArea).m_vertices;
+		float vertices[] = new float[vec2s.length * 3];
+		for(int i = 0; i < vec2s.length; i++) {
+			vertices[i*3+0] = vec2s[i].x;
+			vertices[i*3+1] = vec2s[i].y;
+			vertices[i*3+2] = 0;
+		}
+		tmpDraw = new Mesh(0, 0, vertices, new short[0], 0, 1, 0, 1);
+		tmpDraw.setDrawMode(GL10.GL_TRIANGLE_FAN);
+	}
 	
 	private Vec2 force = new Vec2();
 	private static final float FORCE_MAGNITUDE = 12f;
@@ -81,9 +105,16 @@ public class BlockVortex implements Constants, Forceful {
 	@Override
 	public Vec2 calculateRF(Vec2 itemC, Vec2 itemV) {
 		if(catchArea.testPoint(transform, itemC)) {
-			force.set(LINEAR_FORCE);
-			CompuFuncs.rotateLocal(force, null, angle);
-			return force;
+			switch(type) {
+			case LINEAR:
+				force.set(LINEAR_FORCE);
+				VecHelper.rotateLocal(force, null, angle);
+				return force;
+			case ANGULAR:
+				float angle = VecHelper.angleFromRad(pos, itemC);
+				VecHelper.vecFromPolar(force, angle, FORCE_MAGNITUDE);
+				return force;
+			}
 		}
 		return null;
 	}
@@ -101,9 +132,9 @@ public class BlockVortex implements Constants, Forceful {
 	public void calculateVelocityMutable(Vec2 itemPos, Vec2 itemV, float itemRadius) {
 	}
 	
-	protected RectMesh tmpDraw;
+	protected Mesh tmpDraw;
 	
 	public void draw(GL10 gl) {
-		tmpDraw.draw(gl);
+		if(tmpDraw != null) tmpDraw.draw(gl);
 	}
 }

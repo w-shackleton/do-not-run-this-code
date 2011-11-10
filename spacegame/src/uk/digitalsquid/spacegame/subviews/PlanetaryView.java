@@ -10,6 +10,7 @@ import javax.microedition.khronos.opengles.GL10;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.Manifold;
+import org.jbox2d.common.Settings;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
@@ -26,15 +27,14 @@ import uk.digitalsquid.spacegame.spaceitem.items.PlayerBase;
 import uk.digitalsquid.spacegame.spaceitem.items.Portal;
 import uk.digitalsquid.spacegame.spaceitem.items.Star;
 import uk.digitalsquid.spacegamelib.CompuFuncs;
+import uk.digitalsquid.spacegamelib.Geometry;
 import uk.digitalsquid.spacegamelib.SimulationContext;
 import uk.digitalsquid.spacegamelib.StaticInfo;
 import uk.digitalsquid.spacegamelib.VecHelper;
 import uk.digitalsquid.spacegamelib.gl.Lines;
 import uk.digitalsquid.spacegamelib.gl.RectMesh;
 import uk.digitalsquid.spacegamelib.misc.LevelWall;
-import uk.digitalsquid.spacegamelib.spaceitem.Rectangular;
 import uk.digitalsquid.spacegamelib.spaceitem.SpaceItem;
-import uk.digitalsquid.spacegamelib.spaceitem.Spherical;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.TopDrawable;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Warpable;
@@ -153,6 +153,8 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		{
 			Log.i(TAG, "Loading level...");
 			
+			// Make sure box2d has enough vertices
+			Settings.maxPolygonVertices = Geometry.SHAPE_RESOLUTION;
 			World world = new World(new Vec2(), true);
 			sim = new SimulationContext(context, world);
 			// world.setContactListener(this);
@@ -375,27 +377,6 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 				
 				if(lowestPoint != null) {
 					p.lookTo(lowestPoint); // Set point if found
-				}
-			}
-			
-			{
-				double lowestDist = -1;
-				Vec2 lowestPoint = new Vec2();
-				for(SpaceItem item : planetList) {
-					if(!(item instanceof Star)) {
-						if(item instanceof Spherical || item instanceof Rectangular) {
-							if(lowestDist == -1) lowestDist = VecHelper.dist(item.getPos(), p.itemC);
-							float thisDist = VecHelper.dist(item.getPos(), p.itemC);
-							if(thisDist <= lowestDist) {
-								lowestDist = thisDist;
-								lowestPoint.set(item.getPos());
-							}
-						}
-					}
-				}
-				
-				if(lowestPoint != null) {
-					p.setNearestLandingPoint(lowestPoint);
 				}
 			}
 		}

@@ -47,6 +47,11 @@ public class Mesh {
 	private float rz = 0;
 	
 	/**
+	 * The mode to draw in. See gl.glDrawElements(..)
+	 */
+	private int drawMode = GL10.GL_TRIANGLES;
+	
+	/**
 	 * Constructs a {@link Mesh} with a colour
 	 * @param vertices
 	 * @param indices
@@ -125,7 +130,7 @@ public class Mesh {
 		gl.glRotatef(rz, 0, 0, 1);
 
 		// Point out the where the color buffer is.
-		gl.glDrawElements(GL10.GL_TRIANGLES, numOfIndices,
+		gl.glDrawElements(drawMode, numOfIndices,
 				GL10.GL_UNSIGNED_SHORT, indicesBuffer);
 		// Disable the vertices buffer.
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
@@ -255,5 +260,13 @@ public class Mesh {
 	 */
 	public final void setRepeatingTexture(boolean repeating) {
 		this.repeating = repeating;
+	}
+	
+	/**
+	 * Sets the mode to draw in, ie one of GL10.GL_TRIANGLES etc.
+	 * @param mode
+	 */
+	public final void setDrawMode(int mode) {
+		drawMode = mode;
 	}
 }

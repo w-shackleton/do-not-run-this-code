@@ -10,7 +10,7 @@ public final class StaticInfo implements Constants {
 	public static boolean Antialiasing;
 	public static boolean Starfield;
 	
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 	
 	public static final void initialise(Context context)
 	{

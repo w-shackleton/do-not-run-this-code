@@ -2,6 +2,7 @@ package uk.digitalsquid.spacegamelib;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 
 import org.jbox2d.common.Vec2;
 
@@ -87,51 +88,6 @@ public class CompuFuncs
 	public static final float rotateY(float x, float y, float rot)
 	{
 		return (float) (Math.sqrt((x * x) + (y * y)) * Math.sin(rot + Math.atan2(y, x)));
-	}
-	
-	/**
-	 * Rotate this {@link Coord} around the specified {@link Coord} {@code rot}, by the amount of radians
-	 * @param orig The origin around which to rotate (can be {@code null}, in which case the origin is {@code (0,0)})
-	 * @param rot The amount to rotate, in RADIANS
-	 * @return A new {@link Coord}, which has been rotated
-	 */
-	public static final Vec2 rotateCoord(Vec2 point, Vec2 orig, float rot)
-	{
-		if(orig != null)
-			return new Vec2(
-					orig.x + CompuFuncs.rotateX(point.x - orig.x, point.y - orig.y, rot),
-					orig.y + CompuFuncs.rotateY(point.x - orig.x, point.y - orig.y, rot));
-		return new Vec2(
-				CompuFuncs.rotateX(point.x, point.y, rot),
-				CompuFuncs.rotateY(point.x, point.y, rot));
-	}
-	
-	/**
-	 * Rotate this {@link Coord} around the specified {@link Coord} {@code rot}, by the amount of radians
-	 * @param orig The origin around which to rotate (can be {@code null}, in which case the origin is {@code (0,0)})
-	 * @param rot The amount to rotate, in RADIANS
-	 * @return A new {@link Coord}, which has been rotated
-	 */
-	public static final void rotateLocal(Vec2 point, Vec2 orig, float rot)
-	{
-		if(orig != null) {
-			float tx = orig.x + CompuFuncs.rotateX(point.x - orig.x, point.y - orig.y, rot);
-			point.y = orig.y + CompuFuncs.rotateY(point.x - orig.x, point.y - orig.y, rot);
-			point.x = tx;
-		} else {
-			float tx = CompuFuncs.rotateX(point.x, point.y, rot);
-			point.y = CompuFuncs.rotateY(point.x, point.y, rot);
-			point.x = tx;
-		}
-	}
-	
-	
-	public static final Vec2[] rotateCoords(Vec2[] old, Vec2 orig, float rot)
-	{
-		Vec2[] ret = new Vec2[old.length];
-		for(int i = 0; i < old.length; i++)
-			ret[i] = rotateCoord(old[i], orig, rot);
-		return ret;
 	}
 	
 	/**
@@ -263,5 +219,21 @@ public class CompuFuncs
 	 */
 	public static final float mod(float a, float div) {
 		return (a % div + div) % div;
+	}
+	
+	/**
+	 * Creates a string representation of an array.
+	 * @param array
+	 * @return
+	 */
+	public static final String logArray(Object[] array) {
+		StringWriter acc = new StringWriter();
+		acc.append("{ ");
+		for(Object i : array) {
+			acc.append(i.toString());
+			acc.append(", ");
+		}
+		acc.append(" }");
+		return acc.toString();
 	}
 }

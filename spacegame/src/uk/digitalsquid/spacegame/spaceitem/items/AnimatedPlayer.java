@@ -130,7 +130,8 @@ public class AnimatedPlayer extends Player
 		// Landing gear
 		gl.glPushMatrix();
 		float transitionFactor = (float)(landingPosition - LANDING_GEAR_OPEN_ROTATION) / (float)(LANDING_GEAR_CLOSED_ROTATION - LANDING_GEAR_OPEN_ROTATION);
-		gl.glRotatef(VecHelper.angleFromDeg(nearestPlanet, itemC) * (1 - transitionFactor) + getBallRotation() * transitionFactor, 0, 0, 1);
+		// gl.glRotatef(VecHelper.angleFromDeg(nearestPlanet, itemC) * (1 - transitionFactor) + getBallRotation() * transitionFactor, 0, 0, 1);
+		gl.glRotatef(nearestPlanetAngle * (1 - transitionFactor) + getBallRotation() * transitionFactor, 0, 0, 1);
 		gl.glTranslatef(-landingDrawShiftX, 0, 0);
 		landingGearLeft.draw(gl);
 		landingGearRight.draw(gl);
@@ -165,7 +166,7 @@ public class AnimatedPlayer extends Player
 		eyePos.y += eyeDistanceToMove.y / EYE_MOVE_SPEED;
 		
 		eyeRotatedPos.set(eyePos);
-		CompuFuncs.rotateLocal(eyeRotatedPos, null, -getBallRotation() * DEG_TO_RAD);
+		VecHelper.rotateLocal(eyeRotatedPos, null, -getBallRotation() * DEG_TO_RAD);
 		
 		
 		// Draw
@@ -323,14 +324,18 @@ public class AnimatedPlayer extends Player
 		}
 	}
 	
-	private Vec2 nearestPlanet = new Vec2();
+	// private Vec2 nearestPlanet = new Vec2();
+	/**
+	 * The angle to the nearest planet IN DEGREES
+	 */
+	private float nearestPlanetAngle;
 	
 	@Override
-	public void setNearestLandingPoint(final Vec2 planet) {
-		super.setNearestLandingPoint(planet);
-		if(landingAnimation >= Math.PI) { // If animation is in progress, don't set new planet pos, as it will disrupt smooth animation
-			nearestPlanet = planet;
-		}
+	public void setNearestLandingPoint(final float angle) {
+		super.setNearestLandingPoint(angle);
+		// if(landingAnimation >= Math.PI) { // If animation is in progress, don't set new planet pos, as it will disrupt smooth animation
+			nearestPlanetAngle = angle;
+		// }
 	}
 
 	@Override
@@ -370,15 +375,15 @@ public class AnimatedPlayer extends Player
 		earAbsolutePositions[1].x = rEar.x + CompuFuncs.rotateX(EAR_END.x, EAR_END.y, rEarRotation * DEG_TO_RAD) - landingDrawShiftX;
 		earAbsolutePositions[1].y = rEar.y + CompuFuncs.rotateY(EAR_END.x, EAR_END.y, rEarRotation * DEG_TO_RAD);
 		if(getAlternateDrawPosition() == null) {
-			CompuFuncs.rotateLocal(earAbsolutePositions[0], null, getBallRotation() * DEG_TO_RAD);
-			CompuFuncs.rotateLocal(earAbsolutePositions[1], null, getBallRotation() * DEG_TO_RAD);
+			VecHelper.rotateLocal(earAbsolutePositions[0], null, getBallRotation() * DEG_TO_RAD);
+			VecHelper.rotateLocal(earAbsolutePositions[1], null, getBallRotation() * DEG_TO_RAD);
 			earAbsolutePositions[0].x += itemC.x;
 			earAbsolutePositions[0].y += itemC.y;
 			earAbsolutePositions[1].x += itemC.x;
 			earAbsolutePositions[1].y += itemC.y;
 		} else {
-			CompuFuncs.rotateLocal(earAbsolutePositions[0], null, getAlternateDrawAngle() * DEG_TO_RAD);
-			CompuFuncs.rotateLocal(earAbsolutePositions[1], null, getAlternateDrawAngle() * DEG_TO_RAD);
+			VecHelper.rotateLocal(earAbsolutePositions[0], null, getAlternateDrawAngle() * DEG_TO_RAD);
+			VecHelper.rotateLocal(earAbsolutePositions[1], null, getAlternateDrawAngle() * DEG_TO_RAD);
 			earAbsolutePositions[0].x += getAlternateDrawPosition().x;
 			earAbsolutePositions[0].y += getAlternateDrawPosition().y;
 			earAbsolutePositions[1].x += getAlternateDrawPosition().x;

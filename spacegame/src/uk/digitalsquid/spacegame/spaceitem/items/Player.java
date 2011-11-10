@@ -8,6 +8,7 @@ import javax.microedition.khronos.opengles.GL10;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.Manifold;
+import org.jbox2d.collision.WorldManifold;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.contacts.Contact;
@@ -17,6 +18,7 @@ import uk.digitalsquid.spacegamelib.CompuFuncs;
 import uk.digitalsquid.spacegamelib.SimulationContext;
 import uk.digitalsquid.spacegamelib.VecHelper;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Moveable;
+import android.util.Log;
 
 public abstract class Player extends PlayerBase implements Moveable
 {
@@ -178,12 +180,7 @@ public abstract class Player extends PlayerBase implements Moveable
 	 */
 	public void lookTo(Vec2 point) {}
 	
-	public void setNearestLandingPoint(final Vec2 planet) {}
-	/**
-	 * Computes the landing point from the contacts the player's body has.
-	 */
-	void computeLandingPoint() {
-	}
+	public void setNearestLandingPoint(final float angle) {}
 	
 	private ContactListener contactListener = new ContactListener() {
 		@Override
@@ -199,10 +196,16 @@ public abstract class Player extends PlayerBase implements Moveable
 		public void beginContact(Contact contact) {
 			Fixture iter = body.getFixtureList();
 			do {
-				if(
-						contact.getFixtureA().equals(iter) ||
-						contact.getFixtureB().equals(iter)) { // Contact is ours
-					// TODO: Work this out!
+				if(contact.getFixtureA().equals(iter)) { // Contact is ours
+					WorldManifold worldManifold = new WorldManifold(); // Get world normal, use as angle of landing
+					contact.getWorldManifold(worldManifold);
+					Log.d(TAG, "World normal: " + worldManifold.normal);
+					setNearestLandingPoint(VecHelper.angleDeg(worldManifold.normal));
+				} else if(contact.getFixtureB().equals(iter)) { // Contact is other's, touching us
+					WorldManifold worldManifold = new WorldManifold(); // Get world normal, use as angle of landing
+					contact.getWorldManifold(worldManifold);
+					Log.d(TAG, "World normal: " + worldManifold.normal);
+					setNearestLandingPoint(VecHelper.angleDeg(worldManifold.normal.negateLocal()));
 				}
 			} while((iter = iter.getNext()) != null);
 		}
