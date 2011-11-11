@@ -181,10 +181,10 @@ public abstract class BlockDef {
 
 				@Override
 				public BlockVortex getVortex(Vec2 pos, Vec2 size, float angle) {
-					Vec2 vortexCenter = pos.add(new Vec2(0, GRID_SIZE_2));
+					Vec2 vortexCenter = pos.add(new Vec2(0, GRID_SIZE * 2.5f));
 					VecHelper.rotateLocal(vortexCenter, pos, angle);
 					Vec2 vortexSize = new Vec2(size);
-					vortexSize.y = GRID_SIZE_2;
+					vortexSize.y = GRID_SIZE * 3f;
 					return new BlockVortex(vortexCenter, vortexSize, angle);
 				}
 			});
@@ -223,7 +223,7 @@ public abstract class BlockDef {
 				public BlockVortex getVortex(Vec2 pos, Vec2 size, float angle) {
 					Vec2 origin = new Vec2(pos.x - GRID_SIZE, pos.y - GRID_SIZE); // Bottom corner
 					VecHelper.rotateLocal(origin, pos, angle);
-					return new BlockVortex(origin, angle, (float)Math.PI / 2 /* 90 */, size.x + GRID_SIZE_2);
+					return new BlockVortex(origin, angle, (float)Math.PI / 2 /* 90 */, size.x + GRID_SIZE * 3f);
 				}
 			});
 			// BLOCK_FADE

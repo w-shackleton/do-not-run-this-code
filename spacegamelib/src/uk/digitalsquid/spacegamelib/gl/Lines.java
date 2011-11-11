@@ -34,6 +34,14 @@ public class Lines {
 	private final int type;
 	
 	private int numOfVertices = -1;
+
+	// Our UV texture buffer.
+	private FloatBuffer textureBuffer;
+
+	// Our texture id.
+	private int textureId = -1;
+
+	private int resId = -1;
 	
 	/**
 	 * Constructs a set of lines from vertices
@@ -91,6 +99,36 @@ public class Lines {
 		setVertices(numVertices);
 		setColour(r, g, b, a);
 	}
+	
+	/**
+	 * Constructs a set of lines from vertices with a texture.
+	 * @param x
+	 * @param y
+	 * @param vertices The vertices to use
+	 * @param type Either {@link GL10}.GL_LINE_STRIP, {@link GL10}.GL_LINE_LOOP or {@link GL10}.GL_LINES.
+	 * @param r
+	 * @param g
+	 * @param b
+	 * @param a
+	 */
+	public Lines(float x, float y, int numVertices, float[] textureCoords, int type, int resId) {
+		this.x = x;
+		this.y = y;
+		
+		switch(type) {
+		case GL10.GL_LINE_LOOP:
+		case GL10.GL_LINE_STRIP:
+		case GL10.GL_LINES:
+			break;
+		default:
+			throw new IllegalArgumentException("invalid type");
+		}
+		this.type = type;
+		setVertices(numVertices);
+		if(textureCoords == null) throw new IllegalArgumentException("texturecoords is null");
+		setTextureCoordinates(textureCoords);
+		this.resId = resId;
+	}
 
 	/**
 	 * Render the lines.
@@ -114,6 +152,19 @@ public class Lines {
 	    
 		gl.glColor4f(mRGBA[0], mRGBA[1], mRGBA[2], mRGBA[3]);
 		
+		if(resId != -1 && textureId == -1) textureId = TextureManager.getTexture(gl, resId, true);
+
+		if (textureId != -1 && textureBuffer != null) {
+			
+			gl.glEnable(GL10.GL_TEXTURE_2D);
+			// Enable the texture state
+			gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+
+			// Point to our buffers
+			gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, textureBuffer);
+			gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
+		}
+		
 		gl.glTranslatef(x, y, 0);
 		gl.glRotatef(rz, 0, 0, 1);
 
@@ -121,6 +172,12 @@ public class Lines {
 		gl.glDrawArrays(type, 0, numOfVertices);
 		// Disable the vertices buffer.
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+
+		if (textureId != -1 && textureBuffer != null) {
+			gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+			gl.glDisable(GL10.GL_TEXTURE_2D);
+		}
+		
 		
 		gl.glDisable(GL10.GL_POINT_SMOOTH);
 		gl.glDisable(GL10.GL_LINE_SMOOTH);
@@ -195,5 +252,29 @@ public class Lines {
 	
 	public final void setRotation(float rotation) {
 		rz = rotation;
+	}
+	
+	/**
+	 * Sets a custom texture ID (not one through textureManager)
+	 * @param texId
+	 */
+	protected final void setTextureId(int texId) {
+		textureId = texId;
+	}
+
+	/**
+	 * Set the texture coordinates.
+	 * 
+	 * @param textureCoords
+	 */
+	public final void setTextureCoordinates(float[] textureCoords) {
+		// float is 4 bytes, therefore we multiply the number if
+		// vertices with 4.
+		ByteBuffer byteBuf = ByteBuffer
+				.allocateDirect(textureCoords.length * 4);
+		byteBuf.order(ByteOrder.nativeOrder());
+		textureBuffer = byteBuf.asFloatBuffer();
+		textureBuffer.put(textureCoords);
+		textureBuffer.position(0);
 	}
 }
