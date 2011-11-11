@@ -339,7 +339,9 @@ public class AnimatedPlayer extends Player
 	}
 
 	@Override
-	public void drawMove(float millistep, float speedscale) { }
+	public void drawMove(float millistep, float speedscale) {
+		super.drawMove(millistep, speedscale);
+	}
 	
 	private final Vec2 leftEarExtraForce = new Vec2(), rightEarExtraForce = new Vec2();
 	

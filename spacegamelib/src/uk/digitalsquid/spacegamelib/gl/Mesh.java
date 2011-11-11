@@ -171,6 +171,10 @@ public class Mesh {
 		verticesBuffer.put(vertices);
 		verticesBuffer.position(0);
 	}
+	
+	public final FloatBuffer getVertices() {
+		return verticesBuffer;
+	}
 
 	/**
 	 * Set the indices.
@@ -202,6 +206,10 @@ public class Mesh {
 		textureBuffer = byteBuf.asFloatBuffer();
 		textureBuffer.put(textureCoords);
 		textureBuffer.position(0);
+	}
+	
+	public final FloatBuffer getTextureCoordinates() {
+		return textureBuffer;
 	}
 
 	/**

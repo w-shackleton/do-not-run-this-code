@@ -1,5 +1,7 @@
 package uk.digitalsquid.spacegame.spaceitem.blocks;
 
+import java.nio.FloatBuffer;
+
 import javax.microedition.khronos.opengles.GL10;
 
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -8,13 +10,12 @@ import org.jbox2d.common.Mat22;
 import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
 
+import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.spaceitem.items.BlockDef;
 import uk.digitalsquid.spacegamelib.Constants;
 import uk.digitalsquid.spacegamelib.Geometry;
 import uk.digitalsquid.spacegamelib.VecHelper;
-import uk.digitalsquid.spacegamelib.gl.Lines;
 import uk.digitalsquid.spacegamelib.gl.Mesh;
-import uk.digitalsquid.spacegamelib.gl.RectMesh;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Forceful;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Moveable;
 
@@ -81,21 +82,31 @@ public class BlockVortex implements Constants, Forceful, Moveable {
 		shape.setAsBox(size.x / 2, size.y / 2, center, angle);
 		catchArea = shape;
 		
-		tmpDraw = new RectMesh(center.x, center.y, size.x, size.y, 1, 1, 0, 1);
-		tmpDraw.setRotation(angle * RAD_TO_DEG);
+		// tmpDraw = new RectMesh(center.x, center.y, size.x, size.y, 1, 1, 0, 1);
+		// tmpDraw.setRotation(angle * RAD_TO_DEG);
 		
 		vortexLines = (int) (size.x / BlockDef.GRID_SIZE * LINES_PER_GRID_LENGTH);
 		vortexTexCoordSize = size.x / BlockDef.GRID_SIZE_2;
-		final float[] texCoords = {
-				0, 1,
-				vortexTexCoordSize, 1,
-				0, 0,
-				vortexTexCoordSize, 0
-		};
-		lines = new Lines(center.x, center.y, vortexLines * 3 * 2, texCoords, GL10.GL_LINES, uk.digitalsquid.spacegame.R.drawable.blockvortexbg);
+		final short[] indices = new short[vortexLines * 6];
+		for(int i = 0; i < vortexLines; i++) {
+			// Define indices for quads. See RectMesh's indices for this.
+			indices[i*6+0] = (short) (i*4 + 0);
+			indices[i*6+1] = (short) (i*4 + 1);
+			indices[i*6+2] = (short) (i*4 + 2);
+			indices[i*6+3] = (short) (i*4 + 1);
+			indices[i*6+4] = (short) (i*4 + 3);
+			indices[i*6+5] = (short) (i*4 + 2);
+		}
+		lines = new Mesh(center.x, center.y, new float[vortexLines * 3 * 4], indices, new float[vortexLines * 2 * 4], R.drawable.blockvortexbg);
+		lines.setRepeatingTexture(true);
 		lines.setRotation(angle * RAD_TO_DEG);
 		
 		lineProgress = new float[vortexLines * 3];
+		for(int i = 0; i < vortexLines; i++) {
+			lineProgress[i*3+0] = RAND.nextFloat();
+			lineProgress[i*3+1] = RAND.nextFloat() * 0.05f + 0.05f;
+			lineProgress[i*3+2] = RAND.nextFloat();
+		}
 	}
 	/**
 	 * Constructs a arc based vortex. Note that there is no minimum value for the arc as this would make the shape concave, and anger Box2D
@@ -160,16 +171,22 @@ public class BlockVortex implements Constants, Forceful, Moveable {
 	}
 	
 	protected Mesh tmpDraw;
-	protected Lines lines;
+	
+	/**
+	 * The animated line - a mesh so that each line is a quad.
+	 */
+	protected Mesh lines;
 	
 	/**
 	 * The progress of the lines, from which the vortex positions are calculated.<br />
 	 * Format: {position 0-1, progress 0-1, size 0-1}.
 	 */
 	protected float[] lineProgress;
+	protected float textureMovement;
 	
 	public void draw(GL10 gl) {
 		if(tmpDraw != null) tmpDraw.draw(gl);
+		if(lines != null) lines.draw(gl);
 	}
 	@Override public void move(float millistep, float speedScale) { }
 	
@@ -178,7 +195,62 @@ public class BlockVortex implements Constants, Forceful, Moveable {
 		// Recalculate vortex positions.
 		for(int i = 0; i < vortexLines; i++) {
 			// Move step on
-			// lineProgress[i*3+1] += 0.001 * 
+			lineProgress[i*3+1] += 0.002 * millistep;
+			
+			float progress = lineProgress[i*3+1];
+			float step = lineProgress[i*3+2];
+			if(progress + step > 1) { // Reset
+				// Pos
+				lineProgress[i*3+0] = RAND.nextFloat();
+				step = RAND.nextFloat() * 0.05f + 0.05f;
+				lineProgress[i*3+1] = step;
+				lineProgress[i*3+2] = -step; // Put behind 0.
+			}
+		}
+		textureMovement += 0.0006 * millistep;
+		
+		calculateLinesFromProgress();
+	}
+	
+	private static final float VORTEX_LINE_WIDTH = 0.06f;
+	private static final float HALF_LINE = VORTEX_LINE_WIDTH / 2;
+	
+	/**
+	 * Transforms lineProgress into lines. Also modifies the texture coordinates, as this shape is non trivial
+	 */
+	private void calculateLinesFromProgress() {
+		switch(type) {
+		case LINEAR:
+			FloatBuffer vertices = lines.getVertices();
+			FloatBuffer texCoord = lines.getTextureCoordinates();
+			for(int i = 0; i < vortexLines; i++) {
+				float position = lineProgress[i*3+0];
+				float progress = lineProgress[i*3+1];
+				float step = lineProgress[i*3+2];
+				float newPosition1 = (position - 0.5f) - (HALF_LINE / linearSize.x);
+				float newPosition2 = (position - 0.5f) + (HALF_LINE / linearSize.y);
+				float newProgress1 = (float) (Math.cos(progress * Math.PI / 2) - 0.5f);
+				float newProgress2 = (float) (Math.cos((progress+step) * Math.PI / 2) - 0.5f);
+				vertices.put(i*3*4+0, newPosition1 * linearSize.x);
+				vertices.put(i*3*4+1, newProgress1 * linearSize.y);
+				vertices.put(i*3*4+3, newPosition2 * linearSize.x);
+				vertices.put(i*3*4+4, newProgress1 * linearSize.y);
+				vertices.put(i*3*4+6, newPosition1 * linearSize.x);
+				vertices.put(i*3*4+7, newProgress2 * linearSize.y);
+				vertices.put(i*3*4+9, newPosition2 * linearSize.x);
+				vertices.put(i*3*4+10,newProgress2 * linearSize.y);
+				
+				// Images go positive down, opengl goes positive up
+				texCoord.put(i*2*4+0, (+newPosition1 + 0.5f) * vortexTexCoordSize + textureMovement);
+				texCoord.put(i*2*4+1, (-newProgress1 - 0.5f) * 1);
+				texCoord.put(i*2*4+2, (+newPosition2 + 0.5f) * vortexTexCoordSize + textureMovement);
+				texCoord.put(i*2*4+3, (-newProgress1 - 0.5f) * 1);
+				texCoord.put(i*2*4+4, (+newPosition1 + 0.5f) * vortexTexCoordSize + textureMovement);
+				texCoord.put(i*2*4+5, (-newProgress2 - 0.5f) * 1);
+				texCoord.put(i*2*4+6, (+newPosition2 + 0.5f) * vortexTexCoordSize + textureMovement);
+				texCoord.put(i*2*4+7, (-newProgress2 - 0.5f) * 1);
+			}
+			break;
 		}
 	}
 }

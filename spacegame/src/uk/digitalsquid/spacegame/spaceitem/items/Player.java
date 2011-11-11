@@ -18,7 +18,6 @@ import uk.digitalsquid.spacegamelib.CompuFuncs;
 import uk.digitalsquid.spacegamelib.SimulationContext;
 import uk.digitalsquid.spacegamelib.VecHelper;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Moveable;
-import android.util.Log;
 
 public abstract class Player extends PlayerBase implements Moveable
 {
@@ -128,6 +127,11 @@ public abstract class Player extends PlayerBase implements Moveable
 		previousVelocity.set(body.getLinearVelocity());
 	}
 	
+	@Override
+	public void drawMove(float millistep, float speedScale) {
+		setLandingPointFromContact();
+	}
+	
 	/**
 	 * The torque experienced due to gravity.
 	 */
@@ -182,6 +186,25 @@ public abstract class Player extends PlayerBase implements Moveable
 	
 	public void setNearestLandingPoint(final float angle) {}
 	
+	private WorldManifold _worldManifold;
+	
+	/**
+	 * Uses the stored contact point to recompute the normal angle
+	 */
+	void setLandingPointFromContact() {
+		if(landingContact != null) {
+			_worldManifold = new WorldManifold(); // Get world normal, use as angle of landing
+			landingContact.getWorldManifold(_worldManifold);
+			if(landingIsA)
+				setNearestLandingPoint(VecHelper.angleDeg(_worldManifold.normal));
+			else
+				setNearestLandingPoint(VecHelper.angleDeg(_worldManifold.normal.negateLocal()));
+		}
+	}
+	
+	private Contact landingContact;
+	private boolean landingIsA;
+	
 	private ContactListener contactListener = new ContactListener() {
 		@Override
 		public void preSolve(Contact contact, Manifold oldManifold) {
@@ -191,21 +214,22 @@ public abstract class Player extends PlayerBase implements Moveable
 		}
 		@Override
 		public void endContact(Contact contact) {
+			if(contact.equals(landingContact)) {
+				landingContact = null;
+			}
 		}
 		@Override
 		public void beginContact(Contact contact) {
 			Fixture iter = body.getFixtureList();
 			do {
 				if(contact.getFixtureA().equals(iter)) { // Contact is ours
-					WorldManifold worldManifold = new WorldManifold(); // Get world normal, use as angle of landing
-					contact.getWorldManifold(worldManifold);
-					Log.d(TAG, "World normal: " + worldManifold.normal);
-					setNearestLandingPoint(VecHelper.angleDeg(worldManifold.normal));
+					landingIsA = true;
+					landingContact = contact;
+					setLandingPointFromContact();
 				} else if(contact.getFixtureB().equals(iter)) { // Contact is other's, touching us
-					WorldManifold worldManifold = new WorldManifold(); // Get world normal, use as angle of landing
-					contact.getWorldManifold(worldManifold);
-					Log.d(TAG, "World normal: " + worldManifold.normal);
-					setNearestLandingPoint(VecHelper.angleDeg(worldManifold.normal.negateLocal()));
+					landingIsA = false;
+					landingContact = contact;
+					setLandingPointFromContact();
 				}
 			} while((iter = iter.getNext()) != null);
 		}

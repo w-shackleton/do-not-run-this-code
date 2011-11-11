@@ -136,10 +136,12 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
 
 	@Override
 	public void move(float millistep, float speedScale) {
+		if(vortex != null) vortex.move(millistep, speedScale);
 	}
 
 	@Override
 	public void drawMove(float millistep, float speedscale) {
+		if(vortex != null) vortex.drawMove(millistep, speedscale);
 	}
 
 	@Override

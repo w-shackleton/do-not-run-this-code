@@ -10,8 +10,6 @@ public final class StaticInfo implements Constants {
 	public static boolean Antialiasing;
 	public static boolean Starfield;
 	
-	public static final boolean DEBUG = false;
-	
 	public static final void initialise(Context context)
 	{
 		SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(context);
