@@ -20,6 +20,9 @@ import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Messageable.MessageInfo
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.StaticDrawable;
 import android.content.Context;
 import android.graphics.Matrix;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -29,7 +32,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-public class GameView extends MovingView<GameView.ViewWorker> implements OnTouchListener, KeyInput
+public class GameView extends MovingView<GameView.ViewWorker> implements OnTouchListener, KeyInput, SensorEventListener
 {
 	final Handler parentHandler, gvHandler;
 	private final InputStream level;
@@ -299,5 +302,24 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 	public void onBackPress()
 	{
 		stop(-1);
+	}
+
+	@Override
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+	}
+	
+	@Override
+	public void onSensorChanged(SensorEvent event) {
+		// final float x = event.values[0];
+		final float y = event.values[1];
+		// final float z = event.values[2];
+		if(thread != null) {
+			queueEvent(new Runnable() {
+				@Override
+				public void run() {
+					thread.p.setAccelerometerMoment(y);
+				}
+			});
+		}
 	}
 }

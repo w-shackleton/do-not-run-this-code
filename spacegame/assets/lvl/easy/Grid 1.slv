@@ -11,7 +11,7 @@
         <block x="320" y="-80" sx="32" sy="32" rotation="-0" type="2" hasVortex="1" />
         <block x="224" y="-176" sx="32" sy="32" rotation="-90" type="3" hasVortex="1" />
         <block x="256" y="-80" sx="96" sy="32" rotation="-0" type="1" hasVortex="1" />
-        <wall x="112" y="-80" sx="128" sy="32" rotation="-0" hasEnds="1" />
+        <wall x="112" y="-80" sx="128" sy="32" rotation="-0" hasEnds="1" hasVortex="1" />
         <block x="320" y="-112" sx="32" sy="32" rotation="-90" type="1" hasVortex="1" />
         <block x="192" y="-80" sx="32" sy="32" rotation="-0" type="4" hasVortex="1" />
         <block x="32" y="-80" sx="32" sy="32" rotation="-0" type="5" hasVortex="1" />

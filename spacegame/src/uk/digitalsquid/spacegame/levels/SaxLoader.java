@@ -11,6 +11,7 @@ import uk.digitalsquid.spacegame.spaceitem.items.InfoBox;
 import uk.digitalsquid.spacegame.spaceitem.items.Planet;
 import uk.digitalsquid.spacegame.spaceitem.items.Star;
 import uk.digitalsquid.spacegame.spaceitem.items.Wall;
+import uk.digitalsquid.spacegamelib.Constants;
 import uk.digitalsquid.spacegamelib.SimulationContext;
 import android.sax.Element;
 import android.sax.ElementListener;
@@ -25,10 +26,8 @@ import android.util.Xml;
  * @author william
  *
  */
-public class SaxLoader
+public class SaxLoader implements Constants
 {
-	public static final float LOAD_SCALE = 0.1f;
-	
 	private static final String ROOT = "level";
 	
 	private static final String NAME = "name";
@@ -228,11 +227,14 @@ public class SaxLoader
 			@Override
 			public void start(Attributes attributes)
 			{
+				final boolean hasVortex = getInt(attributes, "hasVortex", 0) != 0;
+				final boolean hasEnds = getInt(attributes, "hasEnds", 0) != 0;
 				level.planetList.add(new Wall(
 						context,
 						getCoord(attributes),
 						getFloat(attributes, "sx", 100) * LOAD_SCALE,
-						getFloat(attributes, ITEMS_KEY_ROTATION, 0)));
+						getFloat(attributes, ITEMS_KEY_ROTATION, 0),
+						hasEnds, hasVortex));
 			}
 		});
 		

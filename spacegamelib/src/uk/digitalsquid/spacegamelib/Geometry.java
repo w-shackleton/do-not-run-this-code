@@ -35,7 +35,7 @@ public final class Geometry {
 		
 		for(int i = 1; i < SHAPE_RESOLUTION; i++) {
 			// Loop is inclusive to make sure final point is in arc
-			float angle = from + (to * (float)i / (SHAPE_RESOLUTION-2));
+			float angle = from + ((to-from) * (float)i / (SHAPE_RESOLUTION-2));
 			vertices[i] = new Vec2();
 			vertices[i].x = (float)Math.cos(angle) * radius + originX;
 			vertices[i].y = (float)Math.sin(angle) * radius + originY;

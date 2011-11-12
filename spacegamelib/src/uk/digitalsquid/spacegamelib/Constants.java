@@ -26,4 +26,16 @@ public interface Constants {
 	 * Pseudo-random numbers.
 	 */
 	public static final Random RAND = new Random();
+	
+	public static final float LOAD_SCALE = 0.1f;
+	
+	/**
+	 * The positioning block size of grid items
+	 */
+	public static final float GRID_SIZE = 16 * LOAD_SCALE;
+	/**
+	 * The size of grid items
+	 */
+	public static final float GRID_SIZE_2 = GRID_SIZE * 2;
+	
 }

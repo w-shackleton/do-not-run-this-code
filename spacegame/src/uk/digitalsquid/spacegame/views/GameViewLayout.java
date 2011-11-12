@@ -1,11 +1,15 @@
 package uk.digitalsquid.spacegame.views;
 
 import java.io.InputStream;
+import java.util.Random;
 
 import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.Spacegame;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Warpable.WarpData;
 import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,7 +24,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class GameViewLayout extends FrameLayout implements KeyInput, OnClickListener
+public class GameViewLayout extends FrameLayout implements KeyInput, OnClickListener, SensorEventListener
 {
 	protected Context context;
 	protected Handler parentHandler;
@@ -133,6 +137,10 @@ public class GameViewLayout extends FrameLayout implements KeyInput, OnClickList
 		gameView.saveState(bundle);
 	}
 	
+	public void onResume() {
+		new Random();
+	}
+	
 	@Override
 	public void onClick(View arg0)
 	{
@@ -158,5 +166,15 @@ public class GameViewLayout extends FrameLayout implements KeyInput, OnClickList
 			nextInfoMessage();
 			break;
 		}
+	}
+
+	@Override
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		gameView.onAccuracyChanged(sensor, accuracy);
+	}
+
+	@Override
+	public void onSensorChanged(SensorEvent event) {
+		gameView.onSensorChanged(event);
 	}
 }

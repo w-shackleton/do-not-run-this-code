@@ -30,7 +30,7 @@ public class BlockVortex implements Constants, Forceful, Moveable {
 		ANGULAR
 	}
 	
-	static final int LINES_PER_GRID_LENGTH = 5;
+	static final int LINES_PER_GRID_LENGTH = 1;
 	
 	final int vortexLines;
 	

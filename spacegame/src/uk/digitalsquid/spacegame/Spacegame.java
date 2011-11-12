@@ -14,6 +14,10 @@ import uk.digitalsquid.spacegamelib.Constants;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Warpable.WarpData;
 import android.app.Activity;
 import android.app.Dialog;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,7 +30,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-public class Spacegame extends Activity implements Constants
+public class Spacegame extends Activity implements Constants, SensorEventListener
 {
 	protected GameViewLayout sview = null;
 	protected SplashScreen splash = null;
@@ -44,6 +48,9 @@ public class Spacegame extends Activity implements Constants
 	
 	protected String currentLevelset;
 	
+	private SensorManager sensorManager;
+	private Sensor accel;
+	
 	@Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -57,6 +64,9 @@ public class Spacegame extends Activity implements Constants
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        accel = sensorManager.getDefaultSensor(SensorManager.SENSOR_ACCELEROMETER);
 		
         linearlayout = new LinearLayout(this);
         
@@ -267,4 +277,31 @@ public class Spacegame extends Activity implements Constants
 			return null;
     	}
     }
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		if(accel != null) {
+			sensorManager.unregisterListener(this);
+		}
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		if(accel != null) {
+			sensorManager.registerListener(this, accel, SensorManager.SENSOR_DELAY_GAME);
+		}
+	}
+
+	@Override
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		if(sview != null) sview.onAccuracyChanged(sensor, accuracy);
+	}
+
+	// Chooses views to send events to.
+	@Override
+	public void onSensorChanged(SensorEvent event) {
+		if(sview != null) sview.onSensorChanged(event);
+	}
 }

@@ -131,4 +131,8 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 		if(bhActivated) return true;
 		return false;
 	}
+
+	@Override
+	public void drawBelow(GL10 gl, float worldZoom) {
+	}
 }

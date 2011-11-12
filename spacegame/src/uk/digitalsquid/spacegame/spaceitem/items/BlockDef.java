@@ -8,8 +8,8 @@ import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 
-import uk.digitalsquid.spacegame.levels.SaxLoader;
 import uk.digitalsquid.spacegame.spaceitem.blocks.BlockVortex;
+import uk.digitalsquid.spacegamelib.Constants;
 import uk.digitalsquid.spacegamelib.Geometry;
 import uk.digitalsquid.spacegamelib.SimulationContext;
 import uk.digitalsquid.spacegamelib.VecHelper;
@@ -20,21 +20,12 @@ import uk.digitalsquid.spacegamelib.VecHelper;
  * @author william
  *
  */
-public abstract class BlockDef {
+public abstract class BlockDef implements Constants {
 	
 	/**
 	 * The grid size according to images.
 	 */
 	public static final float IMAGE_GRID_SIZE = 32;
-	
-	/**
-	 * The positioning block size of grid items
-	 */
-	public static final float GRID_SIZE = 16 * SaxLoader.LOAD_SCALE;
-	/**
-	 * The size of grid items
-	 */
-	public static final float GRID_SIZE_2 = GRID_SIZE * 2;
 	
 	/**
 	 * Gets the smallest size of the block, where 1 unit is a grid square. Should not cache its result.
@@ -58,8 +49,12 @@ public abstract class BlockDef {
 		return getUnscaledMaxSize().mulLocal(GRID_SIZE_2);
 	}
 	
-	public abstract float getRestitution();
-	public abstract float getFriction();
+	public float getRestitution() {
+		return 0.7f;
+	}
+	public float getFriction() {
+		return 0.6f;
+	}
 	
 	/**
 	 * If the block has a picture, returns the image ID. Otherwise, return -1.
@@ -123,22 +118,12 @@ public abstract class BlockDef {
 				}
 				
 				@Override
-				public float getRestitution() {
-					return 0;
-				}
-				
-				@Override
 				public int getImageId() {
 					return uk.digitalsquid.spacegame.R.drawable.block_center;
 				}
 				
 				public Vec2 getImageRelativeSize() {
 					return new Vec2(2, 2);
-				}
-				
-				@Override
-				public float getFriction() {
-					return 0;
 				}
 
 				@Override // No vortexes for center
@@ -161,11 +146,6 @@ public abstract class BlockDef {
 				}
 				
 				@Override
-				public float getRestitution() {
-					return 0.7f;
-				}
-				
-				@Override
 				public int getImageId() {
 					return uk.digitalsquid.spacegame.R.drawable.block_edge1;
 				}
@@ -174,11 +154,6 @@ public abstract class BlockDef {
 					return new Vec2(4, 2);
 				}
 				
-				@Override
-				public float getFriction() {
-					return 0.6f;
-				}
-
 				@Override
 				public BlockVortex getVortex(Vec2 pos, Vec2 size, float angle) {
 					Vec2 vortexCenter = pos.add(new Vec2(0, GRID_SIZE * 2.5f));
@@ -201,22 +176,12 @@ public abstract class BlockDef {
 				}
 				
 				@Override
-				public float getRestitution() {
-					return 0.7f;
-				}
-				
-				@Override
 				public int getImageId() {
 					return uk.digitalsquid.spacegame.R.drawable.block_corner1;
 				}
 				
 				public Vec2 getImageRelativeSize() {
 					return new Vec2(2, 2);
-				}
-				
-				@Override
-				public float getFriction() {
-					return 0.6f;
 				}
 
 				@Override
@@ -242,11 +207,6 @@ public abstract class BlockDef {
 				}
 				
 				@Override
-				public float getRestitution() {
-					return 0.1f;
-				}
-				
-				@Override
 				public int getImageId() {
 					return uk.digitalsquid.spacegame.R.drawable.block_fade1;
 				}
@@ -254,15 +214,75 @@ public abstract class BlockDef {
 				public Vec2 getImageRelativeSize() {
 					return new Vec2(4, 2);
 				}
-				
-				@Override
-				public float getFriction() {
-					return 1f;
-				}
 
 				@Override
 				public BlockVortex getVortex(Vec2 pos, Vec2 size, float angle) {
 					return null;
+				}
+			});
+			
+			// BLOCK_WALLJOIN1
+			defs.put(4, new BlockDef() {
+				@Override
+				protected Vec2 getUnscaledMaxSize() {
+					return new Vec2(1, 1);
+				}
+				
+				@Override
+				public Shape getShape(Body body, Vec2 size) {
+					PolygonShape shape = new PolygonShape();
+					shape.setAsBox(size.x / 2, size.y / 2);
+					return shape;
+				}
+				
+				@Override
+				public int getImageId() {
+					return uk.digitalsquid.spacegame.R.drawable.block_walljoin1;
+				}
+				
+				public Vec2 getImageRelativeSize() {
+					return new Vec2(2, 2);
+				}
+
+				@Override
+				public BlockVortex getVortex(Vec2 pos, Vec2 size, float angle) {
+					Vec2 vortexCenter = pos.add(new Vec2(0, GRID_SIZE * 2.5f));
+					VecHelper.rotateLocal(vortexCenter, pos, angle);
+					Vec2 vortexSize = new Vec2(size);
+					vortexSize.y = GRID_SIZE * 3f;
+					return new BlockVortex(vortexCenter, vortexSize, angle);
+				}
+			});
+			// BLOCK_WALLJOIN1
+			defs.put(5, new BlockDef() {
+				@Override
+				protected Vec2 getUnscaledMaxSize() {
+					return new Vec2(1, 1);
+				}
+				
+				@Override
+				public Shape getShape(Body body, Vec2 size) {
+					PolygonShape shape = new PolygonShape();
+					shape.setAsBox(size.x / 2, size.y / 2);
+					return shape;
+				}
+				
+				@Override
+				public int getImageId() {
+					return uk.digitalsquid.spacegame.R.drawable.block_walljoin2;
+				}
+				
+				public Vec2 getImageRelativeSize() {
+					return new Vec2(2, 2);
+				}
+
+				@Override
+				public BlockVortex getVortex(Vec2 pos, Vec2 size, float angle) {
+					Vec2 vortexCenter = pos.add(new Vec2(0, GRID_SIZE * 2.5f));
+					VecHelper.rotateLocal(vortexCenter, pos, angle);
+					Vec2 vortexSize = new Vec2(size);
+					vortexSize.y = GRID_SIZE * 3f;
+					return new BlockVortex(vortexCenter, vortexSize, angle);
 				}
 			});
 		}

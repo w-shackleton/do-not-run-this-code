@@ -143,7 +143,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			}
 		}
 		
-		protected Player p;
+		public Player p;
 		protected Portal portal;
 		// protected Tether tether;
 		protected LaunchingMechanism launch;
@@ -413,6 +413,15 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			{
 				for(BgPoints p : bgPoints) {
 					p.draw(gl);
+				}
+			}
+
+			// DRAW TIME for objects behind ball
+			for(SpaceItem obj : planetList)
+			{
+				if(obj instanceof TopDrawable)
+				{
+					((TopDrawable)obj).drawBelow(gl, 1);
 				}
 			}
 			

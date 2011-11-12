@@ -114,7 +114,11 @@ public abstract class Player extends PlayerBase implements Moveable
 		}
 		
 		bodyGravityTorque = ballMomentum / 100 * apparentRF.length();
-		body.applyTorque(bodyGravityTorque);
+		/**
+		 * This multiplier reduces the effect of the gravity torque when the accelerometer is going.
+		 */
+		float accelMultiplier = CompuFuncs.trimMinMax((3 - accelerometerMoment) / 3, 0, 1);
+		body.applyTorque(bodyGravityTorque * accelMultiplier);
 		
 		velocityDelta.set(body.getLinearVelocity());
 		velocityDelta.subLocal(previousVelocity);
@@ -122,6 +126,9 @@ public abstract class Player extends PlayerBase implements Moveable
 		if(velocityDelta.lengthSquared() < 0.00000009f &&
 				body.getLinearVelocity().lengthSquared() < 0.04f) { // 0.0003^2
 			openLanding();
+		}
+		if(body.getLinearVelocity().lengthSquared() > 0.07f) { // 0.0003^2
+			closeLanding();
 		}
 		
 		previousVelocity.set(body.getLinearVelocity());
@@ -307,5 +314,11 @@ public abstract class Player extends PlayerBase implements Moveable
 
 	protected float getBodyGravityTorque() {
 		return bodyGravityTorque;
+	}
+	
+	private float accelerometerMoment;
+	
+	public void setAccelerometerMoment(float moment) {
+		accelerometerMoment = moment;
 	}
 }
