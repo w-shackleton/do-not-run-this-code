@@ -30,7 +30,7 @@ public class BlockVortex implements Constants, Forceful, Moveable {
 		ANGULAR
 	}
 	
-	static final int LINES_PER_GRID_LENGTH = 20;
+	static final int LINES_PER_GRID_LENGTH = 5;
 	
 	final int vortexLines;
 	
@@ -60,11 +60,19 @@ public class BlockVortex implements Constants, Forceful, Moveable {
 	 * The size in RADIANS of an angular block
 	 */
 	protected float angularSize;
+	/**
+	 * The size in units of an angular block's circumference.
+	 */
+	protected float angularDistance;
 	
 	/**
 	 * The maximum width of the arc
 	 */
 	protected float angularYmax;
+	/**
+	 * The maximum width of the arc
+	 */
+	protected float angularYmin;
 	
 	/**
 	 * Constructs a rectangular vortex
@@ -116,24 +124,42 @@ public class BlockVortex implements Constants, Forceful, Moveable {
 	 * @param angularSize The size in RADIANS of the arc
 	 * @param size The radius of the arc
 	 */
-	public BlockVortex(Vec2 center, float angle, float angularSize, float size) {
+	public BlockVortex(Vec2 center, float angle, float angularSize, float size, float minSize) {
 		type = VortexType.ANGULAR;
-		vortexLines = 0;
-		vortexTexCoordSize = 1; // TODO: This?
 		pos = center;
 		this.angularSize = angularSize;
 		this.angle = angle;
+		this.angularYmax = size;
+		this.angularYmin = minSize;
 		
 		catchArea = Geometry.createArc(null, center.x, center.y, size, angle, angle+angularSize);
-		Vec2[] vec2s = ((PolygonShape)catchArea).m_vertices;
-		float vertices[] = new float[vec2s.length * 3];
-		for(int i = 0; i < vec2s.length; i++) {
-			vertices[i*3+0] = vec2s[i].x;
-			vertices[i*3+1] = vec2s[i].y;
-			vertices[i*3+2] = 0;
+		
+		// angle
+		// ----- x 2PI r
+		// 2PI
+		angularDistance = angularSize * size;
+		vortexLines = (int) (angularDistance / BlockDef.GRID_SIZE * LINES_PER_GRID_LENGTH);
+		vortexTexCoordSize = angularDistance / BlockDef.GRID_SIZE_2;
+		final short[] indices = new short[vortexLines * 6];
+		for(int i = 0; i < vortexLines; i++) {
+			// Define indices for quads. See RectMesh's indices for this.
+			indices[i*6+0] = (short) (i*4 + 0);
+			indices[i*6+1] = (short) (i*4 + 1);
+			indices[i*6+2] = (short) (i*4 + 2);
+			indices[i*6+3] = (short) (i*4 + 1);
+			indices[i*6+4] = (short) (i*4 + 3);
+			indices[i*6+5] = (short) (i*4 + 2);
 		}
-		tmpDraw = new Mesh(0, 0, vertices, new short[0], 0, 1, 0, 1);
-		tmpDraw.setDrawMode(GL10.GL_TRIANGLE_FAN);
+		lines = new Mesh(center.x, center.y, new float[vortexLines * 3 * 4], indices, new float[vortexLines * 2 * 4], R.drawable.blockvortexbg);
+		lines.setRepeatingTexture(true);
+		lines.setRotation(angle * RAD_TO_DEG);
+		
+		lineProgress = new float[vortexLines * 3];
+		for(int i = 0; i < vortexLines; i++) {
+			lineProgress[i*3+0] = RAND.nextFloat();
+			lineProgress[i*3+1] = RAND.nextFloat() * 0.05f + 0.05f;
+			lineProgress[i*3+2] = RAND.nextFloat();
+		}
 	}
 	
 	private Vec2 force = new Vec2();
@@ -170,8 +196,6 @@ public class BlockVortex implements Constants, Forceful, Moveable {
 	public void calculateVelocityMutable(Vec2 itemPos, Vec2 itemV, float itemRadius) {
 	}
 	
-	protected Mesh tmpDraw;
-	
 	/**
 	 * The animated line - a mesh so that each line is a quad.
 	 */
@@ -185,7 +209,6 @@ public class BlockVortex implements Constants, Forceful, Moveable {
 	protected float textureMovement;
 	
 	public void draw(GL10 gl) {
-		if(tmpDraw != null) tmpDraw.draw(gl);
 		if(lines != null) lines.draw(gl);
 	}
 	@Override public void move(float millistep, float speedScale) { }
@@ -195,7 +218,7 @@ public class BlockVortex implements Constants, Forceful, Moveable {
 		// Recalculate vortex positions.
 		for(int i = 0; i < vortexLines; i++) {
 			// Move step on
-			lineProgress[i*3+1] += 0.002 * millistep;
+			lineProgress[i*3+1] += 0.001 * millistep;
 			
 			float progress = lineProgress[i*3+1];
 			float step = lineProgress[i*3+2];
@@ -203,7 +226,7 @@ public class BlockVortex implements Constants, Forceful, Moveable {
 				// Pos
 				lineProgress[i*3+0] = RAND.nextFloat();
 				step = RAND.nextFloat() * 0.05f + 0.05f;
-				lineProgress[i*3+1] = step;
+				lineProgress[i*3+1] = Math.min(step, 1);
 				lineProgress[i*3+2] = -step; // Put behind 0.
 			}
 		}
@@ -213,20 +236,23 @@ public class BlockVortex implements Constants, Forceful, Moveable {
 	}
 	
 	private static final float VORTEX_LINE_WIDTH = 0.06f;
+	private static final float VORTEX_CURVED_LINE_WIDTH = 0.18f;
 	private static final float HALF_LINE = VORTEX_LINE_WIDTH / 2;
+	private static final float HALF_LINE_2 = VORTEX_CURVED_LINE_WIDTH / 2;
 	
 	/**
 	 * Transforms lineProgress into lines. Also modifies the texture coordinates, as this shape is non trivial
 	 */
 	private void calculateLinesFromProgress() {
+		FloatBuffer vertices, texCoord;
 		switch(type) {
 		case LINEAR:
-			FloatBuffer vertices = lines.getVertices();
-			FloatBuffer texCoord = lines.getTextureCoordinates();
+			vertices = lines.getVertices();
+			texCoord = lines.getTextureCoordinates();
 			for(int i = 0; i < vortexLines; i++) {
-				float position = lineProgress[i*3+0];
-				float progress = lineProgress[i*3+1];
-				float step = lineProgress[i*3+2];
+				final float position = lineProgress[i*3+0];
+				final float progress = lineProgress[i*3+1];
+				final float step = lineProgress[i*3+2];
 				float newPosition1 = (position - 0.5f) - (HALF_LINE / linearSize.x);
 				float newPosition2 = (position - 0.5f) + (HALF_LINE / linearSize.y);
 				float newProgress1 = (float) (Math.cos(progress * Math.PI / 2) - 0.5f);
@@ -249,6 +275,47 @@ public class BlockVortex implements Constants, Forceful, Moveable {
 				texCoord.put(i*2*4+5, (-newProgress2 - 0.5f) * 1);
 				texCoord.put(i*2*4+6, (+newPosition2 + 0.5f) * vortexTexCoordSize + textureMovement);
 				texCoord.put(i*2*4+7, (-newProgress2 - 0.5f) * 1);
+			}
+			break;
+		case ANGULAR:
+			vertices = lines.getVertices();
+			texCoord = lines.getTextureCoordinates();
+			for(int i = 0; i < vortexLines; i++) {
+				final float position= lineProgress[i*3+0];
+				final float progress = lineProgress[i*3+1];
+				final float step = lineProgress[i*3+2];
+				float newProgress1 = (float) Math.cos(progress * Math.PI / 2);
+				float newProgress2 = (float) Math.cos((progress+step) * Math.PI / 2);
+				float newPosition1 = position - (HALF_LINE / angularDistance);
+				float newPosition2 = position + (HALF_LINE / angularDistance);
+				float newPosition1X = (float) Math.cos((position - (HALF_LINE_2 / angularDistance)) * angularSize);
+				float newPosition1Y = (float) Math.sin((position - (HALF_LINE_2 / angularDistance)) * angularSize);
+				float newPosition2X = (float) Math.cos((position + (HALF_LINE_2 / angularDistance)) * angularSize);
+				float newPosition2Y = (float) Math.sin((position + (HALF_LINE_2 / angularDistance)) * angularSize);
+				
+				float newPosition3X = (float) Math.cos((position - (HALF_LINE_2 / angularDistance)) * angularSize);
+				float newPosition3Y = (float) Math.sin((position - (HALF_LINE_2 / angularDistance)) * angularSize);
+				float newPosition4X = (float) Math.cos((position + (HALF_LINE_2 / angularDistance)) * angularSize);
+				float newPosition4Y = (float) Math.sin((position + (HALF_LINE_2 / angularDistance)) * angularSize);
+				
+				vertices.put(i*3*4+0, newPosition3X * (newProgress2 * (angularYmax - angularYmin) + angularYmin));
+				vertices.put(i*3*4+1, newPosition3Y * (newProgress2 * (angularYmax - angularYmin) + angularYmin));
+				vertices.put(i*3*4+3, newPosition4X * (newProgress2 * (angularYmax - angularYmin) + angularYmin));
+				vertices.put(i*3*4+4, newPosition4Y * (newProgress2 * (angularYmax - angularYmin) + angularYmin));
+				vertices.put(i*3*4+6, newPosition1X * (newProgress1 * (angularYmax - angularYmin) + angularYmin));
+				vertices.put(i*3*4+7, newPosition1Y * (newProgress1 * (angularYmax - angularYmin) + angularYmin));
+				vertices.put(i*3*4+9, newPosition2X * (newProgress1 * (angularYmax - angularYmin) + angularYmin));
+				vertices.put(i*3*4+10,newPosition2Y * (newProgress1 * (angularYmax - angularYmin) + angularYmin));
+				
+				// Images go positive down, opengl goes positive up
+				texCoord.put(i*2*4+0, +newPosition1 * vortexTexCoordSize - textureMovement);
+				texCoord.put(i*2*4+1, -newProgress1 * 1);
+				texCoord.put(i*2*4+2, +newPosition2 * vortexTexCoordSize - textureMovement);
+				texCoord.put(i*2*4+3, -newProgress1 * 1);
+				texCoord.put(i*2*4+4, +newPosition1 * vortexTexCoordSize - textureMovement);
+				texCoord.put(i*2*4+5, -newProgress2 * 1);
+				texCoord.put(i*2*4+6, +newPosition2 * vortexTexCoordSize - textureMovement);
+				texCoord.put(i*2*4+7, -newProgress2 * 1);
 			}
 			break;
 		}

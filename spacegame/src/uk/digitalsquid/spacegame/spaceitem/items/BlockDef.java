@@ -223,7 +223,7 @@ public abstract class BlockDef {
 				public BlockVortex getVortex(Vec2 pos, Vec2 size, float angle) {
 					Vec2 origin = new Vec2(pos.x - GRID_SIZE, pos.y - GRID_SIZE); // Bottom corner
 					VecHelper.rotateLocal(origin, pos, angle);
-					return new BlockVortex(origin, angle, (float)Math.PI / 2 /* 90 */, size.x + GRID_SIZE * 3f);
+					return new BlockVortex(origin, angle, (float)Math.PI / 2 /* 90 */, size.x + GRID_SIZE * 3f, size.x);
 				}
 			});
 			// BLOCK_FADE
