@@ -112,6 +112,40 @@ public class Bezier extends Lines {
         }
     }
     
+    /**
+     * Bezier function, outputting 2d points
+     * @param b
+     * @param outputPoints
+     * @param output
+     */
+    public static final void bezier2D(float[] b, int outputPoints, float[] output)
+    {
+        int npts = (b.length) / 2;
+        int icount = 0, jcount;
+        float step = 1.0f / (outputPoints - 1);
+        float t = 0;
+
+        for (int i1 = 0; i1 != outputPoints; i1++)
+        { 
+            if ((1.0 - t) < 0.000005) 
+                t = 1;
+
+            jcount = 0;
+            float px = 0, py = 0;
+            for (int i = 0; i != npts; i++)
+            {
+                float basis = bernsteinBasis(npts - 1, i, t);
+                px += basis * b[jcount];
+                py += basis * b[jcount + 1];
+                jcount = jcount +2;
+            }
+
+            output[icount++] = px;
+            output[icount++] = py;
+            t += step;
+        }
+    }
+    
     @Override
     public void draw(GL10 gl) {
     	super.draw(gl);

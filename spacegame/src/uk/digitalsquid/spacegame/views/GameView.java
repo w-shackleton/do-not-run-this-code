@@ -317,7 +317,8 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 			queueEvent(new Runnable() {
 				@Override
 				public void run() {
-					thread.p.setAccelerometerMoment(y);
+					if(thread.p != null)
+						thread.p.setAccelerometerMoment(y);
 				}
 			});
 		}

@@ -119,6 +119,7 @@ public abstract class Player extends PlayerBase implements Moveable
 		 */
 		float accelMultiplier = CompuFuncs.trimMinMax((3 - accelerometerMoment) / 3, 0, 1);
 		body.applyTorque(bodyGravityTorque * accelMultiplier);
+		body.applyTorque(accelerometerMoment);
 		
 		velocityDelta.set(body.getLinearVelocity());
 		velocityDelta.subLocal(previousVelocity);
@@ -319,6 +320,7 @@ public abstract class Player extends PlayerBase implements Moveable
 	private float accelerometerMoment;
 	
 	public void setAccelerometerMoment(float moment) {
-		accelerometerMoment = moment;
+		// accelerometerMoment = moment;
+		// TODO: Re-enable?
 	}
 }

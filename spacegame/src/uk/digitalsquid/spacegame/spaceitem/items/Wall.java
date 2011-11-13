@@ -10,10 +10,13 @@ import org.jbox2d.dynamics.BodyType;
 
 import uk.digitalsquid.spacegame.PaintLoader.PaintDesc;
 import uk.digitalsquid.spacegame.R;
+import uk.digitalsquid.spacegame.spaceitem.assistors.Spring;
 import uk.digitalsquid.spacegame.spaceitem.blocks.BlockVortex;
 import uk.digitalsquid.spacegamelib.CompuFuncs;
+import uk.digitalsquid.spacegamelib.Constants;
 import uk.digitalsquid.spacegamelib.SimulationContext;
 import uk.digitalsquid.spacegamelib.VecHelper;
+import uk.digitalsquid.spacegamelib.gl.Bezier;
 import uk.digitalsquid.spacegamelib.gl.Lines;
 import uk.digitalsquid.spacegamelib.gl.RectMesh;
 import uk.digitalsquid.spacegamelib.spaceitem.Rectangular;
@@ -23,14 +26,17 @@ import uk.digitalsquid.spacegamelib.spaceitem.interfaces.TopDrawable;
 
 public class Wall extends Rectangular implements Moveable, TopDrawable, Forceful
 {
-	protected static final int LINES = 10;
-	protected static final int LINE_CIRCLES = 1;
+	protected static final int DRAW_SECTIONS_PER_BLOCK = 8;
+	protected static final int SPRING_SECTIONS = 6;
 	protected static final float GAP_WIDTH = 1.5f;
 	protected static final Random rGen = new Random();
 	
 	protected static final float BOUNCINESS = 0.7f;
 	
+	protected final int drawSections;
+	
 	private RectMesh walledge;
+	private RectMesh walljoin1, walljoin2;
 	
 	BlockVortex vTop, vBottom;
 	
@@ -39,6 +45,8 @@ public class Wall extends Rectangular implements Moveable, TopDrawable, Forceful
 	protected static final float WALL_WIDTH = BlockDef.GRID_SIZE_2;
 	protected static final float WALL_MIN_X = 8.0f;
 	protected static final float WALL_MAX_X = 100.0f;
+	
+	protected final boolean hasEnds;
 	
 	/**
 	 * Construct a new {@link Wall}.
@@ -51,6 +59,9 @@ public class Wall extends Rectangular implements Moveable, TopDrawable, Forceful
 	public Wall(SimulationContext context, Vec2 coord, float size, float rotation, boolean hasEnds, boolean hasVortex)
 	{
 		super(context, coord, new Vec2(CompuFuncs.trimMinMax(size, WALL_MIN_X, WALL_MAX_X), WALL_WIDTH), 1, rotation, BOUNCINESS, BodyType.STATIC);
+		
+		this.hasEnds = hasEnds;
+		drawSections = (int) (size / (float)Constants.GRID_SIZE_2 * (float)DRAW_SECTIONS_PER_BLOCK);
 		
 		if(hasVortex) {
 			Vec2 center1 = coord.add(new Vec2(0, GRID_SIZE * 2.5f));
@@ -68,26 +79,41 @@ public class Wall extends Rectangular implements Moveable, TopDrawable, Forceful
 		walledge.setRotation(rotation);
 		walledge.setRepeatingTexture(true);
 		
+		if(hasEnds) {
+			walljoin1 = new RectMesh(coord.x + this.size.x / 2 + this.size.y / 4,
+					coord.y,
+					this.size.y / 2,
+					this.size.y,
+					R.drawable.walljoiner);
+			walljoin2 = new RectMesh(coord.x - this.size.x / 2 - this.size.y / 4,
+					coord.y,
+					this.size.y / 2,
+					this.size.y,
+					R.drawable.walljoiner);
+			walljoin1.setRotation(rotation);
+			walljoin2.setRotation(180+rotation);
+		}
+		
 		fixture.setFriction(0.2f);
 		fixture.getFilterData().categoryBits = COLLISION_GROUP_PLAYER;
 		fixture.getFilterData().maskBits = COLLISION_GROUP_PLAYER;
 		
-		for(int i = 0; i < lines.length; i++) {
-			for(int j = 0; j < lines[i].length; j++) {
-				lines[i][j] = new Lines(getPosX(), getPosY(), new float[4*3], GL10.GL_LINE_STRIP, 0.9f, 0.6f, 0.3f, 0.7f);
-				lines[i][j].setRotation(rotation);
-				FloatBuffer buffer = lines[i][j].getVertices();
-				buffer.put(0, -this.size.x / 2 - BlockDef.GRID_SIZE);
-				buffer.put(1, 0);
-				buffer.put(2, 0);
-				buffer.put(9, this.size.x / 2 + BlockDef.GRID_SIZE);
-				buffer.put(10, 0);
-				buffer.put(11, 0);
-			}
+		bezierPoints = new float[drawSections * 2];
+		line = new Lines(getPosX(), getPosY(), new float[drawSections * 3], GL10.GL_LINE_STRIP, 1, 1, 1, 1);
+		line.setRotation(rotation);
+		spring = new Spring(SPRING_SECTIONS, 0, 0, 0, 0, 0.2f, 2f); // Don't initialise here, do so on next line
+		if(hasEnds) {
+			// Extra y/2 to add half distance on for end part.
+			spring.setEnds(-this.size.x / 2 - this.size.y / 2, 0, this.size.x / 2 + this.size.y / 2, 0);
+		} else {
+			spring.setEnds(-this.size.x / 2, 0, this.size.x / 2, 0);
 		}
 	}
 	
-	protected final Lines[][] lines = new Lines[LINE_CIRCLES][LINES];
+	// protected final Lines[][] lines = new Lines[LINE_CIRCLES][LINES];
+	protected final Lines line;
+	protected final Spring spring;
+	protected final float[] bezierPoints;
 
 	@Override
 	public void draw(GL10 gl, float worldZoom) {
@@ -100,34 +126,33 @@ public class Wall extends Rectangular implements Moveable, TopDrawable, Forceful
 
 	@Override
 	public void drawMove(float millistep, float speedScale) {
+		spring.drawMove(millistep, speedScale);
 		step += 0.004f * millistep;
-		boolean clockwise = true;
-		for(int i = 0; i < lines.length; i++) {
-			Lines[] list = lines[i];
-			clockwise = !clockwise;
-			float position01 = ((float)i+1f) / ((float)lines.length+1f);
-			for(int j = 0; j < list.length; j++) {
-				FloatBuffer vertices = list[j].getVertices();
-				float rotation = (float)j / (float)list.length * (float)Math.PI * 2f + (step * (1-position01));
-				if(clockwise) rotation = -rotation;
-				float ypos = (float)Math.cos(rotation) * size.y / 2;
-				ypos *= position01;
-				float zpos = (float)(Math.sin(rotation)-1) * size.y / 2;
-				zpos *= position01;
-				vertices.put(3, -size.x / 2);
-				vertices.put(4, ypos);
-				vertices.put(5, zpos);
-				vertices.put(6, size.x / 2);
-				vertices.put(7, ypos);
-				vertices.put(8, zpos);
-			}
+		
+		if(RAND.nextInt(60) == 42) {
+			spring.getVelocities()[2] = -3f;
 		}
+		
+		// Get bezier points from spring control points
+		Bezier.bezier2D(spring.getSpringPoints(), drawSections, bezierPoints);
+		FloatBuffer buffer = line.getVertices();
+		for(int i = 0; i < drawSections; i++) {
+			float bPoint = bezierPoints[i*2+0];
+			float endScaleFactor = 1;
+			if(Math.abs(bPoint) > size.x / 2) { // Start shrinking end
+				endScaleFactor = CompuFuncs.trimMinMax((Math.abs(bPoint) - size.x / 2) / (size.y / 2), 1, 0);
+			}
+			buffer.put(i*3+0, bPoint);
+			buffer.put(i*3+1, (float)Math.sin((float)i * 7f / DRAW_SECTIONS_PER_BLOCK - step) * size.y / 2 * 0.95f * endScaleFactor); // 5 = magic distance number
+		}
+		
 		if(vTop != null)	vTop   .drawMove(millistep, speedScale);
 		if(vBottom != null) vBottom.drawMove(millistep, speedScale);
 	}
 
 	@Override
 	public void move(float millistep, float speedScale) {
+		spring.move(millistep, speedScale);
 		if(vTop != null)	vTop   .move(millistep, speedScale);
 		if(vBottom != null) vBottom.move(millistep, speedScale);
 	}
@@ -138,13 +163,10 @@ public class Wall extends Rectangular implements Moveable, TopDrawable, Forceful
 
 	@Override
 	public void drawBelow(GL10 gl, float worldZoom) {
-		gl.glEnable(GL10.GL_DEPTH_TEST);
-		for(Lines[] list : lines) {
-			for(Lines line : list) {
-				line.draw(gl);
-			}
-		}
-		gl.glDisable(GL10.GL_DEPTH_TEST);
+		line.draw(gl);
+		
+		if(walljoin1 != null) walljoin1.draw(gl);
+		if(walljoin2 != null) walljoin2.draw(gl);
 	}
 
 	@Override

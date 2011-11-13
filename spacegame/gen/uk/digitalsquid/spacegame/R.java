@@ -64,7 +64,8 @@ public final class R {
         public static final int teleporter=0x7f020029;
         public static final int timer=0x7f02002a;
         public static final int walledge=0x7f02002b;
-        public static final int wallside=0x7f02002c;
+        public static final int walljoiner=0x7f02002c;
+        public static final int wallside=0x7f02002d;
     }
     public static final class id {
         public static final int buttonContinue=0x7f0b000f;

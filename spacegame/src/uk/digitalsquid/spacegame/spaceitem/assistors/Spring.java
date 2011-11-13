@@ -170,4 +170,8 @@ public final class Spring implements Moveable {
 	public void setSpringPower(float springPower) {
 		this.springPower = springPower;
 	}
+
+	public float[] getVelocities() {
+		return velocities;
+	}
 }
