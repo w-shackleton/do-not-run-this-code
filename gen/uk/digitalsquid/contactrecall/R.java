@@ -16,14 +16,18 @@ public final class R {
     public static final class id {
         public static final int accountname=0x7f060000;
         public static final int addphoto=0x7f060003;
-        public static final int button1=0x7f060006;
+        public static final int button2=0x7f06000b;
         public static final int contactname=0x7f060002;
-        public static final int editgroups=0x7f06000a;
+        public static final int editgroups=0x7f06000e;
+        public static final int guessName=0x7f06000a;
         public static final int list=0x7f060004;
         public static final int loading=0x7f060005;
         public static final int picture=0x7f060001;
-        public static final int progressBar1=0x7f060008;
-        public static final int text=0x7f060009;
+        public static final int progressBar1=0x7f06000c;
+        public static final int start=0x7f060006;
+        public static final int tableLayout1=0x7f060008;
+        public static final int tableRow1=0x7f060009;
+        public static final int text=0x7f06000d;
         public static final int viewContacts=0x7f060007;
     }
     public static final class layout {
@@ -32,7 +36,8 @@ public final class R {
         public static final int contactviewer=0x7f030002;
         public static final int listloadingitem=0x7f030003;
         public static final int main=0x7f030004;
-        public static final int processing=0x7f030005;
+        public static final int modeselect=0x7f030005;
+        public static final int processing=0x7f030006;
     }
     public static final class menu {
         public static final int contactviewermenu=0x7f050000;
@@ -45,7 +50,10 @@ public final class R {
         public static final int groups=0x7f040003;
         public static final int hello=0x7f040000;
         public static final int loading=0x7f040005;
+        public static final int mode_nameGuess=0x7f04000a;
         public static final int processing=0x7f040008;
+        public static final int selectMode=0x7f040009;
+        public static final int start=0x7f04000b;
         public static final int viewcontacts=0x7f040004;
     }
 }

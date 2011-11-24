@@ -16,6 +16,7 @@
         </activity>
         <activity android:name="ContactViewer" android:label="@string/viewcontacts"></activity>
         <activity android:label="@string/capturephoto" android:name="PhotoCapture" android:theme="@android:style/Theme.Dialog"></activity>
+        <activity android:label="@string/selectMode" android:name="ModeSelect"></activity>
 
     </application>
 </manifest>

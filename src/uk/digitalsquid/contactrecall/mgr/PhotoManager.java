@@ -26,16 +26,27 @@ public class PhotoManager implements Config {
 	}
 	
 	/**
-	 * Gets and loads the picture(s) for a given contact ID
+	 * Gets the first picture for a given contact ID
 	 * @param idNum
+	 * @return
 	 */
 	public Bitmap getContactPicture(int idNum) {
+		return getContactPicture(idNum, 0);
+	}
+	
+	/**
+	 * Gets and loads the nth picture(s) for a given contact ID
+	 * @param idNum
+	 * @param position
+	 */
+	public Bitmap getContactPicture(int idNum, int position) {
 		Cursor cur = cr.query(ContactsContract.Data.CONTENT_URI,
 				new String[] { ContactsContract.CommonDataKinds.Photo.PHOTO },
 				ContactsContract.Data.MIMETYPE + " = ? AND " + ContactsContract.Data.CONTACT_ID + "= ?",
 				new String[] { ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE, String.valueOf(idNum) },
 				null);
 		final int photoCol = cur.getColumnIndex(ContactsContract.CommonDataKinds.Photo.PHOTO);
+		for(int i = 0; i < position; i++) cur.moveToNext();
 		while(cur.moveToNext()) {
 			byte[] data = cur.getBlob(photoCol);
 			if(data == null) continue;
@@ -44,6 +55,21 @@ public class PhotoManager implements Config {
 		}
 		cur.close();
 		return null;
+	}
+	
+	/**
+	 * Gets the number of pictures for a given contact.
+	 * @param idNum
+	 */
+	public int getContactPictureCount(int idNum) {
+		Cursor cur = cr.query(ContactsContract.Data.CONTENT_URI,
+				new String[] { },
+				ContactsContract.Data.MIMETYPE + " = ? AND " + ContactsContract.Data.CONTACT_ID + "= ?",
+				new String[] { ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE, String.valueOf(idNum) },
+				null);
+		final int count = cur.getCount();
+		cur.close();
+		return count;
 	}
 	
 	/**

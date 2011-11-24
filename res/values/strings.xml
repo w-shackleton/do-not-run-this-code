@@ -9,4 +9,7 @@
     <string name="addphoto">Add Photo</string>
     <string name="capturephoto">Take image</string>
     <string name="processing">Processing...</string>
+    <string name="selectMode">Select a mode</string>
+    <string name="mode_nameGuess">Picture -&gt; names</string>
+    <string name="start">Start</string>
 </resources>
