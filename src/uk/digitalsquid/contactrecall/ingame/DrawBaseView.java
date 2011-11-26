@@ -4,17 +4,21 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.contactrecall.ingame.gl.TextureManager;
-
 import android.content.Context;
+import android.graphics.Point;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.view.Display;
+import android.view.WindowManager;
 
 public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends GLSurfaceView
 {
 	protected final Context context;
 	protected VT thread;
+	
+	boolean landscape;
 	
 	/**
 	 * Constructs a new {@link DrawBaseView}. Non-abstract extended classes must initialise a renderer
@@ -28,6 +32,9 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 	    // setDebugFlags(DEBUG_CHECK_GL_ERROR | DEBUG_LOG_GL_CALLS);
 	    // if(StaticInfo.DEBUG) setDebugFlags(DEBUG_CHECK_GL_ERROR);
 		this.context = context;
+		
+		Display display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+		landscape = display.getWidth() >= display.getHeight();
 	}
 	
 	protected final void initP2() {
@@ -48,7 +55,7 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		
 		protected long currTime, prevTime, millistep = 17;
 		
-		protected static final float REQ_SIZE_Y = 32.0f; // & 480 - scale to middle-screen size.
+		protected static final float REQ_SIZE_Y = 32.0f; // & 48 - scale to middle-screen size.
 		protected float scaledWidth = 48.0f;
 		protected float scaledHeight = REQ_SIZE_Y;
 		
