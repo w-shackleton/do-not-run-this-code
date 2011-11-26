@@ -22,6 +22,10 @@ public class AsyncLoadBuffer<T> {
 	
 	private final ConcurrentLinkedQueue<T> queue = new ConcurrentLinkedQueue<T>();
 	
+	/**
+	 * Gets the next element, waiting if necessary.
+	 * @return
+	 */
 	public synchronized T get() {
 		if(stage == STAGE_DONE || stage == STAGE_READY) return queue.poll();
 		// else
@@ -73,7 +77,7 @@ public class AsyncLoadBuffer<T> {
 				while(queue.size() >= QUEUE_LENGTH) { // Wait for queue to shrink
 					if(isCancelled()) return null;
 					try {
-						Thread.sleep(200);
+						Thread.sleep(600);
 					} catch (InterruptedException e) { }
 				}
 				queue.offer(src.getElement(count++));
