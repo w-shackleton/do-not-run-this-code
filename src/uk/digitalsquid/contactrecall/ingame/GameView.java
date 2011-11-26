@@ -2,10 +2,11 @@ package uk.digitalsquid.contactrecall.ingame;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import uk.digitalsquid.contactrecall.ingame.GameView.ViewWorker;
 import android.content.Context;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.util.AttributeSet;
-import uk.digitalsquid.contactrecall.ingame.GameView.ViewWorker;
 
 public class GameView extends DrawBaseView<ViewWorker> {
 
@@ -32,9 +33,17 @@ public class GameView extends DrawBaseView<ViewWorker> {
 		@Override
 		protected void onThreadEnd() {
 		}
+		
+		final Matrix matrix2d = new Matrix();
+		final Matrix matrixInverse = new Matrix();
 
 		@Override
 		protected void scale(GL10 c) {
+			matrix2d.reset();
+			
+			matrix2d.postTranslate(-width / 2, -height / 2);
+			matrix2d.postScale(scaledWidth / (float)width, scaledHeight / (float)height);
+			matrix2d.invert(matrixInverse);
 		}
 
 		@Override

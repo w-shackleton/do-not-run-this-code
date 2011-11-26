@@ -67,15 +67,13 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		@Override
 		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 			initialiseOnThread();
+			TextureManager.init(context, gl);
 		}
 		
 		protected boolean firstFrame = true;
 		
 		@Override
 		public void onDrawFrame(GL10 gl) {
-			if(firstFrame) {
-				TextureManager.init(context, gl);
-			}
 			
 			// clear Screen and Depth Buffer
 			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
@@ -107,8 +105,8 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 
 		@Override
 		public void onSurfaceChanged(GL10 gl, int width, int height) {
-			if(height == 0) { 						//Prevent A Divide By Zero By
-				height = 1; 						//Making Height Equal One
+			if(height == 0) {
+				height = 1;
 			}
 			this.width = width;
 			this.height = height;
