@@ -5,7 +5,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.contactrecall.ingame.gl.TextureManager;
 import android.content.Context;
-import android.graphics.Point;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.Bundle;
@@ -18,7 +17,7 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 	protected final Context context;
 	protected VT thread;
 	
-	boolean landscape;
+	protected boolean landscape;
 	
 	/**
 	 * Constructs a new {@link DrawBaseView}. Non-abstract extended classes must initialise a renderer
@@ -176,8 +175,6 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		protected void predraw(GL10 c){}
 		protected void draw(GL10 c){}
 		protected void postdraw(GL10 c){}
-		
-		protected void afterdraw(){}
 		
 		protected abstract void scale(GL10 c);
 		
