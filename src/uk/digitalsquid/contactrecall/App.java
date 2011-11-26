@@ -1,6 +1,7 @@
 package uk.digitalsquid.contactrecall;
 
 import uk.digitalsquid.contactrecall.mgr.ContactManager;
+import uk.digitalsquid.contactrecall.mgr.GameDataManager;
 import uk.digitalsquid.contactrecall.mgr.GroupManager;
 import uk.digitalsquid.contactrecall.mgr.PhotoManager;
 import uk.digitalsquid.contactrecall.mgr.db.DB;
@@ -17,6 +18,7 @@ public class App extends Application {
 	private GroupManager groups;
 	private ContactManager contacts;
 	private PhotoManager photos;
+	private GameDataManager game;
 
 	public DB getDb() {
 		if(db == null) db = new DB(this);
@@ -36,5 +38,10 @@ public class App extends Application {
 	public PhotoManager getPhotos() {
 		if(photos == null) photos = new PhotoManager(getApplicationContext(), getDb());
 		return photos;
+	}
+
+	public GameDataManager getGame() {
+		if(game == null) game = new GameDataManager(getApplicationContext(), this);
+		return game;
 	}
 }
