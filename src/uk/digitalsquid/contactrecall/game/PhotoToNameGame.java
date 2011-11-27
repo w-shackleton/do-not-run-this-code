@@ -8,6 +8,7 @@ import uk.digitalsquid.contactrecall.mgr.Contact;
 import uk.digitalsquid.contactrecall.misc.AsyncLoadBuffer;
 import uk.digitalsquid.contactrecall.misc.AsyncLoadBuffer.Source;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 
 public class PhotoToNameGame extends GameInstance {
 
@@ -66,6 +67,13 @@ public class PhotoToNameGame extends GameInstance {
 
 		@Override
 		public void finish() {
+		}
+
+		@Override
+		public Bitmap ifNull() {
+			// TODO: Change to a question mark image
+			Bitmap ret = Bitmap.createBitmap(8, 8, Config.ARGB_8888);
+			return ret;
 		}
 	};
 }

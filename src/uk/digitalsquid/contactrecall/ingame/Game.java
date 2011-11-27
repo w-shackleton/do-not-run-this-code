@@ -1,6 +1,7 @@
 package uk.digitalsquid.contactrecall.ingame;
 
 import uk.digitalsquid.contactrecall.App;
+import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.game.GameDescriptor;
 import uk.digitalsquid.contactrecall.game.GameInstance;
 import android.app.Activity;
@@ -21,15 +22,21 @@ public class Game extends Activity {
 	GameInstance gameInstance;
 	GameDescriptor gameDesc;
 	
+	private GameView view;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.game);
+		view = (GameView) findViewById(R.id.gameView);
 		app = (App) getApplication();
 		if(savedInstanceState != null && savedInstanceState.getBoolean("gameStarted", false)) {
 			gameDesc = savedInstanceState.getParcelable("gameDesc");
 			gameInstance = app.getCurrentGame();
+			if(gameInstance == null) {
+				gameInstance = gameDesc.createGameInstance(app);
+			}
 		} else {
-			Bundle e = getIntent().getExtras();
 			gameDesc = getIntent().getExtras().getParcelable(GAME_DESRIPTOR);
 			if(gameDesc == null) {
 				Toast.makeText(this, "Game settings not found!", Toast.LENGTH_LONG).show();
@@ -38,6 +45,27 @@ public class Game extends Activity {
 				gameInstance = gameDesc.createGameInstance(app);
 			}
 		}
+		
+		view.setGame(gameInstance);
+		
+		// If this is the first time playing
+		if(savedInstanceState == null || !savedInstanceState.getBoolean("gameStarted", false)) {
+			// Start immediately
+			view.resume();
+		}
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		view.pause();
+		view.onPause();
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		view.onResume();
 	}
 	
 	protected void onSaveInstanceState(Bundle out) {

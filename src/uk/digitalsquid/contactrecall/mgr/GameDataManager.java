@@ -25,10 +25,10 @@ public class GameDataManager implements Config {
 		for(Contact c : potentials) {
 			if(predicate.include(c)) set.add(c);
 		}
-		Collections.shuffle(potentials);
-		int size = potentials.size();
+		Collections.shuffle(set);
+		int size = set.size();
 		for(int i = number; i < size; i++) {
-			potentials.remove(number);
+			set.remove(number);
 		}
 		return set;
 	}

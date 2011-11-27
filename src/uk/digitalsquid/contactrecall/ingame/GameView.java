@@ -2,6 +2,7 @@ package uk.digitalsquid.contactrecall.ingame;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import uk.digitalsquid.contactrecall.game.GameInstance;
 import uk.digitalsquid.contactrecall.ingame.GameView.ViewWorker;
 import android.content.Context;
 import android.graphics.Matrix;
@@ -21,6 +22,10 @@ public class GameView extends DrawBaseView<ViewWorker> {
 	}
 
 	public static class ViewWorker extends DrawBaseView.ViewWorker {
+		
+		public GameInstance game;
+		
+		public boolean running = false;
 
 		public ViewWorker(Context context) {
 			super(context);
@@ -70,5 +75,21 @@ public class GameView extends DrawBaseView<ViewWorker> {
 		@Override
 		protected void postdraw(GL10 gl){}
 		
+	}
+	
+	public void setGame(GameInstance instance) {
+		thread.game = instance;
+	}
+	
+	public void stopGame() {
+		thread.game = null;
+	}
+	
+	public void pause() {
+		thread.running = false;
+	}
+	
+	public void resume() {
+		thread.running = true;
 	}
 }

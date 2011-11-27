@@ -46,4 +46,12 @@ public abstract class GameInstance implements Config {
 	 * @return
 	 */
 	public abstract Object[] getToObjects();
+	
+	public int getProgress() {
+		return progress;
+	}
+	
+	public int size() {
+		return getQuestions().size();
+	}
 }

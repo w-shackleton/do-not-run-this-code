@@ -62,6 +62,12 @@ public class AsyncLoadBuffer<T> {
 		 */
 		T getElement(int pos);
 		
+		/**
+		 * If getElement returns null, this value is used.
+		 * @return
+		 */
+		T ifNull();
+		
 		boolean hasMore();
 		
 		void finish();
@@ -80,7 +86,9 @@ public class AsyncLoadBuffer<T> {
 						Thread.sleep(600);
 					} catch (InterruptedException e) { }
 				}
-				queue.offer(src.getElement(count++));
+				T elem = src.getElement(count++);
+				if(elem != null) queue.offer(elem);
+				else queue.offer(src.ifNull());
 			}
 			return null;
 		}
