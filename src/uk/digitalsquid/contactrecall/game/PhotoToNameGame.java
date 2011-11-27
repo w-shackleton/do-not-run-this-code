@@ -47,21 +47,21 @@ public class PhotoToNameGame extends GameInstance {
 	@Override
 	public Object[] getToObjects() {
 		// TODO: Implement
-		return null;
+		return new String[] {"111", "222", "333", "444" };
 	}
+	
+	int bitmapPosition = 0;
 	
 	private Source<Bitmap> bitmapSource = new Source<Bitmap>() {
 		
-		int position = 0;
-
 		@Override
 		public Bitmap getElement(int pos) {
-			return questions.get(position).getPhoto(app.getPhotos());
+			return questions.get(bitmapPosition).getPhoto(app.getPhotos());
 		}
 
 		@Override
 		public boolean hasMore() {
-			return position < questions.size();
+			return bitmapPosition < questions.size();
 		}
 
 		@Override

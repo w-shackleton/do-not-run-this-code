@@ -17,7 +17,7 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 	protected final Context context;
 	protected VT thread;
 	
-	protected boolean landscape;
+	protected boolean landscape = false;
 	
 	/**
 	 * Constructs a new {@link DrawBaseView}. Non-abstract extended classes must initialise a renderer
@@ -32,8 +32,12 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 	    // if(StaticInfo.DEBUG) setDebugFlags(DEBUG_CHECK_GL_ERROR);
 		this.context = context;
 		
-		Display display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-		landscape = display.getWidth() >= display.getHeight();
+		WindowManager wm = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
+		if(wm != null) {
+			Display display = wm.getDefaultDisplay();
+			if(display != null)
+				landscape = display.getWidth() >= display.getHeight();
+		}
 	}
 	
 	protected final void initP2() {

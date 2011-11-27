@@ -10,6 +10,7 @@ import android.content.Context;
 
 public class GameDataManager implements Config {
 	
+	@SuppressWarnings("unused")
 	private final Context context;
 	private final App app;
 	
@@ -27,7 +28,7 @@ public class GameDataManager implements Config {
 		Collections.shuffle(potentials);
 		int size = potentials.size();
 		for(int i = number; i < size; i++) {
-			potentials.remove(i);
+			potentials.remove(number);
 		}
 		return set;
 	}

@@ -13,7 +13,7 @@ public class AsyncLoadBuffer<T> {
 	
 	private final Source<? extends T> src;
 	
-	private static final int QUEUE_LENGTH = 3;
+	private static final int QUEUE_LENGTH = 2;
 	
 	private static final int STAGE_READY = 1;
 	private static final int STAGE_RUNNING = 2;
