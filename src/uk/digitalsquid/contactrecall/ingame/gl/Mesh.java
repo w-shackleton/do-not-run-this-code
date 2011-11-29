@@ -45,6 +45,8 @@ public class Mesh {
 	// Rotate params.
 	private float rz = 0;
 	
+	private boolean visible = true;
+	
 	/**
 	 * The mode to draw in. See gl.glDrawElements(..)
 	 */
@@ -94,6 +96,7 @@ public class Mesh {
 	 *            the OpenGL context to render to.
 	 */
 	public final void draw(GL10 gl) {
+		if(!isVisible()) return;
 		// Counter-clockwise winding.
 		gl.glFrontFace(GL10.GL_CCW);
 		// Enable face culling.
@@ -275,5 +278,13 @@ public class Mesh {
 	 */
 	public final void setDrawMode(int mode) {
 		drawMode = mode;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
+	public boolean isVisible() {
+		return visible;
 	}
 }

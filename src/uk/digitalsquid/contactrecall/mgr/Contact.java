@@ -43,4 +43,18 @@ public class Contact {
 	public Bitmap getPhoto(PhotoManager mgr) {
 		return mgr.getContactPicture(id);
 	}
+	
+	/**
+	 * Loads the photo from the given manager. Returns the nth one.
+	 */
+	public Bitmap getPhoto(PhotoManager mgr, int position) {
+		return mgr.getContactPicture(id, position);
+	}
+	
+	/**
+	 * Gets the number of photos
+	 */
+	public int getPhotoCount(PhotoManager mgr) {
+		return mgr.getContactPictureCount(id);
+	}
 }

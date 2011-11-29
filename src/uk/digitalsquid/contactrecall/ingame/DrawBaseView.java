@@ -4,15 +4,20 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.contactrecall.ingame.gl.TextureManager;
+import uk.digitalsquid.contactrecall.misc.Config;
 import android.content.Context;
+import android.graphics.Matrix;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.Display;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 
-public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends GLSurfaceView
+public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends GLSurfaceView implements OnTouchListener, Config
 {
 	protected final Context context;
 	protected VT thread;
@@ -29,8 +34,10 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		// setEGLConfigChooser(8, 8, 8, 8, 0, 0);
 	    // getHolder().setFormat(PixelFormat.RGBA_8888);
 	    // setDebugFlags(DEBUG_CHECK_GL_ERROR | DEBUG_LOG_GL_CALLS);
-	    // if(StaticInfo.DEBUG) setDebugFlags(DEBUG_CHECK_GL_ERROR);
+	    if(DEBUG) setDebugFlags(DEBUG_CHECK_GL_ERROR);
 		this.context = context;
+		
+		setOnTouchListener(this);
 		
 		WindowManager wm = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
 		if(wm != null) {
@@ -73,6 +80,9 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 			initialiseOnThread();
 			TextureManager.init(context, gl);
 		}
+		
+		final Matrix matrix2d = new Matrix();
+		final Matrix matrixInverse = new Matrix();
 		
 		protected boolean firstFrame = true;
 		
@@ -184,6 +194,10 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		public abstract void restoreState(Bundle bundle);
 		
 		protected void onSizeChanged(int w, int h) {}
+		
+		protected abstract void onTouchDown(float x, float y);
+		protected abstract void onTouchMove(float x, float y);
+		protected abstract void onTouchUp(float x, float y);
 	}
 	
 	public void saveState(Bundle bundle)
@@ -197,5 +211,42 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		{
 			thread.restoreState(bundle);
 		}
+	}
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		switch(event.getActionIndex()) {
+		case 0: // Currently only supports 1 pointer
+			if(thread == null) break;
+			final float[] touchPoints = new float[2];
+			touchPoints[0] = event.getX();
+			touchPoints[1] = event.getY();
+			thread.matrix2d.mapPoints(touchPoints);
+			switch(event.getActionMasked()) {
+			case MotionEvent.ACTION_DOWN:
+				queueEvent(new Runnable() {
+					@Override public void run() {
+						thread.onTouchDown(touchPoints[0], touchPoints[1]);
+					}
+				});
+				break;
+			case MotionEvent.ACTION_MOVE:
+				queueEvent(new Runnable() {
+					@Override public void run() {
+						thread.onTouchMove(touchPoints[0], touchPoints[1]);
+					}
+				});
+				break;
+			case MotionEvent.ACTION_UP:
+				queueEvent(new Runnable() {
+					@Override public void run() {
+						thread.onTouchUp(touchPoints[0], touchPoints[1]);
+					}
+				});
+				break;
+			}
+			break;
+		}
+		return true;
 	}
 }

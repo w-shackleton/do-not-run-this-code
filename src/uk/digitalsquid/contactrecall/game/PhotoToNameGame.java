@@ -5,9 +5,11 @@ import java.util.List;
 
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.mgr.Contact;
+import uk.digitalsquid.contactrecall.mgr.PhotoManager;
 import uk.digitalsquid.contactrecall.misc.AsyncLoadBuffer;
 import uk.digitalsquid.contactrecall.misc.AsyncLoadBuffer.Source;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Bitmap.Config;
 
 public class PhotoToNameGame extends GameInstance {
@@ -76,4 +78,23 @@ public class PhotoToNameGame extends GameInstance {
 			return ret;
 		}
 	};
+	
+	public static class Images {
+		public List<Bitmap> images;
+		
+		public int contactId;
+		
+		int bitmapSize = 512;
+		
+		public Images(int id, Contact contact, PhotoManager mgr) {
+			contactId = id;
+			int count = contact.getPhotoCount(mgr);
+			for(int i = 0; i < count; i++) {
+				Bitmap src = contact.getPhoto(mgr, i);
+				Bitmap dest = Bitmap.createBitmap(bitmapSize, bitmapSize, Config.ARGB_8888);
+				Canvas c = new Canvas(dest);
+				// TODO: Scale
+			}
+		}
+	}
 }

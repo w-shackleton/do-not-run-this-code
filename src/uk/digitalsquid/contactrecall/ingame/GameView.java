@@ -4,8 +4,8 @@ import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.contactrecall.game.GameInstance;
 import uk.digitalsquid.contactrecall.ingame.GameView.ViewWorker;
+import uk.digitalsquid.contactrecall.ingame.gl.RectMesh;
 import android.content.Context;
-import android.graphics.Matrix;
 import android.os.Bundle;
 import android.util.AttributeSet;
 
@@ -33,23 +33,26 @@ public class GameView extends DrawBaseView<ViewWorker> {
 
 		@Override
 		protected void initialiseOnThread() {
+			if(DEBUG) {
+				pointerPos = new RectMesh(0, 0, 2, 2, 1, 0, 0, 1);
+				pointerPos.setVisible(false);
+			}
 		}
 
 		@Override
 		protected void onThreadEnd() {
 		}
 		
-		final Matrix matrix2d = new Matrix();
-		final Matrix matrixInverse = new Matrix();
-
 		@Override
 		protected void scale(GL10 c) {
 			matrix2d.reset();
 			
 			matrix2d.postTranslate(-width / 2, -height / 2);
-			matrix2d.postScale(scaledWidth / (float)width, scaledHeight / (float)height);
+			matrix2d.postScale(scaledWidth / (float)width, -scaledHeight / (float)height);
 			matrix2d.invert(matrixInverse);
 		}
+		
+		private RectMesh pointerPos;
 
 		@Override
 		public void saveState(Bundle bundle) {
@@ -57,6 +60,11 @@ public class GameView extends DrawBaseView<ViewWorker> {
 
 		@Override
 		public void restoreState(Bundle bundle) {
+		}
+		
+		@Override
+		protected void draw(GL10 gl){
+			if(pointerPos != null) pointerPos.draw(gl);
 		}
 		
 		@Override
@@ -71,10 +79,24 @@ public class GameView extends DrawBaseView<ViewWorker> {
 			gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		}
 		@Override
-		protected void draw(GL10 gl){}
-		@Override
 		protected void postdraw(GL10 gl){}
-		
+
+		@Override
+		protected void onTouchDown(float x, float y) {
+			if(pointerPos != null) pointerPos.setVisible(true);
+			if(pointerPos != null) pointerPos.setXY(x, y);
+		}
+
+		@Override
+		protected void onTouchMove(float x, float y) {
+			if(pointerPos != null) pointerPos.setVisible(true);
+			if(pointerPos != null) pointerPos.setXY(x, y);
+		}
+
+		@Override
+		protected void onTouchUp(float x, float y) {
+			if(pointerPos != null) pointerPos.setVisible(false);
+		}
 	}
 	
 	public void setGame(GameInstance instance) {
