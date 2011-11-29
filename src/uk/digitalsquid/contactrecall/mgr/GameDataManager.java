@@ -38,10 +38,11 @@ public class GameDataManager implements Config {
 	}
 	
 	public LinkedList<Contact> getRandomPhotoSet(int number) {
+		final List<Integer> contactsWithIds = app.getPhotos().getContactsWithPictures();
 		return getRandomContactSet(new ContactPredicate() {
 			@Override
 			public boolean include(Contact contact) {
-				return app.getPhotos().getContactPictureCount(contact.getId()) > 0;
+				return contactsWithIds.contains(contact.getId());
 			}
 		}, number);
 	}

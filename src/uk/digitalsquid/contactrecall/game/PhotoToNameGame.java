@@ -9,8 +9,11 @@ import uk.digitalsquid.contactrecall.mgr.PhotoManager;
 import uk.digitalsquid.contactrecall.misc.AsyncLoadBuffer;
 import uk.digitalsquid.contactrecall.misc.AsyncLoadBuffer.Source;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 
 public class PhotoToNameGame extends GameInstance {
 
@@ -18,12 +21,12 @@ public class PhotoToNameGame extends GameInstance {
 	
 	final LinkedList<Contact> questions;
 	
-	final AsyncLoadBuffer<Bitmap> bitmapLoader;
+	final AsyncLoadBuffer<Images> bitmapLoader;
 
 	public PhotoToNameGame(App app) {
 		this.app = app;
 		questions = app.getGame().getRandomPhotoSet(10); // TODO: Customise number of photos
-		bitmapLoader = new AsyncLoadBuffer<Bitmap>(bitmapSource);
+		bitmapLoader = new AsyncLoadBuffer<Images>(bitmapSource);
 		bitmapLoader.start();
 	}
 
@@ -55,11 +58,12 @@ public class PhotoToNameGame extends GameInstance {
 	
 	int bitmapPosition = 0;
 	
-	private Source<Bitmap> bitmapSource = new Source<Bitmap>() {
+	private Source<Images> bitmapSource = new Source<Images>() {
 		
 		@Override
-		public Bitmap getElement(int pos) {
-			return questions.get(bitmapPosition).getPhoto(app.getPhotos());
+		public Images getElement(int pos) {
+			Contact c = questions.get(bitmapPosition);
+			return new Images(c.getId(), c, app.getPhotos());
 		}
 
 		@Override
@@ -72,29 +76,64 @@ public class PhotoToNameGame extends GameInstance {
 		}
 
 		@Override
-		public Bitmap ifNull() {
+		public Images ifNull() {
 			// TODO: Change to a question mark image
-			Bitmap ret = Bitmap.createBitmap(8, 8, Config.ARGB_8888);
-			return ret;
+			return new Images();
 		}
 	};
 	
+	/**
+	 * Loads a set of images for a contact into memory.
+	 * @author william
+	 *
+	 */
 	public static class Images {
-		public List<Bitmap> images;
+		public final List<Bitmap> images;
 		
-		public int contactId;
+		public final int contactId;
 		
 		int bitmapSize = 512;
 		
+		private static final Paint PAINT = new Paint();
+		static {
+			PAINT.setAntiAlias(true); // TODO: Option?
+			PAINT.setColor(0xFFFFFFFF);
+		}
+		
+		/**
+		 * Blank constructor
+		 * @param id
+		 */
+		public Images() {
+			images = new LinkedList<Bitmap>();
+			contactId = -1;
+		}
 		public Images(int id, Contact contact, PhotoManager mgr) {
+			images = new LinkedList<Bitmap>();
 			contactId = id;
-			int count = contact.getPhotoCount(mgr);
-			for(int i = 0; i < count; i++) {
-				Bitmap src = contact.getPhoto(mgr, i);
+			List<Bitmap> srcs = contact.getPhotos(mgr);
+			for(Bitmap src : srcs) {
+				if(src == null) continue;
 				Bitmap dest = Bitmap.createBitmap(bitmapSize, bitmapSize, Config.ARGB_8888);
 				Canvas c = new Canvas(dest);
-				// TODO: Scale
+				float aspectRatio = (float)src.getWidth() / (float)src.getHeight();
+				float width = bitmapSize;
+				float height = bitmapSize;
+				if(aspectRatio > 1) { // Landscape
+					height = width / aspectRatio;
+				} else {
+					width = height / aspectRatio;
+				}
+				
+				c.drawBitmap(src, new Rect(0, 0, src.getWidth(), src.getHeight()),
+						new RectF((bitmapSize - width) / 2, (bitmapSize - height) / 2, width, height), PAINT);
+				images.add(dest);
+				src.recycle();
 			}
+		}
+		
+		public int size() {
+			return images.size();
 		}
 	}
 }

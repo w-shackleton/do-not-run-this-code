@@ -145,14 +145,6 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 
 		protected abstract void initialiseOnThread();
 		
-		protected boolean running = true;
-		
-		public synchronized void setRunning(boolean run) {
-			if(running && !run) // One time stop
-				onThreadEnd();
-			running = run;
-		}
-		
 		/**
 		 * Called on this thread when the thread is about to end, so that any final calls can be made etc.
 		 */
@@ -200,15 +192,12 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		protected abstract void onTouchUp(float x, float y);
 	}
 	
-	public void saveState(Bundle bundle)
-	{
-		thread.saveState(bundle);
+	public void saveState(Bundle bundle) {
+		if(thread != null) thread.saveState(bundle);
 	}
 	
-	public void restoreState(Bundle bundle)
-	{
-		if(bundle != null)
-		{
+	public void restoreState(Bundle bundle) {
+		if(thread != null && bundle != null) {
 			thread.restoreState(bundle);
 		}
 	}

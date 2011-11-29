@@ -1,6 +1,8 @@
 package uk.digitalsquid.contactrecall.mgr;
 
 import java.io.ByteArrayOutputStream;
+import java.util.LinkedList;
+import java.util.List;
 
 import uk.digitalsquid.contactrecall.mgr.db.DB;
 import uk.digitalsquid.contactrecall.misc.Config;
@@ -58,18 +60,60 @@ public class PhotoManager implements Config {
 	}
 	
 	/**
-	 * Gets the number of pictures for a given contact.
+	 * Gets and loads all picture(s) for a given contact ID
 	 * @param idNum
+	 * @param position
 	 */
-	public int getContactPictureCount(int idNum) {
+	public LinkedList<Bitmap> getContactPictures(int idNum) {
 		Cursor cur = cr.query(ContactsContract.Data.CONTENT_URI,
-				new String[] { },
+				new String[] { ContactsContract.CommonDataKinds.Photo.PHOTO },
 				ContactsContract.Data.MIMETYPE + " = ? AND " + ContactsContract.Data.CONTACT_ID + "= ?",
 				new String[] { ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE, String.valueOf(idNum) },
 				null);
+		final int photoCol = cur.getColumnIndex(ContactsContract.CommonDataKinds.Photo.PHOTO);
+		final LinkedList<Bitmap> ret = new LinkedList<Bitmap>();
+		while(cur.moveToNext()) {
+			byte[] data = cur.getBlob(photoCol);
+			if(data == null) continue;
+			cur.close();
+			ret.add(BitmapFactory.decodeByteArray(data, 0, data.length));
+		}
+		cur.close();
+		return ret;
+	}
+	
+	/**
+	 * Gets the number of pictures for a given contact.
+	 * @param idNum
+	 */
+	@Deprecated
+	public int getContactPictureCount(int idNum) {
+		Cursor cur = cr.query(ContactsContract.Data.CONTENT_URI,
+				new String[] { ContactsContract.Data.CONTACT_ID },
+				ContactsContract.Data.MIMETYPE + " = ? AND " + ContactsContract.Data.CONTACT_ID + "= ?",
+				new String[] { ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE, String.valueOf(idNum) },
+				null);
+		cur.moveToNext();
 		final int count = cur.getCount();
 		cur.close();
 		return count;
+	}
+	
+	/**
+	 * Gets the contact IDs of those with pictures available.
+	 * @param idNum
+	 */
+	public List<Integer> getContactsWithPictures() {
+		Cursor cur = cr.query(ContactsContract.Data.CONTENT_URI,
+				new String[] { ContactsContract.Data.CONTACT_ID },
+				ContactsContract.Data.MIMETYPE + " = ? AND " + ContactsContract.CommonDataKinds.Photo.PHOTO + " IS NOT NULL",
+				new String[] { ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE },
+				null);
+		List<Integer> ret = new LinkedList<Integer>();
+		while(cur.moveToNext()) {
+			ret.add(cur.getInt(0));
+		}
+		return ret;
 	}
 	
 	/**

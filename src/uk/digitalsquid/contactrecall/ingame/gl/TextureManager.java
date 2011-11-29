@@ -104,6 +104,49 @@ public class TextureManager {
 	}
 	
 	/**
+	 * Loads an unmanaged texture. This texture won't be deleted when done.
+	 * @param gl
+	 * @param resId
+	 * @return
+	 */
+	public static final int[] getRawTextures(GL10 gl, final Bitmap[] bitmap) {
+		int[] textures = new int[bitmap.length];
+		// Tell OpenGL to generate textures.
+		gl.glGenTextures(textures.length, textures, 0);
+		
+		for(int i = 0; i < textures.length; i++) {
+			gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[i]);
+			
+			gl.glTexParameterf(GL10.GL_TEXTURE_2D,
+		            GL10.GL_TEXTURE_WRAP_S,
+		            GL10.GL_CLAMP_TO_EDGE);
+			gl.glTexParameterf(GL10.GL_TEXTURE_2D,
+		            GL10.GL_TEXTURE_WRAP_T,
+		            GL10.GL_CLAMP_TO_EDGE);
+			// Scale up if the texture if smaller.
+			gl.glTexParameterf(GL10.GL_TEXTURE_2D,
+			                   GL10.GL_TEXTURE_MAG_FILTER,
+			                   GL10.GL_LINEAR); // TODO: Use this as a performance / quality global option ( / GL_NEAREST)
+			// scale linearly when image smaller than texture
+			gl.glTexParameterf(GL10.GL_TEXTURE_2D,
+			                   GL10.GL_TEXTURE_MIN_FILTER,
+			                   GL10.GL_LINEAR);
+			
+			GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap[i], 0);
+		}
+		
+		return textures;
+	}
+	
+	/**
+	 * Deletes any manually assigned textures.
+	 * @param texIds
+	 */
+	public static final void deleteRawTextures(GL10 gl, int[] texIds) {
+		gl.glDeleteTextures(texIds.length, texIds, 0);
+	}
+	
+	/**
 	 * Loads and gets a contact picture
 	 * @param gl
 	 * @param resId

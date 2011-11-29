@@ -14,7 +14,7 @@ public abstract class GameInstance implements Config {
 	/**
 	 * The progress through this game so far.
 	 */
-	int progress = 0;
+	int progress = -1;
 
 	public abstract List<Contact> getQuestions();
 	
@@ -23,7 +23,7 @@ public abstract class GameInstance implements Config {
 	 * @return
 	 */
 	public Contact getNext() {
-		return getQuestions().get(progress++);
+		return getQuestions().get(++progress);
 	}
 	
 	// Various different modes
@@ -47,6 +47,10 @@ public abstract class GameInstance implements Config {
 	 */
 	public abstract Object[] getToObjects();
 	
+	/**
+	 * Returns the current question.
+	 * @return
+	 */
 	public int getProgress() {
 		return progress;
 	}

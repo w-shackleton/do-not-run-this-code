@@ -15,7 +15,6 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.Handler;
 import android.provider.ContactsContract;
-import android.util.Log;
 
 /**
  * Abstracts the contacts API to the list of contacts.
@@ -64,8 +63,6 @@ public final class ContactManager implements Config {
 					Contact contact = new Contact();
 					contact.setId(id);
 					contact.setDisplayName(displayName);
-					
-					Log.v(TAG, displayName);
 					
 					contacts.add(contact);
 				}

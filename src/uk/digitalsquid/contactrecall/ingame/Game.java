@@ -53,6 +53,8 @@ public class Game extends Activity {
 			// Start immediately
 			view.resume();
 		}
+		
+		if(savedInstanceState != null) view.restoreState(savedInstanceState);
 	}
 	
 	@Override
@@ -71,5 +73,6 @@ public class Game extends Activity {
 	protected void onSaveInstanceState(Bundle out) {
 		out.putParcelable("gameDesc", gameDesc);
 		out.putBoolean("gameStarted", true);
+		view.saveState(out);
 	}
 }

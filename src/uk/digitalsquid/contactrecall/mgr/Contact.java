@@ -1,5 +1,7 @@
 package uk.digitalsquid.contactrecall.mgr;
 
+import java.util.LinkedList;
+
 import android.graphics.Bitmap;
 
 public class Contact {
@@ -52,9 +54,14 @@ public class Contact {
 	}
 	
 	/**
-	 * Gets the number of photos
+	 * Loads the photo from the given manager. Returns the nth one.
 	 */
-	public int getPhotoCount(PhotoManager mgr) {
-		return mgr.getContactPictureCount(id);
+	public LinkedList<Bitmap> getPhotos(PhotoManager mgr) {
+		return mgr.getContactPictures(id);
+	}
+	
+	@Override
+	public String toString() {
+		return displayName;
 	}
 }
