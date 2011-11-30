@@ -6,6 +6,7 @@ import java.util.List;
 import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.contactrecall.game.PhotoToNameGame.Images;
+import uk.digitalsquid.contactrecall.misc.Animator;
 import android.graphics.Bitmap;
 
 /**
@@ -101,14 +102,17 @@ public final class PhotoViewer implements Moveable {
 
 	@Override
 	public void move(float millis) {
+		float smoothStage = Animator.anim1d(Animator.TYPE_SINE, animStage);
 		if(animatingIn) {
 			for(RectMesh photo : photos) {
-				photo.setXYZ((1-animStage) * ANIM_OUT_DISTANCE, 0, 0);
+				photo.setXYZ((1-smoothStage) * ANIM_OUT_DISTANCE, 0, 0);
+				photo.setAlpha(smoothStage);
 			}
 			
 		} else {
 			for(RectMesh photo : photos) {
-				photo.setXYZ(0, animStage * ANIM_OUT_DISTANCE, 0);
+				photo.setXYZ(0, smoothStage * ANIM_OUT_DISTANCE, 0);
+				photo.setAlpha(1-smoothStage);
 			}
 		}
 	}

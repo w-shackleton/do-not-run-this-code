@@ -14,6 +14,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.Log;
 
 public class PhotoToNameGame extends GameInstance {
 
@@ -112,6 +113,7 @@ public class PhotoToNameGame extends GameInstance {
 			List<Bitmap> srcs = contact.getPhotos(mgr);
 			for(Bitmap src : srcs) {
 				if(src == null) continue;
+				Log.v(TAG, "Bitmap size is " + src.getWidth() + ", " + src.getHeight());
 				Bitmap dest = Bitmap.createBitmap(bitmapSize, bitmapSize, Config.ARGB_8888);
 				Canvas c = new Canvas(dest);
 				float aspectRatio = (float)src.getWidth() / (float)src.getHeight();
