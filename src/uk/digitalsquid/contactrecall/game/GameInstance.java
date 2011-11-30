@@ -23,7 +23,11 @@ public abstract class GameInstance implements Config {
 	 * @return
 	 */
 	public Contact getNext() {
-		return getQuestions().get(++progress);
+		try {
+			return getQuestions().get(++progress);
+		} catch(IndexOutOfBoundsException e) {
+			return null;
+		}
 	}
 	
 	// Various different modes

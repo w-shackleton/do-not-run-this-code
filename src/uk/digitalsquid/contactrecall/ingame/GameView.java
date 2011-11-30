@@ -37,6 +37,14 @@ public class GameView extends DrawBaseView<ViewWorker> {
 		 * A timer for the current question. In nanoseconds
 		 */
 		long currentTimer;
+		
+		long timeDiffNano;
+		float timeDiff;
+		
+		static final int STATUS_SHOWING = 1;
+		static final int STATUS_CHANGING = 2;
+		static final int STATUS_FINISHING = 3;
+		int status;
 
 		public ViewWorker(Context context) {
 			super(context);
@@ -48,6 +56,9 @@ public class GameView extends DrawBaseView<ViewWorker> {
 				pointerPos = new RectMesh(0, 0, 2, 2, 1, 0, 0, 1);
 				pointerPos.setVisible(false);
 			}
+			
+			loadNextContact();
+			beginShowNextQuestion();
 		}
 
 		@Override
@@ -93,14 +104,24 @@ public class GameView extends DrawBaseView<ViewWorker> {
 		protected void precalculate() {
 			boolean havePreviousTime = oldTime != -1;
 			if(havePreviousTime) { // Ignore, as no previous time
-				long timeDiff = System.nanoTime() - oldTime;
-				totalTimer += timeDiff;
-				currentTimer += timeDiff;
+				timeDiffNano = System.nanoTime() - oldTime;
+				timeDiff = timeDiffNano / 1000000;
+				totalTimer += timeDiffNano;
+				currentTimer += timeDiffNano;
 			}
 			oldTime = System.nanoTime();
 		}
 		@Override
-		protected void calculate(){}
+		protected void calculate() {
+			even.move(timeDiff);
+			odd.move(timeDiff);
+			
+			//TODO: Implement this properly!
+			if(currentTimer / 1000000 > 4000) {
+				currentTimer = 0;
+				beginShowNextQuestion();
+			}
+		}
 		@Override
 		protected void postcalculate(){}
 		
@@ -108,12 +129,56 @@ public class GameView extends DrawBaseView<ViewWorker> {
 		boolean currentIsEven = true;
 		
 		/**
+		 * Begin animation between questions.
+		 */
+		void beginShowNextQuestion() {
+			if(next != null) {
+				current = next;
+				next = null;
+				if(game.getProgress() % 2 == 0) { // Even
+					 even.animateIn(null);
+					 odd.animateOut(new Runnable() {
+						@Override
+						public void run() {
+							// Finished animating out
+							onNextQuestionShown();
+						}
+					});
+				} else {
+					 odd.animateIn(null);
+					 even.animateOut(new Runnable() {
+						@Override
+						public void run() {
+							// Finished animating out
+							onNextQuestionShown();
+						}
+					});
+				}
+			}
+		}
+		
+		void onNextQuestionShown() {
+			loadNextContact();
+		}
+		
+		void onQuestionsFinishing() {
+			
+		}
+		
+		/**
 		 * Moves onto the next contact, which is loaded into the non active buffer.
 		 */
 		void loadNextContact() {
 			next = game.getNext();
+			if(next == null) {
+				onQuestionsFinishing();
+				return;
+			}
 			if(game.getProgress() % 2 == 0) { // Even
-				
+				// (IGNORE?) Next, so load into ODD buffer
+				even.setQuestion(game.getFromMode(), game.getFromObject());
+			} else {
+				odd.setQuestion(game.getFromMode(), game.getFromObject());
 			}
 		}
 		
@@ -127,13 +192,13 @@ public class GameView extends DrawBaseView<ViewWorker> {
 		@Override
 		protected void onTouchDown(float x, float y) {
 			if(pointerPos != null) pointerPos.setVisible(true);
-			if(pointerPos != null) pointerPos.setXY(x, y);
+			if(pointerPos != null) pointerPos.setXYZ(x, y, 0);
 		}
 
 		@Override
 		protected void onTouchMove(float x, float y) {
 			if(pointerPos != null) pointerPos.setVisible(true);
-			if(pointerPos != null) pointerPos.setXY(x, y);
+			if(pointerPos != null) pointerPos.setXYZ(x, y, 0);
 		}
 
 		@Override

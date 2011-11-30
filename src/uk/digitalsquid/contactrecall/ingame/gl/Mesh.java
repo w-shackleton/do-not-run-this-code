@@ -41,6 +41,8 @@ public class Mesh {
 	private float x = 0;
 
 	private float y = 0;
+	
+	private float z = 0;
 
 	// Rotate params.
 	private float rz = 0;
@@ -128,7 +130,7 @@ public class Mesh {
 			gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
 		}
 
-		gl.glTranslatef(x, y, 0);
+		gl.glTranslatef(x, y, z);
 		gl.glRotatef(rz, 0, 0, 1);
 
 		// Point out the where the color buffer is.
@@ -150,7 +152,7 @@ public class Mesh {
 		gl.glDisable(GL10.GL_CULL_FACE);
 		
 		gl.glRotatef(-rz, 0, 0, 1);
-		gl.glTranslatef(-x, -y, 0);
+		gl.glTranslatef(-x, -y, -z);
 	}
 	
 	/**
@@ -249,9 +251,10 @@ public class Mesh {
 		return rz;
 	}
 	
-	public final void setXY(float x, float y) {
+	public final void setXYZ(float x, float y, float z) {
 		this.x = x;
 		this.y = y;
+		this.z = z;
 	}
 	
 	/**

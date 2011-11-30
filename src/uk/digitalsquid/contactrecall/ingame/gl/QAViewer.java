@@ -2,6 +2,7 @@ package uk.digitalsquid.contactrecall.ingame.gl;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import uk.digitalsquid.contactrecall.game.GameInstance;
 import uk.digitalsquid.contactrecall.game.PhotoToNameGame.Images;
 
 /**
@@ -9,14 +10,41 @@ import uk.digitalsquid.contactrecall.game.PhotoToNameGame.Images;
  * @author william
  *
  */
-public class QAViewer {
+public class QAViewer implements Moveable {
 	PhotoViewer photoQuestion;
 	
-	public void setQuestion(Object question) {
-		if(question instanceof Images) {
+	static final int ANIM_STATE_HIDDEN = 1;
+	static final int ANIM_STATE_ENTERING = 2;
+	static final int ANIM_STATE_VISIBLE = 3;
+	static final int ANIM_STATE_LEAVING = 4;
+	int animState;
+	
+	/**
+	 * From 0 to 1, shows the percentage of the animation done so far.
+	 */
+	float animStage = 0;
+	/**
+	 * If <code>true</code>, the animation is an in one.
+	 */
+	boolean animatingIn;
+	
+	/**
+	 * Time animation lasts for in milliseconds
+	 */
+	public static final float ANIM_TIME = 700;
+	
+	/**
+	 * 
+	 * @param mode The mode according to {@link GameInstance}
+	 * @param question
+	 */
+	public void setQuestion(int mode, Object question) {
+		switch(mode) {
+		case GameInstance.FROM_PHOTO:
 			if(photoQuestion == null) photoQuestion = new PhotoViewer();
 			photoQuestion.setBitmaps((Images) question);
 			// TODO: Set other q types to null to stop multiple drawing,
+			break;
 		}
 	}
 	
@@ -25,5 +53,50 @@ public class QAViewer {
 			photoQuestion.loadTexs(gl);
 			photoQuestion.draw(gl);
 		}
+	}
+	
+	/**
+	 * Animates this {@link QAViewer}.
+	 * @param millis
+	 */
+	@Override
+	public void move(float millis) {
+		animStage += millis / ANIM_TIME;
+		if(animStage > 1) {
+			animStage = 1;
+			if(animatingIn) {
+				if(animateInFinish != null) {
+					animateInFinish.run();
+					animateInFinish = null;
+				}
+			} else {
+				if(animateOutFinish != null) {
+					animateOutFinish.run();
+					animateOutFinish = null;
+				}
+			}
+		}
+		if(photoQuestion != null) photoQuestion.setAnimationStage(animStage);
+		if(photoQuestion != null) photoQuestion.move(millis);
+	}
+	
+	private Runnable animateInFinish, animateOutFinish;
+	
+	/**
+	 * Begins the in animation
+	 */
+	public void animateIn(Runnable onDone) {
+		animateInFinish = onDone;
+		animStage = 0;
+		if(photoQuestion != null) photoQuestion.setAnimation(true);
+	}
+	
+	/**
+	 * Begins the out animation
+	 */
+	public void animateOut(Runnable onDone) {
+		animateOutFinish = onDone;
+		animStage = 0;
+		if(photoQuestion != null) photoQuestion.setAnimation(false);
 	}
 }

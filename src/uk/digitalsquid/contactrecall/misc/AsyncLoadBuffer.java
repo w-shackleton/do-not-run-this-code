@@ -68,17 +68,19 @@ public class AsyncLoadBuffer<T> {
 		 */
 		T ifNull();
 		
-		boolean hasMore();
+		boolean hasMore(int pos);
 		
 		void finish();
 	}
+	
+	// TODO: Add rewinding of this queue to an earlier element.
 	
 	private final AsyncTask<Void, T, Void> thread = new AsyncTask<Void, T, Void>() {
 
 		@Override
 		protected Void doInBackground(Void... params) {
 			int count = 0;
-			while(src.hasMore()) {
+			while(src.hasMore(count)) {
 				if(isCancelled()) return null;
 				while(queue.size() >= QUEUE_LENGTH) { // Wait for queue to shrink
 					if(isCancelled()) return null;
