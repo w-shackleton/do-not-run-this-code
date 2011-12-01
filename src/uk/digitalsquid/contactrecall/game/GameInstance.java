@@ -4,6 +4,7 @@ import java.util.List;
 
 import uk.digitalsquid.contactrecall.mgr.Contact;
 import uk.digitalsquid.contactrecall.misc.Config;
+import android.util.Log;
 
 /**
  * A specific instance of a certain game.
@@ -23,6 +24,7 @@ public abstract class GameInstance implements Config {
 	 * @return
 	 */
 	public Contact getNext() {
+		Log.i(TAG, "Contact nr. " + (progress + 1));
 		try {
 			return getQuestions().get(++progress);
 		} catch(IndexOutOfBoundsException e) {
@@ -57,6 +59,14 @@ public abstract class GameInstance implements Config {
 	 */
 	public int getProgress() {
 		return progress;
+	}
+	
+	/**
+	 * Sets the position to the given place.
+	 * @param position
+	 */
+	public void windTo(int position) {
+		progress = position - 1; // -1 so next get gets this element.
 	}
 	
 	public int size() {

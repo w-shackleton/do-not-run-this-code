@@ -60,6 +60,11 @@ public class GameView extends DrawBaseView<ViewWorker> {
 			loadNextContact();
 			beginShowNextQuestion();
 		}
+		
+		protected void onSizeChanged(float width, float height) {
+			even.setOrientation(landscape, width, height);
+			odd.setOrientation(landscape, width, height);
+		}
 
 		@Override
 		protected void onThreadEnd() {
@@ -80,12 +85,14 @@ public class GameView extends DrawBaseView<ViewWorker> {
 		public void saveState(Bundle bundle) {
 			bundle.putLong("totalTimer", totalTimer);
 			bundle.putLong("currentTimer", currentTimer);
+			bundle.putInt("position", game.getProgress());
 		}
 
 		@Override
 		public void restoreState(Bundle bundle) {
 			totalTimer = bundle.getLong("totalTimer");
 			currentTimer = bundle.getLong("currentTimer");
+			game.windTo(bundle.getInt("position"));
 			oldTime = -1; // TODO: Put this elsewhere as well?
 		}
 		

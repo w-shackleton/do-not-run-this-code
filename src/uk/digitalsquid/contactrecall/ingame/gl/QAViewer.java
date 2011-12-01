@@ -33,6 +33,15 @@ public class QAViewer implements Moveable {
 	 */
 	public static final float ANIM_TIME = 700;
 	
+	boolean landscape;
+	float width, height;
+	
+	public void setOrientation(boolean landscape, float width, float height) {
+		this.landscape = landscape;
+		this.width = width;
+		this.height = height;
+	}
+	
 	/**
 	 * 
 	 * @param mode The mode according to {@link GameInstance}
@@ -50,6 +59,7 @@ public class QAViewer implements Moveable {
 	
 	public void draw(GL10 gl) {
 		if(photoQuestion != null) {
+			photoQuestion.setXYZ(-width / 2 + 6, height / 2 - 6, 0);
 			photoQuestion.loadTexs(gl);
 			photoQuestion.draw(gl);
 		}

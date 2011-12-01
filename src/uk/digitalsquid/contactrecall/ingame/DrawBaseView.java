@@ -11,18 +11,14 @@ import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.Bundle;
 import android.util.AttributeSet;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.WindowManager;
 
 public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends GLSurfaceView implements OnTouchListener, Config
 {
 	protected final Context context;
 	protected VT thread;
-	
-	protected boolean landscape = false;
 	
 	/**
 	 * Constructs a new {@link DrawBaseView}. Non-abstract extended classes must initialise a renderer
@@ -38,13 +34,6 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		this.context = context;
 		
 		setOnTouchListener(this);
-		
-		WindowManager wm = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
-		if(wm != null) {
-			Display display = wm.getDefaultDisplay();
-			if(display != null)
-				landscape = display.getWidth() >= display.getHeight();
-		}
 	}
 	
 	protected final void initP2() {
@@ -63,11 +52,12 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 	{
 		protected Context context;
 		
-		protected long currTime, prevTime, millistep = 17;
+		protected static final float REQ_SIZE_Y = 48f;
+		protected static final float REQ_SIZE_X = 32f;
+		protected float scaledWidth;
+		protected float scaledHeight;
 		
-		protected static final float REQ_SIZE_Y = 32.0f; // & 48 - scale to middle-screen size.
-		protected float scaledWidth = 48.0f;
-		protected float scaledHeight = REQ_SIZE_Y;
+		protected boolean landscape = false;
 		
 		public ViewWorker(Context context)
 		{
@@ -96,7 +86,7 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 			gl.glLoadIdentity();
 	
 			// Drawing
-			gl.glTranslatef(0.0f, 0.0f, -REQ_SIZE_Y / 2); // Screen is now 320x???px big, where ??? is about 480px
+			gl.glTranslatef(0.0f, 0.0f, -scaledHeight / 2 / (float)Math.tan(Math.PI / 8)); // Screen is now 320x???px big, where ??? is about 480px
 			// gl.glTranslatef(0.0f, 0.0f, -5f);
 			
 			gl.glPushMatrix(); // As to stop this matrix being affected
@@ -104,17 +94,6 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 			drawGL(gl);
 			
 			gl.glPopMatrix();
-			
-			currTime = System.currentTimeMillis();
-			if(firstFrame) {
-				prevTime = System.currentTimeMillis() - 17; // Estimate
-				firstFrame = false;
-			}
-			
-			millistep = currTime - prevTime;
-			millistep = (long) (1000f / 60);
-			
-			prevTime = currTime;
 		}
 
 		@Override
@@ -129,18 +108,24 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 			gl.glMatrixMode(GL10.GL_PROJECTION); 	//Select The Projection Matrix
 			gl.glLoadIdentity(); 					//Reset The Projection Matrix
 	
-			//Calculate The Aspect Ratio Of The Window
-			GLU.gluPerspective(gl, 90.0f, (float)width / (float)height, 5f, 200.0f);
-			scaledWidth = (REQ_SIZE_Y * width) / height;
+			landscape = width > height;
+			GLU.gluPerspective(gl, 45.0f, (float)width / (float)height, 5f, 200.0f);
+			if(landscape) {
+				scaledWidth = REQ_SIZE_Y;
+				scaledHeight = (REQ_SIZE_Y * height) / width;
+			} else {
+				scaledHeight = REQ_SIZE_Y;
+				scaledWidth = (REQ_SIZE_Y * width) / height;
+			}
 	
-			gl.glMatrixMode(GL10.GL_MODELVIEW); 	//Select The Modelview Matrix
-			gl.glLoadIdentity(); 					//Reset The Modelview Matrix
+			gl.glMatrixMode(GL10.GL_MODELVIEW);
+			gl.glLoadIdentity();
 			
 			gl.glEnable(GL10.GL_LINE_SMOOTH);
-			// gl.glHint(GL10.GL_POLYGON_SMOOTH_HINT, GL10.GL_NICEST); // no visible diff
+			// gl.glHint(GL10.GL_POLYGON_SMOOTH_HINT, GL10.GL_NICEST);
 			gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
 			
-			onSizeChanged(width, height);
+			onSizeChanged(scaledWidth, scaledHeight);
 		}
 
 		protected abstract void initialiseOnThread();
@@ -185,7 +170,12 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		public abstract void saveState(Bundle bundle);
 		public abstract void restoreState(Bundle bundle);
 		
-		protected void onSizeChanged(int w, int h) {}
+		/**
+		 * When the size changes.
+		 * @param width Width & height in scaled units.
+		 * @param height
+		 */
+		protected void onSizeChanged(float width, float height) {}
 		
 		protected abstract void onTouchDown(float x, float y);
 		protected abstract void onTouchMove(float x, float y);

@@ -7,14 +7,16 @@ import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.contactrecall.game.PhotoToNameGame.Images;
 import uk.digitalsquid.contactrecall.misc.Animator;
+import uk.digitalsquid.contactrecall.misc.Config;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 /**
  * Displays a set of photos and animates them.
  * @author william
  *
  */
-public final class PhotoViewer implements Moveable {
+public final class PhotoViewer implements Moveable, Config {
 	public static final float PHOTO_WIDTH = 9f;
 	public static final float PHOTO_GAP = .5f;
 	
@@ -37,6 +39,7 @@ public final class PhotoViewer implements Moveable {
 	public void setBitmaps(Images bmps) {
 		this.bmps = bmps;
 		needUpdating = true;
+		Log.i(TAG, "Showing picture " + bmps.contactId);
 	}
 	
 	/**
@@ -68,6 +71,8 @@ public final class PhotoViewer implements Moveable {
 	
 	public void draw(GL10 gl) {
 		gl.glPushMatrix();
+		gl.glTranslatef(x, y, z);
+		gl.glRotatef(10, 0, 1, 0);
 		for(RectMesh mesh : photos) {
 			mesh.draw(gl);
 			gl.glTranslatef(PHOTO_WIDTH + PHOTO_GAP, 0, 0);
@@ -115,5 +120,13 @@ public final class PhotoViewer implements Moveable {
 				photo.setAlpha(1-smoothStage);
 			}
 		}
+	}
+	
+	private float x, y, z;
+	
+	public void setXYZ(float x, float y, float z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 }

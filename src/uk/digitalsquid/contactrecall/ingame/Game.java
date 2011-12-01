@@ -35,6 +35,7 @@ public class Game extends Activity {
 			gameInstance = app.getCurrentGame();
 			if(gameInstance == null) {
 				gameInstance = gameDesc.createGameInstance(app);
+				app.setCurrentGame(gameInstance);
 			}
 		} else {
 			gameDesc = getIntent().getExtras().getParcelable(GAME_DESRIPTOR);
@@ -43,6 +44,7 @@ public class Game extends Activity {
 				finish();
 			} else {
 				gameInstance = gameDesc.createGameInstance(app);
+				app.setCurrentGame(gameInstance);
 			}
 		}
 		

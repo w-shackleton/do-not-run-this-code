@@ -57,10 +57,17 @@ public class PhotoToNameGame extends GameInstance {
 		return new String[] {"111", "222", "333", "444" };
 	}
 	
+	@Override
+	public void windTo(int position) {
+		super.windTo(position);
+		bitmapLoader.windTo(position);
+	}
+	
 	private Source<Images> bitmapSource = new Source<Images>() {
 		
 		@Override
 		public Images getElement(int pos) {
+			Log.i(TAG, "Picture nr. " + pos);
 			Contact c = questions.get(pos);
 			return new Images(c.getId(), c, app.getPhotos());
 		}

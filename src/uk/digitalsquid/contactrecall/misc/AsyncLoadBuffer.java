@@ -73,7 +73,15 @@ public class AsyncLoadBuffer<T> {
 		void finish();
 	}
 	
-	// TODO: Add rewinding of this queue to an earlier element.
+	public void windTo(int position) {
+		windToPosition = position;
+		queue.clear();
+	}
+	
+	/**
+	 * -1 indicates nothing to do.
+	 */
+	private int windToPosition = -1;
 	
 	private final AsyncTask<Void, T, Void> thread = new AsyncTask<Void, T, Void>() {
 
@@ -87,6 +95,11 @@ public class AsyncLoadBuffer<T> {
 					try {
 						Thread.sleep(600);
 					} catch (InterruptedException e) { }
+				}
+				if(windToPosition != -1) {
+					queue.clear();
+					count = windToPosition;
+					windToPosition = -1;
 				}
 				T elem = src.getElement(count++);
 				if(elem != null) queue.offer(elem);
