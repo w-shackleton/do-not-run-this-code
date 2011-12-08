@@ -39,7 +39,9 @@ public final class PhotoViewer implements Moveable, Config {
 	public void setBitmaps(Images bmps) {
 		this.bmps = bmps;
 		needUpdating = true;
-		Log.i(TAG, "Showing picture " + bmps.contactId);
+		if(bmps != null) {
+			Log.i(TAG, "Showing picture " + bmps.contactId);
+		}
 	}
 	
 	/**

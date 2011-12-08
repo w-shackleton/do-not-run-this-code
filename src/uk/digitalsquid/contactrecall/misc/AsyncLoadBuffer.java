@@ -29,7 +29,7 @@ public class AsyncLoadBuffer<T> {
 	public synchronized T get() {
 		if(stage == STAGE_DONE || stage == STAGE_READY) return queue.poll();
 		// else
-		while(queue.isEmpty()) {
+		while(queue.peek() == null) {
 			try {
 				Thread.sleep(40);
 			} catch (InterruptedException e) { }

@@ -48,7 +48,9 @@ public class PhotoToNameGame extends GameInstance {
 
 	@Override
 	public Object getFromObject() {
-		return bitmapLoader.get();
+		Object bmp = bitmapLoader.get();
+		if(bmp == null) Log.e(TAG, "Null bitmap!");
+		return bmp;
 	}
 
 	@Override
