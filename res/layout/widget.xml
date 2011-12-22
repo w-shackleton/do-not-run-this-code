@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent" android:background="@drawable/widgetbg" android:padding="@dimen/widget_margin" android:id="@+id/widgetBg" android:clickable="true" android:gravity="center">
+    <LinearLayout android:id="@+id/linearLayout1" android:layout_gravity="center" android:gravity="center" android:layout_width="wrap_content" android:layout_height="wrap_content">
+        <TextView android:id="@+id/widgetText" android:layout_height="wrap_content" android:layout_gravity="center" android:layout_width="fill_parent" android:text="@string/percent" android:textSize="22dip" android:gravity="center" android:textColor="@color/widgetText"></TextView>
+    </LinearLayout>
+</LinearLayout>

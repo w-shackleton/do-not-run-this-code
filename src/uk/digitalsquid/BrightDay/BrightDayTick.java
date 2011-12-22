@@ -56,6 +56,10 @@ public class BrightDayTick extends BroadcastReceiver
 	}
 	
 	public static final int getValue256(Context context) {
+		return getValue(context, 256);
+	}
+	
+	public static final int getValue(Context context, int outOf) {
 		Date time = Calendar.getInstance().getTime();
 		int minsTD = time.getHours() * 60 + time.getMinutes();
 		
@@ -67,8 +71,8 @@ public class BrightDayTick extends BroadcastReceiver
 				pref.getInt("gamma", 0),
 				pref.getInt("stretch", 0),
 				MINS_IN_DAY,
-				256);
-		Log.d("BrightDay", "BDT: Current Val: " + cutMax(256 - vc.getPos(minsTD), 0, 255));
-		return cutMax(256 - vc.getPos(minsTD), 0, 255);
+				outOf);
+		Log.d("BrightDay", "BDT: Current Val: " + cutMax(outOf - vc.getPos(minsTD), 0, outOf));
+		return cutMax(outOf - vc.getPos(minsTD), 0, outOf);
 	}
 }

@@ -39,4 +39,5 @@
 <string name="welcomeTitle">Welcome to Bright Day!</string>
 <string name="ok">OK</string>
 <string name="no">No thanks</string>
+<string name="percent">...</string>
 </resources>
