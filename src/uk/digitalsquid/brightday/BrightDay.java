@@ -23,6 +23,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.PendingIntent.CanceledException;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -303,6 +305,11 @@ public class BrightDay extends Activity implements OnSeekBarChangeListener, OnCl
 		WindowManager.LayoutParams layout = getWindow().getAttributes();
 		layout.screenBrightness = (float)BrightDayTick.getValue256(getApplicationContext()) / 256f;
 		getWindow().setAttributes(layout);
+		
+		// Trigger widget to update here also
+		AppWidgetManager mgr = AppWidgetManager.getInstance(getBaseContext());
+		StatusWidgetProvider prov = new StatusWidgetProvider();
+		prov.onUpdate(getBaseContext(), mgr, mgr.getAppWidgetIds(new ComponentName(getBaseContext(), StatusWidgetProvider.class)));
 	}
 	
 	protected Dialog onCreateDialog(int id)
