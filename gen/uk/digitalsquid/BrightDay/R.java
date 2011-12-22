@@ -16,7 +16,6 @@ public final class R {
     }
     public static final class color {
         public static final int widgetText=0x7f060000;
-        public static final int widgetTextNight=0x7f060001;
     }
     public static final class dimen {
         public static final int widget_margin=0x7f070000;
@@ -25,11 +24,7 @@ public final class R {
         public static final int icon=0x7f020000;
         public static final int iconlarge=0x7f020001;
         public static final int widget_daytime=0x7f020002;
-        public static final int widget_nighttime=0x7f020003;
-        public static final int widgetbg=0x7f020004;
-        public static final int widgetbg_night=0x7f020005;
-        public static final int widgetbg_night_select=0x7f020006;
-        public static final int widgetbg_select=0x7f020007;
+        public static final int widgetbg_night=0x7f020003;
     }
     public static final class id {
         public static final int AboutText1=0x7f090003;
