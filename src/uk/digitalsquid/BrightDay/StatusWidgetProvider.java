@@ -1,4 +1,4 @@
-package uk.digitalsquid.brightday;
+package uk.digitalsquid.BrightDay;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;

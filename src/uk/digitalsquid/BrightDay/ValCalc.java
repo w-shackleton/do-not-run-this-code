@@ -15,7 +15,7 @@
  * along with Bright Day.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.digitalsquid.brightday;
+package uk.digitalsquid.BrightDay;
 
 
 public class ValCalc
