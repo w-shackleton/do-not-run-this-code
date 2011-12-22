@@ -15,7 +15,7 @@
  * along with Bright Day.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.digitalsquid.BrightDay;
+package uk.digitalsquid.brightday;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -27,8 +27,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 
 public class BrightDayHelp extends Activity implements OnSeekBarChangeListener
 {

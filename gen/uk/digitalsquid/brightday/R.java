@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package uk.digitalsquid.BrightDay;
+package uk.digitalsquid.brightday;
 
 public final class R {
     public static final class anim {
