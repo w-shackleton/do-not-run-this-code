@@ -35,8 +35,8 @@ public class TextureManager {
 		bmpOpts = new BitmapFactory.Options();
 		bmpOpts.inScaled = false;
 		
-		txtPaint.setColor(0xFFFFFFFF /* White */);
-		txtPaint.setTextSize(128);
+		txtPaint.setColor(0xFF000000 /* Black */);
+		txtPaint.setTextSize(90);
 		txtPaint.setTextAlign(Align.LEFT);
 	}
 	
@@ -271,7 +271,7 @@ public class TextureManager {
 		Bitmap bmp = Bitmap.createBitmap(TEXT_WIDTH, TEXT_HEIGHT, Bitmap.Config.ARGB_8888);
 		Canvas c = new Canvas(bmp);
 		c.drawColor(0x00FFFFFF);
-		c.drawText("" + letter, 10, 128, txtPaint);
+		c.drawText("" + letter, 10, 105, txtPaint);
 		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bmp, 0);
 		
 		Letter ret = new Letter(textures[0], width);

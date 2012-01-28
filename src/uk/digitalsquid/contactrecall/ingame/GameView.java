@@ -6,6 +6,7 @@ import uk.digitalsquid.contactrecall.game.GameInstance;
 import uk.digitalsquid.contactrecall.ingame.GameView.ViewWorker;
 import uk.digitalsquid.contactrecall.ingame.gl.QAViewer;
 import uk.digitalsquid.contactrecall.ingame.gl.RectMesh;
+import uk.digitalsquid.contactrecall.ingame.gl.names.NameViewer;
 import uk.digitalsquid.contactrecall.ingame.gl.objects.Timer;
 import uk.digitalsquid.contactrecall.mgr.Contact;
 import android.content.Context;
@@ -119,12 +120,15 @@ public class GameView extends DrawBaseView<ViewWorker> {
 		QAViewer odd = new QAViewer(), even = new QAViewer(); // 2 required due to fade in/out
 		Timer timeDisplay = new Timer(0, 0, 2, 2);
 		
+		NameViewer tmpName = new NameViewer(2);
+		
 		@Override
 		protected void draw(GL10 gl){
 			if(pointerPos != null) pointerPos.draw(gl);
 			odd.draw(gl);
 			even.draw(gl);
 			timeDisplay.draw(gl);
+			tmpName.draw(gl);
 		}
 		
 		long oldTime = -1;

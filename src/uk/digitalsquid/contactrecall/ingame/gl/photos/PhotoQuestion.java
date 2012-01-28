@@ -10,8 +10,10 @@ import uk.digitalsquid.contactrecall.misc.Animator;
  *
  */
 public class PhotoQuestion extends PhotoViewer implements Moveable {
+	public static final float PHOTO_WIDTH = 9f;
+	
 	public PhotoQuestion() {
-		super();
+		super(PHOTO_WIDTH);
 		setRXYZ(0, 10, 0);
 	}
 

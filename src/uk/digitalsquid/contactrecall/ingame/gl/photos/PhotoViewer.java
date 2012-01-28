@@ -18,7 +18,6 @@ import android.util.Log;
  *
  */
 public abstract class PhotoViewer implements Config {
-	public static final float PHOTO_WIDTH = 9f;
 	public static final float PHOTO_GAP = .5f;
 	
 	public static final float ANIM_OUT_DISTANCE = -10f; // Down
@@ -28,8 +27,11 @@ public abstract class PhotoViewer implements Config {
 	Images bmps;
 	int[] texIds = new int[0];
 	
-	public PhotoViewer() {
+	final float photoWidth;
+	
+	public PhotoViewer(float width) {
 		photos = new LinkedList<RectMesh>();
+		photoWidth = width;
 	}
 	
 	/**
@@ -56,7 +58,7 @@ public abstract class PhotoViewer implements Config {
 		int sizeDiff = bmps.size() - photos.size();
 		if(sizeDiff > 0) {
 			for(int i = 0; i < sizeDiff; i++) {
-				photos.add(newBlankTextureMesh());
+				photos.add(newBlankTextureMesh(photoWidth));
 			}
 		}
 		if(sizeDiff < 0) {
@@ -80,7 +82,7 @@ public abstract class PhotoViewer implements Config {
 		gl.glRotatef(rz, 0, 0, 1);
 		for(RectMesh mesh : photos) {
 			mesh.draw(gl);
-			gl.glTranslatef(PHOTO_WIDTH + PHOTO_GAP, 0, 0);
+			gl.glTranslatef(photoWidth + PHOTO_GAP, 0, 0);
 		}
 		gl.glPopMatrix();
 	}
@@ -105,8 +107,8 @@ public abstract class PhotoViewer implements Config {
 		animStage = stage;
 	}
 	
-	private static final RectMesh newBlankTextureMesh() {
-		RectMesh ret = new RectMesh(0, 0, PHOTO_WIDTH, PHOTO_WIDTH, 1, 1, 1, 1);
+	private static final RectMesh newBlankTextureMesh(float photoWidth) {
+		RectMesh ret = new RectMesh(0, 0, photoWidth, photoWidth, 1, 1, 1, 1);
 		ret.setTextureCoordinates(RectMesh.texCoords.clone());
 		return ret;
 	}
