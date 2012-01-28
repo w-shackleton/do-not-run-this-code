@@ -1,6 +1,6 @@
 package uk.digitalsquid.contactrecall.misc;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
 import android.os.AsyncTask;
 
@@ -20,21 +20,26 @@ public class AsyncLoadBuffer<T> {
 	private static final int STAGE_DONE = 3;
 	private int stage = STAGE_READY;
 	
-	private final ConcurrentLinkedQueue<T> queue = new ConcurrentLinkedQueue<T>();
+	private final ConcurrentHashMap<Integer, T> queue = new ConcurrentHashMap<Integer, T>();
 	
 	/**
 	 * Gets the next element, waiting if necessary.
 	 * @return
 	 */
-	public synchronized T get() {
-		if(stage == STAGE_DONE || stage == STAGE_READY) return queue.poll();
+	public synchronized T get(int position) {
+		if(stage == STAGE_DONE || stage == STAGE_READY) return queue.get(position);
 		// else
-		while(queue.peek() == null) {
+		while(queue.get(position) == null) {
 			try {
 				Thread.sleep(40);
 			} catch (InterruptedException e) { }
 		}
-		return queue.poll();
+		T result = queue.get(position);
+		// Clear all entries below this one, position wise.
+		for(int elem : queue.keySet()) {
+			if(elem < position) queue.remove(elem);
+		}
+		return result;
 	}
 	
 	/**
@@ -101,16 +106,16 @@ public class AsyncLoadBuffer<T> {
 					count = windToPosition;
 					windToPosition = -1;
 				}
-				T elem = src.getElement(count++);
-				if(elem != null) queue.offer(elem);
-				else queue.offer(src.ifNull());
+				T elem = src.getElement(count);
+				if(elem != null) queue.put(count, elem);
+				else queue.put(count, elem);
+				count++;
 			}
 			return null;
 		}
 		
 		@Override
 		protected void onProgressUpdate(T... vals) {
-			queue.add(vals[0]);
 		}
 		
 		@Override

@@ -10,6 +10,7 @@ import uk.digitalsquid.contactrecall.mgr.Contact;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.Log;
 
 public class GameView extends DrawBaseView<ViewWorker> {
 
@@ -85,7 +86,7 @@ public class GameView extends DrawBaseView<ViewWorker> {
 		public void saveState(Bundle bundle) {
 			bundle.putLong("totalTimer", totalTimer);
 			bundle.putLong("currentTimer", currentTimer);
-			bundle.putInt("position", game.getProgress());
+			bundle.putInt("position", currentPosition);
 		}
 
 		@Override
@@ -133,7 +134,7 @@ public class GameView extends DrawBaseView<ViewWorker> {
 		protected void postcalculate(){}
 		
 		Contact current, next;
-		boolean currentIsEven = true;
+		int currentPosition = 0, nextPosition = 0;
 		
 		/**
 		 * Begin animation between questions.
@@ -141,8 +142,10 @@ public class GameView extends DrawBaseView<ViewWorker> {
 		void beginShowNextQuestion() {
 			if(next != null) {
 				current = next;
+				Log.i(TAG, "Current contact is " + current.getDisplayName());
+				currentPosition = nextPosition;
 				next = null;
-				if(game.getProgress() % 2 == 0) { // Even
+				if(currentPosition % 2 == 0) { // Even
 					 even.animateIn(null);
 					 odd.animateOut(new Runnable() {
 						@Override
@@ -177,6 +180,7 @@ public class GameView extends DrawBaseView<ViewWorker> {
 		 */
 		void loadNextContact() {
 			next = game.getNext();
+			nextPosition = game.getProgress();
 			if(next == null) {
 				onQuestionsFinishing();
 				return;

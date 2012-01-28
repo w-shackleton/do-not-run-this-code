@@ -2,3 +2,5 @@ bin/classes.dex
 bin/contact-recall.apk
 bin/resources.ap_
 bin/uk
+bin/classes
+bin/res

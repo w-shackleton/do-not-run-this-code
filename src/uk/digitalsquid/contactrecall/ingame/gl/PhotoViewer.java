@@ -85,8 +85,8 @@ public final class PhotoViewer implements Moveable, Config {
 	/**
 	 * When true, 0 = out and 1 = in. When false, 0 = in and 1 = out
 	 */
-	private boolean animatingIn = true;
-	private float animStage;
+	private boolean animatingIn = false;
+	private float animStage = 1;
 	
 	/**
 	 * if in is <code>true</code>, start to animate in. Otherwise, start to animate out.
@@ -114,12 +114,14 @@ public final class PhotoViewer implements Moveable, Config {
 			for(RectMesh photo : photos) {
 				photo.setXYZ((1-smoothStage) * ANIM_OUT_DISTANCE, 0, 0);
 				photo.setAlpha(smoothStage);
+				Log.i(TAG, "Alpha:  " + hashCode() + ", " + smoothStage);
 			}
 			
 		} else {
 			for(RectMesh photo : photos) {
 				photo.setXYZ(0, smoothStage * ANIM_OUT_DISTANCE, 0);
 				photo.setAlpha(1-smoothStage);
+				Log.i(TAG, "Alpha2: " + hashCode() + ", " + (1-smoothStage));
 			}
 		}
 	}

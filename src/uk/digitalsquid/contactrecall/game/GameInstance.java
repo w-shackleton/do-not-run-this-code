@@ -54,7 +54,7 @@ public abstract class GameInstance implements Config {
 	public abstract Object[] getToObjects();
 	
 	/**
-	 * Returns the current question.
+	 * Returns the current question's position in the queue
 	 * @return
 	 */
 	public int getProgress() {

@@ -75,7 +75,6 @@ public class PhotoManager implements Config {
 		while(cur.moveToNext()) {
 			byte[] data = cur.getBlob(photoCol);
 			if(data == null) continue;
-			cur.close();
 			ret.add(BitmapFactory.decodeByteArray(data, 0, data.length));
 		}
 		cur.close();
