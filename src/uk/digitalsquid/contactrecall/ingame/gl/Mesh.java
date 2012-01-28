@@ -134,8 +134,8 @@ public class Mesh {
 		gl.glRotatef(rz, 0, 0, 1);
 
 		// Point out the where the color buffer is.
-		gl.glDrawElements(drawMode, numOfIndices,
-				GL10.GL_UNSIGNED_SHORT, indicesBuffer);
+		gl.glDrawElements(drawMode, numOfIndices, GL10.GL_UNSIGNED_SHORT, indicesBuffer);
+		// gl.glDrawArrays(drawMode, 0, numOfIndices);
 		// Disable the vertices buffer.
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 
@@ -261,7 +261,7 @@ public class Mesh {
 	 * Sets a custom texture ID (not one through textureManager)
 	 * @param texId
 	 */
-	protected final void setTextureId(int texId) {
+	public final void setTextureId(int texId) {
 		textureId = texId;
 	}
 	

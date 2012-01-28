@@ -6,6 +6,9 @@ import uk.digitalsquid.contactrecall.game.GameDescriptor;
 import uk.digitalsquid.contactrecall.game.GameInstance;
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.Toast;
 
 /**
@@ -13,7 +16,7 @@ import android.widget.Toast;
  * @author william
  *
  */
-public class Game extends Activity {
+public class Game extends Activity implements GameCallbacks, OnClickListener {
 	
 	public static final String GAME_DESRIPTOR = "uk.digitalsquid.contactrecall.gameInstance";
 	
@@ -24,11 +27,20 @@ public class Game extends Activity {
 	
 	private GameView view;
 	
+	private ViewGroup pauseMenu;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.game);
 		view = (GameView) findViewById(R.id.gameView);
+		view.setGameCallbacks(this);
+		pauseMenu = (ViewGroup) findViewById(R.id.pauseGameView);
+		pauseMenu.setVisibility(View.GONE);
+		
+		findViewById(R.id.resume).setOnClickListener(this);
+		findViewById(R.id.leave).setOnClickListener(this);
+		
 		app = (App) getApplication();
 		if(savedInstanceState != null && savedInstanceState.getBoolean("gameStarted", false)) {
 			gameDesc = savedInstanceState.getParcelable("gameDesc");
@@ -76,5 +88,43 @@ public class Game extends Activity {
 		out.putParcelable("gameDesc", gameDesc);
 		out.putBoolean("gameStarted", true);
 		view.saveState(out);
+	}
+
+	@Override
+	public void onGamePaused() {
+		pauseMenu.setVisibility(View.VISIBLE);
+	}
+
+	@Override
+	public void onGameResumed() {
+		pauseMenu.setVisibility(View.GONE);
+	}
+
+	@Override
+	public void onGameCancelled() {
+		finish();
+	}
+	
+	@Override
+	public void onBackPressed() {
+		if(view.isRunning())
+			view.pause();
+		else
+			view.resume();
+	}
+
+	/**
+	 * Button presses.
+	 */
+	@Override
+	public void onClick(View v) {
+		switch(v.getId()) {
+		case R.id.resume:
+			view.resume();
+			break;
+		case R.id.leave:
+			view.cancelGame();
+			break;
+		}
 	}
 }

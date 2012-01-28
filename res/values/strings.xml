@@ -12,4 +12,6 @@
     <string name="selectMode">Select a mode</string>
     <string name="mode_nameGuess">Picture -&gt; names</string>
     <string name="start">Start</string>
+    <string name="resume">Resume</string>
+    <string name="back">Leave game</string>
 </resources>

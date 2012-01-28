@@ -1,4 +1,4 @@
-package uk.digitalsquid.contactrecall.ingame.gl;
+package uk.digitalsquid.contactrecall.ingame.gl.photos;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -6,7 +6,8 @@ import java.util.List;
 import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.contactrecall.game.PhotoToNameGame.Images;
-import uk.digitalsquid.contactrecall.misc.Animator;
+import uk.digitalsquid.contactrecall.ingame.gl.RectMesh;
+import uk.digitalsquid.contactrecall.ingame.gl.TextureManager;
 import uk.digitalsquid.contactrecall.misc.Config;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -16,7 +17,7 @@ import android.util.Log;
  * @author william
  *
  */
-public final class PhotoViewer implements Moveable, Config {
+public abstract class PhotoViewer implements Config {
 	public static final float PHOTO_WIDTH = 9f;
 	public static final float PHOTO_GAP = .5f;
 	
@@ -74,7 +75,9 @@ public final class PhotoViewer implements Moveable, Config {
 	public void draw(GL10 gl) {
 		gl.glPushMatrix();
 		gl.glTranslatef(x, y, z);
-		gl.glRotatef(10, 0, 1, 0);
+		gl.glRotatef(rx, 1, 0, 0);
+		gl.glRotatef(ry, 0, 1, 0);
+		gl.glRotatef(rz, 0, 0, 1);
 		for(RectMesh mesh : photos) {
 			mesh.draw(gl);
 			gl.glTranslatef(PHOTO_WIDTH + PHOTO_GAP, 0, 0);
@@ -83,10 +86,11 @@ public final class PhotoViewer implements Moveable, Config {
 	}
 	
 	/**
-	 * When true, 0 = out and 1 = in. When false, 0 = in and 1 = out
+	 * When true, 0 = out and 1 = in. When false, 0 = in and 1 = out.
+	 * Note that although PhotoViewer defines the animations, it is up to the implementation to actually do any animating.
 	 */
-	private boolean animatingIn = false;
-	private float animStage = 1;
+	protected boolean animatingIn = false;
+	protected float animStage = 1;
 	
 	/**
 	 * if in is <code>true</code>, start to animate in. Otherwise, start to animate out.
@@ -106,31 +110,25 @@ public final class PhotoViewer implements Moveable, Config {
 		ret.setTextureCoordinates(RectMesh.texCoords.clone());
 		return ret;
 	}
-
-	@Override
-	public void move(float millis) {
-		float smoothStage = Animator.anim1d(Animator.TYPE_SINE, animStage);
-		if(animatingIn) {
-			for(RectMesh photo : photos) {
-				photo.setXYZ((1-smoothStage) * ANIM_OUT_DISTANCE, 0, 0);
-				photo.setAlpha(smoothStage);
-				Log.i(TAG, "Alpha:  " + hashCode() + ", " + smoothStage);
-			}
-			
-		} else {
-			for(RectMesh photo : photos) {
-				photo.setXYZ(0, smoothStage * ANIM_OUT_DISTANCE, 0);
-				photo.setAlpha(1-smoothStage);
-				Log.i(TAG, "Alpha2: " + hashCode() + ", " + (1-smoothStage));
-			}
-		}
-	}
 	
 	private float x, y, z;
+	private float rx, ry, rz;
 	
 	public void setXYZ(float x, float y, float z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+	}
+	
+	/**
+	 * Sets the X, Y, Z rotations in DEGREES
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
+	public void setRXYZ(float rx, float ry, float rz) {
+		this.rx = rx;
+		this.ry = ry;
+		this.rz = rz;
 	}
 }

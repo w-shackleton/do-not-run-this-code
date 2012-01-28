@@ -6,6 +6,7 @@ import uk.digitalsquid.contactrecall.game.GameInstance;
 import uk.digitalsquid.contactrecall.ingame.GameView.ViewWorker;
 import uk.digitalsquid.contactrecall.ingame.gl.QAViewer;
 import uk.digitalsquid.contactrecall.ingame.gl.RectMesh;
+import uk.digitalsquid.contactrecall.ingame.gl.objects.Timer;
 import uk.digitalsquid.contactrecall.mgr.Contact;
 import android.content.Context;
 import android.os.Bundle;
@@ -22,6 +23,13 @@ public class GameView extends DrawBaseView<ViewWorker> {
 	@Override
 	protected ViewWorker createThread() {
 		return new ViewWorker(context);
+	}
+	
+	GameCallbacks gameCallbacks = GameCallbacks.EMPTY_CALLBACKS;
+
+	void setGameCallbacks(GameCallbacks gameCallbacks) {
+		this.gameCallbacks = gameCallbacks;
+		if(this.gameCallbacks == null) this.gameCallbacks = GameCallbacks.EMPTY_CALLBACKS;
 	}
 
 	public static class ViewWorker extends DrawBaseView.ViewWorker {
@@ -41,6 +49,11 @@ public class GameView extends DrawBaseView<ViewWorker> {
 		
 		long timeDiffNano;
 		float timeDiff;
+		
+		/**
+		 * The amount of time allowed per question, in nanoseconds
+		 */
+		long questionTimeAllowance = 4000L * 1000000L;
 		
 		static final int STATUS_SHOWING = 1;
 		static final int STATUS_CHANGING = 2;
@@ -65,6 +78,12 @@ public class GameView extends DrawBaseView<ViewWorker> {
 		protected void onSizeChanged(float width, float height) {
 			even.setOrientation(landscape, width, height);
 			odd.setOrientation(landscape, width, height);
+			
+			// Top right
+			timeDisplay.setXYZ(
+					width / 2 - 3,
+					height / 2 - 3,
+					0);
 		}
 
 		@Override
@@ -98,12 +117,14 @@ public class GameView extends DrawBaseView<ViewWorker> {
 		}
 		
 		QAViewer odd = new QAViewer(), even = new QAViewer(); // 2 required due to fade in/out
+		Timer timeDisplay = new Timer(0, 0, 2, 2);
 		
 		@Override
 		protected void draw(GL10 gl){
 			if(pointerPos != null) pointerPos.draw(gl);
 			odd.draw(gl);
 			even.draw(gl);
+			timeDisplay.draw(gl);
 		}
 		
 		long oldTime = -1;
@@ -124,8 +145,11 @@ public class GameView extends DrawBaseView<ViewWorker> {
 			even.move(timeDiff);
 			odd.move(timeDiff);
 			
+			// Update onscreen timer
+			timeDisplay.setProgress((float)currentTimer / (float)questionTimeAllowance);
+			
 			//TODO: Implement this properly!
-			if(currentTimer / 1000000 > 4000) {
+			if(currentTimer > questionTimeAllowance) {
 				currentTimer = 0;
 				beginShowNextQuestion();
 			}
@@ -228,9 +252,22 @@ public class GameView extends DrawBaseView<ViewWorker> {
 	
 	public void pause() {
 		thread.running = false;
+		setRenderMode(RENDERMODE_WHEN_DIRTY); // Save a bit of CPU
+		gameCallbacks.onGamePaused();
 	}
 	
 	public void resume() {
 		thread.running = true;
+		thread.oldTime = -1; // So we don't get a big time jump
+		setRenderMode(RENDERMODE_CONTINUOUSLY);
+		gameCallbacks.onGameResumed();
+	}
+	
+	public void cancelGame() {
+		gameCallbacks.onGameCancelled();
+	}
+	
+	public boolean isRunning() {
+		return thread.running;
 	}
 }

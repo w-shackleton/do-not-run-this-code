@@ -3,7 +3,7 @@ package uk.digitalsquid.contactrecall.ingame.gl;
 public class RectMesh extends Mesh {
 	
 	protected static final short[] indices = {0, 1, 2, 1, 3, 2};
-	protected static final float[] texCoords = 
+	public static final float[] texCoords = 
 					{0.0f, 1.0f,
 	                1.0f, 1.0f,
                     0.0f, 0.0f,

@@ -4,6 +4,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.contactrecall.game.GameInstance;
 import uk.digitalsquid.contactrecall.game.PhotoToNameGame.Images;
+import uk.digitalsquid.contactrecall.ingame.gl.photos.PhotoQuestion;
 
 /**
  * Shows a question on the screen. Detects the type of question.
@@ -11,7 +12,7 @@ import uk.digitalsquid.contactrecall.game.PhotoToNameGame.Images;
  *
  */
 public class QAViewer implements Moveable {
-	PhotoViewer photoQuestion;
+	PhotoQuestion photoQuestion;
 	
 	static final int ANIM_STATE_HIDDEN = 1;
 	static final int ANIM_STATE_ENTERING = 2;
@@ -50,7 +51,7 @@ public class QAViewer implements Moveable {
 	public void setQuestion(int mode, Object question) {
 		switch(mode) {
 		case GameInstance.FROM_PHOTO:
-			if(photoQuestion == null) photoQuestion = new PhotoViewer();
+			if(photoQuestion == null) photoQuestion = new PhotoQuestion();
 			photoQuestion.setBitmaps((Images) question);
 			// TODO: Set other q types to null to stop multiple drawing,
 			break;
