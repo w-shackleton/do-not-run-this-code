@@ -14,7 +14,12 @@ public class Text extends RectMesh {
 	
 	private boolean needsUpdating = false;
 	
+	/**
+	 * The total width of the text, computed during text bmp update.
+	 */
+	private float totalWidth;
 	private float height;
+	private float gravity;
 
 	/**
 	 * 
@@ -27,8 +32,8 @@ public class Text extends RectMesh {
 	 * @param b |
 	 * @param a |
 	 */
-	public Text(String text, float x, float y, float height, int r, int g, int b, int a) {
-		super(x, y, 128, height, -.5f, 0, r, g, b, a);
+	public Text(String text, float x, float y, float height, float r, float g, float b, float a) {
+		super(x, y, 128, height, r, g, b, a);
 		this.height = height;
 		setText(text);
 	}
@@ -45,7 +50,15 @@ public class Text extends RectMesh {
 	public String getText() {
 		return text;
 	}
-
+	
+	/**
+	 * Gets the text's total width. Takes one draw for this to get updated.
+	 * @return
+	 */
+	public float getWidth() {
+		return totalWidth;
+	}
+	
 	private void updateLetters(GL10 gl) {
 		letters.clear();
 		
@@ -55,15 +68,18 @@ public class Text extends RectMesh {
 		
 		for(char letter : l) {
 			Letter tmpLetter = TextureManager.getText128Texture(gl, letter);
-			RectMesh tmpMesh = new RectMesh(width, 0, height, height, 0, 0, 1, 1, 1, 1); // Height twice here to draw square - font bmps are all square.
+			final float offset = tmpLetter.offset / TextureManager.TEXT_WIDTH * height;
+			RectMesh tmpMesh = new RectMesh(width - offset, 0, height, height, .5f, 0, 1, 1, 1, 1); // Height twice here to draw square - font bmps are all square.
 			tmpMesh.setTextureId(tmpLetter.id);
-			tmpMesh.setTextureCoordinates(texCoords.clone());
+			tmpMesh.setTextureCoordinates(texCoords);
 			letters.add(tmpMesh);
 			
-			width += tmpLetter.width * height / TextureManager.TEXT_WIDTH;
+			width += tmpLetter.width / TextureManager.TEXT_WIDTH * height;
 		}
 		
-		setWH(width, height, -.5f, 0);
+		totalWidth = width;
+		
+		setWH(width, height);
 	}
 	
 	@Override
@@ -75,8 +91,22 @@ public class Text extends RectMesh {
 			updateLetters(gl);
 		}
 		
+		gl.glPushMatrix();
+		// Centre text according to gravity
+		gl.glTranslatef(-totalWidth * gravity, 0, 0);
+		
 		for(RectMesh mesh : letters) {
 			mesh.draw(gl);
 		}
+		gl.glPopMatrix();
+	}
+
+	/**
+	 * Sets the 'gravity' of the text, where 0f is with the left axis aligned to the centre,
+	 * and 1f is the right side
+	 * @param gravity
+	 */
+	public void setGravity(float gravity) {
+		this.gravity = gravity;
 	}
 }

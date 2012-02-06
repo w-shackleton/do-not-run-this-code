@@ -236,6 +236,11 @@ public class TextureManager {
 		return textures[0];
 	}
 	
+	/**
+	 * The amount into each tex that the letter is drawn, to catch any LHS flicks / serifs
+	 */
+	private static final float TEXT_OFFSET = 10;
+	
 	public static final Letter getText128Texture(GL10 gl, char letter) {
 		if(!initialised) throw new IllegalStateException("Texture Manager not initialised");
 		
@@ -271,10 +276,10 @@ public class TextureManager {
 		Bitmap bmp = Bitmap.createBitmap(TEXT_WIDTH, TEXT_HEIGHT, Bitmap.Config.ARGB_8888);
 		Canvas c = new Canvas(bmp);
 		c.drawColor(0x00FFFFFF);
-		c.drawText("" + letter, 10, 105, txtPaint);
+		c.drawText("" + letter, TEXT_OFFSET, 105, txtPaint);
 		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bmp, 0);
 		
-		Letter ret = new Letter(textures[0], width);
+		Letter ret = new Letter(textures[0], width, TEXT_OFFSET);
 		letters.put(letter, ret);
 		
 		return ret;
@@ -283,10 +288,12 @@ public class TextureManager {
 	public static final class Letter {
 		public final int id;
 		public final float width;
+		public final float offset;
 		
-		public Letter(int id, float width) {
+		public Letter(int id, float width, float offset) {
 			this.id = id;
 			this.width = width;
+			this.offset = offset;
 		}
 	}
 }

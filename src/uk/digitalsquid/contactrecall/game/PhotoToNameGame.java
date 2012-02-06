@@ -100,7 +100,7 @@ public class PhotoToNameGame extends GameInstance {
 		
 		public final int contactId;
 		
-		int bitmapSize = 512;
+		static final int bitmapSize = 512;
 		
 		private static final Paint PAINT = new Paint();
 		static {

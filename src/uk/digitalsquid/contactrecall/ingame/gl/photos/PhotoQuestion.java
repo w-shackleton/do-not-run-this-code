@@ -1,8 +1,12 @@
 package uk.digitalsquid.contactrecall.ingame.gl.photos;
 
+import java.util.Random;
+
+import uk.digitalsquid.contactrecall.game.PhotoToNameGame.Images;
 import uk.digitalsquid.contactrecall.ingame.gl.Moveable;
 import uk.digitalsquid.contactrecall.ingame.gl.RectMesh;
 import uk.digitalsquid.contactrecall.misc.Animator;
+import android.graphics.Bitmap;
 
 /**
  * A question which is a (set?) of photos of a single person.
@@ -15,6 +19,19 @@ public class PhotoQuestion extends PhotoViewer implements Moveable {
 	public PhotoQuestion() {
 		super(PHOTO_WIDTH);
 		setRXYZ(0, 10, 0);
+	}
+	
+	private static final Random RANDOM = new Random();
+	
+	/**
+	 * Overloaded version of bitmap setter which only keeps one image for this question - this behaviour might not be used for answers
+	 */
+	@Override
+	public void setBitmaps(Images bmps) {
+		Bitmap singleImg = bmps.images.get(RANDOM.nextInt(bmps.images.size()));
+		bmps.images.clear();
+		bmps.images.add(singleImg);
+		super.setBitmaps(bmps);
 	}
 
 	@Override

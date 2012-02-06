@@ -120,7 +120,7 @@ public class GameView extends DrawBaseView<ViewWorker> {
 		QAViewer odd = new QAViewer(), even = new QAViewer(); // 2 required due to fade in/out
 		Timer timeDisplay = new Timer(0, 0, 2, 2);
 		
-		NameViewer tmpName = new NameViewer(2);
+		NameViewer tmpName = new NameViewer(3);
 		
 		@Override
 		protected void draw(GL10 gl){
