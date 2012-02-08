@@ -6,6 +6,7 @@ import java.util.List;
 import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.contactrecall.game.PhotoToNameGame.Images;
+import uk.digitalsquid.contactrecall.ingame.gl.Positionable;
 import uk.digitalsquid.contactrecall.ingame.gl.RectMesh;
 import uk.digitalsquid.contactrecall.ingame.gl.TextureManager;
 import uk.digitalsquid.contactrecall.misc.Config;
@@ -17,7 +18,7 @@ import android.util.Log;
  * @author william
  *
  */
-public abstract class PhotoViewer implements Config {
+public abstract class PhotoViewer implements Config, Positionable {
 	public static final float PHOTO_GAP = .5f;
 	
 	public static final float ANIM_OUT_DISTANCE = -10f; // Down
@@ -132,5 +133,14 @@ public abstract class PhotoViewer implements Config {
 		this.rx = rx;
 		this.ry = ry;
 		this.rz = rz;
+	}
+	
+	public float getWidth() {
+		return photoWidth;
+	}
+	
+	public float getHeight() {
+		// Square shape
+		return photoWidth;
 	}
 }

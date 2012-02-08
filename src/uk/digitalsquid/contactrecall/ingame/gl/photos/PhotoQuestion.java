@@ -7,6 +7,7 @@ import uk.digitalsquid.contactrecall.ingame.gl.Moveable;
 import uk.digitalsquid.contactrecall.ingame.gl.RectMesh;
 import uk.digitalsquid.contactrecall.misc.Animator;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 /**
  * A question which is a (set?) of photos of a single person.
@@ -42,12 +43,13 @@ public class PhotoQuestion extends PhotoViewer implements Moveable {
 				photo.setXYZ((1-smoothStage) * ANIM_OUT_DISTANCE, 0, 0);
 				photo.setAlpha(smoothStage);
 			}
-			
+			Log.v(TAG, "IN2: " + animStage);
 		} else {
 			for(RectMesh photo : photos) {
 				photo.setXYZ(0, smoothStage * ANIM_OUT_DISTANCE, 0);
 				photo.setAlpha(1-smoothStage);
 			}
+			Log.v(TAG, "OUT2: " + animStage);
 		}
 	}
 }

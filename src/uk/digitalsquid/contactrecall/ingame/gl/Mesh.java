@@ -35,7 +35,7 @@ public class Mesh {
 	private int numOfIndices = -1;
 
 	// Flat Color
-	private final float[] mRGBA = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
+	private final float[] rgba = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	// Translate params.
 	private float x = 0;
@@ -115,7 +115,7 @@ public class Mesh {
 		gl.glEnable(GL10.GL_BLEND); // Only if alpha present?
 	    gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 	    
-		gl.glColor4f(mRGBA[0], mRGBA[1], mRGBA[2], mRGBA[3]);
+		gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
 		
 		if(resId != -1 && textureId == -1) textureId = TextureManager.getTexture(gl, resId, repeating);
 
@@ -224,23 +224,27 @@ public class Mesh {
 	 * @param blue
 	 * @param alpha
 	 */
-	protected final void setColour(float red, float green, float blue, float alpha) {
-		mRGBA[0] = red;
-		mRGBA[1] = green;
-		mRGBA[2] = blue;
-		mRGBA[3] = alpha;
+	protected void setColour(float red, float green, float blue, float alpha) {
+		rgba[0] = red;
+		rgba[1] = green;
+		rgba[2] = blue;
+		rgba[3] = alpha;
+	}
+	
+	protected float[] getColour() {
+		return rgba;
 	}
 	
 	/**
 	 * Sets the alpha, between 0 and 1
 	 * @param alpha
 	 */
-	public final void setAlpha(float alpha) {
-		mRGBA[3] = alpha;
+	public void setAlpha(float alpha) {
+		rgba[3] = alpha;
 	}
 	
 	public final float getAlpha() {
-		return mRGBA[3];
+		return rgba[3];
 	}
 	
 	public final void setRotation(float rotation) {

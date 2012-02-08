@@ -1,7 +1,9 @@
 package uk.digitalsquid.contactrecall.game;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.mgr.Contact;
@@ -52,11 +54,17 @@ public class PhotoToNameGame extends GameInstance {
 		if(bmp == null) Log.e(TAG, "Null bitmap!");
 		return bmp;
 	}
+	
+	private static final Random rand = new Random(42); // Same seed to get same results for testing
 
 	@Override
-	public Object[] getToObjects() {
+	public List<Object> getToObjects() {
 		// TODO: Implement
-		return new String[] {"111", "222", "333", "444" };
+		List<Object> ret = new ArrayList<Object>();
+		for(int i = 0; i < 4; i++) {
+			ret.add(String.valueOf(rand.nextInt(1000)));
+		}
+		return ret;
 	}
 	
 	@Override

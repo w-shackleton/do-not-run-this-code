@@ -6,6 +6,11 @@ import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.contactrecall.ingame.gl.TextureManager.Letter;
 
+/**
+ * Draws Android-rendered text to a GL
+ * @author william
+ *
+ */
 public class Text extends RectMesh {
 	
 	private String text;
@@ -45,6 +50,7 @@ public class Text extends RectMesh {
 	public void setText(String text) {
 		this.text = text;
 		needsUpdating = true;
+		totalWidth = TextureManager.getText128Width(text);
 	}
 
 	public String getText() {
@@ -52,7 +58,7 @@ public class Text extends RectMesh {
 	}
 	
 	/**
-	 * Gets the text's total width. Takes one draw for this to get updated.
+	 * Gets the text's total width.
 	 * @return
 	 */
 	public float getWidth() {
@@ -66,12 +72,17 @@ public class Text extends RectMesh {
 		
 		float width = 0;
 		
+		float[] rgba = getColour();
+		
 		for(char letter : l) {
 			Letter tmpLetter = TextureManager.getText128Texture(gl, letter);
 			final float offset = tmpLetter.offset / TextureManager.TEXT_WIDTH * height;
 			RectMesh tmpMesh = new RectMesh(width - offset, 0, height, height, .5f, 0, 1, 1, 1, 1); // Height twice here to draw square - font bmps are all square.
 			tmpMesh.setTextureId(tmpLetter.id);
 			tmpMesh.setTextureCoordinates(texCoords);
+			tmpMesh.setColour(
+					rgba[0], rgba[1],
+					rgba[2], rgba[3]);
 			letters.add(tmpMesh);
 			
 			width += tmpLetter.width / TextureManager.TEXT_WIDTH * height;
@@ -108,5 +119,34 @@ public class Text extends RectMesh {
 	 */
 	public void setGravity(float gravity) {
 		this.gravity = gravity;
+	}
+
+	/**
+	 * Set one flat color on the text.
+	 * 
+	 * @param red
+	 * @param green
+	 * @param blue
+	 * @param alpha
+	 */
+	@Override
+	protected void setColour(float red, float green, float blue, float alpha) {
+		super.setColour(red, green, blue, alpha);
+		if(letters != null)
+			for(Mesh m : letters) {
+				m.setColour( red, green, blue, alpha);
+			}
+	}
+	
+	/**
+	 * Sets the alpha, between 0 and 1
+	 * @param alpha
+	 */
+	public void setAlpha(float alpha) {
+		super.setAlpha(alpha);
+		if(letters != null)
+			for(Mesh m : letters) {
+				m.setAlpha(alpha);
+			}
 	}
 }

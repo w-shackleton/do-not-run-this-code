@@ -33,9 +33,9 @@ public abstract class GameInstance implements Config {
 	}
 	
 	// Various different modes
-	public static final int FROM_PHOTO = 0;
+	public static final int FROM_PHOTO = 1;
 	
-	public static final int TO_NAME = 0;
+	public static final int TO_NAME = 1;
 	
 	public abstract int getFromMode();
 	public abstract int getToMode();
@@ -51,7 +51,7 @@ public abstract class GameInstance implements Config {
 	 * Calls will be made only once per contact.
 	 * @return
 	 */
-	public abstract Object[] getToObjects();
+	public abstract List<Object> getToObjects();
 	
 	/**
 	 * Returns the current question's position in the queue

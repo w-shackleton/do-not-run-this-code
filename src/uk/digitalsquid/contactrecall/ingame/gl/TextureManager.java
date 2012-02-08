@@ -241,6 +241,15 @@ public class TextureManager {
 	 */
 	private static final float TEXT_OFFSET = 10;
 	
+	/**
+	 * Computes the width of text as it would be if created using <code>getText128Texture</code>.
+	 * @param text
+	 * @return
+	 */
+	public static final float getText128Width(String text) {
+		return txtPaint.measureText(text);
+	}
+	
 	public static final Letter getText128Texture(GL10 gl, char letter) {
 		if(!initialised) throw new IllegalStateException("Texture Manager not initialised");
 		
