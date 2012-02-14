@@ -32,6 +32,14 @@ public abstract class GameInstance implements Config {
 		}
 	}
 	
+	/**
+	 * Gets the current question contact.
+	 * @return
+	 */
+	public Contact getCurrent() {
+		return getQuestions().get(progress);
+	}
+	
 	// Various different modes
 	public static final int FROM_PHOTO = 1;
 	

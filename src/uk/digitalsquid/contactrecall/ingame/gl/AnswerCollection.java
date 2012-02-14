@@ -17,6 +17,7 @@ public class AnswerCollection<T extends Positionable> extends ArrayList<T> {
 	
 	/**
 	 * Amount of padding on each answer.
+	 * TODO: Use this?
 	 */
 	static final float ANSWER_PADDING = 1;
 	

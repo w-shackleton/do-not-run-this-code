@@ -1,9 +1,15 @@
 package uk.digitalsquid.contactrecall.mgr;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 
 import android.graphics.Bitmap;
 
+/**
+ * Represents the basic info about a contact in the phone's database.
+ * @author william
+ *
+ */
 public class Contact {
 	private int id;
 	
@@ -54,7 +60,7 @@ public class Contact {
 	}
 	
 	/**
-	 * Loads the photo from the given manager. Returns the nth one.
+	 * Loads the photo from the given manager. Returns all photos.
 	 */
 	public LinkedList<Bitmap> getPhotos(PhotoManager mgr) {
 		return mgr.getContactPictures(id);
@@ -64,4 +70,18 @@ public class Contact {
 	public String toString() {
 		return displayName;
 	}
+	
+	@Override
+	public boolean equals(Object c2) {
+		if(c2 instanceof Contact)
+			return ((Contact) c2).getId() == getId();
+		return false;
+	}
+	
+	public static final Comparator<Contact> CONTACT_NAME_COMPARATOR = new Comparator<Contact>() {
+		@Override
+		public int compare(Contact lhs, Contact rhs) {
+			return lhs.getDisplayName().compareToIgnoreCase(rhs.getDisplayName());
+		}
+	};
 }

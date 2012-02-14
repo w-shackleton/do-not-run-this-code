@@ -1,0 +1,98 @@
+package uk.digitalsquid.contactrecall.misc;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+/**
+ * Static utilities for transforming lists.
+ * @author william
+ *
+ */
+public final class ListUtils {
+	private ListUtils() {}
+	
+	/**
+	 * Selects <code>num</code> random elements from the given list.
+	 * @param from
+	 * @param num
+	 * @return
+	 */
+	public static <T> ArrayList<T> selectRandomSet(List<T> from, int num) {
+		if(num < 0) return new ArrayList<T>();
+		if(num > from.size()) return new ArrayList<T>(from);
+		
+		final ArrayList<T> ret = new ArrayList<T>();
+		final int size = from.size();
+		
+		/**
+		 * Insert a bunch of random elements
+		 */
+		for(int i = 0; i < num; i++) {
+			ret.add(from.get(Const.RAND.nextInt(size)));
+		}
+		
+		return ret;
+	}
+	
+	/**
+	 * Selects <code>num</code> random elements from the given list, making sure that none are the given variable <code>excluding</code>,
+	 * and that no two elements are the same.
+	 * @param from
+	 * @param num
+	 * @return
+	 */
+	public static <T> ArrayList<T> selectRandomExclusiveDistinctSet(List<T> from, final Comparator<T> comp, final T excluding, final int num) {
+		if(num < 0) return new ArrayList<T>();
+		if(num > from.size()) return new ArrayList<T>(from);
+		
+		final ArrayList<T> ret = new ArrayList<T>();
+		final int size = from.size();
+		
+		// FIXME / TODO: Could 2 contacts have the same name in Android? It usually combines them.
+		
+		// Is this necessary, considering the duplicate test below? It may reduce the test below's chance of being used.
+		final int[] choices = generateRandomDistinctNumbers(size, num);
+		
+		for(int i = 0; i < num; i++) {
+			final T elem = from.get(choices[i]);
+			boolean ok = true;
+			for(int t = 0; t < i; t++) { // t is the iterator for checking for duplicates
+				if(comp.compare(elem, ret.get(t)) == 0 ||
+						comp.compare(elem, excluding) == 0) { // Check if already added / is excluded one.
+					// Try again, but don't decrease i. This could cause a loop in some rare cases. Just have 1 too less this time.
+					ok = false;
+					break;
+				}
+			}
+			if(ok) ret.add(elem);
+		}
+		return ret;
+	}
+	
+	/**
+	 * Generates a random set of distinct ints between [0,max). If max &lt; count then some are repeated.
+	 * @param max
+	 * @param count
+	 * @return
+	 */
+	public static int[] generateRandomDistinctNumbers(int max, int count) {
+		int[] ret = new int[count];
+		if(max < count) { // Not possible, must have some duplicates.
+			for(int i = 0; i < count; i++) {
+				ret[i] = Const.RAND.nextInt(max);
+			}
+		} else {
+			for(int i = 0; i < count; i++) {
+				ret[i] = Const.RAND.nextInt(max);
+				for(int t = 0; t < i; t++) { // Iterate through checking
+					if(ret[t] == ret[i]) {
+						i--; // Try again
+						break;
+					}
+				}
+			}
+		}
+		return ret;
+	}
+}

@@ -210,7 +210,6 @@ public class GameView extends DrawBaseView<ViewWorker> {
 				return;
 			}
 			if(game.getProgress() % 2 == 0) { // Even
-				// (IGNORE?) Next, so load into ODD buffer
 				even.setQuestion(game.getFromMode(), game.getFromObject());
 				even.setAnswer(game.getToMode(), game.getToObjects());
 			} else {

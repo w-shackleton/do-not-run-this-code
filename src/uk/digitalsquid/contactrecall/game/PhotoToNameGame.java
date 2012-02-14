@@ -3,13 +3,14 @@ package uk.digitalsquid.contactrecall.game;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.mgr.Contact;
 import uk.digitalsquid.contactrecall.mgr.PhotoManager;
 import uk.digitalsquid.contactrecall.misc.AsyncLoadBuffer;
 import uk.digitalsquid.contactrecall.misc.AsyncLoadBuffer.Source;
+import uk.digitalsquid.contactrecall.misc.Const;
+import uk.digitalsquid.contactrecall.misc.ListUtils;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -55,15 +56,31 @@ public class PhotoToNameGame extends GameInstance {
 		return bmp;
 	}
 	
-	private static final Random rand = new Random(42); // Same seed to get same results for testing
-
 	@Override
 	public List<Object> getToObjects() {
-		// TODO: Implement
+		// TODO: Return correct choice here as well.
+		List<Contact> choices = getChoices(getCurrent(), 4); // TODO: Change number available
 		List<Object> ret = new ArrayList<Object>();
-		for(int i = 0; i < 4; i++) {
-			ret.add(String.valueOf(rand.nextInt(1000)));
+		
+		for(Contact c : choices) {
+			ret.add(c.getDisplayName());
 		}
+		
+		return ret;
+	}
+	
+	/**
+	 * Gets a random set of answer choices including the correct one.
+	 * @param correctChoice
+	 * @param number
+	 * @return
+	 */
+	private List<Contact> getChoices(Contact correctChoice, int number) {
+		ArrayList<Contact> ret =
+				ListUtils.selectRandomExclusiveDistinctSet(
+						app.getContacts().getContacts(), Contact.CONTACT_NAME_COMPARATOR, correctChoice, number - 1);
+		ret.add(Const.RAND.nextInt(ret.size()+1), correctChoice);
+		assert ret.size() == number;
 		return ret;
 	}
 	
