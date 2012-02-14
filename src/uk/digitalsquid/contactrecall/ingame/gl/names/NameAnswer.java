@@ -2,7 +2,6 @@ package uk.digitalsquid.contactrecall.ingame.gl.names;
 
 import uk.digitalsquid.contactrecall.ingame.gl.Moveable;
 import uk.digitalsquid.contactrecall.misc.Animator;
-import android.util.Log;
 
 /**
  * Displays a name as an answer.
@@ -26,12 +25,10 @@ public class NameAnswer extends NameViewer implements Moveable {
 		if(animatingIn) {
 			// display.setXYZ((1-smoothStage) * ANIM_OUT_DISTANCE, 0, 0);
 			display.setAlpha(smoothStage);
-			Log.v(TAG, "IN: " + animStage);
 			
 		} else {
 			// display.setXYZ(0, smoothStage * ANIM_OUT_DISTANCE, 0);
 			display.setAlpha(1-smoothStage);
-			Log.v(TAG, "OUT: " + animStage);
 		}
 	}
 

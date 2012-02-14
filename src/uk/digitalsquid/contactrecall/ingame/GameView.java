@@ -215,7 +215,7 @@ public class GameView extends DrawBaseView<ViewWorker> {
 				even.setAnswer(game.getToMode(), game.getToObjects());
 			} else {
 				odd.setQuestion(game.getFromMode(), game.getFromObject());
-				even.setAnswer(game.getToMode(), game.getToObjects());
+				odd.setAnswer(game.getToMode(), game.getToObjects());
 			}
 		}
 		

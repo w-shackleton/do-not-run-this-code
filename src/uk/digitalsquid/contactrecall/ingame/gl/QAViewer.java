@@ -8,13 +8,14 @@ import uk.digitalsquid.contactrecall.game.GameInstance;
 import uk.digitalsquid.contactrecall.game.PhotoToNameGame.Images;
 import uk.digitalsquid.contactrecall.ingame.gl.names.NameAnswer;
 import uk.digitalsquid.contactrecall.ingame.gl.photos.PhotoQuestion;
+import uk.digitalsquid.contactrecall.misc.Config;
 
 /**
  * Shows a question on the screen. Detects the type of question.
  * @author william
  *
  */
-public class QAViewer implements Moveable {
+public class QAViewer implements Config, Moveable {
 	
 	PhotoQuestion photoQuestion;
 	
@@ -47,6 +48,9 @@ public class QAViewer implements Moveable {
 		this.landscape = landscape;
 		this.width = width;
 		this.height = height;
+		
+		// Reposition onscreen on size change
+		if(nameAnswers != null) nameAnswers.repositionAnswers(0, -height / 2 + 10, width - 4, 20);
 	}
 	
 	/**

@@ -4,6 +4,13 @@ import java.util.ArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
 
+/**
+ * Positions and draws a set of answers to the screen.
+ * TODO: Needs improved layout logic
+ * @author william
+ *
+ * @param <T> The type of the answer to be shown
+ */
 public class AnswerCollection<T extends Positionable> extends ArrayList<T> {
 
 	private static final long serialVersionUID = 1237933580898961905L;
