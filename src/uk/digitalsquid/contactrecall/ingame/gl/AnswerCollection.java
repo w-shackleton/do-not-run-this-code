@@ -44,6 +44,8 @@ public class AnswerCollection<T extends Positionable> extends ArrayList<T> {
 			for(int x = 0; x < countAcross; x++) {
 				//														.5 to move to centre - half a block
 				final float centreX = cx - width / 2 + (width * (float)(x+.5f) / countAcross);
+				get(count).setWidth(width / countAcross - ANSWER_PADDING);
+				get(count).setHeight(height / rows - ANSWER_PADDING);
 				get(count++).setXYZ(centreX, centreY, 0);
 			}
 		}

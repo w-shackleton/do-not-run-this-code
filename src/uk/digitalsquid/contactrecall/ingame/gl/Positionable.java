@@ -17,6 +17,9 @@ public interface Positionable {
 	 */
 	public void setRXYZ(float rx, float ry, float rz);
 	
+	public void setWidth(float width);
+	public void setHeight(float height);
+	
 	public float getWidth();
 	public float getHeight();
 	

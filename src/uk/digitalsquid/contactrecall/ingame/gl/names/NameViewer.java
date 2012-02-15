@@ -3,6 +3,7 @@ package uk.digitalsquid.contactrecall.ingame.gl.names;
 import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.contactrecall.ingame.gl.Positionable;
+import uk.digitalsquid.contactrecall.ingame.gl.RectMesh;
 import uk.digitalsquid.contactrecall.ingame.gl.Text;
 import uk.digitalsquid.contactrecall.misc.Config;
 
@@ -17,19 +18,40 @@ public abstract class NameViewer implements Config, Positionable {
 		this.textHeight = textHeight;
 		display = new Text("", 0, 0, textHeight, 1, 1, 1, 0);
 		display.setGravity(0.5f);
+		// if(DEBUG) bg = new RectMesh(0, 0, requiredWidth, textHeight, 0, 1, 0, 0.2f);
 	}
 	
 	Text display;
+	RectMesh bg;
 
 	private String text = "";
 	
 	void setText(String text) {
 		this.text = text;
 		display.setText(text);
+		rescale();
 	}
 
 	String getText() {
 		return text;
+	}
+	
+	private float requiredWidth = 1;
+	
+	/**
+	 * Scales text down when it is too big.
+	 */
+	private float compensationScale = 1;
+	
+	/**
+	 * Scales the text down so it fits in the specified width
+	 */
+	private void rescale() {
+		if(display.getWidth() > requiredWidth) {
+			compensationScale = requiredWidth / display.getWidth();
+		} else {
+			compensationScale = 1;
+		}
 	}
 	
 	public void draw(GL10 gl) {
@@ -38,6 +60,9 @@ public abstract class NameViewer implements Config, Positionable {
 		gl.glRotatef(rx, 1, 0, 0);
 		gl.glRotatef(ry, 0, 1, 0);
 		gl.glRotatef(rz, 0, 0, 1);
+		if(bg != null) bg.draw(gl);
+		// Don't scale debug bg
+		gl.glScalef(compensationScale, compensationScale, compensationScale);
 		display.draw(gl);
 		gl.glPopMatrix();
 	}
@@ -83,6 +108,7 @@ public abstract class NameViewer implements Config, Positionable {
 		this.rz = rz;
 	}
 	
+	@Override
 	public float getWidth() {
 		return display.getWidth();
 	}
@@ -91,4 +117,14 @@ public abstract class NameViewer implements Config, Positionable {
 	public float getHeight() {
 		return textHeight;
 	}
+	
+	@Override
+	public void setWidth(float width) {
+		requiredWidth = width;
+		rescale();
+		if(bg != null) bg.setWH(requiredWidth, textHeight);
+	}
+	
+	@Override
+	public void setHeight(float height) { }
 }

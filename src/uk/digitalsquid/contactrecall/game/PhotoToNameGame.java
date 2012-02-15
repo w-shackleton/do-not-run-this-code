@@ -57,8 +57,7 @@ public class PhotoToNameGame extends GameInstance {
 	}
 	
 	@Override
-	public List<Object> getToObjects() {
-		// TODO: Return correct choice here as well.
+	public ToData generateToData() {
 		List<Contact> choices = getChoices(getCurrent(), 4); // TODO: Change number available
 		List<Object> ret = new ArrayList<Object>();
 		
@@ -66,11 +65,14 @@ public class PhotoToNameGame extends GameInstance {
 			ret.add(c.getDisplayName());
 		}
 		
-		return ret;
+		final int pos = Const.RAND.nextInt(ret.size()+1);
+		ret.add(pos, getCurrent().getDisplayName());
+		
+		return new ToData(ret, pos);
 	}
 	
 	/**
-	 * Gets a random set of answer choices including the correct one.
+	 * Gets a random set of answer choices excluding the correct one.
 	 * @param correctChoice
 	 * @param number
 	 * @return
@@ -79,8 +81,6 @@ public class PhotoToNameGame extends GameInstance {
 		ArrayList<Contact> ret =
 				ListUtils.selectRandomExclusiveDistinctSet(
 						app.getContacts().getContacts(), Contact.CONTACT_NAME_COMPARATOR, correctChoice, number - 1);
-		ret.add(Const.RAND.nextInt(ret.size()+1), correctChoice);
-		assert ret.size() == number;
 		return ret;
 	}
 	

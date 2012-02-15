@@ -62,7 +62,7 @@ public class Text extends RectMesh {
 	 * @return
 	 */
 	public float getWidth() {
-		return totalWidth;
+		return totalWidth / TextureManager.TEXT_WIDTH * height;
 	}
 	
 	private void updateLetters(GL10 gl) {

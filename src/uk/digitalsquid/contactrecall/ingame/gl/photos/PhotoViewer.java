@@ -28,7 +28,7 @@ public abstract class PhotoViewer implements Config, Positionable {
 	Images bmps;
 	int[] texIds = new int[0];
 	
-	final float photoWidth;
+	float photoWidth;
 	
 	public PhotoViewer(float width) {
 		photos = new LinkedList<RectMesh>();
@@ -142,5 +142,20 @@ public abstract class PhotoViewer implements Config, Positionable {
 	public float getHeight() {
 		// Square shape
 		return photoWidth;
+	}
+	
+	@Override
+	public void setWidth(float width) {
+		photoWidth = width;
+		for(RectMesh mesh : photos) {
+			mesh.setWH(photoWidth, photoWidth);
+		}
+	}
+	
+	public void setHeight(float height) {
+		photoWidth = height;
+		for(RectMesh mesh : photos) {
+			mesh.setWH(photoWidth, photoWidth);
+		}
 	}
 }

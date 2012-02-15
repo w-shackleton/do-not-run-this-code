@@ -50,7 +50,7 @@ public class QAViewer implements Config, Moveable {
 		this.height = height;
 		
 		// Reposition onscreen on size change
-		if(nameAnswers != null) nameAnswers.repositionAnswers(0, -height / 2 + 10, width - 4, 20);
+		if(nameAnswers != null) nameAnswers.repositionAnswers(0, -height / 2 + 12, width - 4, 15);
 	}
 	
 	/**
@@ -77,7 +77,6 @@ public class QAViewer implements Config, Moveable {
 		switch(mode) {
 		case GameInstance.TO_NAME:
 			if(nameAnswers == null) nameAnswers = new AnswerCollection<NameAnswer>();
-			nameAnswers.clear();
 			
 			// Add each one to the answer collection, then organise it.
 			
@@ -98,7 +97,7 @@ public class QAViewer implements Config, Moveable {
 			for(NameAnswer a : nameAnswers) {
 				a.setName(list.get(pos++).toString());
 			}
-			nameAnswers.repositionAnswers(0, -height / 2 + 10, width - 4, 20);
+			nameAnswers.repositionAnswers(0, -height / 2 + 12, width - 4, 15);
 			break;
 		}
 	}

@@ -81,6 +81,8 @@ public class Contact {
 	public static final Comparator<Contact> CONTACT_NAME_COMPARATOR = new Comparator<Contact>() {
 		@Override
 		public int compare(Contact lhs, Contact rhs) {
+			if(lhs == null) return -1;
+			if(rhs == null) return 1;
 			return lhs.getDisplayName().compareToIgnoreCase(rhs.getDisplayName());
 		}
 	};

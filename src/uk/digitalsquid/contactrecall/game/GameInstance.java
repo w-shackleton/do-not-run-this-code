@@ -26,7 +26,9 @@ public abstract class GameInstance implements Config {
 	public Contact getNext() {
 		Log.i(TAG, "Contact nr. " + (progress + 1));
 		try {
-			return getQuestions().get(++progress);
+			Contact ret = getQuestions().get(++progress);
+			currentToData = generateToData(); // Make exception happen first
+			return ret;
 		} catch(IndexOutOfBoundsException e) {
 			return null;
 		}
@@ -37,6 +39,7 @@ public abstract class GameInstance implements Config {
 	 * @return
 	 */
 	public Contact getCurrent() {
+		if(progress >= getQuestions().size()) return null;
 		return getQuestions().get(progress);
 	}
 	
@@ -54,12 +57,44 @@ public abstract class GameInstance implements Config {
 	 * @return
 	 */
 	public abstract Object getFromObject();
+	
 	/**
 	 * Gets the {@link Object}s for the answers part. What this should be is determined by the getFromMode result.
+	 * @return
+	 */
+	public List<Object> getToObjects() {
+		return currentToData.objects;
+	}
+	
+	/**
+	 * Gets the {@link ToData} for the answers part. What this should be is determined by the getFromMode result.
 	 * Calls will be made only once per contact.
 	 * @return
 	 */
-	public abstract List<Object> getToObjects();
+	public abstract ToData generateToData();
+	
+	private ToData currentToData;
+	
+	public static class ToData {
+		private final List<Object> objects;
+		/**
+		 * The index in objects of the correct choice for this question
+		 */
+		private final int correctChoice;
+		
+		public ToData(List<Object> objects, int correctChoice) {
+			this.objects = objects;
+			this.correctChoice = correctChoice;
+		}
+
+		public List<Object> getObjects() {
+			return objects;
+		}
+
+		public int getCorrectChoice() {
+			return correctChoice;
+		}
+	}
 	
 	/**
 	 * Returns the current question's position in the queue
