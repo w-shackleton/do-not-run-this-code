@@ -2,6 +2,7 @@ package uk.digitalsquid.spacegame.views;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import uk.digitalsquid.spacegame.App;
 import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.Spacegame;
 import uk.digitalsquid.spacegame.levels.LevelManager;
@@ -24,11 +25,11 @@ public class SplashScreen extends DrawBaseView<SplashScreen.ViewWorker>
 	
 	private final LevelManager lmanager;
 	
-	public SplashScreen(Context context, AttributeSet attrib, Handler parentHandler, LevelManager lmanager)
+	public SplashScreen(Context context, AttributeSet attrib, Handler parentHandler, App app)
 	{
 		super(context, attrib);
 		
-		this.lmanager = lmanager;
+		this.lmanager = app.getLevelManager();
         this.parentHandler = parentHandler;
         
         initP2();

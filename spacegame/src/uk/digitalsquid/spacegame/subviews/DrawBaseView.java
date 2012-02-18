@@ -139,7 +139,7 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		/**
 		 * Called on this thread when the thread is about to end, so that any final calls can be made etc.
 		 */
-		protected abstract void onThreadEnd();
+		protected void onThreadEnd() { }
 		
 		protected int width, height;
 		

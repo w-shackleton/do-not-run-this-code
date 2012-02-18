@@ -5,7 +5,7 @@ import java.io.InputStream;
 import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.spacegame.BounceVibrate;
-import uk.digitalsquid.spacegame.Spacegame;
+import uk.digitalsquid.spacegame.Game;
 import uk.digitalsquid.spacegame.levels.LevelItem.LevelSummary;
 import uk.digitalsquid.spacegame.spaceitem.assistors.Simulation;
 import uk.digitalsquid.spacegame.spaceitem.assistors.SoundManager;
@@ -32,17 +32,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-public class GameView extends MovingView<GameView.ViewWorker> implements OnTouchListener, KeyInput, SensorEventListener
+public class GameView extends MovingView<GameView.ViewWorker> implements OnTouchListener, SensorEventListener
 {
-	final Handler parentHandler, gvHandler;
+	final Handler gameHandler;
 	private final InputStream level;
 	
-	public GameView(Context context, AttributeSet attrs, InputStream level, Handler handler, Handler gvHandler)
+	public GameView(Context context, AttributeSet attrs, InputStream level, Handler gameHandler)
 	{
 		super(context, attrs);
 		
-		parentHandler = handler;
-		this.gvHandler = gvHandler;
+		this.gameHandler = gameHandler;
 		this.level = level;
         
         setOnTouchListener(this);
@@ -59,16 +58,16 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
     			if(m.what == ViewWorker.MESSAGE_END_GAME)
     			{
     				Message newM = new Message();
-    				newM.what = Spacegame.MESSAGE_END_LEVEL;
+    				newM.what = Game.GVL_MSG_ENDLEVEL;
     				newM.arg1 = m.arg1;
     				newM.obj = m.obj;
-    				GameView.this.parentHandler.sendMessage(newM);
+    				GameView.this.gameHandler.sendMessage(newM);
     				
     				// This ends the level, so turn off rendering
     				setRenderMode(RENDERMODE_WHEN_DIRTY);
     			}
     		}
-    	}, this.gvHandler, level);
+    	}, this.gameHandler, level);
 	}
 	
 	class ViewWorker extends MovingView.ViewWorker
@@ -145,7 +144,7 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 							Log.v(TAG, "Opening info box...");
 							message.display = false;
 							Message m = Message.obtain();
-							m.what = GameViewLayout.GVL_MSG_INFOBOX;
+							m.what = Game.GVL_MSG_INFOBOX;
 							m.obj = message.messages;
 							gvHandler.sendMessage(m);
 						}
@@ -281,7 +280,7 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 		}
 	}
 	
-	protected void setPaused(boolean p) {
+	public void setPaused(boolean p) {
 		thread.setPaused(p);
 	}
 
@@ -296,12 +295,6 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 			});
 		}
 		return true;
-	}
-	
-	@Override
-	public void onBackPress()
-	{
-		stop(-1);
 	}
 
 	@Override

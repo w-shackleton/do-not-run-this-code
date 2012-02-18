@@ -50,15 +50,15 @@ class LevelCompletedDialog extends Dialog implements android.view.View.OnClickLi
 	public void onClick(View v) {
 		switch(v.getId()) {
 		case R.id.buttonContinue:
-			handler.sendEmptyMessage(Spacegame.LEVELCOMPLETED_CONTINUE);
+			handler.sendEmptyMessage(Game.LEVELCOMPLETED_CONTINUE);
 			dismiss();
 			break;
 		case R.id.buttonRetry:
-			handler.sendEmptyMessage(Spacegame.LEVELCOMPLETED_RETRY);
+			handler.sendEmptyMessage(Game.LEVELCOMPLETED_RETRY);
 			dismiss();
 			break;
 		case R.id.buttonToMenu:
-			handler.sendEmptyMessage(Spacegame.LEVELCOMPLETED_TOMENU);
+			handler.sendEmptyMessage(Game.LEVELCOMPLETED_TOMENU);
 			dismiss();
 			break;
 		}
@@ -67,7 +67,7 @@ class LevelCompletedDialog extends Dialog implements android.view.View.OnClickLi
 	@Override
 	public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
 		if(keyCode == KeyEvent.KEYCODE_BACK) {
-			handler.sendEmptyMessage(Spacegame.LEVELCOMPLETED_TOMENU);
+			handler.sendEmptyMessage(Game.LEVELCOMPLETED_TOMENU);
 			dismiss();
 			return true;
 		}

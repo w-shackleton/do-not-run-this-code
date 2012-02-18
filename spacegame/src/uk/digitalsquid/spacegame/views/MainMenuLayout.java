@@ -1,11 +1,14 @@
 package uk.digitalsquid.spacegame.views;
 
+import uk.digitalsquid.spacegame.App;
 import uk.digitalsquid.spacegame.BounceVibrate;
+import uk.digitalsquid.spacegame.LevelSetSelect;
 import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegame.Spacegame;
 import uk.digitalsquid.spacegame.levels.LevelManager;
 import uk.digitalsquid.spacegamelib.StaticInfo;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
@@ -23,7 +26,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ToggleButton;
 
-public class MainMenuLayout extends FrameLayout implements OnClickListener, OnCheckedChangeListener, KeyInput
+public class MainMenuLayout extends FrameLayout implements OnClickListener, OnCheckedChangeListener
 {
 	protected Context context;
 	protected Handler parentHandler;
@@ -31,10 +34,10 @@ public class MainMenuLayout extends FrameLayout implements OnClickListener, OnCh
 	MainMenu menuView;
 	protected LevelManager lmanager;
 	
-	public MainMenuLayout(Context context, AttributeSet attrs, Handler handler, LevelManager lmanager)
+	public MainMenuLayout(Context context, AttributeSet attrs, Handler handler, App app)
 	{
 		super(context, attrs);
-		this.lmanager = lmanager;
+		this.lmanager = app.getLevelManager();
 		prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		this.context = context;
 		parentHandler = handler;
@@ -44,8 +47,7 @@ public class MainMenuLayout extends FrameLayout implements OnClickListener, OnCh
 		panout = AnimationUtils.loadAnimation(context, R.anim.panout);
 		panin = AnimationUtils.loadAnimation(context, R.anim.panin);
 
-		menuView = new MainMenu(context, attrs, handler, context.getResources()
-				.openRawResource(R.raw.menu));
+		menuView = new MainMenu(context, attrs, context.getResources().openRawResource(R.raw.menu));
 		((LinearLayout) findViewById(R.id.mainmenulayout)).addView(menuView);
 		menuView.setFocusable(false);
 		menuView.setFocusableInTouchMode(false);
@@ -83,13 +85,10 @@ public class MainMenuLayout extends FrameLayout implements OnClickListener, OnCh
 		switch(v.getId())
 		{
 		case R.id.mainmenubuttonstart:
-			// Continue starting process
-			findViewById(R.id.mainmenubuttons).startAnimation(panout);
-			findViewById(R.id.mainmenubuttons).setVisibility(View.INVISIBLE);
-			menuView.stop(-1);
-//			menuView.stop(Spacegame.MESSAGE_MAIN_MENU_FINISHED);
-			m.what = Spacegame.MESSAGE_MAIN_MENU_FINISHED;
-			parentHandler.sendMessageAtTime(m, SystemClock.uptimeMillis() + panout.getDuration());
+			// START
+			menuView.stop();
+			Intent intent = new Intent(context, LevelSetSelect.class);
+			context.startActivity(intent);
 			break;
 		case R.id.mainmenubuttonoptions:
 			findViewById(R.id.mainmenubuttons).startAnimation(panout);
@@ -127,7 +126,7 @@ public class MainMenuLayout extends FrameLayout implements OnClickListener, OnCh
 			lmanager.resetDB();
 			findViewById(R.id.mainmenuoptionsperformance).startAnimation(panout);
 			findViewById(R.id.mainmenuoptionsperformance).setVisibility(View.INVISIBLE);
-			menuView.stop(-1);
+			menuView.stop();
 			m.what = Spacegame.MESSAGE_RESET_GAME;
 			parentHandler.sendMessageAtTime(m, SystemClock.uptimeMillis() + panout.getDuration());
 			break;
@@ -157,9 +156,7 @@ public class MainMenuLayout extends FrameLayout implements OnClickListener, OnCh
 		}
 	}
 	
-	@Override
-	public void onBackPress()
-	{
+	public void onBackPress() {
 		if(findViewById(R.id.mainmenubuttons).getVisibility() == View.VISIBLE)
 		{
 			Message msg = Message.obtain();

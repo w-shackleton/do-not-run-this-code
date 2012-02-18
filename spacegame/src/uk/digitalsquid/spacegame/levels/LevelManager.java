@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.xml.sax.SAXException;
@@ -99,11 +100,11 @@ public class LevelManager implements Constants {
 				Log.i(TAG, "Error processing levelset in " + levelSet);
 				break;
 			}
-			if(db.CheckLevelSetNotExists(lSetInfo.filename))
+			if(db.checkLevelSetNotExists(lSetInfo.filename))
 			{
 				Log.v(TAG, "Levelset " + lInfo.set
 						+ " doesn't exist in DB, creating...");
-				db.InsertLevelSetInfo(lSetInfo);
+				db.insertLevelSetInfo(lSetInfo);
 			}
 			
 			// Done set, doing levels...
@@ -124,7 +125,7 @@ public class LevelManager implements Constants {
 				
 				Log.i(TAG, "Checking level " + lInfo.filename + " in level set " + lInfo.set);
 				
-				if(db.CheckLevelNotExists(lInfo.filename, lInfo.fileNumber, lInfo.set))
+				if(db.checkLevelNotExists(lInfo.filename, lInfo.fileNumber, lInfo.set))
 				{
 					Log.v(TAG, "Level " + lInfo.filename
 							+ " doesn't exist in DB, creating...");
@@ -133,14 +134,14 @@ public class LevelManager implements Constants {
 					
 					lInfo.author = info.getAuthor();
 					lInfo.name = info.getName();
-					db.InsertLevelInfo(lInfo);
+					db.insertLevelInfo(lInfo);
 				}
 			}
 		}
 
 		Log.i(TAG,
 				"Checking for items in database which aren't available...");
-		db.CheckDatabaseValidity(am);
+		db.checkDatabaseValidity(am);
 
 		db.getWritableDatabase().close();
 		Log.i(TAG, "Finished updating database");
@@ -167,10 +168,10 @@ public class LevelManager implements Constants {
 
 	public ArrayList<LevelExtendedInfo> getLevelsFromSet(String set)
 	{
-		return db.GetLevelsFromSet(set);
+		return db.getLevelsFromSet(set);
 	}
 
-	public InputStream getLevelIStream(LevelExtendedInfo info) throws IOException {
+	public InputStream getLevelIStream(LevelInfo info) throws IOException {
 		if(info.set.startsWith(BUILTIN_PREFIX)) {
 			String setFilePath = info.set.replace(BUILTIN_PREFIX, ""); // Remove it
 			Log.v(TAG, "Opening level at path " + "lvl/" + setFilePath + "/" + info.filename + " " + info.fileNumber + ".slv");
@@ -239,7 +240,7 @@ public class LevelManager implements Constants {
 		{
 		}
 
-		private boolean CheckLevelSetNotExists(String levelsetName)
+		private boolean checkLevelSetNotExists(String levelsetName)
 		{
 			Cursor c = getReadableDatabase().query(DB_SETS_NAME,
 					new String[] { KEY_FILENAME }, KEY_FILENAME + " = ?",
@@ -249,7 +250,7 @@ public class LevelManager implements Constants {
 			return ret;
 		}
 
-		private boolean CheckLevelNotExists(String levelfilename, int levelNumber, String levelset)
+		private boolean checkLevelNotExists(String levelfilename, int levelNumber, String levelset)
 		{
 			Cursor c = getReadableDatabase().query(DB_LEVELS_NAME,
 					new String[] { KEY_NAME },
@@ -260,7 +261,7 @@ public class LevelManager implements Constants {
 			return ret;
 		}
 
-		private void InsertLevelInfo(LevelInfo info)
+		private void insertLevelInfo(LevelInfo info)
 		{
 			ContentValues vals = new ContentValues();
 			vals.put(KEY_FROMSET, info.set);
@@ -271,7 +272,7 @@ public class LevelManager implements Constants {
 			getWritableDatabase().insert(DB_LEVELS_NAME, "", vals);
 		}
 
-		private void InsertLevelSetInfo(LevelSetInfo info)
+		private void insertLevelSetInfo(LevelSetInfo info)
 		{
 			ContentValues vals = new ContentValues();
 			vals.put(KEY_NAME, info.name);
@@ -280,7 +281,7 @@ public class LevelManager implements Constants {
 			getWritableDatabase().insert(DB_SETS_NAME, "", vals);
 		}
 
-		private void CheckDatabaseValidity(AssetManager am) throws IOException
+		private void checkDatabaseValidity(AssetManager am) throws IOException
 		{
 			Cursor levels = getReadableDatabase().query(DB_LEVELS_NAME,
 					new String[] { KEY_FILENAME, KEY_FROMSET, KEY_LEVEL_NUMBER }, null, null,
@@ -297,7 +298,7 @@ public class LevelManager implements Constants {
 					try {
 						am.open("lvl/" + properSet + "/" + filename + " " + fileNumber + ".slv").close();
 					} catch(IOException e) {
-						DeleteLevel(filename, fileNumber, set);
+						deleteLevel(filename, fileNumber, set);
 					}
 				}
 			}
@@ -317,13 +318,13 @@ public class LevelManager implements Constants {
 				}
 				if(isEmpty) {
 					Log.i(TAG, "Deleting level set " + foldername);
-					DeleteLevelSet(foldername);
+					deleteLevelSet(foldername);
 				}
 			}
 			levelSets.close();
 		}
 
-		private void DeleteLevel(String filename, int fileNumber, String set)
+		private void deleteLevel(String filename, int fileNumber, String set)
 		{
 			getWritableDatabase()
 					.delete(
@@ -334,13 +335,13 @@ public class LevelManager implements Constants {
 									set, "" + fileNumber});
 		}
 
-		private void DeleteLevelSet(String set)
+		private void deleteLevelSet(String set)
 		{
 			getWritableDatabase().delete(DB_SETS_NAME, KEY_FILENAME + " = ?",
 					new String[] { set });
 		}
 
-		private ArrayList<LevelExtendedInfo> GetLevelsFromSet(String set)
+		private ArrayList<LevelExtendedInfo> getLevelsFromSet(String set)
 		{
 			ArrayList<LevelExtendedInfo> items = new ArrayList<LevelExtendedInfo>();
 
@@ -403,8 +404,9 @@ public class LevelManager implements Constants {
 		}
 	}
 
-	protected static class LevelBaseInfo
-	{
+	protected static class LevelBaseInfo implements Serializable {
+		private static final long serialVersionUID = 6665358257178911099L;
+		
 		public String name, set = null;
 		public int fileNumber;
 
@@ -416,8 +418,9 @@ public class LevelManager implements Constants {
 		}
 	}
 
-	protected static class LevelInfo extends LevelBaseInfo
-	{
+	public static class LevelInfo extends LevelBaseInfo {
+		private static final long serialVersionUID = 3664640337409898860L;
+		
 		public String author, filename;
 
 		public LevelInfo(String name, int fileNumber, String set, String author, String filename)
@@ -433,8 +436,9 @@ public class LevelManager implements Constants {
 		}
 	}
 
-	public static final class LevelExtendedInfo extends LevelInfo
-	{
+	public static final class LevelExtendedInfo extends LevelInfo {
+		private static final long serialVersionUID = -866101939292856696L;
+		
 		public int time;
 		public boolean completed, playable;
 
@@ -448,8 +452,9 @@ public class LevelManager implements Constants {
 		}
 	}
 
-	protected static final class LevelSetInfo
-	{
+	protected static final class LevelSetInfo implements Serializable {
+		private static final long serialVersionUID = 7551210763843853987L;
+		
 		public String name, author, filename;
 
 		public LevelSetInfo(String name, String author, String filename)

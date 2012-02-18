@@ -386,12 +386,9 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		float stopAnimationFade = 0;
 		float stopAnimationFadeSpeed = 1;
 		
-		protected int returnCode;
-
-		protected void startStopping(int messageCode)
+		protected void startStopping()
 		{
 			stopAnimation = true;
-			returnCode = messageCode;
 		}
 		
 		@Override
@@ -514,8 +511,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		public void preSolve(Contact contact, Manifold oldManifold) { }
 	}
 	
-	public void stop(int messageCode)
-	{
-		thread.startStopping(messageCode);
+	public void stop() {
+		thread.startStopping();
 	}
 }

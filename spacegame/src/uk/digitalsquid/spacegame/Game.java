@@ -1,40 +1,53 @@
-package uk.digitalsquid.spacegame.views;
+package uk.digitalsquid.spacegame;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.Random;
 
-import uk.digitalsquid.spacegame.R;
-import uk.digitalsquid.spacegame.Spacegame;
-import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Warpable.WarpData;
+import uk.digitalsquid.spacegame.levels.LevelItem.LevelSummary;
+import uk.digitalsquid.spacegame.levels.LevelManager.LevelInfo;
+import uk.digitalsquid.spacegame.views.GameView;
+import uk.digitalsquid.spacegamelib.Constants;
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class GameViewLayout extends FrameLayout implements KeyInput, OnClickListener, SensorEventListener
+/**
+ * Main gameplay activity.
+ * @author william
+ *
+ */
+public class Game extends Activity implements Constants, OnClickListener, SensorEventListener
 {
 	protected Context context;
-	protected Handler parentHandler;
 	
 	GameView gameView;
 	
 	Animation panout, panin;
+	
+	static final int DIALOG_LEVELCOMPLETE = 1;
 
-	protected static final int GVL_MSG_INFOBOX = 1;
-	protected static final int GVL_MSG_PAUSE = 2;
+	public static final int GVL_MSG_INFOBOX = 1;
+	public static final int GVL_MSG_PAUSE = 2;
+	public static final int GVL_MSG_ENDLEVEL = 3;
+	
+	public static final int LEVELCOMPLETED_RETRY = 4;
+	public static final int LEVELCOMPLETED_CONTINUE = 5;
+	public static final int LEVELCOMPLETED_TOMENU = 6;
 	
 	protected Handler gvHandler = new Handler()
 	{
@@ -54,6 +67,21 @@ public class GameViewLayout extends FrameLayout implements KeyInput, OnClickList
 			case GVL_MSG_PAUSE:
 				onBackPress();
 				break;
+			case GVL_MSG_ENDLEVEL:
+				Bundle extras = new Bundle();
+				extras.putInt("reason", m.arg1);
+				extras.putParcelable("summary", (LevelSummary)m.obj);
+				showDialog(DIALOG_LEVELCOMPLETE, extras);
+				break;
+				
+			case LEVELCOMPLETED_CONTINUE:
+				throw new UnsupportedOperationException("Not implemented yet");
+			case LEVELCOMPLETED_RETRY:
+				throw new UnsupportedOperationException("Not implemented yet");
+			case LEVELCOMPLETED_TOMENU:
+				gameView.stop();
+				finish();
+				break;
 			}
 		}
 	};
@@ -61,8 +89,7 @@ public class GameViewLayout extends FrameLayout implements KeyInput, OnClickList
 	protected String[] infoBoxText;
 	protected int infoBoxTextPointer;
 	
-	protected void nextInfoMessage()
-	{
+	protected void nextInfoMessage() {
 		if(infoBoxTextPointer < infoBoxText.length)
 		{
 			((TextView)findViewById(R.id.gameviewinfoboxtext)).setText(infoBoxText[infoBoxTextPointer++]);
@@ -75,19 +102,41 @@ public class GameViewLayout extends FrameLayout implements KeyInput, OnClickList
 		}
 	}
 	
-	public GameViewLayout(Context context, AttributeSet attrs, InputStream level, Handler handler)
-	{
-		super(context, attrs);
-		this.context = context;
-		parentHandler = handler;
-		
-		LayoutInflater li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		li.inflate(R.layout.gameview, this);
+	public static final String LEVELINFO_EXTRA = "uk.digitalsquid.spacegame.Game.LevelInfoExtra";
+	
+	App app;
+	
+	SensorManager sensorManager;
+	Sensor accel;
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.gameview);
+		app = (App)getApplication();
 		
 		panout = AnimationUtils.loadAnimation(context, R.anim.panout);
 		panin = AnimationUtils.loadAnimation(context, R.anim.panin);
+		
+		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+		accel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		
+		LevelInfo info = (LevelInfo) getIntent().getExtras().getSerializable(LEVELINFO_EXTRA);
+		if(info == null) {
+			Log.e(TAG, "No level info given!");
+			finish();
+			return;
+		}
 
-		gameView = new GameView(context, attrs, level, handler, gvHandler);
+		InputStream level;
+		try {
+			level = app.getLevelManager().getLevelIStream(info);
+		} catch (IOException e) {
+			Log.e(TAG, "Failed to open level", e);
+			finish();
+			return;
+		}
+		gameView = new GameView(context, null, level, gvHandler);
 		((LinearLayout) findViewById(R.id.gameviewlayout)).addView(gameView);
 		gameView.setFocusable(false);
 		gameView.setFocusableInTouchMode(false);
@@ -100,10 +149,19 @@ public class GameViewLayout extends FrameLayout implements KeyInput, OnClickList
 		
 		findViewById(R.id.gameviewbuttons).setVisibility(View.GONE);
 	}
-
+	
 	@Override
-	public void onBackPress()
-	{
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		super.onKeyDown(keyCode, event);
+		switch(keyCode) {
+		case KeyEvent.KEYCODE_BACK:
+			onBackPress();
+			return true;
+		}
+		return false;
+	}
+
+	public void onBackPress() {
 		if(findViewById(R.id.gameviewinfobox).getVisibility() == View.INVISIBLE)
 		{
 			if(findViewById(R.id.gameviewbuttons).getVisibility() == View.GONE)
@@ -123,22 +181,31 @@ public class GameViewLayout extends FrameLayout implements KeyInput, OnClickList
 			nextInfoMessage();
 	}
 	
-	public void restoreState(Bundle bundle)
-	{
+	@Override
+	public void onRestoreInstanceState(Bundle bundle) {
+		super.onRestoreInstanceState(bundle);
+		// TODO: Is this auto-called?
 		gameView.restoreState(bundle);
-		if(bundle != null)
-		{
+		if(bundle != null) {
 			findViewById(R.id.gameviewbuttons).setVisibility(View.VISIBLE);
 		}
 	}
 	
-	public void saveState(Bundle bundle)
-	{
-		gameView.saveState(bundle);
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		gameView.saveState(outState);
 	}
 	
+	@Override
+	public void onPause() {
+		sensorManager.unregisterListener(this);
+	}
+	
+	@Override
 	public void onResume() {
-		new Random();
+		super.onResume();
+		sensorManager.registerListener(this, accel, SensorManager.SENSOR_DELAY_GAME);
 	}
 	
 	@Override
@@ -154,10 +221,9 @@ public class GameViewLayout extends FrameLayout implements KeyInput, OnClickList
 		case R.id.gameviewbuttonquit:
 			findViewById(R.id.gameviewbuttons).startAnimation(panout);
 			findViewById(R.id.gameviewbuttons).setVisibility(View.INVISIBLE);
-			Message m = Message.obtain();
-			m.what = Spacegame.MESSAGE_END_LEVEL;
-			m.arg1 = WarpData.END_QUIT;
-			parentHandler.sendMessageAtTime(m, SystemClock.uptimeMillis() + panout.getDuration());
+			
+			gameView.stop();
+			finish();
 			break;
 		case R.id.gameviewinfoboxpic:
 			nextInfoMessage();
@@ -176,5 +242,14 @@ public class GameViewLayout extends FrameLayout implements KeyInput, OnClickList
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		gameView.onSensorChanged(event);
+	}
+	
+	@Override
+	public Dialog onCreateDialog(int id, Bundle args) {
+		switch(id) {
+		case DIALOG_LEVELCOMPLETE:
+			return new LevelCompletedDialog(this, (LevelSummary) args.getParcelable("summary"), gvHandler);
+		}
+		return null;
 	}
 }

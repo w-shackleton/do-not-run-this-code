@@ -6,18 +6,14 @@ import javax.microedition.khronos.opengles.GL10;
 
 import uk.digitalsquid.spacegame.subviews.PlanetaryView;
 import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
 import android.util.AttributeSet;
 
 public class MainMenu extends PlanetaryView<MainMenu.ViewWorker>
 {
-	protected final Handler gameHandler;
 	private final InputStream levelData;
-	public MainMenu(Context context, AttributeSet attrs, Handler gameHandler, InputStream levelData)
+	public MainMenu(Context context, AttributeSet attrs, InputStream levelData)
 	{
 		super(context, attrs);
-		this.gameHandler = gameHandler;
 		this.levelData = levelData;
 		
 		initP2();
@@ -71,14 +67,6 @@ public class MainMenu extends PlanetaryView<MainMenu.ViewWorker>
 			
 			gl.glScalef(WORLD_ZOOM_POSTSCALE, WORLD_ZOOM_POSTSCALE, 1);
 			gl.glScalef(WORLD_ZOOM_PRESCALE, WORLD_ZOOM_PRESCALE, 1);
-		}
-
-		@Override
-		protected void onThreadEnd()
-		{
-			Message msg = Message.obtain();
-			msg.what = returnCode;
-			MainMenu.this.gameHandler.sendMessage(msg);
 		}
 
 		@Override
