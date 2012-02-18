@@ -45,8 +45,7 @@ import android.util.Log;
 
 public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends DrawBaseView<VT>
 {
-	public PlanetaryView(Context context, AttributeSet attrs)
-	{
+	public PlanetaryView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 	
@@ -123,7 +122,6 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		//protected Vec2 p.itemC, p.itemVC, p.itemRF;
 
 		protected boolean paused = false;
-		private Object pauseNotify = new Object();
 		
 		protected static final int GAME_STATE_MOVING = 0;
 		protected static final int GAME_STATE_STOPPED = 1;
@@ -134,12 +132,8 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		
 		protected float borderBounceColour = 255;
 		
-		public void setPaused(boolean p)
-		{
-			synchronized(pauseNotify) {
-				paused = p;
-				pauseNotify.notifyAll();
-			}
+		public void setPaused(boolean p) {
+			paused = p;
 		}
 		
 		public Player p;
@@ -179,7 +173,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 				loadError = true;
 			}
 			if(loadError) {
-				setRunning(false);
+				stop();
 				return;
 			}
 			
@@ -232,29 +226,6 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		}
 		
 		protected long startTime, finishTime;
-		
-		@Override
-		public synchronized void setRunning(boolean run) {
-			super.setRunning(run);
-			if(!run)
-				setPaused(false);
-		}
-		
-		/**
-		 * Used to pause the game properly
-		 */
-		@Override
-		protected void afterdraw() {
-			super.afterdraw();
-			synchronized(pauseNotify) {
-				if(paused && running) {
-					try {
-						pauseNotify.wait();
-					} catch (InterruptedException e) {
-					}
-				}
-			}
-		}
 		
 		public abstract void wallBounced(float amount);
 		
@@ -363,12 +334,18 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			
 			if(warpData.endGame)
 			{
-				setRunning(false);
+				stop();
 				endGame = true;
 			}
 			if(warpData.stopTimer) {
 				finishTime = System.currentTimeMillis();
 			}
+		}
+		
+		@Override
+		public void stop() {
+			super.stop();
+			setPaused(true);
 		}
 		
 		/**

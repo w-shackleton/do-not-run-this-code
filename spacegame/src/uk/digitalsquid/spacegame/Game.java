@@ -10,6 +10,7 @@ import uk.digitalsquid.spacegamelib.Constants;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -18,7 +19,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
@@ -35,6 +35,7 @@ public class Game extends Activity implements Constants, OnClickListener, Sensor
 	GameView gameView;
 	
 	Animation panout, panin;
+	LevelInfo info;
 	
 	static final int DIALOG_LEVELCOMPLETE = 1;
 
@@ -46,11 +47,53 @@ public class Game extends Activity implements Constants, OnClickListener, Sensor
 	public static final int LEVELCOMPLETED_CONTINUE = 5;
 	public static final int LEVELCOMPLETED_TOMENU = 6;
 	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.gameview);
+		app = (App)getApplication();
+		
+		panout = AnimationUtils.loadAnimation(this, R.anim.panout);
+		panin = AnimationUtils.loadAnimation(this, R.anim.panin);
+		
+		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+		accel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		
+		info = (LevelInfo) getIntent().getExtras().getSerializable(LEVELINFO_EXTRA);
+		if(info == null) {
+			Log.e(TAG, "No level info given!");
+			finish();
+			return;
+		}
+
+		InputStream level;
+		try {
+			level = app.getLevelManager().getLevelIStream(info);
+		} catch (IOException e) {
+			Log.e(TAG, "Failed to open level", e);
+			finish();
+			return;
+		}
+		gameView = (GameView) findViewById(R.id.gameview);
+		gameView.setLevel(level);
+		gameView.setGameHandler(gvHandler);
+		gameView.setFocusable(false);
+		gameView.setFocusableInTouchMode(false);
+		gameView.create();
+
+		findViewById(R.id.gameviewbuttonresume).setOnClickListener(this);
+		findViewById(R.id.gameviewbuttonquit).setOnClickListener(this);
+
+		findViewById(R.id.gameviewinfoboxpic).setOnClickListener(this);
+		findViewById(R.id.gameviewinfoboxtext).setOnClickListener(this);
+		
+		findViewById(R.id.gameviewbuttons).setVisibility(View.GONE);
+	}
+	
 	protected Handler gvHandler = new Handler()
 	{
 		@Override
-		public void handleMessage(Message m)
-		{
+		public void handleMessage(Message m) {
 			switch(m.what)
 			{
 			case GVL_MSG_INFOBOX:
@@ -62,7 +105,7 @@ public class Game extends Activity implements Constants, OnClickListener, Sensor
 				findViewById(R.id.gameviewinfobox).startAnimation(panin);
 				break;
 			case GVL_MSG_PAUSE:
-				onBackPress();
+				onBackPressed();
 				break;
 			case GVL_MSG_ENDLEVEL:
 				Bundle extras = new Bundle();
@@ -74,7 +117,11 @@ public class Game extends Activity implements Constants, OnClickListener, Sensor
 			case LEVELCOMPLETED_CONTINUE:
 				throw new UnsupportedOperationException("Not implemented yet");
 			case LEVELCOMPLETED_RETRY:
-				throw new UnsupportedOperationException("Not implemented yet");
+				Intent intent = new Intent(Game.this, Game.class);
+				intent.putExtra(LEVELINFO_EXTRA, info);
+				startActivity(intent);
+				finish();
+				break;
 			case LEVELCOMPLETED_TOMENU:
 				gameView.stop();
 				finish();
@@ -107,60 +154,7 @@ public class Game extends Activity implements Constants, OnClickListener, Sensor
 	Sensor accel;
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.gameview);
-		app = (App)getApplication();
-		
-		panout = AnimationUtils.loadAnimation(this, R.anim.panout);
-		panin = AnimationUtils.loadAnimation(this, R.anim.panin);
-		
-		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-		accel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		
-		LevelInfo info = (LevelInfo) getIntent().getExtras().getSerializable(LEVELINFO_EXTRA);
-		if(info == null) {
-			Log.e(TAG, "No level info given!");
-			finish();
-			return;
-		}
-
-		InputStream level;
-		try {
-			level = app.getLevelManager().getLevelIStream(info);
-		} catch (IOException e) {
-			Log.e(TAG, "Failed to open level", e);
-			finish();
-			return;
-		}
-		gameView = (GameView) findViewById(R.id.gameview);
-		gameView.setLevel(level);
-		gameView.setGameHandler(gvHandler);
-		gameView.setFocusable(false);
-		gameView.setFocusableInTouchMode(false);
-		gameView.create();
-
-		findViewById(R.id.gameviewbuttonresume).setOnClickListener(this);
-		findViewById(R.id.gameviewbuttonquit).setOnClickListener(this);
-
-		findViewById(R.id.gameviewinfoboxpic).setOnClickListener(this);
-		findViewById(R.id.gameviewinfoboxtext).setOnClickListener(this);
-		
-		findViewById(R.id.gameviewbuttons).setVisibility(View.GONE);
-	}
-	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		super.onKeyDown(keyCode, event);
-		switch(keyCode) {
-		case KeyEvent.KEYCODE_BACK:
-			onBackPress();
-			return true;
-		}
-		return false;
-	}
-
-	public void onBackPress() {
+	public void onBackPressed() {
 		if(findViewById(R.id.gameviewinfobox).getVisibility() == View.INVISIBLE)
 		{
 			if(findViewById(R.id.gameviewbuttons).getVisibility() == View.GONE)
@@ -223,8 +217,6 @@ public class Game extends Activity implements Constants, OnClickListener, Sensor
 			finish();
 			break;
 		case R.id.gameviewinfoboxpic:
-			nextInfoMessage();
-			break;
 		case R.id.gameviewinfoboxtext:
 			nextInfoMessage();
 			break;

@@ -76,8 +76,6 @@ public class TextureManager {
 		
 		data.clear();
 		letters.clear();
-		
-		System.gc();
 	}
 	
 	/**
@@ -131,8 +129,6 @@ public class TextureManager {
 		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bmp, 0);
 		
 		data.put(resId, textures[0]);
-		
-		System.gc(); // Needed?
 		
 		return textures[0];
 	}

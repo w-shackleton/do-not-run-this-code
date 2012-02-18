@@ -24,6 +24,7 @@ import android.graphics.Matrix;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.opengl.GLSurfaceView;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
@@ -67,8 +68,8 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
     	{
     		public void handleMessage(Message m)
     		{
-    			if(m.what == ViewWorker.MESSAGE_END_GAME)
-    			{
+    			switch(m.what) {
+    			case ViewWorker.MESSAGE_END_GAME:
     				Message newM = new Message();
     				newM.what = Game.GVL_MSG_ENDLEVEL;
     				newM.arg1 = m.arg1;
@@ -76,7 +77,13 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
     				GameView.this.gameHandler.sendMessage(newM);
     				
     				// This ends the level, so turn off rendering
-    				setRenderMode(RENDERMODE_WHEN_DIRTY);
+    				// setRenderMode(RENDERMODE_WHEN_DIRTY);
+    				Log.d(TAG, "Set rendermode (end) to " + RENDERMODE_WHEN_DIRTY);
+    				break;
+    			case ViewWorker.MESSAGE_SET_RENDERMODE:
+    				setRenderMode(m.arg1);
+    				Log.d(TAG, "Set rendermode to " + m.arg1);
+    				break;
     			}
     		}
     	}, this.gameHandler, level);
@@ -85,6 +92,7 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 	class ViewWorker extends MovingView.ViewWorker
 	{
 		static final int MESSAGE_END_GAME = 1;
+		static final int MESSAGE_SET_RENDERMODE = 2;
 		
 		protected Handler msgHandler, gvHandler;
 		
@@ -255,6 +263,15 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 				}
 				break;
 			}
+		}
+		
+		@Override
+		public void setPaused(boolean pause) {
+			super.setPaused(pause);
+			Message m = Message.obtain();
+			m.what = MESSAGE_SET_RENDERMODE;
+			m.arg1 = pause ? GLSurfaceView.RENDERMODE_WHEN_DIRTY : GLSurfaceView.RENDERMODE_CONTINUOUSLY;
+			msgHandler.sendMessage(m);
 		}
 
 		@Override

@@ -92,7 +92,7 @@ public class SplashScreen extends DrawBaseView<SplashScreen.ViewWorker>
 			if(timeThroughLoop == 50)
 				splashLogoWantedOpacity = 0;
 			if(timeThroughLoop == 70)
-				setRunning(false);
+				stop();
 
 			if(splashLogoOpacity < splashLogoWantedOpacity)
 				splashLogoOpacity+=14f / 256;

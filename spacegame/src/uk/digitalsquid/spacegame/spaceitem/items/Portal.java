@@ -13,7 +13,6 @@ import uk.digitalsquid.spacegamelib.gl.RectMesh;
 import uk.digitalsquid.spacegamelib.spaceitem.Gravitable;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Moveable;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Warpable;
-import android.util.Log;
 
 /**
  * Finishing portal for the game
@@ -182,9 +181,6 @@ public class Portal extends Gravitable implements Moveable, Warpable {
 
 	@Override
 	public boolean isForceExclusive() {
-		if(status == Status.FINISHING || status == Status.FINISHED) {
-			Log.v(TAG, "Exclusive");
-		}
 		return status == Status.FINISHING || status == Status.FINISHED; // Only when entering portal
 	}
 }
