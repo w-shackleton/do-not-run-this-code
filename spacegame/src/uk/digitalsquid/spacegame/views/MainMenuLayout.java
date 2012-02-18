@@ -23,7 +23,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ToggleButton;
 
 public class MainMenuLayout extends FrameLayout implements OnClickListener, OnCheckedChangeListener
@@ -47,10 +46,11 @@ public class MainMenuLayout extends FrameLayout implements OnClickListener, OnCh
 		panout = AnimationUtils.loadAnimation(context, R.anim.panout);
 		panin = AnimationUtils.loadAnimation(context, R.anim.panin);
 
-		menuView = new MainMenu(context, attrs, context.getResources().openRawResource(R.raw.menu));
-		((LinearLayout) findViewById(R.id.mainmenulayout)).addView(menuView);
+		menuView = (MainMenu) findViewById(R.id.menuview);
+		menuView.setLevel(context.getResources().openRawResource(R.raw.menu));
 		menuView.setFocusable(false);
 		menuView.setFocusableInTouchMode(false);
+		menuView.create();
 
 		findViewById(R.id.mainmenubuttonstart).setOnClickListener(this);
 		findViewById(R.id.mainmenubuttonoptions).setOnClickListener(this);

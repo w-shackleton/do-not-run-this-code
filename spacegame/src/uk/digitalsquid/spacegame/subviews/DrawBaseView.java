@@ -9,29 +9,29 @@ import uk.digitalsquid.spacegamelib.gl.TextureManager;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
-import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 
 public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends GLSurfaceView implements Constants
 {
-	protected final Context context;
 	protected VT thread;
 	
 	/**
 	 * Constructs a new {@link DrawBaseView}. Non-abstract extended classes must initialise a renderer
 	 * with a subclass of {@link ViewWorker}. 
 	 */
-	public DrawBaseView(Context context, AttributeSet attrs)
-	{
+	public DrawBaseView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		// setEGLConfigChooser(8, 8, 8, 8, 0, 0);
 	    // getHolder().setFormat(PixelFormat.RGBA_8888);
 	    // setDebugFlags(DEBUG_CHECK_GL_ERROR | DEBUG_LOG_GL_CALLS);
 	    if(StaticInfo.DEBUG) setDebugFlags(DEBUG_CHECK_GL_ERROR);
-		this.context = context;
 	}
 	
-	protected final void initP2() {
+	/**
+	 * Called after all settings and objects have been set. This creates & starts the thread.
+	 */
+	public void create() {
 		thread = createThread();
 		if(thread == null) throw new IllegalStateException("thread not initialised!");
 		setRenderer(thread);
@@ -175,22 +175,29 @@ public abstract class DrawBaseView<VT extends DrawBaseView.ViewWorker> extends G
 		
 		protected abstract void scale(GL10 c);
 		
-		public abstract void saveState(Bundle bundle);
-		public abstract void restoreState(Bundle bundle);
+		public abstract void saveState(GameState state);
+		public abstract void restoreState(GameState state);
 		
 		protected void onSizeChanged(int w, int h) {}
 	}
 	
-	public void saveState(Bundle bundle)
-	{
-		thread.saveState(bundle);
+	@Override
+	public Parcelable onSaveInstanceState() {
+		Parcelable superState = super.onSaveInstanceState();
+		GameState state = new GameState(superState);
+		thread.saveState(state);
+		return state;
 	}
 	
-	public void restoreState(Bundle bundle)
-	{
-		if(bundle != null)
-		{
-			thread.restoreState(bundle);
+	@Override
+	public void onRestoreInstanceState(Parcelable parcelable) {
+		// Ignore our part
+		if(!(parcelable instanceof GameState)) {
+			super.onRestoreInstanceState(parcelable);
+			return;
 		}
+		GameState state = (GameState) parcelable;
+		super.onRestoreInstanceState(state.getSuperState());
+		thread.restoreState(state);
 	}
 }

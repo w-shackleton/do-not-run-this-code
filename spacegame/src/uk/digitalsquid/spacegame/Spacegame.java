@@ -5,14 +5,11 @@ import uk.digitalsquid.spacegame.views.MainMenuLayout;
 import uk.digitalsquid.spacegame.views.SplashScreen;
 import uk.digitalsquid.spacegamelib.Constants;
 import android.app.Activity;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 public class Spacegame extends Activity implements Constants
@@ -34,10 +31,6 @@ public class Spacegame extends Activity implements Constants
         // UI thread initialisy stuff
         BounceVibrate.initialise(getApplicationContext());
         
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setVolumeControlStream(AudioManager.STREAM_MUSIC);
-		
         linearlayout = new LinearLayout(this);
         
         setContentView(linearlayout);
@@ -89,11 +82,14 @@ public class Spacegame extends Activity implements Constants
 		switch(view)
 		{
 		case LOADING:
-			splash = new SplashScreen(getApplicationContext(), null, msgHandler, (App)getApplication());
+			splash = new SplashScreen(this, null);
+			splash.setParentHandler(msgHandler);
+			splash.setApp((App)getApplication());
+			splash.create();
 			linearlayout.addView(splash);
 			break;
 		case MAIN_MENU:
-			mainmenu = new MainMenuLayout(getApplicationContext(), null, msgHandler, (App)getApplication());
+			mainmenu = new MainMenuLayout(this, null, msgHandler, (App)getApplication());
 			linearlayout.addView(mainmenu);
 			break;
 		}

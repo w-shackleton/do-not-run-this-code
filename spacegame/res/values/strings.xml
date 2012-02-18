@@ -4,4 +4,6 @@
     <string name="app_name">Space Game</string>
 <string name="gamewin">Level</string>
 <string name="levelcompleted">Level Completed</string>
+<string name="selectLevelset">Select Levelset</string>
+<string name="selectLevel">Select Level</string>
 </resources>

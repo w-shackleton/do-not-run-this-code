@@ -2,20 +2,28 @@
 <RelativeLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_height="fill_parent" android:layout_width="fill_parent" android:orientation="horizontal">
-
-
-
-
-
-
-<LinearLayout android:layout_height="fill_parent" android:layout_width="fill_parent" android:id="@+id/levelsetselectlayout"></LinearLayout><ScrollView android:layout_height="fill_parent" android:layout_width="wrap_content"><TableLayout android:layout_height="fill_parent" android:layout_width="wrap_content" android:id="@+id/levelsetselectbuttons"><TableRow android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_margin="5dip"><ImageView android:layout_height="40dip" android:layout_width="40dip" android:layout_gravity="center_vertical" android:layout_margin="4dip" android:scaleType="fitXY" android:src="@drawable/icon_tut"></ImageView><Button android:layout_height="wrap_content" style="@style/mainmenuitem" android:id="@+id/menubutton_levelset1" android:text="Tutorial" android:layout_margin="0dip" android:layout_width="wrap_content"></Button>
-</TableRow><TableRow android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_margin="5dip"><ImageView android:layout_height="40dip" android:layout_width="40dip" android:layout_gravity="center_vertical" android:layout_margin="4dip" android:scaleType="fitXY" android:src="@drawable/icon_easy"></ImageView><Button android:layout_height="wrap_content" style="@style/mainmenuitem" android:layout_margin="0dip" android:layout_width="wrap_content" android:text="Easy Levels" android:id="@+id/menubutton_levelset2"></Button>
-</TableRow><TableRow android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_margin="5dip"><ImageView android:layout_height="40dip" android:layout_width="40dip" android:layout_gravity="center_vertical" android:layout_margin="4dip" android:scaleType="fitXY" android:src="@drawable/icon_medium"></ImageView><Button android:layout_height="wrap_content" style="@style/mainmenuitem" android:layout_margin="0dip" android:layout_width="wrap_content" android:id="@+id/menubutton_levelset3" android:text="Medium Levels"></Button>
-</TableRow><TableRow android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_margin="5dip"><ImageView android:layout_height="40dip" android:layout_width="40dip" android:layout_gravity="center_vertical" android:layout_margin="4dip" android:scaleType="fitXY" android:src="@drawable/icon_hard"></ImageView><Button android:layout_height="wrap_content" style="@style/mainmenuitem" android:layout_margin="0dip" android:layout_width="wrap_content" android:id="@+id/menubutton_levelset4" android:text="Hard Levels"></Button>
-</TableRow></TableLayout>
-
-
-
-
-</ScrollView>
+	<uk.digitalsquid.spacegame.views.MainMenu
+	    android:id="@+id/menuview"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent" />
+	<ScrollView android:layout_height="fill_parent" android:layout_width="wrap_content">
+	    <TableLayout android:layout_height="fill_parent" android:layout_width="wrap_content" android:id="@+id/levelsetselectbuttons">
+	        <TableRow android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_margin="5dip">
+	            <ImageView android:layout_height="40dip" android:layout_width="40dip" android:layout_gravity="center_vertical" android:layout_margin="4dip" android:scaleType="fitXY" android:src="@drawable/icon_tut"></ImageView>
+	            <Button android:layout_height="wrap_content" style="@style/mainmenuitem" android:id="@+id/menubutton_levelset1" android:text="Tutorial" android:layout_margin="0dip" android:layout_width="wrap_content"></Button>
+			</TableRow>
+			<TableRow android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_margin="5dip">
+			    <ImageView android:layout_height="40dip" android:layout_width="40dip" android:layout_gravity="center_vertical" android:layout_margin="4dip" android:scaleType="fitXY" android:src="@drawable/icon_easy"></ImageView>
+			    <Button android:layout_height="wrap_content" style="@style/mainmenuitem" android:layout_margin="0dip" android:layout_width="wrap_content" android:text="Easy Levels" android:id="@+id/menubutton_levelset2"></Button>
+			</TableRow>
+			<TableRow android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_margin="5dip">
+			    <ImageView android:layout_height="40dip" android:layout_width="40dip" android:layout_gravity="center_vertical" android:layout_margin="4dip" android:scaleType="fitXY" android:src="@drawable/icon_medium"></ImageView>
+			    <Button android:layout_height="wrap_content" style="@style/mainmenuitem" android:layout_margin="0dip" android:layout_width="wrap_content" android:id="@+id/menubutton_levelset3" android:text="Medium Levels"></Button>
+			</TableRow>
+			<TableRow android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_margin="5dip">
+			    <ImageView android:layout_height="40dip" android:layout_width="40dip" android:layout_gravity="center_vertical" android:layout_margin="4dip" android:scaleType="fitXY" android:src="@drawable/icon_hard"></ImageView>
+			    <Button android:layout_height="wrap_content" style="@style/mainmenuitem" android:layout_margin="0dip" android:layout_width="wrap_content" android:id="@+id/menubutton_levelset4" android:text="Hard Levels"></Button>
+			</TableRow>
+		</TableLayout>
+	</ScrollView>
 </RelativeLayout>

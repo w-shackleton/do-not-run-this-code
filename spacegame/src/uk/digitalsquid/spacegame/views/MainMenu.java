@@ -10,18 +10,24 @@ import android.util.AttributeSet;
 
 public class MainMenu extends PlanetaryView<MainMenu.ViewWorker>
 {
-	private final InputStream levelData;
-	public MainMenu(Context context, AttributeSet attrs, InputStream levelData)
+	private InputStream levelData;
+	
+	public MainMenu(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
-		this.levelData = levelData;
-		
-		initP2();
+	}
+	
+	/**
+	 * Sets the level. This must be called before create() is called
+	 * @param level
+	 */
+	public void setLevel(InputStream level) {
+		this.levelData = level;
 	}
 
 	@Override
 	protected ViewWorker createThread() {
-		return new ViewWorker(context, levelData);
+		return new ViewWorker(getContext(), levelData);
 	}
 
 	protected class ViewWorker extends PlanetaryView.ViewWorker

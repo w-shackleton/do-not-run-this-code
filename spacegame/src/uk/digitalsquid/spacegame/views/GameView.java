@@ -10,6 +10,7 @@ import uk.digitalsquid.spacegame.levels.LevelItem.LevelSummary;
 import uk.digitalsquid.spacegame.spaceitem.assistors.Simulation;
 import uk.digitalsquid.spacegame.spaceitem.assistors.SoundManager;
 import uk.digitalsquid.spacegame.spaceview.gamemenu.StarDisplay;
+import uk.digitalsquid.spacegame.subviews.GameState;
 import uk.digitalsquid.spacegame.subviews.MovingView;
 import uk.digitalsquid.spacegamelib.spaceitem.SpaceItem;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Clickable;
@@ -23,9 +24,9 @@ import android.graphics.Matrix;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -34,24 +35,35 @@ import android.view.View.OnTouchListener;
 
 public class GameView extends MovingView<GameView.ViewWorker> implements OnTouchListener, SensorEventListener
 {
-	final Handler gameHandler;
-	private final InputStream level;
+	Handler gameHandler;
+	private InputStream level;
 	
-	public GameView(Context context, AttributeSet attrs, InputStream level, Handler gameHandler)
+	/**
+	 * Sets the level. This must be called before create() is called
+	 * @param level
+	 */
+	public void setLevel(InputStream level) {
+		this.level = level;
+	}
+	
+	/**
+	 * Sets the callback handler. This must be called before create() is called
+	 * @param level
+	 */
+	public void setGameHandler(Handler handler) {
+		gameHandler = handler;
+	}
+	
+	public GameView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
-		
-		this.gameHandler = gameHandler;
-		this.level = level;
         
         setOnTouchListener(this);
-        
-        initP2();
 	}
 
 	@Override
 	protected ViewWorker createThread() {
-    	return new ViewWorker(context, new Handler()
+    	return new ViewWorker(getContext(), new Handler()
     	{
     		public void handleMessage(Message m)
     		{
@@ -87,15 +99,13 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 		private StarDisplay starCount;
 
 		@Override
-		protected void initialiseOnThread()
-		{
+		protected void initialiseOnThread() {
 			super.initialiseOnThread();
 			starCount = new StarDisplay(context, level.starsToCollect, portal);
 		}
 		
 		@Override
-		protected void predraw(GL10 gl)
-		{
+		protected void predraw(GL10 gl) {
 			super.predraw(gl);
 		}
 		
@@ -189,15 +199,13 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 		}
 		
 		@Override
-		public synchronized void saveState(Bundle bundle)
-		{
-			super.saveState(bundle);
+		public synchronized void saveState(GameState state) {
+			super.saveState(state);
 		}
 		
 		@Override
-		public synchronized void restoreState(Bundle bundle)
-		{
-			super.restoreState(bundle);
+		public synchronized void restoreState(GameState state) {
+			super.restoreState(state);
 		}
 		
 		public synchronized void onTouch(View v, MotionEvent event)
@@ -272,12 +280,9 @@ public class GameView extends MovingView<GameView.ViewWorker> implements OnTouch
 	}
 	
 	@Override
-	public void restoreState(Bundle bundle) {
-		super.restoreState(bundle);
-		if(bundle != null)
-		{
-			thread.setPaused(true);
-		}
+	public void onRestoreInstanceState(Parcelable parcel) {
+		super.onRestoreInstanceState(parcel);
+		setPaused(true);
 	}
 	
 	public void setPaused(boolean p) {

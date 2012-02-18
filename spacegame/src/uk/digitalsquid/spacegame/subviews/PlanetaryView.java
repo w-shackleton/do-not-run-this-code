@@ -40,7 +40,6 @@ import uk.digitalsquid.spacegamelib.spaceitem.interfaces.TopDrawable;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Warpable;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Warpable.WarpData;
 import android.content.Context;
-import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -148,10 +147,18 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		// protected Tether tether;
 		protected LaunchingMechanism launch;
 		
+		protected boolean initialised = false;
+		
+		/**
+		 * If not null this should be restored in the thread
+		 */
+		GameState toRestore;
+		Object toRestoreLock = new Object();
+		
 		@Override
-		protected void initialiseOnThread()
-		{
-			Log.i(TAG, "Loading level...");
+		protected void initialiseOnThread() {
+			initialised = true;
+			Log.i(TAG, "Loading level..." + hashCode());
 			
 			// Make sure box2d has enough vertices
 			Settings.maxPolygonVertices = Geometry.SHAPE_RESOLUTION;
@@ -181,11 +188,23 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			planetList = level.planetList;
 			if(planetList == null)
 				planetList = new ArrayList<SpaceItem>();
+			
+			// Restore state
+			synchronized(toRestoreLock) {
+				if(toRestore != null) {
+					level.startPos.set(toRestore.userPos);
+					level.startSpeed.set(toRestore.userVelocity);
+					avgPos = toRestore.avgPos;
+					screenPos = toRestore.screenPos;
+					
+					userZoom = toRestore.userZoom;
+				} else {
+					for(int i = 0; i < screenPos.length; i++)
+						screenPos[i] = new Vec2();
+				}
+			}
 
 			p = new AnimatedPlayer(sim, level.startPos, level.startSpeed);
-//			p.itemC = new Vec2(level.startPos);
-//			p.itemVC = new Vec2();
-//			p.itemRF = new Vec2();
 			
 			levelBorder = new Lines(0, 0, new float[] {
 					(float) -level.bounds.x / 2, (float) -level.bounds.y / 2, 0,
@@ -198,9 +217,6 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			// tether = new Tether(sim, p);
 			launch = new LaunchingMechanism(sim, p);
 			s = new Simulation();
-			
-			for(int i = 0; i < screenPos.length; i++)
-				screenPos[i] = new Vec2();
 			
 			// BG Points
 			BG_POINTS_PER_AREA = (int) level.bounds.length() * 5;
@@ -250,8 +266,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		private static final int STEPS_TO_STOP = 30 * 1; // 1 second.
 		
 		@Override
-		protected void calculate()
-		{
+		protected void calculate() {
 			super.calculate();
 			
 			s.calculate(sim, level, p, portal, launch, paused, gravOn, (int) millistep);
@@ -386,23 +401,19 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		float stopAnimationFade = 0;
 		float stopAnimationFadeSpeed = 1;
 		
-		protected void startStopping()
-		{
+		protected void startStopping() {
 			stopAnimation = true;
 		}
 		
 		@Override
-		protected void predraw(GL10 gl)
-		{
-		}
+		protected void predraw(GL10 gl) { }
 		
 		int i, iter;
 		
 		protected Lines levelBorder;
 		
 		@Override
-		protected void draw(GL10 gl)
-		{
+		protected void draw(GL10 gl) {
 			super.draw(gl);
 			// DRAW TIME
 			
@@ -448,8 +459,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		}
 		
 		@Override
-		protected void postdraw(GL10 gl)
-		{
+		protected void postdraw(GL10 gl) {
 			// Apply warpData, part 2. Part 1 is not done here, but in a non-abstract class, in scale()
 			warpDataPaint.setAlpha((float) CompuFuncs.trimMax(warpData.fade / 256, 1));
 			if(warpDataPaint.getAlpha() != 0) {
@@ -463,30 +473,37 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 		}
 		
 		@Override
-		public synchronized void saveState(Bundle bundle)
-		{
-			Log.v(TAG, "State Saved");
-			bundle.putSerializable("p.itemC", p.itemC);
-			bundle.putSerializable("p.itemVC", p.getVelocity());
-			bundle.putSerializable("avgPos", avgPos);
+		public synchronized void saveState(GameState state) {
+			if(!initialised) {
+				Log.w(TAG, "State NOT saved for " + hashCode() + ", trying to use old state.");
+				synchronized(toRestoreLock) {
+					if(toRestore != null) {
+						state.avgPos = toRestore.avgPos;
+						state.screenPos = toRestore.screenPos;
+						state.userPos = toRestore.userPos;
+						state.userVelocity = toRestore.userVelocity;
+						state.userZoom = toRestore.userZoom;
+					} else {
+						Log.w(TAG, "State NOT restored");
+					}
+				}
+				return;
+			}
+			Log.d(TAG, "State saved for " + hashCode());
+			state.userPos = p.itemC;
+			state.userVelocity = p.getVelocity();
+			state.avgPos = avgPos;
 			
-			for(int i = 0; i < screenPos.length; i++)
-				bundle.putSerializable("screenPos" + i, screenPos[i]);
-			bundle.putFloat("userZoom", userZoom);
+			state.screenPos = screenPos;
+			state.userZoom = userZoom;
 		}
 
 		@Override
-		public synchronized void restoreState(Bundle bundle)
-		{
-			Log.v(TAG, "State Restored");
-			
-			p.itemC.set((Vec2) bundle.getSerializable("p.itemC"));
-			p.setVelocity((Vec2) bundle.getSerializable("p.itemVC"));
-			avgPos = (Vec2) bundle.getSerializable("avgPos");
-			for(int i = 0; i < screenPos.length; i++)
-				screenPos[i] = (Vec2) bundle.getSerializable("screenPos" + i);
-			
-			userZoom = bundle.getFloat("userZoom");
+		public synchronized void restoreState(GameState state) {
+			synchronized (toRestoreLock) {
+				toRestore = state;
+			}
+			Log.d(TAG, "State Restored");
 		}
 
 		@Override

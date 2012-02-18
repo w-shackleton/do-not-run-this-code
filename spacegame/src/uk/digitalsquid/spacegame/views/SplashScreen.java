@@ -10,10 +10,10 @@ import uk.digitalsquid.spacegame.levels.SaxInfoLoader;
 import uk.digitalsquid.spacegame.levels.SaxLoader;
 import uk.digitalsquid.spacegame.spaceitem.assistors.SoundManager;
 import uk.digitalsquid.spacegame.subviews.DrawBaseView;
+import uk.digitalsquid.spacegame.subviews.GameState;
 import uk.digitalsquid.spacegamelib.StaticInfo;
 import uk.digitalsquid.spacegamelib.gl.RectMesh;
 import android.content.Context;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -23,21 +23,24 @@ public class SplashScreen extends DrawBaseView<SplashScreen.ViewWorker>
 {
 	Handler parentHandler;
 	
-	private final LevelManager lmanager;
+	private LevelManager lmanager;
 	
-	public SplashScreen(Context context, AttributeSet attrib, Handler parentHandler, App app)
+	public SplashScreen(Context context, AttributeSet attrib)
 	{
 		super(context, attrib);
-		
+	}
+	
+	public void setApp(App app) {
 		this.lmanager = app.getLevelManager();
-        this.parentHandler = parentHandler;
-        
-        initP2();
+	}
+	
+	public void setParentHandler(Handler handler) {
+		parentHandler = handler;
 	}
 	
 	@Override
 	protected ViewWorker createThread() {
-    	return new ViewWorker(context, new Handler()
+    	return new ViewWorker(getContext(), new Handler()
     	{
     		@Override
     		public void handleMessage(Message m)
@@ -171,15 +174,9 @@ public class SplashScreen extends DrawBaseView<SplashScreen.ViewWorker>
 		}
 
 		@Override
-		public void restoreState(Bundle bundle)
-		{
-			
-		}
+		public void saveState(GameState state) { }
 
 		@Override
-		public void saveState(Bundle bundle)
-		{
-			
-		}
+		public void restoreState(GameState state) { }
 	}
 }

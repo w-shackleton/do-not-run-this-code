@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -33,8 +32,6 @@ import android.widget.TextView;
  */
 public class Game extends Activity implements Constants, OnClickListener, SensorEventListener
 {
-	protected Context context;
-	
 	GameView gameView;
 	
 	Animation panout, panin;
@@ -115,8 +112,8 @@ public class Game extends Activity implements Constants, OnClickListener, Sensor
 		setContentView(R.layout.gameview);
 		app = (App)getApplication();
 		
-		panout = AnimationUtils.loadAnimation(context, R.anim.panout);
-		panin = AnimationUtils.loadAnimation(context, R.anim.panin);
+		panout = AnimationUtils.loadAnimation(this, R.anim.panout);
+		panin = AnimationUtils.loadAnimation(this, R.anim.panin);
 		
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		accel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -136,10 +133,12 @@ public class Game extends Activity implements Constants, OnClickListener, Sensor
 			finish();
 			return;
 		}
-		gameView = new GameView(context, null, level, gvHandler);
-		((LinearLayout) findViewById(R.id.gameviewlayout)).addView(gameView);
+		gameView = (GameView) findViewById(R.id.gameview);
+		gameView.setLevel(level);
+		gameView.setGameHandler(gvHandler);
 		gameView.setFocusable(false);
 		gameView.setFocusableInTouchMode(false);
+		gameView.create();
 
 		findViewById(R.id.gameviewbuttonresume).setOnClickListener(this);
 		findViewById(R.id.gameviewbuttonquit).setOnClickListener(this);
@@ -184,8 +183,6 @@ public class Game extends Activity implements Constants, OnClickListener, Sensor
 	@Override
 	public void onRestoreInstanceState(Bundle bundle) {
 		super.onRestoreInstanceState(bundle);
-		// TODO: Is this auto-called?
-		gameView.restoreState(bundle);
 		if(bundle != null) {
 			findViewById(R.id.gameviewbuttons).setVisibility(View.VISIBLE);
 		}
@@ -194,11 +191,11 @@ public class Game extends Activity implements Constants, OnClickListener, Sensor
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		gameView.saveState(outState);
 	}
 	
 	@Override
 	public void onPause() {
+		super.onPause();
 		sensorManager.unregisterListener(this);
 	}
 	

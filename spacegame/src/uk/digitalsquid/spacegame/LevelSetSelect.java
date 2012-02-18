@@ -3,10 +3,10 @@ package uk.digitalsquid.spacegame;
 import uk.digitalsquid.spacegame.levels.LevelManager;
 import uk.digitalsquid.spacegame.views.MainMenu;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.LinearLayout;
 
 /**
  * Shows the screen to select the levelset
@@ -21,10 +21,11 @@ public class LevelSetSelect extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.levelsetselect);
 		
-		menuView = new MainMenu(this, null, getResources().openRawResource(R.raw.menu_levelsets));
-		((LinearLayout) findViewById(R.id.levelsetselectlayout)).addView(menuView);
+		menuView = (MainMenu) findViewById(R.id.menuview);
+		menuView.setLevel(getResources().openRawResource(R.raw.menu_levelsets));
 		menuView.setFocusable(false);
 		menuView.setFocusableInTouchMode(false);
+		menuView.create();
 		
 		findViewById(R.id.menubutton_levelset1).setOnClickListener(this);
 		findViewById(R.id.menubutton_levelset2).setOnClickListener(this);
@@ -49,10 +50,13 @@ public class LevelSetSelect extends Activity implements OnClickListener {
 		case R.id.menubutton_levelset4:
 			levelsetfilename += "hard";
 			break;
+		default:
+			return;
 		}
 		
 		menuView.stop();
-		// Intent intent = new Intent(this, LevelSelect.class);
-		// startActivity(intent);
+		Intent intent = new Intent(this, LevelSelect.class);
+		intent.putExtra(LevelSelect.LEVELSET_EXTRA, levelsetfilename);
+		startActivity(intent);
 	}
 }

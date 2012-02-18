@@ -4,12 +4,15 @@
       android:versionName="0.1" android:versionCode="10">
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="App">
         
-        <activity android:label="@string/app_name" android:name="Spacegame" android:screenOrientation="landscape">
+        <activity android:label="@string/app_name" android:name="Spacegame" android:screenOrientation="landscape" android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="LevelSetSelect" android:label="@string/selectLevelset" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape"></activity>
+        <activity android:name="LevelSelect" android:label="@string/selectLevel" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape"></activity>
+        <activity android:name="Game" android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape"></activity>
 
     
 

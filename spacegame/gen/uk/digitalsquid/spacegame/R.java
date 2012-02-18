@@ -71,13 +71,13 @@ public final class R {
         public static final int buttonContinue=0x7f0b000f;
         public static final int buttonRetry=0x7f0b000e;
         public static final int buttonToMenu=0x7f0b000d;
+        public static final int gameview=0x7f0b0000;
         public static final int gameviewbuttonquit=0x7f0b0006;
         public static final int gameviewbuttonresume=0x7f0b0005;
         public static final int gameviewbuttons=0x7f0b0004;
         public static final int gameviewinfobox=0x7f0b0001;
         public static final int gameviewinfoboxpic=0x7f0b0002;
         public static final int gameviewinfoboxtext=0x7f0b0003;
-        public static final int gameviewlayout=0x7f0b0000;
         public static final int imageView1=0x7f0b0008;
         public static final int imageView2=0x7f0b000a;
         public static final int levelselect_info=0x7f0b0011;
@@ -89,7 +89,6 @@ public final class R {
         public static final int levelselectitem_statusimg=0x7f0b0016;
         public static final int levelselectitem_text=0x7f0b0017;
         public static final int levelsetselectbuttons=0x7f0b0019;
-        public static final int levelsetselectlayout=0x7f0b0018;
         public static final int linearLayout1=0x7f0b000c;
         public static final int linearLayout2=0x7f0b0007;
         public static final int mainmenubuttonoptions=0x7f0b0021;
@@ -112,6 +111,7 @@ public final class R {
         public static final int menubutton_levelset3=0x7f0b001c;
         public static final int menubutton_levelset4=0x7f0b001d;
         public static final int menupref=0x7f0b002d;
+        public static final int menuview=0x7f0b0018;
         public static final int starsCollected=0x7f0b0009;
         public static final int timeTaken=0x7f0b000b;
     }
@@ -139,6 +139,8 @@ public final class R {
         public static final int gamewin=0x7f070002;
         public static final int hello=0x7f070000;
         public static final int levelcompleted=0x7f070003;
+        public static final int selectLevel=0x7f070005;
+        public static final int selectLevelset=0x7f070004;
     }
     public static final class style {
         public static final int dialogbox=0x7f090002;
