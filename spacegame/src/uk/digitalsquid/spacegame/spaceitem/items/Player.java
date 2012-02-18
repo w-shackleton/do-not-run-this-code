@@ -117,9 +117,17 @@ public abstract class Player extends PlayerBase implements Moveable
 		/**
 		 * This multiplier reduces the effect of the gravity torque when the accelerometer is going.
 		 */
-		float accelMultiplier = CompuFuncs.trimMinMax((3 - accelerometerMoment) / 3, 0, 1);
+		float accelMultiplier = CompuFuncs.trimMinMax((3 - Math.abs(accelerometerMoment)) / 3, 0, 1);
 		body.applyTorque(bodyGravityTorque * accelMultiplier);
 		body.applyTorque(accelerometerMoment);
+		earTorque = bodyGravityTorque * accelMultiplier + accelerometerMoment;
+		
+		// Applying here so we can get angular speed first
+		/* float momentumMultiplier = CompuFuncs.trimMinMax(Math.abs(body.getAngularVelocity()) * .1f, 0, 1);
+		Log.d(TAG, "Mult: " + momentumMultiplier);
+		// Apply a reverse torque proportional to the speed
+		body.applyTorque(-momentumMultiplier * bodyGravityTorque * accelMultiplier);
+		body.applyTorque(-momentumMultiplier * accelerometerMoment); */
 		
 		velocityDelta.set(body.getLinearVelocity());
 		velocityDelta.subLocal(previousVelocity);
@@ -128,7 +136,7 @@ public abstract class Player extends PlayerBase implements Moveable
 				body.getLinearVelocity().lengthSquared() < 0.04f) { // 0.0003^2
 			openLanding();
 		}
-		if(body.getLinearVelocity().lengthSquared() > 0.07f) { // 0.0003^2
+		if(body.getLinearVelocity().lengthSquared() > 0.07f) {
 			closeLanding();
 		}
 		
@@ -312,15 +320,17 @@ public abstract class Player extends PlayerBase implements Moveable
 	public float getBallRotation() {
 		return ballRotation;
 	}
+	
+	protected float earTorque;
 
-	protected float getBodyGravityTorque() {
-		return bodyGravityTorque;
+	protected float getEarTorque() {
+		return earTorque;
 	}
 	
 	private float accelerometerMoment;
 	
 	public void setAccelerometerMoment(float moment) {
-		// accelerometerMoment = moment;
-		// TODO: Re-enable?
+		// This multiplier stops the player spinning too fast - the faster it spins, the less the moment is applied
+		accelerometerMoment = -moment;
 	}
 }

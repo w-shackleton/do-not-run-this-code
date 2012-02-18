@@ -30,8 +30,7 @@ import android.widget.TextView;
  * @author william
  *
  */
-public class Game extends Activity implements Constants, OnClickListener, SensorEventListener
-{
+public class Game extends Activity implements Constants, OnClickListener, SensorEventListener {
 	GameView gameView;
 	
 	Animation panout, panin;
@@ -90,8 +89,7 @@ public class Game extends Activity implements Constants, OnClickListener, Sensor
 		findViewById(R.id.gameviewbuttons).setVisibility(View.GONE);
 	}
 	
-	protected Handler gvHandler = new Handler()
-	{
+	protected Handler gvHandler = new Handler() {
 		@Override
 		public void handleMessage(Message m) {
 			switch(m.what)

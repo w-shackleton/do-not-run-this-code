@@ -20,7 +20,7 @@ public interface Constants {
 	 */
 	public static final float RAD_TO_DEG = (float) (180 / Math.PI);
 	
-	public static final String TAG = "SpaceGame";
+	public static final String TAG = "spacegame";
 	
 	/**
 	 * Pseudo-random numbers.

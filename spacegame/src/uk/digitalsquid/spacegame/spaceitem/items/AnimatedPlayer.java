@@ -283,8 +283,8 @@ public class AnimatedPlayer extends Player
 		deltaVelocity.subLocal(previousVelocity);
 		deltaVelocity.mul(VELOCITY_FORCE_FACTOR);
 		
-		float forceX = (itemRF.x + leftEarExtraForce.x + deltaVelocity.x) * EAR_FORCE_PREMULTIPLIER;
-		float forceY = (itemRF.y + leftEarExtraForce.y + deltaVelocity.y) * EAR_FORCE_PREMULTIPLIER;
+		float forceX = 0 * (itemRF.x + leftEarExtraForce.x + deltaVelocity.x) * EAR_FORCE_PREMULTIPLIER;
+		float forceY = 0 * (itemRF.y + leftEarExtraForce.y + deltaVelocity.y) * EAR_FORCE_PREMULTIPLIER;
 		
 		// Work out angular force on ears.
 		double leftEarExternalForce  = CompuFuncs.rotateY(
@@ -299,13 +299,13 @@ public class AnimatedPlayer extends Player
 		previousVelocity.set(body.getLinearVelocity());
 		
 		// Natural rotation + the force from earlier - torque, to make ears delay when body moves.
-		double leftEarForce = LEFT_EAR_RESTING_POSITION - lEarRotation + leftEarExternalForce - (getBodyGravityTorque() * 2);
+		double leftEarForce = LEFT_EAR_RESTING_POSITION - lEarRotation + leftEarExternalForce - (getEarTorque() * 2);
 		
 		lEarRotationSpeed += leftEarForce * millistep / ITERS / 1000f * EAR_FORCE_MULTIPLIER;
 		lEarRotationSpeed *= EAR_ROTATING_AIR_RESISTANCE;
 		lEarRotation += lEarRotationSpeed * millistep / ITERS / 1000f * speedScale * EAR_ROTATING_SPEED;
 		
-		double rightEarForce = RIGHT_EAR_RESTING_POSITION - rEarRotation + rightEarExternalForce - (getBodyGravityTorque() * 1);
+		double rightEarForce = RIGHT_EAR_RESTING_POSITION - rEarRotation + rightEarExternalForce - (getEarTorque() * 1); // Different to make ears wobble differently
 		
 		rEarRotationSpeed += rightEarForce * millistep / ITERS / 1000f * EAR_FORCE_MULTIPLIER;
 		rEarRotationSpeed *= EAR_ROTATING_AIR_RESISTANCE;
