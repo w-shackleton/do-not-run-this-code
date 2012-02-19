@@ -8,6 +8,7 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyType;
 
 import uk.digitalsquid.spacegame.R;
+import uk.digitalsquid.spacegamelib.Constants;
 import uk.digitalsquid.spacegamelib.SimulationContext;
 import uk.digitalsquid.spacegamelib.gl.RectMesh;
 import uk.digitalsquid.spacegamelib.spaceitem.Rectangular;
@@ -15,7 +16,7 @@ import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Clickable;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Messageable;
 import android.util.Log;
 
-public class InfoBox extends Rectangular implements Messageable, Clickable
+public class InfoBox extends Rectangular implements Messageable, Clickable, Constants
 {
 	protected String text = null;
 	protected RectMesh image;
@@ -27,8 +28,8 @@ public class InfoBox extends Rectangular implements Messageable, Clickable
 	 */
 	
 	protected static final float BOUNCINESS = 0.8f;
-	protected static final Vec2 SIZE = new Vec2(5f, 4f);
-	protected static final Vec2 IMG_SIZE = new Vec2(5f, 5f);
+	protected static final Vec2 SIZE = new Vec2(5f * GRID_SIZE, 4f * GRID_SIZE);
+	protected static final Vec2 IMG_SIZE = new Vec2(5f * GRID_SIZE, 5f * GRID_SIZE);
 	
 	public InfoBox(SimulationContext context, Vec2 coord, float rotation, String text, boolean initialshow)
 	{

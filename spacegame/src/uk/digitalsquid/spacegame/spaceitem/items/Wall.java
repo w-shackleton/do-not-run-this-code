@@ -75,23 +75,25 @@ public class Wall extends Rectangular implements Moveable, TopDrawable, Forceful
 			vBottom = new BlockVortex(center2, vortexSize, (rotation + 180) * DEG_TO_RAD);
 		}
 		
-		walledge = new RectMesh(coord.x, coord.y, this.size.x, this.size.y, R.drawable.walledge);
-		walledge.setRotation(rotation);
+		walledge = new RectMesh(0, 0, this.size.x, this.size.y, R.drawable.walledge);
+		// walledge.setRotation(rotation);
 		walledge.setRepeatingTexture(true);
 		
 		if(hasEnds) {
-			walljoin1 = new RectMesh(coord.x + this.size.x / 2 + this.size.y / 4,
-					coord.y,
+			walljoin1 = new RectMesh(+this.size.x / 2 + this.size.y / 4,
+					0,
 					this.size.y / 2,
 					this.size.y,
-					R.drawable.walljoiner);
-			walljoin2 = new RectMesh(coord.x - this.size.x / 2 - this.size.y / 4,
-					coord.y,
+					R.drawable.wallside);
+			walljoin2 = new RectMesh(-this.size.x / 2 - this.size.y / 4,
+					0,
 					this.size.y / 2,
 					this.size.y,
-					R.drawable.walljoiner);
-			walljoin1.setRotation(rotation);
-			walljoin2.setRotation(180+rotation);
+					R.drawable.wallside);
+			// walljoin1.setRotation(rotation);
+			// walljoin2.setRotation(180+rotation);
+			walljoin1.setRotation(0);
+			walljoin2.setRotation(180);
 		}
 		
 		fixture.setFriction(0.2f);
@@ -117,7 +119,14 @@ public class Wall extends Rectangular implements Moveable, TopDrawable, Forceful
 
 	@Override
 	public void draw(GL10 gl, float worldZoom) {
+		gl.glPushMatrix();
+		gl.glTranslatef(getPosX(), getPosY(), 0);
+		gl.glRotatef(getRotation(), 0, 0, 1);
 		walledge.draw(gl);
+		if(walljoin1 != null) walljoin1.draw(gl);
+		if(walljoin2 != null) walljoin2.draw(gl);
+		gl.glPopMatrix();
+		
 		if(vTop != null) vTop.draw(gl);
 		if(vBottom != null) vBottom.draw(gl);
 	}
@@ -164,9 +173,6 @@ public class Wall extends Rectangular implements Moveable, TopDrawable, Forceful
 	@Override
 	public void drawBelow(GL10 gl, float worldZoom) {
 		line.draw(gl);
-		
-		if(walljoin1 != null) walljoin1.draw(gl);
-		if(walljoin2 != null) walljoin2.draw(gl);
 	}
 
 	@Override

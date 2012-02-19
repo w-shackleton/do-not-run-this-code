@@ -7,8 +7,8 @@
     <portal x="-263" y="89" />
     <stars value="12" />
     <items>
-        <gravity x="96" y="272" sx="336" sy="272" rotation="45" power="0" />
-        <wall x="-136" y="-72" sx="208" sy="16" rotation="-180" />
+        <gravity x="96" y="272" sx="352" sy="288" rotation="45" power="0" />
+        <wall x="-144" y="-32" sx="224" sy="32" rotation="-180" hasEnds="1" />
         <planet x="213" y="-159" radius="80.1901" type="1" />
         <planet x="-96" y="112" radius="50" type="2" />
         <star x="-192" y="112" radius="15" />
@@ -40,11 +40,11 @@
         <star x="-16" y="176" radius="15" />
         <star x="256" y="208" radius="15" />
         <star x="288" y="128" radius="15" />
-        <infobox x="16" y="320" sx="80" sy="48" rotation="-0" initialshow="false">Welcome to &lt;game name&gt;.</infobox>
+        <infobox x="16" y="320" sx="96" sy="64" rotation="-0" initialshow="false">Welcome to &lt;game name&gt;.</infobox>
         <planet x="336" y="160" radius="31.0461" type="0" />
-        <wall x="-248" y="-152" sx="144" sy="16" rotation="-90" />
-        <wall x="8" y="-184" sx="80" sy="16" rotation="-90" />
-        <wall x="-120" y="-232" sx="240" sy="16" rotation="-0" />
-        <infobox x="-200" y="-200" sx="80" sy="48" rotation="-0" initialshow="false"></infobox>
+        <wall x="-272" y="-128" sx="160" sy="32" rotation="-90" hasEnds="1" />
+        <wall x="16" y="-160" sx="96" sy="32" rotation="-90" hasEnds="1" />
+        <wall x="-128" y="-224" sx="256" sy="32" rotation="-0" hasEnds="1" />
+        <infobox x="-208" y="-80" sx="96" sy="64" rotation="-0" initialshow="false"></infobox>
     </items>
 </level>

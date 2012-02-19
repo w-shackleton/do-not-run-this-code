@@ -22,7 +22,7 @@ public class AnimatedPlayer extends Player
 	/**
 	 * The amount that the eye can move in its socket
 	 */
-	protected static final float EYE_MOVE_AMOUNT = 0.3f;
+	protected static final float EYE_MOVE_AMOUNT = 0.35f;
 	
 	/**
 	 * The position that the eye is aiming to be at (for animation)
@@ -42,7 +42,7 @@ public class AnimatedPlayer extends Player
 	/**
 	 * How quickly the distance affects the eye position
 	 */
-	protected static final float LOOKTO_DISTANCE_AFFECTOR = 15f;
+	protected static final float LOOKTO_DISTANCE_AFFECTOR = 5f;
 	
 	protected final RectMesh ball, leftEar, rightEar;
 	protected final RectMesh leftEye, leftEyeinside, leftEyeblinking;
@@ -56,14 +56,20 @@ public class AnimatedPlayer extends Player
 	private int blinkTimeLeft = 0;
 	
 	/**
+	 * The progress, from 0 to 1 of the eye roll progress
+	 */
+	private float eyeRollProgress = -1;
+	
+	/**
 	 * Amount of time to blink for
 	 */
-	private static final int BLINK_TIME = 3;
+	private static final int BLINK_TIME = 7;
+	private static final float EYE_ROLL_TIMETAKEN = 2f; // In seconds
 	
 	/**
 	 * Speed to move the eyes at. Higher is slower.
 	 */
-	private static final float EYE_MOVE_SPEED = 70;
+	private float EYE_MOVE_SPEED = 10;
 	
 	private static final Vec2 lEar = new Vec2(-.7f, -.4f);
 	private static final Vec2 rEar = new Vec2(-.7f, .4f);
@@ -77,7 +83,7 @@ public class AnimatedPlayer extends Player
 	private static final float EAR_ROTATING_AIR_RESISTANCE = 0.985f;
 	private static final float EAR_ROTATING_SPEED = 15;
 	private static final float EAR_FORCE_MULTIPLIER = 1f;
-	private static final float EAR_FORCE_PREMULTIPLIER = 2f;
+	private static final float EAR_FORCE_PREMULTIPLIER = 1f;
 	private float lEarRotation = 30;
 	private float rEarRotation = -30;
 	private float lEarRotationSpeed = 0;
@@ -145,8 +151,16 @@ public class AnimatedPlayer extends Player
 		lookToDistance.set(itemC);
 		lookToDistance.subLocal(eyeMoveToOnGame); // lookTo = itemC - eyeMoveToOnGame
 		
-		float lookLength = lookToDistance.length();
-		float lookAngle = VecHelper.angleRad(lookToDistance);
+		float lookLength, lookAngle;
+		if(eyeRollProgress == -1) { // Not
+			lookLength = lookToDistance.length();
+			lookAngle = VecHelper.angleRad(lookToDistance);
+			EYE_MOVE_SPEED = 10;
+		} else {
+			lookLength = 10000; // Large number
+			lookAngle = (float) (eyeRollProgress * Math.PI) + (getRotation()-90) * DEG_TO_RAD; // Half circle
+			EYE_MOVE_SPEED = 1;
+		}
 		
 		lookLength = CompuFuncs.trimMinMax(lookLength, -LOOKTO_DISTANCE_AFFECTOR, LOOKTO_DISTANCE_AFFECTOR);
 		lookLength *= (float)EYE_MOVE_AMOUNT / (float)LOOKTO_DISTANCE_AFFECTOR;
@@ -246,6 +260,10 @@ public class AnimatedPlayer extends Player
 		return ret;
 	}
 	
+	public final void rollEyes() {
+		if(eyeRollProgress == -1) eyeRollProgress = 0;
+	}
+	
 	private static final float LANDING_MOVE_ANIMATION_STEP = (float) (Math.PI * 0.02);
 	private static final float LANDING_DRAW_SHIFT_TOTAL = 1.4f;
 	
@@ -279,12 +297,15 @@ public class AnimatedPlayer extends Player
 		// Get delta velocity as sort of force on ears
 		if(previousVelocity == null) previousVelocity = new Vec2(body.getLinearVelocity());
 		
+		if(eyeRollProgress > 1) eyeRollProgress = -1;
+		if(eyeRollProgress != -1) eyeRollProgress += millistep / 1000 * EYE_ROLL_TIMETAKEN;
+		
 		deltaVelocity.set(body.getLinearVelocity()); // delta = current - previous
 		deltaVelocity.subLocal(previousVelocity);
 		deltaVelocity.mul(VELOCITY_FORCE_FACTOR);
 		
-		float forceX = 0 * (itemRF.x + leftEarExtraForce.x + deltaVelocity.x) * EAR_FORCE_PREMULTIPLIER;
-		float forceY = 0 * (itemRF.y + leftEarExtraForce.y + deltaVelocity.y) * EAR_FORCE_PREMULTIPLIER;
+		float forceX = (itemRF.x + leftEarExtraForce.x + deltaVelocity.x) * EAR_FORCE_PREMULTIPLIER;
+		float forceY = (itemRF.y + leftEarExtraForce.y + deltaVelocity.y) * EAR_FORCE_PREMULTIPLIER;
 		
 		// Work out angular force on ears.
 		double leftEarExternalForce  = CompuFuncs.rotateY(
