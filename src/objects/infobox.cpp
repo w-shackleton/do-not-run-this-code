@@ -2,8 +2,8 @@
 
 using namespace Objects;
 
-#define INFOBOX_SIZE_X 80
-#define INFOBOX_SIZE_Y 56
+#define INFOBOX_SIZE_X (GRID_SIZE * 5)
+#define INFOBOX_SIZE_Y (GRID_SIZE * 4)
 
 #include "../misc/data.hpp"
 

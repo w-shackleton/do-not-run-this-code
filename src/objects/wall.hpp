@@ -18,7 +18,8 @@ namespace Objects
 			void saveXMLChild(TiXmlElement* item);
 
 			Cairo::RefPtr<Cairo::ImageSurface> wallside;
-			Cairo::RefPtr<Cairo::ImageSurface> wall;
+			Cairo::RefPtr<Cairo::ImageSurface> wallImage;
+			Cairo::RefPtr<Cairo::SurfacePattern> wallPattern;
 
 			bool hasEnds;
 			wxMenuItem *hasEndsMenuItem;

@@ -1,12 +1,14 @@
 #include "wall.hpp"
 
 using namespace Objects;
+using namespace Cairo;
 
 #define RECT_SIZE_Y GRID_SIZE_2
 #define RECT_MIN_X 80
 #define RECT_MAX_X 1200
 
-#define IMG_SIZE 64
+#define IMG_SIZE_X 32
+#define IMG_SIZE_Y 64
 
 #include "../misc/data.hpp"
 
@@ -15,7 +17,11 @@ Wall::Wall(EditorCallbacks &callbacks, double x, double y, double sx, double rot
 	hasEndsMenuItem(NULL),
 	hasEnds(true) // True by default
 {
-	wall = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("wall.png"));
+	wallImage = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("walledge.png"));
+	RefPtr<Surface> s = RefPtr<Surface>::cast_dynamic(wallImage);
+	wallPattern = Cairo::SurfacePattern::create(s);
+	wallPattern->set_extend(EXTEND_REPEAT);
+
 	wallside = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("wallside.png"));
 	hasEndsMenuItem = contextMenu->AppendCheckItem(contextMenuNextAvailableSlot++, _("&Has End parts"));
 	hasEndsMenuItem->Check(hasEnds);
@@ -28,7 +34,12 @@ Wall::Wall(EditorCallbacks &callbacks, TiXmlElement &item) :
 {
 	sy = RECT_SIZE_Y;
 	item.QueryBoolAttribute("hasEnds", &hasEnds);
-	wall = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("wall.png"));
+
+	wallImage = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("walledge.png"));
+	RefPtr<Surface> s = RefPtr<Surface>::cast_dynamic(wallImage);
+	wallPattern = Cairo::SurfacePattern::create(s);
+	wallPattern->set_extend(EXTEND_REPEAT);
+
 	wallside = Cairo::ImageSurface::create_from_png(Misc::Data::getFilePath("wallside.png"));
 	hasEndsMenuItem = contextMenu->AppendCheckItem(contextMenuNextAvailableSlot++, _("&Has End parts"));
 	hasEndsMenuItem->Check(hasEnds);
@@ -57,7 +68,8 @@ void Wall::draw(Cairo::RefPtr<Cairo::Context> &cr)
 	cr->rotate(getRotation());
 	cr->scale(.5, .5);
 
-	cr->set_source(wall, -RECT_MAX_X, -getSY());
+	wallPattern->set_matrix(translation_matrix(-getSX(), -getSY()));
+	cr->set_source(wallPattern);
 	cr->rectangle(-getSX(), -getSY(), getSX() * 2, getSY() * 2);
 	cr->fill();
 
@@ -66,7 +78,7 @@ void Wall::draw(Cairo::RefPtr<Cairo::Context> &cr)
 		{
 			cr->rotate(M_PI);
 			cr->set_source(wallside, getSX(), -getSY());
-			cr->rectangle( getSX(), -getSY(), IMG_SIZE, IMG_SIZE);
+			cr->rectangle( getSX(), -getSY(), IMG_SIZE_X, IMG_SIZE_Y);
 			cr->fill();
 		}
 	}
