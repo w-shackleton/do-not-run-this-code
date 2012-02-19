@@ -10,6 +10,7 @@ import uk.digitalsquid.spacegame.R;
 import uk.digitalsquid.spacegamelib.CompuFuncs;
 import uk.digitalsquid.spacegamelib.SimulationContext;
 import uk.digitalsquid.spacegamelib.VecHelper;
+import uk.digitalsquid.spacegamelib.gl.Arc;
 import uk.digitalsquid.spacegamelib.gl.RectMesh;
 
 public class AnimatedPlayer extends Player
@@ -47,6 +48,8 @@ public class AnimatedPlayer extends Player
 	protected final RectMesh ball, leftEar, rightEar;
 	protected final RectMesh leftEye, leftEyeinside, leftEyeblinking;
 	protected final RectMesh rightEye, rightEyeinside, rightEyeblinking;
+	
+	protected final Arc leftEyeBlur, rightEyeBlur;
 	
 	protected final RectMesh landingGearLeft, landingGearRight;
 	
@@ -124,6 +127,9 @@ public class AnimatedPlayer extends Player
 		landingGearLeft.setRotation(-LANDING_GEAR_CLOSED_ROTATION);
 		landingGearRight.setRotation(LANDING_GEAR_CLOSED_ROTATION);
 		
+		leftEyeBlur = new Arc(0, 0, R.drawable.motionblur);
+		rightEyeBlur = new Arc(0, 0, R.drawable.motionblur);
+		
 		body.setLinearVelocity(velocity);
 		itemRF.setZero();
 		
@@ -182,7 +188,6 @@ public class AnimatedPlayer extends Player
 		eyeRotatedPos.set(eyePos);
 		VecHelper.rotateLocal(eyeRotatedPos, null, -getBallRotation() * DEG_TO_RAD);
 		
-		
 		// Draw
 		
 		gl.glPushMatrix();
@@ -204,11 +209,33 @@ public class AnimatedPlayer extends Player
 		rightEar.draw(gl);
 		gl.glPopMatrix();
 		
+		{ // Eye motion blur
+			gl.glPushMatrix();
+			gl.glRotatef(-getBallRotation(), 0, 0, 1); // Rotate back again
+			float lEyeRotationOffset = VecHelper.angleRad(lEye);
+			float rEyeRotationOffset = VecHelper.angleRad(rEye);
+			
+			float currentRotationRad = getBallRotation() * DEG_TO_RAD;
+			float previousRotationRad = previousRotation * DEG_TO_RAD;
+			float rotationDelta = (previousRotationRad - currentRotationRad) * 5;
+		
+			leftEyeBlur.setSize(
+					lEye.length() - EYE_RADIUS * 1, lEye.length() + EYE_RADIUS * 1,
+					currentRotationRad + lEyeRotationOffset,
+					currentRotationRad + lEyeRotationOffset + rotationDelta);
+			rightEyeBlur.setSize(
+					rEye.length() - EYE_RADIUS * 1, rEye.length() + EYE_RADIUS * 1,
+					currentRotationRad + rEyeRotationOffset,
+					currentRotationRad + rEyeRotationOffset + rotationDelta);
+			leftEyeBlur.draw(gl);
+			rightEyeBlur.draw(gl);
+			gl.glPopMatrix();
+		}
+		
 		if(random.nextInt(1000) == 42) blinkTimeLeft = BLINK_TIME;
 		if(blinkTimeLeft-- > 0) // Blinking
 		{
 			leftEyeblinking.draw(gl);
-
 			rightEyeblinking.draw(gl);
 		}
 		else
@@ -226,7 +253,13 @@ public class AnimatedPlayer extends Player
 		}
 		
 		gl.glPopMatrix();
+		previousRotation = getBallRotation();
 	}
+	
+	/**
+	 * Stores the previous rotation, used for motion blur
+	 */
+	private float previousRotation;
 	
 	@Override
 	public void lookTo(Vec2 point)

@@ -20,7 +20,7 @@ public abstract class PlayerBase extends Spherical {
 		fixture.setRestitution(0.05f);
 		fixture.setFriction(0.95f);
 		fixture.setDensity(10);
-		body.setAngularDamping(0.2f);
+		body.setAngularDamping(0.1f);
 		itemC = getPos();
 		
 		fixture.getFilterData().categoryBits = COLLISION_GROUP_PLAYER;

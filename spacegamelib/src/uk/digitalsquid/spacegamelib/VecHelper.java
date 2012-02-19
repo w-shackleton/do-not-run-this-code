@@ -69,7 +69,6 @@ public final class VecHelper {
 	 * Rotate this {@link Vec2} around the specified {@link Vec2} {@code rot}, by the amount of radians
 	 * @param orig The origin around which to rotate (can be {@code null}, in which case the origin is {@code (0,0)})
 	 * @param rot The amount to rotate, in RADIANS
-	 * @return A new {@link Vec2}, which has been rotated
 	 */
 	public static final void rotateLocal(Vec2 point, Vec2 orig, float rot)
 	{

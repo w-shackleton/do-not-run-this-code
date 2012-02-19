@@ -47,6 +47,11 @@ public class Mesh {
 	private float rz = 0;
 	
 	/**
+	 * The way round that triangles wind
+	 */
+	private int winding = GL10.GL_CCW;
+	
+	/**
 	 * The mode to draw in. See gl.glDrawElements(..)
 	 */
 	private int drawMode = GL10.GL_TRIANGLES;
@@ -96,7 +101,7 @@ public class Mesh {
 	 */
 	public final void draw(GL10 gl) {
 		// Counter-clockwise winding.
-		gl.glFrontFace(GL10.GL_CCW);
+		gl.glFrontFace(winding);
 		// Enable face culling.
 		gl.glEnable(GL10.GL_CULL_FACE);
 		// What faces to remove with the face culling.
@@ -276,5 +281,15 @@ public class Mesh {
 	 */
 	public final void setDrawMode(int mode) {
 		drawMode = mode;
+	}
+
+	/**
+	 * Set the winding, either GL10.GL_CCW or GL10.GL_CW
+	 * @param winding
+	 */
+	public void setWinding(int winding) {
+		if(!(winding == GL10.GL_CCW || winding == GL10.GL_CW))
+			throw new IllegalArgumentException("winding has an invalid value");
+		this.winding = winding;
 	}
 }
