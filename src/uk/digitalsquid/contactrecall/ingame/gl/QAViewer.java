@@ -59,6 +59,7 @@ public class QAViewer implements Config, Moveable {
 	 * @param question
 	 */
 	public void setQuestion(int mode, Object question) {
+		if(question == null) return;
 		switch(mode) {
 		case GameInstance.FROM_PHOTO:
 			if(photoQuestion == null) photoQuestion = new PhotoQuestion();

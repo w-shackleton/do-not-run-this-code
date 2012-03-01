@@ -16,6 +16,10 @@ public abstract class GameInstance implements Config {
 	 * The progress through this game so far.
 	 */
 	int progress = -1;
+	/**
+	 * The last contact to be shown onscreen. Used to not have to reload the contact on screen rotate etc.
+	 */
+	int lastShown = -2;
 
 	public abstract List<Contact> getQuestions();
 	
@@ -24,13 +28,19 @@ public abstract class GameInstance implements Config {
 	 * @return
 	 */
 	public Contact getNext() {
-		Log.i(TAG, "Contact nr. " + (progress + 1));
-		try {
-			Contact ret = getQuestions().get(++progress);
-			currentToData = generateToData(); // Make exception happen first
-			return ret;
-		} catch(IndexOutOfBoundsException e) {
-			return null;
+		progress++;
+		Log.i(TAG, "Contact nr. " + progress);
+		if(lastShown == progress) { // Showing current one again, so don't do anything
+			return getCurrent();
+		} else {
+			try {
+				lastShown = (progress-1);
+				Contact ret = getQuestions().get(progress);
+				currentToData = generateToData(); // Make exception happen first
+				return ret;
+			} catch(IndexOutOfBoundsException e) {
+				return null;
+			}
 		}
 	}
 	
@@ -71,7 +81,7 @@ public abstract class GameInstance implements Config {
 	 * Calls will be made only once per contact.
 	 * @return
 	 */
-	public abstract ToData generateToData();
+	protected abstract ToData generateToData();
 	
 	private ToData currentToData;
 	
