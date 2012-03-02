@@ -9,6 +9,7 @@ import uk.digitalsquid.contactrecall.game.PhotoToNameGame.Images;
 import uk.digitalsquid.contactrecall.ingame.gl.names.NameAnswer;
 import uk.digitalsquid.contactrecall.ingame.gl.photos.PhotoQuestion;
 import uk.digitalsquid.contactrecall.misc.Config;
+import android.util.Log;
 
 /**
  * Shows a question on the screen. Detects the type of question.
@@ -62,6 +63,7 @@ public class QAViewer implements Config, Moveable {
 		if(question == null) return;
 		switch(mode) {
 		case GameInstance.FROM_PHOTO:
+			Log.w(TAG, "Loading photo");
 			if(photoQuestion == null) photoQuestion = new PhotoQuestion();
 			photoQuestion.setBitmaps((Images) question);
 			// TODO: Set other q types to null to stop multiple drawing,
@@ -77,6 +79,7 @@ public class QAViewer implements Config, Moveable {
 	public void setAnswer(int mode, List<?> answers) {
 		switch(mode) {
 		case GameInstance.TO_NAME:
+			Log.w(TAG, "Loading answers " + answers);
 			if(nameAnswers == null) nameAnswers = new AnswerCollection<NameAnswer>();
 			
 			// Add each one to the answer collection, then organise it.

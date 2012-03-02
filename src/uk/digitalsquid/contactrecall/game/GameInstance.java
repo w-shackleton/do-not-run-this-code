@@ -31,10 +31,13 @@ public abstract class GameInstance implements Config {
 		progress++;
 		Log.i(TAG, "Contact nr. " + progress);
 		if(lastShown == progress) { // Showing current one again, so don't do anything
+			currentToData = visibleToData;
 			return getCurrent();
 		} else {
 			try {
 				lastShown = (progress-1);
+				visibleToData = currentToData;
+				
 				Contact ret = getQuestions().get(progress);
 				currentToData = generateToData(); // Make exception happen first
 				return ret;
@@ -125,4 +128,9 @@ public abstract class GameInstance implements Config {
 	public int size() {
 		return getQuestions().size();
 	}
+	
+	/**
+	 * Used to persist {@link ToData} across screen rotations
+	 */
+	private ToData visibleToData;
 }
