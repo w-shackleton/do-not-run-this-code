@@ -36,7 +36,7 @@ public class GameView extends DrawBaseView<ViewWorker> {
 		
 		public GameInstance game;
 		
-		public boolean running = false;
+		public boolean running = true;
 		
 		/**
 		 * A timer for the whole game. In nanoseconds
@@ -53,7 +53,7 @@ public class GameView extends DrawBaseView<ViewWorker> {
 		/**
 		 * The amount of time allowed per question, in nanoseconds
 		 */
-		long questionTimeAllowance = 9000L * 1000000L;
+		long questionTimeAllowance = 4000L * 1000000L;
 		
 		static final int STATUS_SHOWING = 1;
 		static final int STATUS_CHANGING = 2;
