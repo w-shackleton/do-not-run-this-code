@@ -103,6 +103,9 @@ void Block::loadImageForType(int type) {
 	case BLOCK_WALLJOIN2:
 		image = ImageSurface::create_from_png(Data::getFilePath("block/walljoin2.png"));
 		break;
+	case BLOCK_WALL_CORNER:
+		image = ImageSurface::create_from_png(Data::getFilePath("block/wallcorner.png"));
+		break;
 	}
 }
 Misc::Point Block::getMinSizeForType(int type) {
@@ -121,6 +124,7 @@ Misc::Point Block::getMaxSizeForType(int type) {
 		return Point(GRID_SIZE_2 * 100, GRID_SIZE_2);
 	case BLOCK_WALLJOIN1:
 	case BLOCK_WALLJOIN2:
+	case BLOCK_WALL_CORNER:
 		return Point(GRID_SIZE_2, GRID_SIZE_2);
 	}
 }

@@ -13,6 +13,7 @@ namespace Objects
 
 		BLOCK_WALLJOIN1,
 		BLOCK_WALLJOIN2,
+		BLOCK_WALL_CORNER,
 	};
 
 	/**

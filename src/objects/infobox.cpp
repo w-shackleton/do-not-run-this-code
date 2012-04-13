@@ -2,7 +2,7 @@
 
 using namespace Objects;
 
-#define INFOBOX_SIZE_X (GRID_SIZE * 5)
+#define INFOBOX_SIZE_X (GRID_SIZE * 6)
 #define INFOBOX_SIZE_Y (GRID_SIZE * 4)
 
 #include "../misc/data.hpp"
@@ -45,6 +45,8 @@ void InfoBox::draw(Cairo::RefPtr<Cairo::Context> &cr)
 
 	cr->set_source(img, -getSX(), -getSY());
 	cr->rectangle(-getSX(), -getSY(), getSX() * 2, getSY() * 2); cr->fill();
+
+	cout << getSX() << ", " << getSY() << endl;
 
 	cr->scale(2, 2);
 	cr->rotate(-rotation);
