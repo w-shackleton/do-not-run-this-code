@@ -253,7 +253,7 @@ public abstract class BlockDef implements Constants {
 					return new BlockVortex(vortexCenter, vortexSize, angle);
 				}
 			});
-			// BLOCK_WALLJOIN1
+			// BLOCK_WALLJOIN2
 			defs.put(5, new BlockDef() {
 				@Override
 				protected Vec2 getUnscaledMaxSize() {
@@ -283,6 +283,34 @@ public abstract class BlockDef implements Constants {
 					Vec2 vortexSize = new Vec2(size);
 					vortexSize.y = GRID_SIZE * 3f;
 					return new BlockVortex(vortexCenter, vortexSize, angle);
+				}
+			});
+			// BLOCK_WALL_CORNER
+			defs.put(6, new BlockDef() {
+				@Override
+				protected Vec2 getUnscaledMaxSize() {
+					return new Vec2(1, 1);
+				}
+				
+				@Override
+				public Shape getShape(Body body, Vec2 size) {
+					PolygonShape shape = new PolygonShape();
+					shape.setAsBox(size.x / 2, size.y / 2);
+					return shape;
+				}
+				
+				@Override
+				public int getImageId() {
+					return uk.digitalsquid.spacegame.R.drawable.block_wallcorner;
+				}
+				
+				public Vec2 getImageRelativeSize() {
+					return new Vec2(2, 2);
+				}
+
+				@Override
+				public BlockVortex getVortex(Vec2 pos, Vec2 size, float angle) {
+					return null;
 				}
 			});
 		}

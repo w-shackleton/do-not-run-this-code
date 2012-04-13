@@ -28,11 +28,10 @@ public class InfoBox extends Rectangular implements Messageable, Clickable, Cons
 	 */
 	
 	protected static final float BOUNCINESS = 0.8f;
-	protected static final Vec2 SIZE = new Vec2(5f * GRID_SIZE, 4f * GRID_SIZE);
-	protected static final Vec2 IMG_SIZE = new Vec2(5f * GRID_SIZE, 5f * GRID_SIZE);
+	protected static final Vec2 SIZE = new Vec2(6f * GRID_SIZE, 4f * GRID_SIZE);
+	protected static final Vec2 IMG_SIZE = new Vec2(6f * GRID_SIZE, 6f * GRID_SIZE);
 	
-	public InfoBox(SimulationContext context, Vec2 coord, float rotation, String text, boolean initialshow)
-	{
+	public InfoBox(SimulationContext context, Vec2 coord, float rotation, String text, boolean initialshow) {
 		super(context, coord, SIZE, 10, rotation, BOUNCINESS, BodyType.STATIC);
 		if(text == null) text = "";
 		this.text = text;
@@ -47,22 +46,19 @@ public class InfoBox extends Rectangular implements Messageable, Clickable, Cons
 		fixture.getFilterData().maskBits = COLLISION_GROUP_PLAYER;
 	}
 	
-	public InfoBox(SimulationContext context, Vec2 coord, int textId, boolean initialshow)
-	{
+	public InfoBox(SimulationContext context, Vec2 coord, int textId, boolean initialshow) {
 		this(context, coord, 0, context.getResources().getString(textId), initialshow);
 	}
 
 	@Override
-	public void draw(GL10 gl, float worldZoom)
-	{
+	public void draw(GL10 gl, float worldZoom) {
 		image.draw(gl);
 	}
 	
 	MessageInfo messageInfo;
 
 	@Override
-	public MessageInfo sendMessage()
-	{
+	public MessageInfo sendMessage() {
 		//Log.v(TAG, "showNow: " + showNow);
 		// TODO: Delete showNow since message display setting reset in GameView?
 		messageInfo.display = showNow; // Only display once (possibly obsoleted by code in Messageable caller in GameView)
@@ -71,8 +67,7 @@ public class InfoBox extends Rectangular implements Messageable, Clickable, Cons
 	}
 
 	@Override
-	public void onClick(float x, float y)
-	{
+	public void onClick(float x, float y) {
 		Log.v(TAG, "Loading info box...");
 		showNow = true;
 	}

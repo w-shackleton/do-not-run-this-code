@@ -46,5 +46,8 @@
         <wall x="16" y="-160" sx="96" sy="32" rotation="-90" hasEnds="1" />
         <wall x="-128" y="-224" sx="256" sy="32" rotation="-0" hasEnds="1" />
         <infobox x="-208" y="-80" sx="96" sy="64" rotation="-0" initialshow="false"></infobox>
+        <block x="16" y="-224" sx="32" sy="32" rotation="-90" type="6" hasVortex="1" />
+        <block x="-272" y="-224" sx="32" sy="32" rotation="-180" type="6" hasVortex="1" />
+        <block x="-272" y="-32" sx="32" sy="32" rotation="90" type="6" hasVortex="1" />
     </items>
 </level>
