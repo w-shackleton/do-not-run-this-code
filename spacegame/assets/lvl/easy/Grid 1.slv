@@ -7,21 +7,43 @@
     <portal x="-88" y="-1" />
     <stars value="10" />
     <items>
-	    <!--<blackhole x="149" y="177" radius="70" />-->
         <block x="320" y="-80" sx="32" sy="32" rotation="-0" type="2" hasVortex="1" />
         <block x="224" y="-176" sx="32" sy="32" rotation="-90" type="3" hasVortex="1" />
         <block x="256" y="-80" sx="96" sy="32" rotation="-0" type="1" hasVortex="1" />
-        <wall x="112" y="-80" sx="128" sy="32" rotation="-0" hasEnds="1" hasVortex="1" />
-        <block x="320" y="-112" sx="32" sy="32" rotation="-90" type="1" hasVortex="1" />
+        <wall x="112" y="-80" sx="128" sy="32" rotation="-0" hasEnds="1" />
+        <block x="320" y="-144" sx="96" sy="32" rotation="-90" type="1" hasVortex="1" />
         <block x="192" y="-80" sx="32" sy="32" rotation="-0" type="4" hasVortex="1" />
         <block x="32" y="-80" sx="32" sy="32" rotation="-0" type="5" hasVortex="1" />
         <block x="0" y="-80" sx="32" sy="32" rotation="-270" type="2" hasVortex="1" />
         <block x="0" y="-176" sx="32" sy="32" rotation="-180" type="2" hasVortex="1" />
-        <block x="224" y="-128" sx="64" sy="32" rotation="90" type="1" hasVortex="1" />
-        <wall x="128" y="-144" sx="160" sy="32" rotation="-0" hasEnds="0" />
+        <block x="224" y="-112" sx="32" sy="32" rotation="90" type="1" hasVortex="1" />
+        <wall x="64" y="-144" sx="32" sy="32" rotation="-0" hasEnds="1" />
         <block x="272" y="-144" sx="64" sy="96" rotation="-0" type="0" hasVortex="1" />
         <block x="0" y="-128" sx="64" sy="32" rotation="90" type="1" hasVortex="1" />
-        <block x="32" y="-128" sx="64" sy="32" rotation="-90" type="1" hasVortex="1" />
+        <block x="32" y="-112" sx="32" sy="32" rotation="-90" type="1" hasVortex="1" />
         <block x="32" y="-176" sx="32" sy="32" rotation="-90" type="2" hasVortex="1" />
+        <planet x="176.704" y="-235.51" radius="50" type="5" />
+        <block x="320" y="-208" sx="32" sy="32" rotation="-90" type="5" hasVortex="1" />
+        <wall x="320" y="-272" sx="96" sy="32" rotation="-90" hasEnds="1" />
+        <wall x="96" y="-240" sx="160" sy="32" rotation="-90" hasEnds="1" />
+        <wall x="160" y="-144" sx="96" sy="32" rotation="-0" hasEnds="1" />
+        <block x="320" y="-336" sx="32" sy="32" rotation="-90" type="7" hasVortex="1" />
+        <block x="96" y="-336" sx="32" sy="32" rotation="-180" type="7" hasVortex="1" />
+        <block x="96" y="-144" sx="32" sy="32" rotation="-0" type="8" hasVortex="1" />
+        <block x="224" y="-144" sx="32" sy="32" rotation="90" type="6" hasVortex="1" />
+        <block x="32" y="-144" sx="32" sy="32" rotation="-90" type="6" hasVortex="1" />
+        <wall x="144" y="-336" sx="64" sy="32" rotation="-0" hasEnds="1" />
+        <block x="256" y="-336" sx="32" sy="32" rotation="-0" type="5" hasVortex="1" />
+        <block x="192" y="-336" sx="32" sy="32" rotation="-0" type="4" hasVortex="1" />
+        <wall x="288" y="-336" sx="32" sy="32" rotation="-0" hasEnds="1" />
+        <block x="224" y="-336" sx="32" sy="32" rotation="-0" type="1" hasVortex="1" />
+        <block x="224" y="-384" sx="32" sy="64" rotation="-0" type="0" hasVortex="1" />
+        <block x="256" y="-384" sx="64" sy="32" rotation="-90" type="1" hasVortex="1" />
+        <block x="192" y="-384" sx="64" sy="32" rotation="90" type="1" hasVortex="1" />
+        <block x="256" y="-432" sx="32" sy="32" rotation="-90" type="2" hasVortex="1" />
+        <block x="192" y="-432" sx="32" sy="32" rotation="-180" type="2" hasVortex="1" />
+        <block x="224" y="-432" sx="32" sy="32" rotation="-180" type="1" hasVortex="1" />
+        <block x="288" y="-368" sx="32" sy="32" rotation="-180" type="9" hasVortex="1" />
+        <block x="160" y="-368" sx="32" sy="32" rotation="-270" type="9" hasVortex="1" />
     </items>
 </level>

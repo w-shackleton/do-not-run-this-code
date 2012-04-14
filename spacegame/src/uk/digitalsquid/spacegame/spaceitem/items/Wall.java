@@ -43,7 +43,7 @@ public class Wall extends Rectangular implements Moveable, TopDrawable, Forceful
 	protected static final PaintDesc wallPaint = new PaintDesc(20, 100, 40);
 	
 	protected static final float WALL_WIDTH = BlockDef.GRID_SIZE_2;
-	protected static final float WALL_MIN_X = 8.0f;
+	protected static final float WALL_MIN_X = 4.0f;
 	protected static final float WALL_MAX_X = 100.0f;
 	
 	protected final boolean hasEnds;
@@ -96,7 +96,8 @@ public class Wall extends Rectangular implements Moveable, TopDrawable, Forceful
 			walljoin2.setRotation(180);
 		}
 		
-		fixture.setFriction(0.2f);
+		fixture.setFriction(0.6f);
+		fixture.setRestitution(0.7f);
 		fixture.getFilterData().categoryBits = COLLISION_GROUP_PLAYER;
 		fixture.getFilterData().maskBits = COLLISION_GROUP_PLAYER;
 		
