@@ -4,7 +4,7 @@ using namespace Objects;
 using namespace Cairo;
 
 #define RECT_SIZE_Y GRID_SIZE_2
-#define RECT_MIN_X 80
+#define RECT_MIN_X 40
 #define RECT_MAX_X 1200
 
 #define IMG_SIZE_X 32

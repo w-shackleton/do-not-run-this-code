@@ -50,7 +50,11 @@ class SpaceFrame: public wxFrame
 			ID_block_fade,
 			ID_block_walljoin1,
 			ID_block_walljoin2,
+			ID_block_walljoin3,
 			ID_block_wallcorner,
+			ID_block_wallcorner2,
+
+			ID_block_concave1,
 
 			ID_tb_c_star,
 		};

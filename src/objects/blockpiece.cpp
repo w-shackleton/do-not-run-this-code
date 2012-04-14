@@ -103,8 +103,17 @@ void Block::loadImageForType(int type) {
 	case BLOCK_WALLJOIN2:
 		image = ImageSurface::create_from_png(Data::getFilePath("block/walljoin2.png"));
 		break;
+	case BLOCK_WALLJOIN3:
+		image = ImageSurface::create_from_png(Data::getFilePath("block/walljoin3.png"));
+		break;
 	case BLOCK_WALL_CORNER:
 		image = ImageSurface::create_from_png(Data::getFilePath("block/wallcorner.png"));
+		break;
+	case BLOCK_WALL_CORNER2:
+		image = ImageSurface::create_from_png(Data::getFilePath("block/wallcorner2.png"));
+		break;
+	case BLOCK_CONCAVE1:
+		image = ImageSurface::create_from_png(Data::getFilePath("block/concave1.png"));
 		break;
 	}
 }
@@ -116,15 +125,11 @@ Misc::Point Block::getMaxSizeForType(int type) {
 	switch(type) {
 	case BLOCK_CENTER:
 		return Point(GRID_SIZE_2 * 100, GRID_SIZE_2 * 100);
-	case BLOCK_CORNER:
-		return Point(GRID_SIZE_2, GRID_SIZE_2);
 	case BLOCK_EDGE:
 		return Point(GRID_SIZE_2 * 100, GRID_SIZE_2);
 	case BLOCK_FADE:
 		return Point(GRID_SIZE_2 * 100, GRID_SIZE_2);
-	case BLOCK_WALLJOIN1:
-	case BLOCK_WALLJOIN2:
-	case BLOCK_WALL_CORNER:
+	default:
 		return Point(GRID_SIZE_2, GRID_SIZE_2);
 	}
 }
