@@ -107,4 +107,18 @@ public final class VecHelper {
 			ret[i] = rotateCoord(old[i], orig, rot);
 		return ret;
 	}
+	
+	/**
+	 * Converts an array of vectors into an array of floats
+	 * @param vecs
+	 * @return
+	 */
+	public static final float[] vec2ToFloat3(Vec2 []vecs, int len) {
+		final float[] ret = new float[len*3];
+		for(int i = 0; i < len; i++) {
+			ret[i*3+0] = vecs[i].x;
+			ret[i*3+1] = vecs[i].y;
+		}
+		return ret;
+	}
 }

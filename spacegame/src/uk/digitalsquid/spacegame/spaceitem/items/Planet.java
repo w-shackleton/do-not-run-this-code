@@ -20,7 +20,7 @@ public class Planet extends Gravitable
 {
 	protected static final PlanetType[] PLANET_TYPES = {
 		new PlanetType(Type.nobounce1,	FgType.image,	R.drawable.planet1,		0.1f, 0.5f, 3f, 25f, null),
-		new PlanetType(Type.sticky1,	FgType.image,	R.drawable.planet5,		0f,   0.9f, 4f, 25f, null),
+		new PlanetType(Type.sticky1,	FgType.image,	R.drawable.planet5,		0f,   0.6f, 4f, 25f, null),
 		new PlanetType(Type.bounce2,	FgType.image,	R.drawable.planet2,		0.97f,0.1f, 2f, 20f, null),
 		new PlanetType(Type.n1,			FgType.image,	R.drawable.planet3,		0.5f, 0.6f, 2f, 20f, null),
 		new PlanetType(Type.n2,			FgType.image,	R.drawable.planet4,		0.6f, 0.7f, 2f, 20f, null),
@@ -39,20 +39,19 @@ public class Planet extends Gravitable
 	{
 		super(context, coord, 1, getDensityForId(typeId) * 10, radius, BodyType.STATIC);
 		
-		fixture.setRestitution(getBouncinessForId(typeId));
-		fixture.setFriction(0.8f);
-		// fixture.setFriction(CompuFuncs.TrimMinMax(1 - getBouncinessForId(typeId), 0, 1));
-		
 		for(PlanetType t : PLANET_TYPES) {
 			if(t.typeId == typeId) {
 				this.type = t;
 			}
 		}
 		
+		fixture.setRestitution(type.restitution);
+		fixture.setFriction(0.8f);
+		fixture.setDensity(type.density * 10);
+		
 		setRadius(CompuFuncs.trimMinMax(getRadius(), type.minSize, type.maxSize));
 		
-		if(type.fgType == FgType.image)
-		{
+		if(type.fgType == FgType.image) {
 			// fgRotation = (float) (rGen.nextFloat() * 360);
 			fg = new RectMesh((float)getPos().x, (float)getPos().y, radius * 2, radius * 2, type.fileId2);
 		}
@@ -75,13 +74,13 @@ public class Planet extends Gravitable
 	 * @param typeId
 	 * @return
 	 */
-	protected static final float getBouncinessForId(int typeId) {
+	protected static final float getRestitutionForId(int typeId) {
 		for(PlanetType t : PLANET_TYPES) {
 			if(t.typeId == typeId) {
-				return (float) t.bounciness;
+				return (float) t.restitution;
 			}
 		}
-		return (float) PLANET_TYPES[0].bounciness;
+		return (float) PLANET_TYPES[0].restitution;
 	}
 	
 	/**
@@ -122,7 +121,7 @@ public class Planet extends Gravitable
 		
 		public final float minSize, maxSize;
 		
-		public final float bounciness, density;
+		public final float restitution, density;
 		
 		public final PaintDesc colour1;
 		
@@ -131,7 +130,7 @@ public class Planet extends Gravitable
 			this.fileId2 = fileId2;
 			this.minSize = minSize;
 			this.maxSize = maxSize;
-			this.bounciness = bounciness;
+			this.restitution = bounciness;
 			this.density = density;
 			
 			this.colour1 = colour1;

@@ -105,8 +105,9 @@ public abstract class BlockDef implements Constants {
 		if(defs == null) {
 			defs = new HashMap<Integer, BlockDef>();
 			
+			int pos = 0;
 			// BLOCK_CENTER
-			defs.put(0, new BlockDef() {
+			defs.put(pos++, new BlockDef() {
 				@Override
 				protected Vec2 getUnscaledMaxSize() {
 					return new Vec2(100, 100);
@@ -132,7 +133,7 @@ public abstract class BlockDef implements Constants {
 				}
 			});
 			// BLOCK_EDGE
-			defs.put(1, new BlockDef() {
+			defs.put(pos++, new BlockDef() {
 				@Override
 				protected Vec2 getUnscaledMaxSize() {
 					return new Vec2(100, 1);
@@ -164,7 +165,7 @@ public abstract class BlockDef implements Constants {
 				}
 			});
 			// BLOCK_CORNER
-			defs.put(2, new BlockDef() {
+			defs.put(pos++, new BlockDef() {
 				@Override
 				protected Vec2 getUnscaledMaxSize() {
 					return new Vec2(1, 1);
@@ -192,7 +193,7 @@ public abstract class BlockDef implements Constants {
 				}
 			});
 			// BLOCK_FADE
-			defs.put(3, new BlockDef() {
+			defs.put(pos++, new BlockDef() {
 				@Override
 				protected Vec2 getUnscaledMaxSize() {
 					return new Vec2(100, 1);
@@ -222,7 +223,7 @@ public abstract class BlockDef implements Constants {
 			});
 			
 			// BLOCK_WALLJOIN1
-			defs.put(4, new BlockDef() {
+			defs.put(pos++, new BlockDef() {
 				@Override
 				protected Vec2 getUnscaledMaxSize() {
 					return new Vec2(1, 1);
@@ -254,7 +255,7 @@ public abstract class BlockDef implements Constants {
 				}
 			});
 			// BLOCK_WALLJOIN2
-			defs.put(5, new BlockDef() {
+			defs.put(pos++, new BlockDef() {
 				@Override
 				protected Vec2 getUnscaledMaxSize() {
 					return new Vec2(1, 1);
@@ -286,7 +287,7 @@ public abstract class BlockDef implements Constants {
 				}
 			});
 			// BLOCK_WALLJOIN3
-			defs.put(6, new BlockDef() {
+			defs.put(pos++, new BlockDef() {
 				@Override
 				protected Vec2 getUnscaledMaxSize() {
 					return new Vec2(1, 1);
@@ -318,7 +319,7 @@ public abstract class BlockDef implements Constants {
 				}
 			});
 			// BLOCK_WALL_CORNER
-			defs.put(7, new BlockDef() {
+			defs.put(pos++, new BlockDef() {
 				@Override
 				protected Vec2 getUnscaledMaxSize() {
 					return new Vec2(1, 1);
@@ -346,7 +347,7 @@ public abstract class BlockDef implements Constants {
 				}
 			});
 			// BLOCK_WALL_CORNER2
-			defs.put(8, new BlockDef() {
+			defs.put(pos++, new BlockDef() {
 				@Override
 				protected Vec2 getUnscaledMaxSize() {
 					return new Vec2(1, 1);
@@ -371,6 +372,94 @@ public abstract class BlockDef implements Constants {
 				@Override
 				public BlockVortex getVortex(Vec2 pos, Vec2 size, float angle) {
 					return null;
+				}
+			});
+			// BLOCK_CONCAVE1
+			defs.put(pos++, new BlockDef() {
+				@Override
+				protected Vec2 getUnscaledMaxSize() {
+					return new Vec2(1, 1);
+				}
+				
+				@Override
+				public Shape getShape(Body body, Vec2 size) {
+					return Geometry.createConcaveArc(-size.x / 2, size.y / 2, size.x, -Constants.PI / 2, 0);
+				}
+				
+				@Override
+				public int getImageId() {
+					return uk.digitalsquid.spacegame.R.drawable.block_concave1;
+				}
+				
+				public Vec2 getImageRelativeSize() {
+					return new Vec2(2, 2);
+				}
+
+				@Override
+				public BlockVortex getVortex(Vec2 pos, Vec2 size, float angle) {
+					return null;
+				}
+			});
+			// BLOCK_CONCAVE2
+			defs.put(pos++, new BlockDef() {
+				@Override
+				protected Vec2 getUnscaledMaxSize() {
+					return new Vec2(2, 2);
+				}
+				@Override
+				protected Vec2 getUnscaledMinSize() {
+					return new Vec2(2, 2);
+				}
+				
+				@Override
+				public Shape getShape(Body body, Vec2 size) {
+					return Geometry.createConcaveArc(-size.x / 2, size.y / 2, size.x, -Constants.PI / 2, 0);
+				}
+				
+				@Override
+				public int getImageId() {
+					return uk.digitalsquid.spacegame.R.drawable.block_concave2;
+				}
+				
+				public Vec2 getImageRelativeSize() {
+					return new Vec2(4, 4);
+				}
+
+				@Override
+				public BlockVortex getVortex(Vec2 pos, Vec2 size, float angle) {
+					return null;
+				}
+			});
+			// BLOCK_CORNER2
+			defs.put(pos++, new BlockDef() {
+				@Override
+				protected Vec2 getUnscaledMaxSize() {
+					return new Vec2(2, 2);
+				}
+				@Override
+				protected Vec2 getUnscaledMinSize() {
+					return new Vec2(2, 2);
+				}
+				
+				@Override
+				public Shape getShape(Body body, Vec2 size) {
+					return Geometry.createArc(body, -size.x / 2, -size.y / 2, size.x, 0f, (float)Math.PI / 2);
+				}
+				
+				@Override
+				public int getImageId() {
+					return uk.digitalsquid.spacegame.R.drawable.block_corner2;
+				}
+				
+				public Vec2 getImageRelativeSize() {
+					return new Vec2(4, 4);
+				}
+
+				@Override
+				public BlockVortex getVortex(Vec2 pos, Vec2 size, float angle) {
+					Vec2 origin = new Vec2(pos.x - GRID_SIZE, pos.y - GRID_SIZE); // Bottom corner
+					VecHelper.rotateLocal(origin, pos, angle);
+					return new BlockVortex(origin, angle, (float)Math.PI / 2 /* 90 */, size.x + GRID_SIZE * 3f, size.x);
 				}
 			});
 		}

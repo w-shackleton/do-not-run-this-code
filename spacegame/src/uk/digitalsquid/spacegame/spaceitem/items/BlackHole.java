@@ -19,7 +19,7 @@ import android.preference.PreferenceManager;
 public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warpable, Messageable
 {
 	private static final float BLACK_HOLE_RADIUS = 7f;
-	private static final float BLACK_HOLE_DENSITY = 8f;
+	private static final float BLACK_HOLE_DENSITY = 2f;
 	private static final float BLACK_HOLE_ZOOM_SPEED = 1.01f;
 	public static final float BLACK_HOLE_ZOOM_POWER = 1.10f;
 	private static final int BLACK_HOLE_ZOOM_WAIT = 100;
@@ -42,8 +42,8 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 	{
 		super(context, coord, 100, BLACK_HOLE_DENSITY, BLACK_HOLE_RADIUS, BodyType.STATIC);
 		
-		bhImage = new RectMesh(getPosX(), getPosY(), (float)getRadius() * 4, (float)getRadius() * 4, R.drawable.bh);
-		bhP2Image = new RectMesh(getPosX(), getPosY(), (float)getRadius() * 4, (float)getRadius() * 4, R.drawable.bhp2);
+		bhImage = new RectMesh(getPosX(), getPosY(), (float)getRadius() * 2, (float)getRadius() * 2, R.drawable.bh);
+		bhP2Image = new RectMesh(getPosX(), getPosY(), (float)getRadius() * 2, (float)getRadius() * 2, R.drawable.bhp2);
 		
 		fixture.getFilterData().categoryBits = COLLISION_GROUP_NONE;
 		fixture.getFilterData().maskBits = COLLISION_GROUP_NONE;
@@ -55,8 +55,7 @@ public class BlackHole extends Gravitable implements TopDrawable, Moveable, Warp
 		if(currDist < BLACK_HOLE_CAPTURE_DIST && !bhActivated) { // Start pulse
 			bhActivated = true;
 			bhStarted = true;
-			if(PreferenceManager.getDefaultSharedPreferences(context).getBoolean("bhFirstTime", true))
-			{
+			if(PreferenceManager.getDefaultSharedPreferences(context).getBoolean("bhFirstTime", true)) {
 				PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("bhFirstTime", false).commit();
 				messageInfo.display = true;
 			}

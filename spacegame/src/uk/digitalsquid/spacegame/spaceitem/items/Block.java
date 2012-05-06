@@ -2,6 +2,8 @@ package uk.digitalsquid.spacegame.spaceitem.items;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import org.jbox2d.collision.shapes.ChainShape;
+import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyType;
@@ -11,6 +13,8 @@ import org.jbox2d.dynamics.FixtureDef;
 import uk.digitalsquid.spacegame.spaceitem.blocks.BlockVortex;
 import uk.digitalsquid.spacegamelib.CompuFuncs;
 import uk.digitalsquid.spacegamelib.SimulationContext;
+import uk.digitalsquid.spacegamelib.VecHelper;
+import uk.digitalsquid.spacegamelib.gl.Lines;
 import uk.digitalsquid.spacegamelib.gl.RectMesh;
 import uk.digitalsquid.spacegamelib.spaceitem.SpaceItem;
 import uk.digitalsquid.spacegamelib.spaceitem.interfaces.Forceful;
@@ -35,6 +39,8 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
 	protected final boolean hasVortex;
 	
 	protected BlockVortex vortex;
+	
+	private Lines debugBoundary;
 
 	/**
 	 * Protected constructor. Use BlockDef.create
@@ -59,6 +65,15 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
 			fixtureDef.restitution = def.getRestitution();
 			fixture = body.createFixture(fixtureDef);
 			fixture.setUserData(this);
+		}
+		
+		if(shape instanceof ChainShape) {
+			ChainShape c = (ChainShape) shape;
+			if(DEBUG) debugBoundary = new Lines(getPosX(), getPosY(), VecHelper.vec2ToFloat3(c.m_vertices, c.m_count), GL10.GL_LINE_STRIP, 1, 1, 0, 1);
+		}
+		if(shape instanceof PolygonShape) {
+			PolygonShape c = (PolygonShape) shape;
+			if(DEBUG) debugBoundary = new Lines(getPosX(), getPosY(), VecHelper.vec2ToFloat3(c.m_vertices, c.m_count), GL10.GL_LINE_LOOP, 1, 1, 0, 1);
 		}
 		
 		if(hasVortex) vortex = def.getVortex(getPos(), size, angle * DEG_TO_RAD); // Could still be null
@@ -152,5 +167,9 @@ public class Block extends SpaceItem implements Moveable, Forceful, IsClickable 
 			mesh.draw(gl);
 		}
 		if(vortex != null) vortex.draw(gl);
+		if(debugBoundary != null) {
+			debugBoundary.setRotation(getRotation());
+			debugBoundary.draw(gl);
+		}
 	}
 }
