@@ -44,4 +44,7 @@ public final class Geometry {
 		shape.set(vertices, SHAPE_RESOLUTION);
 		return shape;
 	}
+	
+	public static final void createConcaveEdge(float[] points) {
+	}
 }

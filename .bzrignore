@@ -9,3 +9,5 @@ bin/spacegame.gl.apk
 bin/codehead
 spacegame/bin/*
 spacegamelib/bin/*
+.svn
+.metadata

@@ -59,18 +59,16 @@ public final class R {
         public static final int planet3=0x7f020024;
         public static final int planet4=0x7f020025;
         public static final int planet5=0x7f020026;
-        public static final int planet51=0x7f020027;
-        public static final int planet6=0x7f020028;
-        public static final int planet61=0x7f020029;
-        public static final int planetbouncy=0x7f02002a;
-        public static final int portal=0x7f02002b;
-        public static final int portal_opening=0x7f02002c;
-        public static final int splash=0x7f02002d;
-        public static final int star=0x7f02002e;
-        public static final int teleporter=0x7f02002f;
-        public static final int timer=0x7f020030;
-        public static final int walledge=0x7f020031;
-        public static final int wallside=0x7f020032;
+        public static final int planet6=0x7f020027;
+        public static final int planetbouncy=0x7f020028;
+        public static final int portal=0x7f020029;
+        public static final int portal_opening=0x7f02002a;
+        public static final int splash=0x7f02002b;
+        public static final int star=0x7f02002c;
+        public static final int teleporter=0x7f02002d;
+        public static final int timer=0x7f02002e;
+        public static final int walledge=0x7f02002f;
+        public static final int wallside=0x7f020030;
     }
     public static final class id {
         public static final int buttonContinue=0x7f0b000f;
