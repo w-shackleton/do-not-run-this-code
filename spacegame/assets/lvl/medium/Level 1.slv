@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<level>
+    <name></name>
+    <creator></creator>
+    <start x="-400" y="430" />
+    <bounds x="1000" y="1000" />
+    <portal x="-365" y="-16" />
+    <stars value="5" />
+    <items>
+        <planet x="-395" y="331" radius="66.55" type="1" />
+        <planet x="-216" y="280" radius="55" type="3" />
+        <star x="-191" y="351" radius="15" />
+        <block x="-48" y="416" sx="128" sy="32" rotation="-0" type="1" hasVortex="1" />
+        <block x="32" y="416" sx="32" sy="32" rotation="-0" type="2" hasVortex="1" />
+        <block x="128" y="416" sx="160" sy="32" rotation="90" type="1" hasVortex="1" />
+        <block x="32" y="320" sx="160" sy="32" rotation="-90" type="1" hasVortex="1" />
+        <block x="96" y="224" sx="96" sy="32" rotation="-0" type="1" hasVortex="1" />
+        <block x="80" y="272" sx="64" sy="64" rotation="-90" type="10" hasVortex="1" />
+        <block x="32" y="224" sx="32" sy="32" rotation="-0" type="0" hasVortex="1" />
+        <block x="-128" y="416" sx="32" sy="32" rotation="90" type="2" hasVortex="1" />
+        <block x="-128" y="384" sx="32" sy="32" rotation="90" type="4" hasVortex="1" />
+        <wall x="-128" y="288" sx="160" sy="32" rotation="90" hasEnds="1" />
+        <block x="128" y="320" sx="32" sy="32" rotation="180" type="2" hasVortex="0" />
+        <blackhole x="186" y="112" radius="70" />
+        <planet x="304" y="-88" radius="73.205" type="3" />
+        <star x="95" y="459" radius="15" />
+        <star x="341" y="4" radius="15" />
+        <star x="379" y="-138" radius="15" />
+        <wall x="-48" y="192" sx="128" sy="32" rotation="-0" hasEnds="1" />
+        <block x="32" y="192" sx="32" sy="32" rotation="180" type="5" hasVortex="1" />
+        <block x="160" y="224" sx="32" sy="32" rotation="-0" type="2" hasVortex="1" />
+        <block x="160" y="192" sx="32" sy="32" rotation="-90" type="2" hasVortex="1" />
+        <block x="96" y="192" sx="96" sy="32" rotation="180" type="1" hasVortex="1" />
+        <block x="320" y="320" sx="352" sy="32" rotation="180" type="1" hasVortex="0" />
+        <block x="320" y="416" sx="352" sy="160" rotation="-0" type="0" hasVortex="1" />
+        <block x="0" y="304" sx="192" sy="32" rotation="-90" type="3" hasVortex="1" />
+        <block x="-48" y="384" sx="128" sy="32" rotation="-0" type="3" hasVortex="1" />
+        <wall x="-320" y="192" sx="352" sy="32" rotation="-0" hasEnds="1" />
+        <block x="-128" y="192" sx="32" sy="32" rotation="180" type="8" hasVortex="1" />
+        <planet x="-45" y="-336" radius="73.205" type="5" />
+        <wall x="-16" y="-16" sx="320" sy="32" rotation="-0" hasEnds="1" />
+        <block x="160" y="-16" sx="32" sy="32" rotation="180" type="5" hasVortex="1" />
+        <block x="-192" y="-16" sx="32" sy="32" rotation="180" type="4" hasVortex="1" />
+        <block x="-224" y="-16" sx="32" sy="32" rotation="-180" type="2" hasVortex="1" />
+        <block x="-224" y="16" sx="32" sy="32" rotation="90" type="2" hasVortex="1" />
+        <block x="192" y="16" sx="32" sy="32" rotation="-0" type="2" hasVortex="1" />
+        <block x="192" y="-16" sx="32" sy="32" rotation="-90" type="2" hasVortex="1" />
+        <block x="-192" y="16" sx="32" sy="32" rotation="-0" type="2" hasVortex="1" />
+        <block x="160" y="16" sx="32" sy="32" rotation="90" type="2" hasVortex="1" />
+        <star x="39" y="-48" radius="15" />
+    </items>
+</level>

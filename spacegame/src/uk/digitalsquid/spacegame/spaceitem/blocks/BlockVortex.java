@@ -6,7 +6,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
-import org.jbox2d.common.Mat22;
 import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
 
@@ -42,7 +41,7 @@ public class BlockVortex implements Constants, Forceful, Moveable {
 	/**
 	 * Identity transform
 	 */
-	private static final Transform transform = new Transform(new Vec2(), new Mat22(1, 0, 0, 1));
+	private static final Transform transform = new Transform();
 	
 	protected final Shape catchArea;
 	

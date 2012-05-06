@@ -9,7 +9,7 @@ import java.util.Random;
  */
 public interface Constants {
 	
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 	/**
 	 * Multiply a number of degrees by this to convert it to radians
 	 */
@@ -21,6 +21,8 @@ public interface Constants {
 	public static final float RAD_TO_DEG = (float) (180 / Math.PI);
 	
 	public static final String TAG = "spacegame";
+	
+	public static final float PI = (float)Math.PI;
 	
 	/**
 	 * Pseudo-random numbers.

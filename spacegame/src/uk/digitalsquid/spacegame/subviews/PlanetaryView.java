@@ -156,7 +156,7 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			
 			// Make sure box2d has enough vertices
 			Settings.maxPolygonVertices = Geometry.SHAPE_RESOLUTION;
-			World world = new World(new Vec2(), true);
+			World world = new World(new Vec2());
 			sim = new SimulationContext(context, world);
 			// world.setContactListener(this);
 			
