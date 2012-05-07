@@ -9,7 +9,7 @@ import java.util.Random;
  */
 public interface Constants {
 	
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	/**
 	 * Multiply a number of degrees by this to convert it to radians
 	 */

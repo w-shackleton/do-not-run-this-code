@@ -402,17 +402,14 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			}
 
 			// DRAW TIME for objects behind ball
-			for(SpaceItem obj : planetList)
-			{
-				if(obj instanceof TopDrawable)
-				{
+			for(SpaceItem obj : planetList) {
+				if(obj instanceof TopDrawable) {
 					((TopDrawable)obj).drawBelow(gl, 1);
 				}
 			}
 			
 			// Object draw
-			for(SpaceItem item : planetList)
-			{
+			for(SpaceItem item : planetList) {
 				item.draw(gl, 1);
 			}
 			
@@ -426,13 +423,13 @@ public abstract class PlanetaryView<VT extends PlanetaryView.ViewWorker> extends
 			if(borderBounceColour > 1) borderBounceColour = 1;
 
 			// DRAW TIME for objects on top of ball
-			for(SpaceItem obj : planetList)
-			{
-				if(obj instanceof TopDrawable)
-				{
+			for(SpaceItem obj : planetList) {
+				if(obj instanceof TopDrawable) {
 					((TopDrawable)obj).drawTop(gl, 1);
 				}
 			}
+			
+			s.debugDraw(gl);
 		}
 		
 		@Override

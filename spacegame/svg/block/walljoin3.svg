@@ -16,7 +16,7 @@
    version="1.1"
    inkscape:version="0.48.2 r9819"
    sodipodi:docname="walljoin3.svg"
-   inkscape:export-filename="/home/william/Dev/wksp/spacegame/spacegame/svg/block/edge1.png"
+   inkscape:export-filename="/home/william/Dev/wksp/spacegame/spacegame/svg/block/walljoin3.png"
    inkscape:export-xdpi="180"
    inkscape:export-ydpi="180">
   <defs
@@ -293,7 +293,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>

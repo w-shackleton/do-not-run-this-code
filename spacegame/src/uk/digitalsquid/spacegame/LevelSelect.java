@@ -89,24 +89,24 @@ public class LevelSelect extends Activity implements OnItemClickListener, OnItem
 				TextView title = (TextView) convertView.findViewById(R.id.levelselectitem_text);
 				title.setText(currItem.filename + " "  + currItem.fileNumber + (currItem.name.equals("") ? "" : (" - " + currItem.name)));
 				ImageView img = (ImageView) convertView.findViewById(R.id.levelselectitem_statusimg);
-				if(currItem.completed) {
+				if(currItem.isCompleted()) {
 					img.setImageResource(android.R.drawable.presence_online);
 				} else {
-					if(currItem.playable) {
+					if(currItem.isPlayable()) {
 						img.setImageResource(android.R.drawable.presence_away);
 					} else {
 						img.setImageResource(android.R.drawable.presence_offline);
 					}
 				}
 			}
-			convertView.setEnabled(currItem.playable);
+			convertView.setEnabled(currItem.isPlayable());
 			return convertView;
 		}
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		if(adapter.getItem(arg2).playable) {
+		if(adapter.getItem(arg2).isPlayable()) {
 			Intent intent = new Intent(this, Game.class);
 			intent.putExtra(Game.LEVELINFO_EXTRA, adapter.getItem(arg2));
 			
@@ -121,7 +121,7 @@ public class LevelSelect extends Activity implements OnItemClickListener, OnItem
 		title.setText(info.name);
 		authour.setText(info.author);
 		
-		if(info.completed) {
+		if(info.isCompleted()) {
 			int deci = (info.time / 100) % 10;
 			int secs = (info.time / 1000) % 60;
 			int mins = (info.time / 1000) / 60;

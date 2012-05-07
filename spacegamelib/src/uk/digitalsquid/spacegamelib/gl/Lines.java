@@ -277,4 +277,9 @@ public class Lines {
 		textureBuffer.put(textureCoords);
 		textureBuffer.position(0);
 	}
+	
+	public void setXY(float x, float y) {
+		this.x = x;
+		this.y = y;
+	}
 }

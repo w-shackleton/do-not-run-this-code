@@ -11,6 +11,7 @@ import org.xml.sax.SAXException;
 
 import uk.digitalsquid.spacegamelib.CompuFuncs;
 import uk.digitalsquid.spacegamelib.Constants;
+import uk.digitalsquid.spacegamelib.StaticInfo;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -440,15 +441,33 @@ public class LevelManager implements Constants {
 		private static final long serialVersionUID = -866101939292856696L;
 		
 		public int time;
-		public boolean completed, playable;
+		private boolean completed;
+
+		private boolean playable;
 
 		public LevelExtendedInfo(String name, int fileNumber, String set, String author,
 				String filename, int time, boolean completed, boolean playable)
 		{
 			super(name, fileNumber, set, author, filename);
 			this.time = time;
-			this.completed = completed;
+			this.setCompleted(completed);
+			this.setPlayable(playable);
+		}
+
+		public void setPlayable(boolean playable) {
 			this.playable = playable;
+		}
+
+		public boolean isPlayable() {
+			return playable || StaticInfo.DEBUG; // Play all when debugging
+		}
+
+		public void setCompleted(boolean completed) {
+			this.completed = completed;
+		}
+
+		public boolean isCompleted() {
+			return completed;
 		}
 	}
 
