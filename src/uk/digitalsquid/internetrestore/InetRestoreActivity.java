@@ -18,7 +18,7 @@ public class InetRestoreActivity extends Activity {
         try {
 			Logg.d("Wifi: " + info.getWifiIface());
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			Logg.e("Failed to get wifi iface", e);
 		}
     }
 }

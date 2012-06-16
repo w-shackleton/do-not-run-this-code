@@ -1,4 +1,4 @@
-package uk.digitalsquid.internetrestore.util;
+package uk.digitalsquid.internetrestore.util.net;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
