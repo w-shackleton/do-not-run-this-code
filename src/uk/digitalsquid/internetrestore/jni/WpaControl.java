@@ -27,8 +27,10 @@ public class WpaControl {
 	private static native long openCtrl(String ctrlPath);
 	private static native void closeCtrl(long wpa_ctrl);
 	
-	public void close() {
-		if(isConnectionOpen())
+	public synchronized void close() {
+		if(isConnectionOpen()) {
 			closeCtrl(wpa_ctrl);
+			wpa_ctrl = 0;
+		}
 	}
 }
