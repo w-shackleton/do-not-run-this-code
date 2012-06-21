@@ -18,14 +18,14 @@ public class WpaControl {
 	/**
 	 * Pointer to wpa_ctrl* object
 	 */
-	private long wpa_ctrl;
+	private int wpa_ctrl;
 	
 	public boolean isConnectionOpen() {
 		return wpa_ctrl != 0;
 	}
 
-	private static native long openCtrl(String ctrlPath);
-	private static native void closeCtrl(long wpa_ctrl);
+	private static native int openCtrl(String ctrlPath);
+	private static native void closeCtrl(int wpa_ctrl);
 	
 	public synchronized void close() {
 		if(isConnectionOpen()) {

@@ -10,18 +10,18 @@ extern "C" {
 /*
  * Class:     uk_digitalsquid_internetrestore_jni_WpaControl
  * Method:    openCtrl
- * Signature: (Ljava/lang/String;)J
+ * Signature: (Ljava/lang/String;)I
  */
-JNIEXPORT jlong JNICALL Java_uk_digitalsquid_internetrestore_jni_WpaControl_openCtrl
+JNIEXPORT jint JNICALL Java_uk_digitalsquid_internetrestore_jni_WpaControl_openCtrl
   (JNIEnv *, jclass, jstring);
 
 /*
  * Class:     uk_digitalsquid_internetrestore_jni_WpaControl
  * Method:    closeCtrl
- * Signature: (J)V
+ * Signature: (I)V
  */
 JNIEXPORT void JNICALL Java_uk_digitalsquid_internetrestore_jni_WpaControl_closeCtrl
-  (JNIEnv *, jclass, jlong);
+  (JNIEnv *, jclass, jint);
 
 #ifdef __cplusplus
 }

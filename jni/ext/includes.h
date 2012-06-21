@@ -22,7 +22,7 @@
 /* Include possible build time configuration before including anything else */
 #include "build_config.h"
 
-// #include <stdlib.h>
+#include "stdlib-min.h"
 #include <sys/stat.h>
 #include <stdio.h>
 #include <stdarg.h>
