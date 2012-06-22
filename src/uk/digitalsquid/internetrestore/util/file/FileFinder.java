@@ -42,6 +42,8 @@ public final class FileFinder {
 	public static String SU = "";
 	public static String BUSYBOX = "";
 	
+	public static String WPA_SUPPLICANT = "";
+	
 	/**
 	 * The system's version of BB, if it exists.
 	 */
@@ -49,6 +51,7 @@ public final class FileFinder {
 	
 	private static final String[] BB_PATHS = { "/system/bin/busybox", "/system/xbin/busybox", "/system/sbin/busybox", "/vendor/bin/busybox", "busybox" };
 	private static final String[] SU_PATHS = { "/system/bin/su", "/system/xbin/su", "/system/sbin/su", "/vendor/bin/su", "su" };
+	private static final String[] WPA_PATHS = { "/system/bin/wpa_supplicant", "/system/xbin/wpa_supplicant", "/system/sbin/wpa_supplicant", "/vendor/bin/wpa_supplicant", "wpa_supplicant" };
 	
 	/**
 	 * Searches for the busybox executable. Uses the builtin one if user wants. This is also the default behaviour.
@@ -89,6 +92,23 @@ public final class FileFinder {
 		return "";
 	}
 	
+	/**
+	 * Searches for the wpa_supplicant executable
+	 * @return
+	 */
+	private static final String findWpa(SharedPreferences prefs) {
+		if(prefs != null) {
+			String customPath = prefs.getString("pathToWpa", "");
+			if(!customPath.equals("") && new File(customPath).exists()) return customPath;
+		}
+		for(String wpa : WPA_PATHS) {
+			if(new File(wpa).exists()) {
+				return wpa;
+			}
+		}
+		return "";
+	}
+	
 	public static final void initialise(Context appContext) throws FileNotFoundException {
 		FileFinder.context = appContext;
 		if(initialised) {
@@ -116,6 +136,9 @@ public final class FileFinder {
 		if(SU.equals("")) {
 			throw new FileNotFoundException("su");
 		}
+		WPA_SUPPLICANT = findWpa(prefs);
+		if(WPA_SUPPLICANT.equals(""))
+			throw new FileNotFoundException("wpa_supplicant");
 		try {
 			checkBBInstalledFunctions();
 		} catch (FileNotFoundException e) { // If fails with this BB, try system BB.

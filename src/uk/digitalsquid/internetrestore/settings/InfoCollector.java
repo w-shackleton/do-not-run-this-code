@@ -50,7 +50,7 @@ public class InfoCollector {
 	}
 	private String getWifiIfaceByIp() throws UnknownHostException, SocketException {
 		WifiInfo info = wifi.getConnectionInfo();
-		InetAddress addr = IP.reverseInetFromInt(info.getIpAddress());
+		InetAddress addr = IP.inetFromInt(info.getIpAddress());
 		Logg.i("Addr: " + addr);
 		NetworkInterface iface = NetworkInterface.getByInetAddress(addr);
 		if(iface == null) throw new UnknownHostException("Couldn't get NetworkInterface");
@@ -63,7 +63,7 @@ public class InfoCollector {
 		while(ifaces.hasMoreElements()) {
 			NetworkInterface iface = ifaces.nextElement();
 			String comparison = Mac.format(iface.getHardwareAddress());
-			if(wifiMac.equals(comparison))
+			if(wifiMac.equalsIgnoreCase(comparison))
 				return iface.getDisplayName();
 		}
 		throw new UnknownHostException("Couldn't identify iface by mac");

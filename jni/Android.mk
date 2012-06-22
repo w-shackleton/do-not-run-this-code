@@ -1,7 +1,8 @@
 
 LOCAL_PATH := $(call my-dir)
 
-all: uk_digitalsquid_internetrestore_jni_WpaControl.h uk_digitalsquid_internetrestore_jni_FileUtil.h
+all: pre_all
+pre_all: uk_digitalsquid_internetrestore_jni_WpaControl.h uk_digitalsquid_internetrestore_jni_FileUtil.h
 
 uk_digitalsquid_internetrestore_jni_WpaControl.h: $(LOCAL_PATH)/../bin/classes/uk/digitalsquid/internetrestore/jni/WpaControl.class
 	cd $(LOCAL_PATH)/../bin/classes; \

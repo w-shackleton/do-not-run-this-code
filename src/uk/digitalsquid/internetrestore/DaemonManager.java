@@ -42,6 +42,8 @@ public class DaemonManager extends Service {
     	
     	AsyncTaskHelper.execute(thread);
     	
+    	queueTask(new Task.StartTask());
+    	
 		notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     	
     	started = true;

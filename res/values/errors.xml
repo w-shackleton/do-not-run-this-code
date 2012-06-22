@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="no_wpa">Couldn\'t find wpa_supplicant executable on phone. This most likely means that this phone won\'t work with %d.
+    </string>
+    
+</resources>

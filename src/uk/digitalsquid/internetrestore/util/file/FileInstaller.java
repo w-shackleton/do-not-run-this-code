@@ -68,5 +68,6 @@ public final class FileInstaller {
 	 */
 	public void installFiles() throws NotFoundException, IOException {
 		installScript("xtables-multi", R.raw.xtables);
+		installScript("busybox", R.raw.busybox);
 	}
 }
