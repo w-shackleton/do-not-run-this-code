@@ -177,4 +177,35 @@ public final class ProcessRunner {
 		}
 		return 0;
 	}
+	
+	public static final int GET_STDOUT = 1;
+	public static final int GET_STDERR = 2;
+	
+	public static class ProcessResult {
+		public String output;
+		public int returnCode;
+	}
+	
+	public static final ProcessResult runProcessWithOutput(Map<String, String> env, final int flags, String... args) throws IOException {
+		final StringBuilder ret = new StringBuilder();
+		ProcessResult result = new ProcessResult();
+		result.returnCode = runProcessWithCallback(env, new OutputCallback() {
+			@Override
+			public void onNewCout(String line) {
+				if((flags & GET_STDOUT) == GET_STDOUT) {
+					ret.append(line);
+					ret.append('\n');
+				}
+			}
+			@Override
+			public void onNewCerr(String line) {
+				if((flags & GET_STDERR) == GET_STDERR) {
+					ret.append(line);
+					ret.append('\n');
+				}
+			}
+		}, args);
+		result.output = ret.toString();
+		return result;
+	}
 }

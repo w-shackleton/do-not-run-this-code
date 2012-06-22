@@ -1,29 +1,9 @@
-/*
- * This file is part of Network Spoofer for Android.
- * Network Spoofer lets you change websites on other people’s computers
- * from an Android phone.
- * Copyright (C) 2011 Will Shackleton
- *
- * Network Spoofer is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Network Spoofer is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Network Spoofer, in the file COPYING.
- * If not, see <http://www.gnu.org/licenses/>.
- */
-
 package uk.digitalsquid.internetrestore.util.file;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,20 +14,40 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 public final class FileFinder {
-	private FileFinder() { }
-	private static boolean initialised = false;
+	public FileFinder(Context context) {
+		this.context = context;
+		initialise(context);
+	}
+	private final Context context;
 	
-	private static Context context;
-	
-	public static String SU = "";
-	public static String BUSYBOX = "";
-	
-	public static String WPA_SUPPLICANT = "";
+	private String su = "";
+	private String busybox = "";
 	
 	/**
 	 * The system's version of BB, if it exists.
 	 */
-	public static String SYSTEM_BUSYBOX = "";
+	@SuppressWarnings("unused")
+	private String systemBusybox = "";
+	
+	private String wpa_supplicant = "";
+	
+	public String getSuPath() throws FileNotFoundException {
+		if(su == "")
+			throw new FileNotFoundException("su");
+		return su;
+	}
+	
+	public String getBusyboxPath() throws FileNotFoundException {
+		if(busybox == "")
+			throw new FileNotFoundException("busybox");
+		return busybox;
+	}
+	
+	public String getWpaSupplicantPath() throws FileNotFoundException {
+		if(wpa_supplicant == "")
+			throw new FileNotFoundException("wpa_supplicant");
+		return wpa_supplicant;
+	}
 	
 	private static final String[] BB_PATHS = { "/system/bin/busybox", "/system/xbin/busybox", "/system/sbin/busybox", "/vendor/bin/busybox", "busybox" };
 	private static final String[] SU_PATHS = { "/system/bin/su", "/system/xbin/su", "/system/sbin/su", "/vendor/bin/su", "su" };
@@ -57,7 +57,7 @@ public final class FileFinder {
 	 * Searches for the busybox executable. Uses the builtin one if user wants. This is also the default behaviour.
 	 * @return
 	 */
-	private static final String findBusybox(boolean useLocal, SharedPreferences prefs) {
+	private String findBusybox(boolean useLocal, SharedPreferences prefs) {
 		if(useLocal && prefs != null) {
 			if(prefs.getBoolean("builtinbusybox", true)) {
 				String myBB = FileInstaller.getScriptPath(context, "busybox");
@@ -79,7 +79,7 @@ public final class FileFinder {
 	 * Searches for the su executable
 	 * @return
 	 */
-	private static final String findSu(SharedPreferences prefs) {
+	private String findSu(SharedPreferences prefs) {
 		if(prefs != null) {
 			String customPath = prefs.getString("pathToSu", "");
 			if(!customPath.equals("") && new File(customPath).exists()) return customPath;
@@ -96,7 +96,7 @@ public final class FileFinder {
 	 * Searches for the wpa_supplicant executable
 	 * @return
 	 */
-	private static final String findWpa(SharedPreferences prefs) {
+	private String findWpa(SharedPreferences prefs) {
 		if(prefs != null) {
 			String customPath = prefs.getString("pathToWpa", "");
 			if(!customPath.equals("") && new File(customPath).exists()) return customPath;
@@ -109,52 +109,46 @@ public final class FileFinder {
 		return "";
 	}
 	
-	public static final void initialise(Context appContext) throws FileNotFoundException {
-		FileFinder.context = appContext;
-		if(initialised) {
-			return;
-		}
-		initialised = true;
+	private void initialise(Context appContext) {
 		loadPaths();
 	}
 	
 	/**
-	 * (re)loads the SU and BB paths, perhaps after a preference change.
+	 * (re)loads the su and BB paths, perhaps after a preference change.
 	 * @throws FileNotFoundException 
 	 */
-	public static final void loadPaths() throws FileNotFoundException {
+	public void loadPaths() {
 		SharedPreferences prefs = null;
 		if(context != null) {
 			prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		}
-		BUSYBOX = findBusybox(true, prefs);
-		SYSTEM_BUSYBOX = findBusybox(false, prefs);
-		if(BUSYBOX.equals("")) {
-			throw new FileNotFoundException("busybox");
-		}
-		SU = findSu(prefs);
-		if(SU.equals("")) {
-			throw new FileNotFoundException("su");
-		}
-		WPA_SUPPLICANT = findWpa(prefs);
-		if(WPA_SUPPLICANT.equals(""))
-			throw new FileNotFoundException("wpa_supplicant");
-		try {
-			checkBBInstalledFunctions();
-		} catch (FileNotFoundException e) { // If fails with this BB, try system BB.
-			BUSYBOX = SYSTEM_BUSYBOX;
-			checkBBInstalledFunctions(); // Let this one throw error
-		}
+		busybox = findBusybox(true, prefs);
+		systemBusybox = findBusybox(false, prefs);
+		su = findSu(prefs);
+		wpa_supplicant = findWpa(prefs);
+	}
+	
+	/**
+	 * Returns a list of missing files.
+	 * @return
+	 */
+	public String[] getMissingFiles() {
+		ArrayList<String> list = new ArrayList<String>(2);
+		if(busybox.equals("")) list.add("busybox");
+		if(su.equals("")) list.add("su");
+		if(wpa_supplicant.equals("")) list.add("wpa_supplicant");
+		addBBMissingFunctions(list);
+		return list.toArray(null);
 	}
 	
 	/**
 	 * Checks that the necessary BB commands are available
 	 * @throws FileNotFoundException 
 	 */
-	static final void checkBBInstalledFunctions() throws FileNotFoundException {
+	private final void addBBMissingFunctions(ArrayList<String> out) {
 		List<String> result = new LinkedList<String>();
 		try {
-			ProcessRunner.runProcess(null, result, BUSYBOX);
+			ProcessRunner.runProcess(null, result, busybox);
 		} catch (IOException e) {
 			Logg.e("Failed to check BB programs, probably as BB doesn't exist?");
 			e.printStackTrace();
@@ -174,27 +168,8 @@ public final class FileFinder {
 		}
 		int i = 0;
 		for(boolean found : foundApplets) {
-			if(!found) throw new FileNotFoundException("bb:"+requiredApplets[i]);
+			if(!found) out.add("bb:"+requiredApplets[i]);
 			i++;
-		}
-	}
-	
-	/**
-	 * Initialise that doesn't search custom paths. Not recommended.
-	 * @throws FileNotFoundException
-	 */
-	public static final void initialise() throws FileNotFoundException {
-		if(initialised) {
-			return;
-		}
-		initialised = true;
-		BUSYBOX = findBusybox(true, null);
-		if(BUSYBOX.equals("")) {
-			throw new FileNotFoundException("busybox");
-		}
-		SU = findSu(null);
-		if(SU.equals("")) {
-			throw new FileNotFoundException("su");
 		}
 	}
 }

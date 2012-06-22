@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import uk.digitalsquid.internetrestore.App;
 import uk.digitalsquid.internetrestore.R;
 import uk.digitalsquid.internetrestore.util.MissingFeatureException;
-import uk.digitalsquid.internetrestore.util.file.FileFinder;
 
 /**
  * Class for managing the instance of wpa_supplicant
@@ -13,13 +12,13 @@ import uk.digitalsquid.internetrestore.util.file.FileFinder;
  *
  */
 public class Wpa {
-	final String wpa_supplicant;
-	final App app;
+	private String wpa_supplicant;
+	private final App app;
 	
 	public Wpa(App app) {
 		this.app = app;
 		try {
-			FileFinder.initialise(app);
+			wpa_supplicant = app.getFileFinder().getWpaSupplicantPath();
 		} catch (FileNotFoundException e) {
 			if(e.getMessage().equalsIgnoreCase("wpa_supplicant))")) {
 				MissingFeatureException exc =
@@ -28,7 +27,7 @@ public class Wpa {
 				exc.initCause(e);
 				throw exc;
 			}
+		} finally {
 		}
-		wpa_supplicant = FileFinder.WPA_SUPPLICANT;
 	}
 }

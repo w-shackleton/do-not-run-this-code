@@ -1,7 +1,6 @@
 package uk.digitalsquid.internetrestore.util.file;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +17,7 @@ public final class FileInstaller {
 	private static final String BIN_DIR = "/bin";
 	private final Context context;
 	
-	public FileInstaller(Context context) throws FileNotFoundException {
+	public FileInstaller(Context context) {
 		this.context = context;
 		try {
 		new File(context.getFilesDir().getParent() + BIN_DIR).mkdir();

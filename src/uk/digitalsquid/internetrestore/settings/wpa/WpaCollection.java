@@ -1,6 +1,6 @@
 package uk.digitalsquid.internetrestore.settings.wpa;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import uk.digitalsquid.internetrestore.Logg;
@@ -10,7 +10,7 @@ import uk.digitalsquid.internetrestore.Logg;
  * @author william
  *
  */
-public class WpaCollection extends HashMap<String, WpaVal> {
+public class WpaCollection extends ArrayList<WpaVal> {
 
 	private static final long serialVersionUID = -984589309176975957L;
 	
@@ -21,20 +21,38 @@ public class WpaCollection extends HashMap<String, WpaVal> {
 	public WpaCollection(String contents) {
 		StringTokenizer tk = new StringTokenizer(contents, "\n\r");
 		while(tk.hasMoreTokens()) {
-			String element = tk.nextToken();
-			if(element.equals("")) continue;
-			String[] parts = element.split("=", 2);
+			StringBuilder lines = new StringBuilder();
+			
+			int bracketDepth = 0;
+			do { //Keep skipping (and appending) lines until any closing brackets are met
+				String element = tk.nextToken();
+				for(int i = 0; i < element.length(); i++) {
+					char c = element.charAt(i);
+					if(c == '{') bracketDepth++;
+					if(c == '}') bracketDepth--;
+				}
+				if(lines.length() > 0) lines.append('\n');
+				lines.append(element);
+			} while(bracketDepth != 0 && tk.hasMoreTokens());
+			
+			String section = lines.toString().trim();
+			
+			if(section.equals("")) continue;
+			String[] parts = section.split("=", 2);
 			if(parts.length < 2) {
-				Logg.d("Malformed WPA line: " + element);
+				Logg.d("Malformed WPA line: " + section);
 				continue;
 			}
 			String key = parts[0];
-			WpaVal val = new WpaVal(parts[1]);
-			put(key, val);
+			WpaVal entry = new WpaVal(key, parts[1]);
+			add(entry);
 		}
 	}
 	
 	public void write(StringBuilder out) {
-		
+		for(WpaVal entry : this) {
+			entry.write(out);
+			out.append('\n');
+		}
 	}
 }
