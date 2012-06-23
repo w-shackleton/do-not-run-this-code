@@ -27,7 +27,6 @@ public class Wpa {
 				exc.initCause(e);
 				throw exc;
 			}
-		} finally {
 		}
 	}
 }

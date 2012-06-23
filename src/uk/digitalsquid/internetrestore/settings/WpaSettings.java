@@ -1,5 +1,6 @@
 package uk.digitalsquid.internetrestore.settings;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -7,6 +8,8 @@ import uk.digitalsquid.internetrestore.App;
 import uk.digitalsquid.internetrestore.settings.wpa.WpaCollection;
 import uk.digitalsquid.internetrestore.util.ProcessRunner;
 import uk.digitalsquid.internetrestore.util.ProcessRunner.ProcessResult;
+import uk.digitalsquid.internetrestore.util.file.FileIO;
+import uk.digitalsquid.internetrestore.util.file.FileInstaller;
 
 /**
  * Class for manipulating our copy of wpa_supplicant.conf
@@ -44,5 +47,13 @@ public class WpaSettings {
 			return new WpaCollection(result.output);
 		}
 		throw new FileNotFoundException("Couldn't find system wpa_supplicant.conf, or superuser request wasn't accepted");
+	}
+	
+	public void writeLocalConfig(WpaCollection config) throws IOException {
+		File path = app.getFileInstaller().getConfFilePath(FileInstaller.CONF_WPA_SUPPLICANT);
+		StringBuilder out = new StringBuilder();
+		config.write(out);
+		
+		FileIO.writeContents(path, out.toString());
 	}
 }

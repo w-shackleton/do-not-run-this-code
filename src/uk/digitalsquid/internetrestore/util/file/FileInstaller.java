@@ -15,12 +15,21 @@ import android.content.res.Resources.NotFoundException;
 
 public final class FileInstaller {
 	private static final String BIN_DIR = "/bin";
+	private static final String CONF_DIR = "/conf";
 	private final Context context;
+	
+	public static final String CONF_WPA_SUPPLICANT = "wpa_supplicant.conf";
+	public static final String BIN_BUSYBOX = "busybox";
+	
+	private final File binDir;
+	private final File confDir;
 	
 	public FileInstaller(Context context) {
 		this.context = context;
+		binDir = new File(context.getFilesDir().getParent() + BIN_DIR);
+		confDir = new File(context.getFilesDir().getParent() + CONF_DIR);
 		try {
-		new File(context.getFilesDir().getParent() + BIN_DIR).mkdir();
+			new File(context.getFilesDir().getParent() + BIN_DIR).mkdir();
 		} catch (NullPointerException e) {
 			// One of the above fileops failed, most likely due to broken phone.
 			Logg.e("Failed to create binary directory!");
@@ -52,12 +61,12 @@ public final class FileInstaller {
         is.close();
 	}
 	
-	public static String getScriptPath(Context context, String scriptName) {
-		return context.getFilesDir().getParent() + BIN_DIR + "/" + scriptName;
+	public String getScriptPath(String scriptName) {
+		return binDir.getAbsolutePath() + "/" + scriptName;
 	}
 	
-	private String getScriptPath(String scriptName) {
-		return getScriptPath(context, scriptName);
+	public File getConfFilePath(String confFileName) {
+		return new File(confDir.getAbsolutePath(), confFileName);
 	}
 	
 	/**

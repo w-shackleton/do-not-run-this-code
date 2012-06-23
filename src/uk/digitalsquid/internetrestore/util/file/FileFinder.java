@@ -7,18 +7,23 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import uk.digitalsquid.internetrestore.App;
 import uk.digitalsquid.internetrestore.Logg;
 import uk.digitalsquid.internetrestore.util.ProcessRunner;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 public final class FileFinder {
-	public FileFinder(Context context) {
-		this.context = context;
-		initialise(context);
+	public FileFinder(App app) {
+		this.app = app;
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
+		busybox = findBusybox(true, prefs);
+		systemBusybox = findBusybox(false, prefs);
+		su = findSu(prefs);
+		wpa_supplicant = findWpa(prefs);
 	}
-	private final Context context;
+	private final App app;
 	
 	private String su = "";
 	private String busybox = "";
@@ -60,7 +65,7 @@ public final class FileFinder {
 	private String findBusybox(boolean useLocal, SharedPreferences prefs) {
 		if(useLocal && prefs != null) {
 			if(prefs.getBoolean("builtinbusybox", true)) {
-				String myBB = FileInstaller.getScriptPath(context, "busybox");
+				String myBB = app.getFileInstaller().getScriptPath(FileInstaller.BIN_BUSYBOX);
 				Logg.i("Using local copy of BB");
 				return myBB; // Found our copy of BB
 			}
@@ -107,25 +112,6 @@ public final class FileFinder {
 			}
 		}
 		return "";
-	}
-	
-	private void initialise(Context appContext) {
-		loadPaths();
-	}
-	
-	/**
-	 * (re)loads the su and BB paths, perhaps after a preference change.
-	 * @throws FileNotFoundException 
-	 */
-	public void loadPaths() {
-		SharedPreferences prefs = null;
-		if(context != null) {
-			prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		}
-		busybox = findBusybox(true, prefs);
-		systemBusybox = findBusybox(false, prefs);
-		su = findSu(prefs);
-		wpa_supplicant = findWpa(prefs);
 	}
 	
 	/**
