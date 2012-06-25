@@ -1,5 +1,6 @@
 package uk.digitalsquid.internetrestore;
 
+import uk.digitalsquid.internetrestore.settings.WpaSettings;
 import uk.digitalsquid.internetrestore.util.file.FileFinder;
 import uk.digitalsquid.internetrestore.util.file.FileInstaller;
 import android.app.Application;
@@ -25,5 +26,12 @@ public class App extends Application {
 	public FileInstaller getFileInstaller() {
 		if(fileInstaller == null) fileInstaller = new FileInstaller(this);
 		return fileInstaller;
+	}
+	
+	private WpaSettings wpaSettings;
+	
+	public WpaSettings getWpaSettings() {
+		if(wpaSettings == null) wpaSettings = new WpaSettings(this);
+		return wpaSettings;
 	}
 }

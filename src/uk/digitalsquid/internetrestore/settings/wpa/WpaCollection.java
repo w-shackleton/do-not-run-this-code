@@ -14,6 +14,10 @@ public class WpaCollection extends ArrayList<WpaVal> {
 
 	private static final long serialVersionUID = -984589309176975957L;
 	
+	public WpaCollection() {
+		
+	}
+	
 	/**
 	 * Fills in a {@link WpaCollection} with the given contents.
 	 * @param contents
@@ -54,5 +58,14 @@ public class WpaCollection extends ArrayList<WpaVal> {
 			entry.write(out);
 			out.append('\n');
 		}
+	}
+	
+	public int getNetworkCount() {
+		int count = 0;
+		for(WpaVal val : this) {
+			if(val.getKey().toLowerCase().startsWith("network"))
+				count++;
+		}
+		return count;
 	}
 }

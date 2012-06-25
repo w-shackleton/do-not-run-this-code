@@ -1,7 +1,9 @@
 package uk.digitalsquid.internetrestore.util.file;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -25,5 +27,18 @@ public class FileIO {
 	}
 	public static void writeContents(String file, String data) throws IOException {
 		writeContents(new File(file), data);
+	}
+	
+	public static String readContents(File file) throws IOException {
+		FileReader in = new FileReader(file);
+		BufferedReader buf = new BufferedReader(in);
+		
+		char[] data = new char[1024];
+		int count;
+		StringBuilder out = new StringBuilder(1024);
+		while((count = buf.read(data)) != -1) {
+			out.append(data, 0, count);
+		}
+		return out.toString();
 	}
 }

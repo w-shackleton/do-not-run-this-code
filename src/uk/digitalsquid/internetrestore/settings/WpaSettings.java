@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import uk.digitalsquid.internetrestore.App;
+import uk.digitalsquid.internetrestore.Logg;
 import uk.digitalsquid.internetrestore.settings.wpa.WpaCollection;
 import uk.digitalsquid.internetrestore.util.ProcessRunner;
 import uk.digitalsquid.internetrestore.util.ProcessRunner.ProcessResult;
@@ -50,10 +51,24 @@ public class WpaSettings {
 	}
 	
 	public void writeLocalConfig(WpaCollection config) throws IOException {
-		File path = app.getFileInstaller().getConfFilePath(FileInstaller.CONF_WPA_SUPPLICANT);
 		StringBuilder out = new StringBuilder();
 		config.write(out);
 		
-		FileIO.writeContents(path, out.toString());
+		FileIO.writeContents(getLocalConfigPath(), out.toString());
+	}
+	
+	public WpaCollection readLocalConfig() {
+		String data;
+		try {
+			data = FileIO.readContents(getLocalConfigPath());
+			return new WpaCollection(data);
+		} catch (IOException e) {
+			Logg.d("Couldn't get local config contents, returning empty config descriptor", e);
+			return new WpaCollection();
+		}
+	}
+	
+	public File getLocalConfigPath() {
+		return app.getFileInstaller().getConfFilePath(FileInstaller.CONF_WPA_SUPPLICANT);
 	}
 }

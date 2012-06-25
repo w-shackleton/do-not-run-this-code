@@ -15,7 +15,7 @@ public class Wpa {
 	private String wpa_supplicant;
 	private final App app;
 	
-	public Wpa(App app) {
+	public Wpa(App app) throws MissingFeatureException {
 		this.app = app;
 		try {
 			wpa_supplicant = app.getFileFinder().getWpaSupplicantPath();
@@ -28,5 +28,15 @@ public class Wpa {
 				throw exc;
 			}
 		}
+	}
+	
+	/**
+	 * Starts the WPA daemon using the saved config
+	 * @throws MissingFeatureException 
+	 */
+	public synchronized void start() throws MissingFeatureException {
+		// First check that wpa_supplicant.conf contains at least one network.
+		int networkCount = app.getWpaSettings().readLocalConfig().getNetworkCount();
+		if(networkCount == 0) throw new MissingFeatureException("Please add at least 1 network to connect to");
 	}
 }
