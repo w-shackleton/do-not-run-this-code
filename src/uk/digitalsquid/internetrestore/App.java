@@ -1,5 +1,6 @@
 package uk.digitalsquid.internetrestore;
 
+import uk.digitalsquid.internetrestore.settings.InfoCollector;
 import uk.digitalsquid.internetrestore.settings.WpaSettings;
 import uk.digitalsquid.internetrestore.util.file.FileFinder;
 import uk.digitalsquid.internetrestore.util.file.FileInstaller;
@@ -33,5 +34,12 @@ public class App extends Application {
 	public WpaSettings getWpaSettings() {
 		if(wpaSettings == null) wpaSettings = new WpaSettings(this);
 		return wpaSettings;
+	}
+	
+	private InfoCollector infoCollector;
+	
+	public InfoCollector getInfoCollector() {
+		if(infoCollector == null) infoCollector = new InfoCollector(this);
+		return infoCollector;
 	}
 }

@@ -25,6 +25,23 @@ public class WpaSettings {
 	}
 	
 	/**
+	 * Gets the directory in which wpa_supplicant configurations are stored.
+	 * On some (all?) devices this is <code>/data/misc/wifi</code>
+	 * @return
+	 * @throws FileNotFoundException 
+	 */
+	public File getWpaDir() throws FileNotFoundException {
+		final File[] dirs = {
+			new File("/data/misc/wifi"),
+		};
+		for(File dir : dirs) {
+			if(dir.isDirectory())
+				return dir;
+		}
+		throw new FileNotFoundException("wpa folder not found");
+	}
+	
+	/**
 	 * Reads the system config as root, then parses it.
 	 * @return The system's wpa_supplicant config
 	 * @throws IOException If reading the system's wpa_supplicant.conf failed
@@ -33,7 +50,8 @@ public class WpaSettings {
 	public WpaCollection readSystemConfig() throws IOException {
 		// Find system wpa_supplicant.conf
 		String[] potentialPaths = {
-				"/data/misc/wifi/wpa_supplicant.conf"
+				"/data/misc/wifi/wpa_supplicant.conf",
+				new File(getWpaDir(), "wpa_supplicant.conf").getAbsolutePath(),
 		};
 		for(String potential : potentialPaths) {
 			// Read system conf as root

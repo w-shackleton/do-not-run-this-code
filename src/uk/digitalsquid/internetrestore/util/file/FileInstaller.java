@@ -19,6 +19,7 @@ public final class FileInstaller {
 	private final Context context;
 	
 	public static final String CONF_WPA_SUPPLICANT = "wpa_supplicant.conf";
+	public static final String CONF_ENTROPY_BIN = "entropy.bin";
 	public static final String BIN_BUSYBOX = "busybox";
 	
 	private final File binDir;

@@ -2,5 +2,8 @@
 <resources>
     <string name="no_wpa">Couldn\'t find wpa_supplicant executable on phone. This most likely means that this phone won\'t work with %d.
     </string>
+    <string name="no_networks">Please add at least 1 network to connect to. This will be the network on which internet will be restored.</string>
+    <string name="no_wifi_iface">Couldn\'t get Wifi interface name. This most likely indicates that this device has an incompatible / missing Wifi device.</string>
+    <string name="no_su">Superuser is missing from this device. Please root this device in order to use this program.</string>
     
 </resources>
