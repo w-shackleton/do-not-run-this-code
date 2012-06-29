@@ -3,5 +3,7 @@
 
     <string name="hello">Hello World, InetRestoreActivity!</string>
     <string name="app_name">Internet restore</string>
+    <string name="editWifiNetworks">Edit Wifi Networks</string>
+    <string name="addNetwork">Add Network</string>
 
 </resources>

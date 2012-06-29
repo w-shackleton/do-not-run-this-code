@@ -47,7 +47,7 @@ public class WpaVal {
 	public void write(StringBuilder out) {
 		out.append(key);
 		out.append('=');
-		switch(type) {
+		switch(getType()) {
 		case TYPE_VALUE:
 			out.append(value);
 		case TYPE_CONTAINER:
@@ -57,7 +57,7 @@ public class WpaVal {
 	
 	@Override
 	public String toString() {
-		switch(type) {
+		switch(getType()) {
 		case TYPE_VALUE:
 			return key + ": " + value;
 		case TYPE_CONTAINER:
@@ -69,5 +69,39 @@ public class WpaVal {
 
 	public String getKey() {
 		return key;
+	}
+	
+	/**
+	 * Gets the value contained in this {@link WpaVal}. If it has multiple children,
+	 * a text form of those is returned
+	 * @return
+	 */
+	public String getValue() {
+		switch(type) {
+		case TYPE_VALUE:
+			return value;
+		case TYPE_CONTAINER:
+			return values.toString();
+		default:
+			return "";
+		}
+	}
+
+	public int getType() {
+		return type;
+	}
+	
+	/**
+	 * Returns the children of this {@link WpaVal}. If it contains a single value,
+	 * an exception is thrown
+	 * @return
+	 */
+	public WpaCollection getChildren() {
+		switch(type) {
+		case TYPE_CONTAINER:
+			return values;
+		default:
+			throw new IllegalStateException("This block only has a single child property");
+		}
 	}
 }

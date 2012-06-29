@@ -9,6 +9,8 @@ import uk.digitalsquid.internetrestore.settings.wpa.WpaCollection;
 import android.app.Activity;
 import android.content.res.Resources.NotFoundException;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class InetRestoreActivity extends Activity {
 	
@@ -44,5 +46,24 @@ public class InetRestoreActivity extends Activity {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+    	super.onCreateOptionsMenu(menu);
+    	
+    	getMenuInflater().inflate(R.menu.menu, menu);
+    	
+    	return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch(item.getItemId()) {
+    	case R.id.editWifiNetworks:
+    		return true;
+		default:
+			return false;
+    	}
     }
 }
