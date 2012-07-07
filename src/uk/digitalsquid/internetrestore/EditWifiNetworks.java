@@ -1,8 +1,10 @@
 package uk.digitalsquid.internetrestore;
 
+import java.io.IOException;
 import java.util.List;
 
 import uk.digitalsquid.internetrestore.settings.wpa.WpaCollection;
+import uk.digitalsquid.internetrestore.settings.wpa.WpaParsedSettings;
 import android.app.Activity;
 import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
@@ -26,11 +28,19 @@ public class EditWifiNetworks extends Activity {
 		app = (App) getApplication();
 		setContentView(R.layout.edit_wifi_networks);
 		listAdapter = new WifiListAdapter();
-		ListView list = (ListView) findViewById(R.id.editWifiNetworks);
+		ListView list = (ListView) findViewById(R.id.list);
 		list.setAdapter(listAdapter);
 		
 		// Get network list from saved supplicant file.
-		WpaCollection wpaRawConf = app.getWpaSettings().readLocalConfig();
+		// WpaCollection wpaRawConf = app.getWpaSettings().readLocalConfig();
+		WpaCollection wpaRawConf = null;
+		try {
+			wpaRawConf = app.getWpaSettings().readSystemConfig();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		WpaParsedSettings wpaConf = new WpaParsedSettings(wpaRawConf);
+		WpaCollection converted = wpaConf.convertBackToConfig();
 	}
 
 	@Override
@@ -62,12 +72,12 @@ public class EditWifiNetworks extends Activity {
 		
 		@Override
 		public int getCount() {
-			return networks.size();
+			return networks == null ? 0 : networks.size();
 		}
 
 		@Override
 		public WifiConfiguration getItem(int position) {
-			return networks.get(position);
+			return networks == null ? null : networks.get(position);
 		}
 
 		@Override

@@ -7,6 +7,7 @@ import uk.digitalsquid.internetrestore.settings.InfoCollector;
 import uk.digitalsquid.internetrestore.settings.WpaSettings;
 import uk.digitalsquid.internetrestore.settings.wpa.WpaCollection;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources.NotFoundException;
 import android.os.Bundle;
 import android.view.Menu;
@@ -59,8 +60,11 @@ public class InetRestoreActivity extends Activity {
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+    	Intent i;
     	switch(item.getItemId()) {
     	case R.id.editWifiNetworks:
+    		i = new Intent(this, EditWifiNetworks.class);
+    		startActivity(i);
     		return true;
 		default:
 			return false;

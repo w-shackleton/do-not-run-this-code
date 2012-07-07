@@ -5,6 +5,10 @@ import java.util.BitSet;
 
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiConfiguration.AuthAlgorithm;
+import android.net.wifi.WifiConfiguration.GroupCipher;
+import android.net.wifi.WifiConfiguration.KeyMgmt;
+import android.net.wifi.WifiConfiguration.PairwiseCipher;
+import android.net.wifi.WifiConfiguration.Protocol;
 
 /**
  * Stores settings in a form where they can be edited easily
@@ -14,9 +18,8 @@ import android.net.wifi.WifiConfiguration.AuthAlgorithm;
 public class WpaParsedSettings {
 	private WpaCollection remainingParameters;
 	
-	private ArrayList<WifiConfiguration> networks;
+	private ArrayList<WifiConfiguration> networks = new ArrayList<WifiConfiguration>();
 	
-	@SuppressWarnings("unchecked")
 	public WpaParsedSettings(WpaCollection config) {
 		remainingParameters = (WpaCollection) config.clone();
 		for(int i = 0; i < remainingParameters.size(); i++) {
@@ -46,6 +49,28 @@ public class WpaParsedSettings {
 		return null;
 	}
 	
+	/**
+	 * Parses an integer safely. Returns 0 on error.
+	 * @param number
+	 * @return
+	 */
+	private static int parseIntSafe(String number) {
+		try {
+			return Integer.parseInt(number);
+		} catch(NumberFormatException e) {
+			return 0;
+		}
+	}
+	
+	private static boolean parseBoolSafe(String bool) {
+		String val = bool.toLowerCase();
+		if("true".equals(val)) return true;
+		if("false".equals(val)) return false;
+		if("1".equals(val)) return true;
+		if("0".equals(val)) return false;
+		return false;
+	}
+	
 	private static WifiConfiguration convertConfToNetwork(WpaVal config) {
 		WifiConfiguration conf = new WifiConfiguration();
 		for(WpaVal val : config.getChildren()) {
@@ -57,14 +82,57 @@ public class WpaParsedSettings {
 				conf.SSID = value;
 			else if(key.equals("auth_alg")) {
 				BitSet auth_alg = new BitSet();
-				if(value.contains("LEAP"))
+				if(value.contains("leap"))
 					auth_alg.set(AuthAlgorithm.LEAP);
-				if(value.contains("OPEN"))
+				if(value.contains("open"))
 					auth_alg.set(AuthAlgorithm.OPEN);
-				if(value.contains("SHARED"))
+				if(value.contains("shared"))
 					auth_alg.set(AuthAlgorithm.SHARED);
+				conf.allowedAuthAlgorithms = auth_alg;
 			} else if(key.equals("psk"))
 				conf.preSharedKey = value;
+			else if(key.equals("priority"))
+				conf.priority = parseIntSafe(value);
+			else if(key.equals("scan_ssid"))
+				conf.hiddenSSID = parseBoolSafe(value);
+			else if(key.equals("proto")) {
+				BitSet proto = new BitSet();
+				if(value.contains("wpa"))
+					proto.set(Protocol.WPA);
+				if(value.contains("rsn"))
+					proto.set(Protocol.RSN);
+			} else if(key.equals("key_mgmt")) {
+				BitSet key_mgmt = new BitSet();
+				if(value.contains("ieee8021x"))
+					key_mgmt.set(KeyMgmt.IEEE8021X);
+				if(value.contains("wpa-psk"))
+					key_mgmt.set(KeyMgmt.WPA_PSK);
+				if(value.contains("none"))
+					key_mgmt.set(KeyMgmt.NONE);
+				if(value.contains("wpa-eap"))
+					key_mgmt.set(KeyMgmt.WPA_EAP);
+				conf.allowedKeyManagement = key_mgmt;
+			} else if(key.equals("pairwise")) {
+				BitSet pairwise = new BitSet();
+				if(value.contains("ccmp"))
+					pairwise.set(PairwiseCipher.CCMP);
+				if(value.contains("none"))
+					pairwise.set(PairwiseCipher.NONE);
+				if(value.contains("tkip"))
+					pairwise.set(PairwiseCipher.TKIP);
+				conf.allowedPairwiseCiphers = pairwise;
+			} else if(key.equals("group")) {
+				BitSet group = new BitSet();
+				if(value.contains("ccmp"))
+					group.set(GroupCipher.CCMP);
+				if(value.contains("tkip"))
+					group.set(GroupCipher.TKIP);
+				if(value.contains("wep104"))
+					group.set(GroupCipher.WEP104);
+				if(value.contains("wep40"))
+					group.set(GroupCipher.WEP40);
+				conf.allowedGroupCiphers = group;
+			}
 		}
 		return conf;
 	}
