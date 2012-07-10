@@ -68,4 +68,8 @@ public class WpaCollection extends ArrayList<WpaVal> {
 		}
 		return count;
 	}
+	
+	public WpaParsedSettings parse() {
+		return new WpaParsedSettings(this);
+	}
 }

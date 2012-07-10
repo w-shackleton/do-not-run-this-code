@@ -63,7 +63,7 @@ public class InfoCollector {
 		while(ifaces.hasMoreElements()) {
 			NetworkInterface iface = ifaces.nextElement();
 			String comparison = Mac.format(iface.getHardwareAddress());
-			if(wifiMac.equalsIgnoreCase(comparison))
+			if(wifiMac != null && wifiMac.equalsIgnoreCase(comparison))
 				return iface.getDisplayName();
 		}
 		throw new UnknownHostException("Couldn't identify iface by mac");

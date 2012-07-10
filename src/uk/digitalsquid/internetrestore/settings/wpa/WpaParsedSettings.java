@@ -27,7 +27,8 @@ public class WpaParsedSettings {
 			if("network".equals(val.getKey())) {
 				if(val.getType() == WpaVal.TYPE_VALUE) continue;
 				networks.add(convertConfToNetwork(val));
-			}
+			} else
+				remainingParameters.remove(i);
 		}
 	}
 	
@@ -76,17 +77,18 @@ public class WpaParsedSettings {
 		for(WpaVal val : config.getChildren()) {
 			String key = val.getKey().toLowerCase();
 			String value = val.getValue();
+			String valLower = value.toLowerCase();
 			if(key.equals("bssid"))
 				conf.BSSID = value;
 			else if(key.equals("ssid"))
 				conf.SSID = value;
 			else if(key.equals("auth_alg")) {
 				BitSet auth_alg = new BitSet();
-				if(value.contains("leap"))
+				if(valLower.contains("leap"))
 					auth_alg.set(AuthAlgorithm.LEAP);
-				if(value.contains("open"))
+				if(valLower.contains("open"))
 					auth_alg.set(AuthAlgorithm.OPEN);
-				if(value.contains("shared"))
+				if(valLower.contains("shared"))
 					auth_alg.set(AuthAlgorithm.SHARED);
 				conf.allowedAuthAlgorithms = auth_alg;
 			} else if(key.equals("psk"))
@@ -97,39 +99,39 @@ public class WpaParsedSettings {
 				conf.hiddenSSID = parseBoolSafe(value);
 			else if(key.equals("proto")) {
 				BitSet proto = new BitSet();
-				if(value.contains("wpa"))
+				if(valLower.contains("wpa"))
 					proto.set(Protocol.WPA);
-				if(value.contains("rsn"))
+				if(valLower.contains("rsn"))
 					proto.set(Protocol.RSN);
 			} else if(key.equals("key_mgmt")) {
 				BitSet key_mgmt = new BitSet();
-				if(value.contains("ieee8021x"))
+				if(valLower.contains("ieee8021x"))
 					key_mgmt.set(KeyMgmt.IEEE8021X);
-				if(value.contains("wpa-psk"))
+				if(valLower.contains("wpa-psk"))
 					key_mgmt.set(KeyMgmt.WPA_PSK);
-				if(value.contains("none"))
+				if(valLower.contains("none"))
 					key_mgmt.set(KeyMgmt.NONE);
-				if(value.contains("wpa-eap"))
+				if(valLower.contains("wpa-eap"))
 					key_mgmt.set(KeyMgmt.WPA_EAP);
 				conf.allowedKeyManagement = key_mgmt;
 			} else if(key.equals("pairwise")) {
 				BitSet pairwise = new BitSet();
-				if(value.contains("ccmp"))
+				if(valLower.contains("ccmp"))
 					pairwise.set(PairwiseCipher.CCMP);
-				if(value.contains("none"))
+				if(valLower.contains("none"))
 					pairwise.set(PairwiseCipher.NONE);
-				if(value.contains("tkip"))
+				if(valLower.contains("tkip"))
 					pairwise.set(PairwiseCipher.TKIP);
 				conf.allowedPairwiseCiphers = pairwise;
 			} else if(key.equals("group")) {
 				BitSet group = new BitSet();
-				if(value.contains("ccmp"))
+				if(valLower.contains("ccmp"))
 					group.set(GroupCipher.CCMP);
-				if(value.contains("tkip"))
+				if(valLower.contains("tkip"))
 					group.set(GroupCipher.TKIP);
-				if(value.contains("wep104"))
+				if(valLower.contains("wep104"))
 					group.set(GroupCipher.WEP104);
-				if(value.contains("wep40"))
+				if(valLower.contains("wep40"))
 					group.set(GroupCipher.WEP40);
 				conf.allowedGroupCiphers = group;
 			}
