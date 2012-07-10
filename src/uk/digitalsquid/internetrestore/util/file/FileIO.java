@@ -40,6 +40,8 @@ public class FileIO {
 		while((count = buf.read(data)) != -1) {
 			out.append(data, 0, count);
 		}
+		buf.close();
+		in.close();
 		return out.toString();
 	}
 }

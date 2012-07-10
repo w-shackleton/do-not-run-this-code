@@ -1,11 +1,7 @@
 package uk.digitalsquid.internetrestore;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 
-import uk.digitalsquid.internetrestore.settings.InfoCollector;
-import uk.digitalsquid.internetrestore.settings.WpaSettings;
-import uk.digitalsquid.internetrestore.settings.wpa.WpaCollection;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources.NotFoundException;
