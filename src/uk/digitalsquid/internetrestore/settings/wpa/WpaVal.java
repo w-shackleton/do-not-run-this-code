@@ -25,6 +25,8 @@ public class WpaVal {
 	public static final int TYPE_CONTAINER = 2;
 	
 	public WpaVal(String key, String value) {
+		if(key == null) throw new IllegalArgumentException("key is null");
+		if(value == null) value = ""; // Really this shouldn't be added at all but it is too late here
 		this.key = key.trim();
 		this.value = value.trim();
 		if(this.value.startsWith("{")) {
@@ -41,6 +43,17 @@ public class WpaVal {
 	}
 	
 	/**
+	 * Constructor for a blank TYPE_CONTAINER
+	 * @param key
+	 */
+	public WpaVal(String key) {
+		this.key = key.trim();
+		value = "{}";
+		values = new WpaCollection();
+		type = TYPE_CONTAINER;
+	}
+	
+	/**
 	 * Writes the contents of this {@link WpaVal} to the given {@link StringBuilder}
 	 * @param out
 	 */
@@ -50,8 +63,10 @@ public class WpaVal {
 		switch(getType()) {
 		case TYPE_VALUE:
 			out.append(value);
+			break;
 		case TYPE_CONTAINER:
-			values.write(out);
+			values.writeAsChild(out);
+			break;
 		}
 	}
 	

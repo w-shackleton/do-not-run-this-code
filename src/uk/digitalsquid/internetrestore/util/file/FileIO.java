@@ -16,6 +16,7 @@ public class FileIO {
 	private FileIO() { }
 	
 	public static void writeContents(File file, String data) throws IOException {
+		file.getParentFile().mkdirs();
 		if(!file.exists()) file.createNewFile();
 		FileWriter out = new FileWriter(file);
 		

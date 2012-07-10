@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="importWifiTitle">Import Wifi networks?</string>
+    <string name="importWifiDesc">Would you like to automatically import the phone\'s saved Wifi networks?</string>
+    
+</resources>

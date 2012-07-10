@@ -3,6 +3,7 @@ package uk.digitalsquid.internetrestore.settings.wpa;
 import java.util.ArrayList;
 import java.util.BitSet;
 
+import uk.digitalsquid.internetrestore.util.ListProxy;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiConfiguration.AuthAlgorithm;
 import android.net.wifi.WifiConfiguration.GroupCipher;
@@ -15,20 +16,26 @@ import android.net.wifi.WifiConfiguration.Protocol;
  * @author william
  *
  */
-public class WpaParsedSettings {
-	private WpaCollection remainingParameters;
+public class WpaParsedSettings extends ListProxy<WifiConfiguration> {
+	/**
+	 * Parameters which aren't networks.
+	 */
+	private WpaCollection remainingParameters = new WpaCollection();
 	
+	/**
+	 * Networks, parsed into {@link WifiConfiguration}
+	 */
 	private ArrayList<WifiConfiguration> networks = new ArrayList<WifiConfiguration>();
 	
 	public WpaParsedSettings(WpaCollection config) {
-		remainingParameters = (WpaCollection) config.clone();
-		for(int i = 0; i < remainingParameters.size(); i++) {
-			WpaVal val = remainingParameters.get(i);
+		setProxy(networks);
+		for(int i = 0; i < config.size(); i++) {
+			WpaVal val = config.get(i);
 			if("network".equals(val.getKey())) {
 				if(val.getType() == WpaVal.TYPE_VALUE) continue;
 				networks.add(convertConfToNetwork(val));
 			} else
-				remainingParameters.remove(i);
+				remainingParameters.add(val);
 		}
 	}
 	
@@ -46,8 +53,71 @@ public class WpaParsedSettings {
 	}
 	
 	private static WpaVal convertNetwork(WifiConfiguration network) {
-		// TODO: Implement
-		return null;
+		WpaVal val = new WpaVal("network");
+		WpaCollection inner = val.getChildren();
+		
+		inner.add("bssid", network.BSSID);
+		if(network.SSID != null)
+			inner.add("ssid", enquote(network.SSID));
+		if(network.allowedAuthAlgorithms != null)
+			inner.add("auth_alg", bitSetToString(network.allowedAuthAlgorithms, AuthAlgorithm.strings));
+		if(network.preSharedKey != null)
+			inner.add("psk", enquote(network.preSharedKey));
+		inner.add("priority", String.valueOf(network.priority));
+		inner.add("scan_ssid", network.hiddenSSID ? "1" : "0");
+		if(network.allowedProtocols != null)
+			inner.add("proto", bitSetToString(network.allowedProtocols, Protocol.strings));
+		if(network.allowedKeyManagement != null)
+			inner.add("key_mgmt", bitSetToString(network.allowedKeyManagement, KeyMgmt.strings));
+		if(network.allowedPairwiseCiphers != null)
+			inner.add("pairwise", bitSetToString(network.allowedPairwiseCiphers, PairwiseCipher.strings));
+		if(network.allowedGroupCiphers != null)
+			inner.add("group", bitSetToString(network.allowedGroupCiphers, GroupCipher.strings));
+		
+		if(network.wepKeys != null) {
+			for(int i = 0; i < 4; i++) {
+				String rawKey = network.wepKeys[i];
+				if(rawKey == null) continue;
+				String key = isHex(rawKey) ? rawKey : enquote(rawKey);
+				if(network.wepKeys.length > i) inner.add(String.format("wep_key%d", i), key);
+			}
+		}
+		inner.add("wep_tx_keyidx", String.valueOf(network.wepTxKeyIndex));
+		
+		return val;
+	}
+	
+	private static String enquote(String str) {
+		return String.format("\"%s\"", str);
+	}
+	
+	/**
+	 * Returns <code>true</code> if the given string contains hexadecimal only.
+	 * @param str
+	 * @return
+	 */
+	private static boolean isHex(String str) {
+		// TODO: Ask the user if they want a hex or string WEP key?
+		for(char c : str.toCharArray()) {
+			if(
+					(c < '0' || c > '9') &&
+					(c < 'a' || c > 'f') &&
+					(c < 'A' || c > 'F'))
+				return false;
+		}
+		return true;
+	}
+	
+	private static String bitSetToString(BitSet set, String[] values) {
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < set.size(); i++) {
+			if(set.get(i)) {
+				if(i >= values.length) break;
+				if(sb.length() != 0) sb.append(' ');
+				sb.append(values[i]);
+			}
+		}
+		return sb.toString();
 	}
 	
 	/**
@@ -74,6 +144,7 @@ public class WpaParsedSettings {
 	
 	private static WifiConfiguration convertConfToNetwork(WpaVal config) {
 		WifiConfiguration conf = new WifiConfiguration();
+		conf.wepKeys = new String[4];
 		for(WpaVal val : config.getChildren()) {
 			String key = val.getKey().toLowerCase();
 			String value = val.getValue();
@@ -134,8 +205,39 @@ public class WpaParsedSettings {
 				if(valLower.contains("wep40"))
 					group.set(GroupCipher.WEP40);
 				conf.allowedGroupCiphers = group;
-			}
+			} else if(key.equals("wep_key0"))
+				conf.wepKeys[0] = value;
+			else if(key.equals("wep_key1"))
+				conf.wepKeys[1] = value;
+			else if(key.equals("wep_key2"))
+				conf.wepKeys[2] = value;
+			else if(key.equals("wep_key3"))
+				conf.wepKeys[3] = value;
+			else if(key.equals("wep_tx_keyidx"))
+				conf.wepTxKeyIndex = parseIntSafe(value);
 		}
 		return conf;
+	}
+	
+	private boolean hasNetwork(String networkName) {
+		for(WifiConfiguration conf : networks) {
+			if(conf.SSID.equals(networkName)) return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Inserts all the new settings from the given settings
+	 * @param from
+	 */
+	public void mergeFrom(WpaParsedSettings from) {
+		for(WpaVal val : from.remainingParameters) {
+			if(!remainingParameters.hasKey(val))
+				remainingParameters.add(val);
+		}
+		for(WifiConfiguration conf : from.networks) {
+			if(!hasNetwork(conf.SSID))
+				networks.add(conf);
+		}
 	}
 }

@@ -31,22 +31,6 @@ public class InetRestoreActivity extends Activity {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-        
-        // Testing
-        InfoCollector info = new InfoCollector(this);
-        try {
-			Logg.d("Wifi: " + info.getWifiIface());
-		} catch (UnknownHostException e) {
-			Logg.e("Failed to get wifi iface", e);
-		}
-        
-        WpaSettings wpa = new WpaSettings((App)getApplication());
-        try {
-			WpaCollection wpaCfg = wpa.readSystemConfig();
-			wpaCfg.isEmpty();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
     }
     
     @Override

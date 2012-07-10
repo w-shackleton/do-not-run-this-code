@@ -6,6 +6,9 @@ import java.util.List;
 import uk.digitalsquid.internetrestore.settings.wpa.WpaCollection;
 import uk.digitalsquid.internetrestore.settings.wpa.WpaParsedSettings;
 import android.app.Activity;
+import android.app.AlertDialog.Builder;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,11 +19,16 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class EditWifiNetworks extends Activity {
 	
+	protected static final int DIALOG_ASK_USE_SYSTEM_WIFI = 1;
+	
 	WifiListAdapter listAdapter;
 	App app;
+	
+	WpaParsedSettings config;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -32,15 +40,12 @@ public class EditWifiNetworks extends Activity {
 		list.setAdapter(listAdapter);
 		
 		// Get network list from saved supplicant file.
-		// WpaCollection wpaRawConf = app.getWpaSettings().readLocalConfig();
-		WpaCollection wpaRawConf = null;
-		try {
-			wpaRawConf = app.getWpaSettings().readSystemConfig();
-		} catch (IOException e) {
-			e.printStackTrace();
+		WpaCollection wpaRawConf = app.getWpaSettings().readLocalConfig();
+		config = wpaRawConf.parse();
+		if(config.size() == 0) {
+			showDialog(DIALOG_ASK_USE_SYSTEM_WIFI);
 		}
-		WpaParsedSettings wpaConf = new WpaParsedSettings(wpaRawConf);
-		WpaCollection converted = wpaConf.convertBackToConfig();
+		listAdapter.setNetworks(config);
 	}
 
 	@Override
@@ -59,6 +64,21 @@ public class EditWifiNetworks extends Activity {
 			return true;
 		default:
 			return false;
+		}
+	}
+	
+	/**
+	 * Displays and saves the current network list back to the conf file.
+	 * Should be called after each change to ensure Android consistency etc.
+	 */
+	void updateNetworks() {
+		listAdapter.setNetworks(config);
+		WpaCollection rawConfig = config.convertBackToConfig();
+		try {
+			app.getWpaSettings().writeLocalConfig(rawConfig);
+		} catch (IOException e) {
+			Logg.e("Failed to write wpa config back to wpa_supplicant.conf", e);
+			Toast.makeText(this, "Failed to write new configuration", Toast.LENGTH_SHORT).show();
 		}
 	}
 	
@@ -106,6 +126,45 @@ public class EditWifiNetworks extends Activity {
 		public void setNetworks(List<WifiConfiguration> networks) {
 			this.networks = networks;
 			notifyDataSetChanged();
+		}
+	}
+	
+	public void addNetworksFromSystemConfig() {
+		Logg.i("Adding networks from system conf");
+		WpaCollection wpaRawConf = null;
+		try {
+			wpaRawConf = app.getWpaSettings().readSystemConfig();
+		} catch (IOException e) {
+			Logg.e("Failed to get system wpa_supplicant config", e);
+			Toast.makeText(this, "Failed to import system Wifi networks. Either the file couldn't be found or superuser wasn't accepted.", Toast.LENGTH_LONG).show();
+		}
+		WpaParsedSettings wpaConf = new WpaParsedSettings(wpaRawConf);
+		config.mergeFrom(wpaConf);
+		updateNetworks();
+	}
+	
+	public Dialog onCreateDialog(int id, Bundle args) {
+		super.onCreateDialog(id, args);
+		Builder builder;
+		switch(id) {
+		case DIALOG_ASK_USE_SYSTEM_WIFI:
+			builder = new Builder(this);
+			builder.setTitle(R.string.importWifiTitle);
+			builder.setMessage(R.string.importWifiDesc);
+			builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					addNetworksFromSystemConfig();
+				}
+			});
+			builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+				}
+			});
+			return builder.create();
+		default:
+			return null;
 		}
 	}
 }

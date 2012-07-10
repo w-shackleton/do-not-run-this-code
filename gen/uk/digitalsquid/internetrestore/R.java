@@ -39,6 +39,8 @@ public final class R {
         public static final int app_name=0x7f050005;
         public static final int editWifiNetworks=0x7f050006;
         public static final int hello=0x7f050004;
+        public static final int importWifiDesc=0x7f050009;
+        public static final int importWifiTitle=0x7f050008;
         public static final int no_networks=0x7f050001;
         public static final int no_su=0x7f050003;
         public static final int no_wifi_iface=0x7f050002;

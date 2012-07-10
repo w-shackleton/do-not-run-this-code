@@ -48,9 +48,25 @@ public class WpaCollection extends ArrayList<WpaVal> {
 				continue;
 			}
 			String key = parts[0];
-			WpaVal entry = new WpaVal(key, parts[1]);
+			String val = parts[1];
+			if(val.startsWith("\"") && val.endsWith("\""))
+				val = val.substring(1, val.length() - 1);
+			WpaVal entry = new WpaVal(key, val);
 			add(entry);
 		}
+	}
+	
+	/**
+	 * Version of the write method which adds { } around the children.
+	 * @param out
+	 */
+	void writeAsChild(StringBuilder out) {
+		out.append("{\n");
+		for(WpaVal entry : this) {
+			entry.write(out);
+			out.append('\n');
+		}
+		out.append('}');
 	}
 	
 	public void write(StringBuilder out) {
@@ -71,5 +87,36 @@ public class WpaCollection extends ArrayList<WpaVal> {
 	
 	public WpaParsedSettings parse() {
 		return new WpaParsedSettings(this);
+	}
+	
+	/**
+	 * Returns <code>true</code> if a key with this name already exists.
+	 * O(n)
+	 */
+	boolean hasKey(String key) {
+		for(WpaVal val : this) {
+			if(val.getKey().equals(key))
+				return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns <code>true</code> if a key with this name already exists.
+	 * O(n)
+	 */
+	boolean hasKey(WpaVal key) {
+		return hasKey(key.getKey());
+	}
+	
+	/**
+	 * Convenience function which adds a new {@link WpaVal}
+	 * @param key
+	 * @param value
+	 */
+	public void add(String key, String value) {
+		if(key == null || value == null) return;
+		if(key.equals("") || value.equals("")) return;
+		add(new WpaVal(key, value));
 	}
 }
