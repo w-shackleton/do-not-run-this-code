@@ -1,5 +1,6 @@
 package uk.digitalsquid.internetrestore.util;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;

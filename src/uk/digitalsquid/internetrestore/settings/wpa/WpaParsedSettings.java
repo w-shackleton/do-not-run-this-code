@@ -1,5 +1,6 @@
 package uk.digitalsquid.internetrestore.settings.wpa;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.BitSet;
 
@@ -16,7 +17,9 @@ import android.net.wifi.WifiConfiguration.Protocol;
  * @author william
  *
  */
-public class WpaParsedSettings extends ListProxy<WifiConfiguration> {
+public class WpaParsedSettings extends ListProxy<WifiConfiguration> implements Serializable {
+	private static final long serialVersionUID = -3170244308212339621L;
+
 	/**
 	 * Parameters which aren't networks.
 	 */

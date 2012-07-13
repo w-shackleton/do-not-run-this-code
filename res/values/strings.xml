@@ -5,5 +5,8 @@
     <string name="app_name">Internet restore</string>
     <string name="editWifiNetworks">Edit Wifi Networks</string>
     <string name="addNetwork">Add Network</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="password">Password</string>
 
 </resources>

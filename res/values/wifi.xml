@@ -2,5 +2,15 @@
 <resources>
     <string name="importWifiTitle">Import Wifi networks?</string>
     <string name="importWifiDesc">Would you like to automatically import the phone\'s saved Wifi networks?</string>
+    <string name="editWifiTitle">Edit Wifi</string>
+    <string name="networkName">Network Name (SSID)</string>
+    <string name="networkSecurity">Network Security</string>
+    <string-array name="securityNames">
+        <item >Open</item>
+        <item >WEP</item>
+        <item >WPA/WPA2</item>
+    </string-array>
+        <string name="showPassword">Show password</string>
+        <string name="wepKeyMessage">If in doubt, use this key.</string>
     
 </resources>
