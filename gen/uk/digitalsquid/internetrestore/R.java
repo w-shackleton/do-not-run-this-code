@@ -17,17 +17,19 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int addNew=0x7f080016;
-        public static final int container=0x7f080011;
-        public static final int delete=0x7f080015;
-        public static final int description=0x7f080013;
-        public static final int edit=0x7f080014;
-        public static final int editWifiNetworks=0x7f080018;
-        public static final int importSystem=0x7f080017;
-        public static final int list=0x7f080010;
-        public static final int name=0x7f080012;
+        public static final int addNew=0x7f080018;
+        public static final int container=0x7f080013;
+        public static final int delete=0x7f080017;
+        public static final int description=0x7f080015;
+        public static final int edit=0x7f080016;
+        public static final int editWifiNetworks=0x7f08001a;
+        public static final int importSystem=0x7f080019;
+        public static final int list=0x7f080012;
+        public static final int name=0x7f080014;
+        public static final int priority=0x7f080011;
         public static final int security=0x7f080003;
         public static final int showPsk=0x7f080006;
+        public static final int showWepKeys=0x7f080010;
         public static final int ssid=0x7f080001;
         public static final int textView1=0x7f080000;
         public static final int textView2=0x7f080002;
@@ -75,6 +77,7 @@ public final class R {
         public static final int no_wifi_iface=0x7f050002;
         public static final int no_wpa=0x7f050000;
         public static final int password=0x7f05000a;
+        public static final int priority=0x7f050012;
         public static final int showPassword=0x7f050010;
         public static final int wepKeyMessage=0x7f050011;
     }

@@ -12,5 +12,6 @@
     </string-array>
         <string name="showPassword">Show password</string>
         <string name="wepKeyMessage">If in doubt, use this key.</string>
+        <string name="priority">Priority:</string>
     
 </resources>

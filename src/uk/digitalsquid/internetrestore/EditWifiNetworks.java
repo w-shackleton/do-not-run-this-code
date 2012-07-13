@@ -15,6 +15,7 @@ import android.net.wifi.WifiConfiguration.KeyMgmt;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.method.PasswordTransformationMethod;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -23,8 +24,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -33,10 +38,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class EditWifiNetworks extends Activity {
+public class EditWifiNetworks extends Activity implements OnItemClickListener {
 	
 	protected static final int DIALOG_ASK_USE_SYSTEM_WIFI = 1;
-	protected static final int DIALOG_EDIT_WIFI = 2;
+	protected static final int DIALOG_EDIT_FIRST_WIFI = 2;
+	
+	private int nextDialog = DIALOG_EDIT_FIRST_WIFI;
 	
 	WifiListAdapter listAdapter;
 	App app;
@@ -53,6 +60,7 @@ public class EditWifiNetworks extends Activity {
 		list.setAdapter(listAdapter);
 		
 		list.setOnCreateContextMenuListener(this);
+		list.setOnItemClickListener(this);
 		
 		if(savedInstanceState == null) {
 			// Get network list from saved supplicant file.
@@ -94,7 +102,7 @@ public class EditWifiNetworks extends Activity {
 			return false;
 		}
 	}
-	
+		
 	private int currentSelectedId;
 	
 	@Override
@@ -122,13 +130,24 @@ public class EditWifiNetworks extends Activity {
 			bundle.putInt("id", currentSelectedId);
 			WifiConfiguration network = listAdapter.getItem(currentSelectedId);
 			bundle.putParcelable("oldSettings", network);
-			showDialog(DIALOG_EDIT_WIFI, bundle);
+			showDialog(DIALOG_EDIT_FIRST_WIFI + nextDialog++, bundle);
 			return true;
 		case R.id.delete:
+			config.remove(currentSelectedId);
+			updateNetworks();
 			return true;
 		default:
 			return false;
 		}
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+			Bundle bundle = new Bundle();
+			bundle.putInt("id", pos);
+			WifiConfiguration network = listAdapter.getItem(pos);
+			bundle.putParcelable("oldSettings", network);
+			showDialog(DIALOG_EDIT_FIRST_WIFI + nextDialog++, bundle);
 	}
 	
 	/**
@@ -210,12 +229,11 @@ public class EditWifiNetworks extends Activity {
 				WpaParsedSettings wpaConf = new WpaParsedSettings(wpaRawConf);
 				config.mergeFrom(wpaConf);
 				updateNetworks();
-				msg.recycle();
 			}
 		}
 	};
 	
-	public Dialog onCreateDialog(int id, Bundle args) {
+	public Dialog onCreateDialog(int id, final Bundle args) {
 		super.onCreateDialog(id, args);
 		Builder builder;
 		switch(id) {
@@ -235,7 +253,7 @@ public class EditWifiNetworks extends Activity {
 				}
 			});
 			return builder.create();
-		case DIALOG_EDIT_WIFI:
+		default:
 			builder = new Builder(this);
 			builder.setTitle(R.string.editWifiTitle);
 			
@@ -249,6 +267,8 @@ public class EditWifiNetworks extends Activity {
 			wifiConfWpa.setVisibility(View.GONE);
 			wifiConfWep.setVisibility(View.GONE);
 			
+			final EditText priority = (EditText)view.findViewById(R.id.priority);
+			
 			final EditText ssid = (EditText) view.findViewById(R.id.ssid);
 			final EditText wpaPsk = (EditText) view.findViewById(R.id.wpaPsk);
 			final EditText wepKeys[] = new EditText[4];
@@ -261,6 +281,23 @@ public class EditWifiNetworks extends Activity {
 			wepIxs[1] = (RadioButton) view.findViewById(R.id.wepKeyIx1);
 			wepIxs[2] = (RadioButton) view.findViewById(R.id.wepKeyIx2);
 			wepIxs[3] = (RadioButton) view.findViewById(R.id.wepKeyIx3);
+			
+			CheckBox showWpaKeys = (CheckBox) view.findViewById(R.id.showPsk);
+			CheckBox showWepKeys = (CheckBox) view.findViewById(R.id.showWepKeys);
+			
+			showWpaKeys.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+				@Override
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					wpaPsk.setTransformationMethod(isChecked ? null : new PasswordTransformationMethod());
+				}
+			});
+			showWepKeys.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+				@Override
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					for(EditText wepKey : wepKeys)
+						wepKey.setTransformationMethod(isChecked ? null : new PasswordTransformationMethod());
+				}
+			});
 			
 			security.setOnItemSelectedListener(new OnItemSelectedListener() {
 
@@ -287,6 +324,7 @@ public class EditWifiNetworks extends Activity {
 			builder.setView(view);
 			
 			ssid.setText(conf.SSID);
+			priority.setText(String.valueOf(conf.priority));
 			if(conf.allowedAuthAlgorithms.get(AuthAlgorithm.SHARED)) { // WEP
 				security.setSelection(1);
 				if(conf.wepTxKeyIndex < 0) conf.wepTxKeyIndex = 0;
@@ -297,17 +335,53 @@ public class EditWifiNetworks extends Activity {
 						wepKeys[i].setText(conf.wepKeys[i]);
 					}
 				}
+			} else if(conf.allowedKeyManagement.get(KeyMgmt.WPA_PSK)) {
+				security.setSelection(2);
+				wpaPsk.setText(conf.preSharedKey);
+			} else {
+				security.setSelection(0);
 			}
 			
 			builder.setNegativeButton(android.R.string.no, null);
 			builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
+					conf.SSID = ssid.getText().toString();
+					conf.priority = Integer.parseInt(priority.getText().toString());
+					switch(security.getSelectedItemPosition()) {
+					case 0: // Open
+						conf.allowedKeyManagement.clear();
+						conf.allowedAuthAlgorithms.clear();
+						break;
+					case 1: // WEP
+						conf.allowedKeyManagement.clear();
+						conf.allowedAuthAlgorithms.clear();
+						conf.allowedAuthAlgorithms.set(AuthAlgorithm.OPEN);
+						conf.allowedAuthAlgorithms.set(AuthAlgorithm.SHARED);
+						
+						if(conf.wepKeys == null)
+							conf.wepKeys = new String[4];
+						for(int i = 0; i < conf.wepKeys.length && i < wepKeys.length; i++) {
+							conf.wepKeys[i] = wepKeys[i].getText().toString();
+						}
+						conf.wepTxKeyIndex = 0;
+						for(int i = 0; i < wepIxs.length; i++)
+							if(wepIxs[i].isChecked()) conf.wepTxKeyIndex = i;
+						break;
+					case 2: // WPA
+						conf.allowedKeyManagement.clear();
+						conf.allowedKeyManagement.set(KeyMgmt.WPA_PSK);
+						conf.allowedAuthAlgorithms.clear();
+						
+						conf.preSharedKey = wpaPsk.getText().toString();
+						break;
+					}
+					int id = args.getInt("id");
+					config.set(id, conf);
+					updateNetworks();
 				}
 			});
 			return builder.create();
-		default:
-			return null;
 		}
 	}
 }

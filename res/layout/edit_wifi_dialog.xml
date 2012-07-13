@@ -161,9 +161,27 @@
                     </TableRow>
                 </uk.digitalsquid.internetrestore.RadioGroupTableLayout>
 
+			    <CheckBox
+			        android:id="@+id/showWepKeys"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:text="@string/showPassword" />
+
 	        </LinearLayout>
 	
 	    </FrameLayout>
+
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/priority"
+	        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+	    <EditText
+	        android:id="@+id/priority"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:inputType="number" />
 	
 	</LinearLayout>
 </ScrollView>
