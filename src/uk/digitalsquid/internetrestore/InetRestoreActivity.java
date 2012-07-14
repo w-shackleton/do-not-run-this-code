@@ -8,8 +8,10 @@ import android.content.res.Resources.NotFoundException;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 
-public class InetRestoreActivity extends Activity {
+public class InetRestoreActivity extends Activity implements OnClickListener {
 	
 	App app;
 	
@@ -18,6 +20,9 @@ public class InetRestoreActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         app = (App) getApplication();
+        
+        findViewById(R.id.start).setOnClickListener(this);
+        findViewById(R.id.stop).setOnClickListener(this);
         
         // Run File installer - this needs to be moved to a BG thread on load
         try {
@@ -50,4 +55,18 @@ public class InetRestoreActivity extends Activity {
 			return false;
     	}
     }
+    
+    Intent serviceIntent = new Intent(this, DaemonManager.class);
+
+	@Override
+	public void onClick(View v) {
+		switch(v.getId()) {
+		case R.id.start:
+			startService(serviceIntent);
+			break;
+		case R.id.stop:
+			stopService(serviceIntent);
+			break;
+		}
+	}
 }

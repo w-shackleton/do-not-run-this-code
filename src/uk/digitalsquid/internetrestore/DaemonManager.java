@@ -3,6 +3,9 @@ package uk.digitalsquid.internetrestore;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import uk.digitalsquid.internetrestore.Task.StartTask;
+import uk.digitalsquid.internetrestore.manager.Wpa;
+import uk.digitalsquid.internetrestore.util.MissingFeatureException;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
@@ -21,9 +24,12 @@ public class DaemonManager extends Service {
 	public static final String INTENT_STATUSUPDATE = "uk.digitalsquid.internetrestore.DaemonManager.StatusUpdate";
 	public static final String INTENT_EXTRA_STATUS = "uk.digitalsquid.internetrestore.DaemonManager.status";
 	
+	private App app;
+	
 	@Override
 	public void onCreate() {
           super.onCreate();
+          app = (App) getApplication();
 	}
 	
 	private boolean started = false;
@@ -47,6 +53,12 @@ public class DaemonManager extends Service {
 		notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     	
     	started = true;
+    }
+    
+    @Override
+    public void onDestroy() {
+    	super.onDestroy();
+    	queueTask(new Task(Task.ACTION_STOP));
     }
     
 	private GlobalStatus status;
@@ -87,6 +99,8 @@ public class DaemonManager extends Service {
 	private class DaemonManagerThread extends AsyncTask<Void, GlobalStatus, Void> {
 		
 		boolean running = true;
+		
+		Wpa wpa;
 
 		@Override
 		protected Void doInBackground(Void... arg0) {
@@ -95,6 +109,17 @@ public class DaemonManager extends Service {
 					Task task = tasks.take();
 					
 					switch(task.getAction()) {
+					case Task.ACTION_SUBCLASSED:
+						if(task instanceof StartTask) {
+							StartTask startTask = (StartTask) task;
+							try {
+								wpa = new Wpa(app);
+							} catch (MissingFeatureException e) {
+								e.printStackTrace();
+								// TODO: Show to user
+							}
+						}
+						break;
 					case Task.ACTION_STOP:
 						// TODO: Stop!
 						running = false;

@@ -183,9 +183,13 @@ public class WpaParsedSettings extends ListProxy<WifiConfiguration> implements S
 					key_mgmt.set(KeyMgmt.IEEE8021X);
 				if(valLower.contains("wpa-psk"))
 					key_mgmt.set(KeyMgmt.WPA_PSK);
+				if(valLower.contains("wpa_psk"))
+					key_mgmt.set(KeyMgmt.WPA_PSK);
 				if(valLower.contains("none"))
 					key_mgmt.set(KeyMgmt.NONE);
 				if(valLower.contains("wpa-eap"))
+					key_mgmt.set(KeyMgmt.WPA_EAP);
+				if(valLower.contains("wpa_eap"))
 					key_mgmt.set(KeyMgmt.WPA_EAP);
 				conf.allowedKeyManagement = key_mgmt;
 			} else if(key.equals("pairwise")) {
