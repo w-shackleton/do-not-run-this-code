@@ -29,7 +29,7 @@ public class AndroidWifi {
 	}
 	
 	public boolean isWifiRunning() {
-		return !(wifiManager.getWifiState() == WifiManager.WIFI_STATE_DISABLED);
+		return wifiManager.getWifiState() != WifiManager.WIFI_STATE_DISABLED;
 	}
 	
 	/**

@@ -69,13 +69,13 @@ public class WpaParsedSettings extends ListProxy<WifiConfiguration> implements S
 		inner.add("priority", String.valueOf(network.priority));
 		inner.add("scan_ssid", network.hiddenSSID ? "1" : "0");
 		if(network.allowedProtocols != null)
-			inner.add("proto", bitSetToString(network.allowedProtocols, Protocol.strings));
+			inner.add("proto", bitSetToString(network.allowedProtocols, replaceUnderscoreToDash(Protocol.strings)));
 		if(network.allowedKeyManagement != null)
-			inner.add("key_mgmt", bitSetToString(network.allowedKeyManagement, KeyMgmt.strings));
+			inner.add("key_mgmt", bitSetToString(network.allowedKeyManagement, replaceUnderscoreToDash(KeyMgmt.strings)));
 		if(network.allowedPairwiseCiphers != null)
-			inner.add("pairwise", bitSetToString(network.allowedPairwiseCiphers, PairwiseCipher.strings));
+			inner.add("pairwise", bitSetToString(network.allowedPairwiseCiphers, replaceUnderscoreToDash(PairwiseCipher.strings)));
 		if(network.allowedGroupCiphers != null)
-			inner.add("group", bitSetToString(network.allowedGroupCiphers, GroupCipher.strings));
+			inner.add("group", bitSetToString(network.allowedGroupCiphers, replaceUnderscoreToDash(GroupCipher.strings)));
 		
 		if(network.wepKeys != null) {
 			for(int i = 0; i < 4; i++) {
@@ -92,6 +92,23 @@ public class WpaParsedSettings extends ListProxy<WifiConfiguration> implements S
 	
 	private static String enquote(String str) {
 		return String.format("\"%s\"", str);
+	}
+	
+	/**
+	 * Fixes the fact that android's KeyMgmt.strings reports that a value is
+	 * WPA_PSK, when it is actually WPA-PSK.
+	 * @param in
+	 * @return
+	 */
+	private static String[] replaceUnderscoreToDash(String[] in) {
+		// Where is Haskell when you need it?
+		if(in == null) return null;
+		String[] ret = new String[in.length];
+		int i = 0;
+		for(String str : in) {
+			ret[i++] = str.replace('_', '-');
+		}
+		return ret;
 	}
 	
 	/**

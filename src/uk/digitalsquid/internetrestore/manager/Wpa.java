@@ -1,6 +1,5 @@
 package uk.digitalsquid.internetrestore.manager;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -19,6 +18,8 @@ import uk.digitalsquid.internetrestore.util.file.FileInstaller;
 public class Wpa {
 	private String wpa_supplicant, su;
 	private final App app;
+	
+	private final String iface;
 	
 	private Process instance;
 	
@@ -42,22 +43,6 @@ public class Wpa {
 				throw exc;
 			}
 		}
-	}
-	
-	/**
-	 * Starts the WPA daemon using the saved config
-	 * @throws MissingFeatureException 
-	 */
-	public synchronized void start() throws MissingFeatureException {
-		// First check that wpa_supplicant.conf contains at least one network.
-		int networkCount = app.getWpaSettings().readLocalConfig().getNetworkCount();
-		if(networkCount == 0) throw new MissingFeatureException("No networks are available in config", R.string.no_networks);
-		
-		// Note that this method of running processes only works on SDK >= 9.
-		// This is fine for this app as we are using SDK 10.
-		final String wpa_supplicant_conf = app.getFileInstaller().getScriptPath(FileInstaller.CONF_WPA_SUPPLICANT);
-		final String entropy_bin = app.getFileInstaller().getScriptPath(FileInstaller.CONF_ENTROPY_BIN);
-		final String iface;
 		try {
 			iface = app.getInfoCollector().getWifiIface();
 		} catch (UnknownHostException e) {
@@ -65,8 +50,35 @@ public class Wpa {
 			exc.initCause(e);
 			throw exc;
 		}
+	}
+	
+	/**
+	 * Starts the WPA daemon using the saved config
+	 * @throws MissingFeatureException 
+	 */
+	public synchronized void start() throws IOException {
+		// First check that wpa_supplicant.conf contains at least one network.
+		int networkCount = app.getWpaSettings().readLocalConfig().getNetworkCount();
+		if(networkCount == 0) throw new MissingFeatureException("No networks are available in config", R.string.no_networks);
 		
-		final String wpaCmdLine = String.format("%s -i %s -c %s -e %s",
+		// Note that this method of running processes only works on SDK >= 9.
+		// This is fine for this app as we are using SDK 10.
+		final String wpa_supplicant_conf = app.getFileInstaller().getConfFilePath(FileInstaller.CONF_WPA_SUPPLICANT).getAbsolutePath();
+		final String entropy_bin = app.getFileInstaller().getConfFilePath(FileInstaller.CONF_ENTROPY_BIN).getAbsolutePath();
+		final String run_wpa_supplicant = app.getFileInstaller().getScriptPath(FileInstaller.BIN_RUN_WPA_SUPPLICANT);
+		
+		// We have to use this helper script to call everything to cd after becoming root.
+		
+		String cwd;
+		try {
+			cwd = app.getWpaSettings().getWpaDir().getAbsolutePath();
+		} catch (FileNotFoundException e1) {
+			cwd = ".";
+		}
+		
+		final String wpaCmdLine = String.format("%s %s %s -i %s -c %s -e %s",
+				run_wpa_supplicant,
+				cwd,
 				wpa_supplicant,
 				iface,
 				wpa_supplicant_conf,
@@ -79,19 +91,7 @@ public class Wpa {
 				"-c",
 				wpaCmdLine);
 		
-		File cwd;
-		try {
-			cwd = app.getWpaSettings().getWpaDir();
-		} catch (FileNotFoundException e1) {
-			cwd = null;
-		}
-		pb.directory(cwd);
-		
-		try {
-			instance = pb.start();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		instance = pb.start();
 	}
 	
 	/**

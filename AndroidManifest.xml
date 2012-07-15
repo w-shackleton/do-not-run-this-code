@@ -23,6 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name="EditWifiNetworks" android:label="@string/editWifiNetworks"></activity>
+        <service android:name="DaemonManager"></service>
     </application>
 
 </manifest>

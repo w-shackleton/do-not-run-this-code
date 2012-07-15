@@ -14,14 +14,18 @@ public class GlobalStatus implements Parcelable {
 	public static final int STATUS_STOPPING = 3;
 	public static final int STATUS_STOPPED = 4;
 	
-	int status;
+	private int status;
+	
+	public GlobalStatus() {
+		this.setStatus(0);
+	}
 	
 	public GlobalStatus(int status) {
-		this.status = status;
+		this.setStatus(status);
 	}
 	
 	GlobalStatus(Parcel in) {
-		status = in.readInt();
+		setStatus(in.readInt());
 	}
 
 	@Override
@@ -31,9 +35,17 @@ public class GlobalStatus implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel p, int flags) {
-		p.writeInt(status);
+		p.writeInt(getStatus());
 	}
 	
+	int getStatus() {
+		return status;
+	}
+
+	void setStatus(int status) {
+		this.status = status;
+	}
+
 	public static final Creator<GlobalStatus> CREATOR = new Creator<GlobalStatus>() {
 
 		@Override

@@ -21,6 +21,7 @@ public final class FileInstaller {
 	public static final String CONF_WPA_SUPPLICANT = "wpa_supplicant.conf";
 	public static final String CONF_ENTROPY_BIN = "entropy.bin";
 	public static final String BIN_BUSYBOX = "busybox";
+	public static final String BIN_RUN_WPA_SUPPLICANT = "run_wpa_supplicant";
 	
 	private final File binDir;
 	private final File confDir;
@@ -77,6 +78,11 @@ public final class FileInstaller {
 	 */
 	public void installFiles() throws NotFoundException, IOException {
 		installScript("xtables-multi", R.raw.xtables);
-		installScript("busybox", R.raw.busybox);
+		installScript(BIN_BUSYBOX, R.raw.busybox);
+		installScript(BIN_RUN_WPA_SUPPLICANT, R.raw.run_wpa_supplicant);
+		
+		File entropy = getConfFilePath(CONF_ENTROPY_BIN);
+		entropy.getParentFile().mkdirs();
+		entropy.createNewFile();
 	}
 }

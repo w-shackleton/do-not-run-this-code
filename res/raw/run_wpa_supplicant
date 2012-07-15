@@ -1,0 +1,13 @@
+#!/system/bin/sh
+
+
+# This script should be run as root. It takes a folder as its first argument,
+# followed by the command that should be run and its arguments.
+# It allows the running of binaries whose working directories are hidden
+# from the normal user.
+
+cd $1
+
+shift
+
+$@
