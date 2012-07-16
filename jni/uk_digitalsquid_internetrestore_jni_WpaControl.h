@@ -23,6 +23,30 @@ JNIEXPORT jint JNICALL Java_uk_digitalsquid_internetrestore_jni_WpaControl_openC
 JNIEXPORT void JNICALL Java_uk_digitalsquid_internetrestore_jni_WpaControl_closeCtrl
   (JNIEnv *, jclass, jint);
 
+/*
+ * Class:     uk_digitalsquid_internetrestore_jni_WpaControl
+ * Method:    attach
+ * Signature: (I)Z
+ */
+JNIEXPORT jboolean JNICALL Java_uk_digitalsquid_internetrestore_jni_WpaControl_attach
+  (JNIEnv *, jclass, jint);
+
+/*
+ * Class:     uk_digitalsquid_internetrestore_jni_WpaControl
+ * Method:    detach
+ * Signature: (I)Z
+ */
+JNIEXPORT jboolean JNICALL Java_uk_digitalsquid_internetrestore_jni_WpaControl_detach
+  (JNIEnv *, jclass, jint);
+
+/*
+ * Class:     uk_digitalsquid_internetrestore_jni_WpaControl
+ * Method:    recv
+ * Signature: (I[B)I
+ */
+JNIEXPORT jint JNICALL Java_uk_digitalsquid_internetrestore_jni_WpaControl_recv
+  (JNIEnv *, jclass, jint, jbyteArray);
+
 #ifdef __cplusplus
 }
 #endif

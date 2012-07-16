@@ -70,7 +70,6 @@ public final class R {
         public static final int edit=0x7f050009;
         public static final int editWifiNetworks=0x7f050007;
         public static final int editWifiTitle=0x7f05000e;
-        public static final int hello=0x7f050005;
         public static final int importWifiDesc=0x7f05000d;
         public static final int importWifiTitle=0x7f05000c;
         public static final int networkName=0x7f05000f;
@@ -83,6 +82,7 @@ public final class R {
         public static final int priority=0x7f050013;
         public static final int showPassword=0x7f050011;
         public static final int wepKeyMessage=0x7f050012;
+        public static final int wpa_no_ctrl=0x7f050005;
         public static final int wpa_no_start=0x7f050004;
     }
 }

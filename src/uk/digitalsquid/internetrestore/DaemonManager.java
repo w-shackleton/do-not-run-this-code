@@ -2,6 +2,7 @@ package uk.digitalsquid.internetrestore;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -12,6 +13,7 @@ import uk.digitalsquid.internetrestore.jni.WpaControl;
 import uk.digitalsquid.internetrestore.manager.AndroidWifi;
 import uk.digitalsquid.internetrestore.manager.Wpa;
 import uk.digitalsquid.internetrestore.util.MissingFeatureException;
+import uk.digitalsquid.internetrestore.util.file.FileInstaller;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
@@ -163,12 +165,20 @@ public class DaemonManager extends Service {
 							}
 							
 							// Connect to control interface
+							try {
+								File ctrl = findCtrlSocket(app.getFileInstaller().getSockPath(FileInstaller.SOCK_CTRL));
+								wpaControl = new WpaControl(ctrl.getAbsolutePath());
+							} catch (MissingFeatureException e) {
+								Logg.e("Failed to find or connect to wpa socket", e);
+							}
 							status.setStatus(GlobalStatus.STATUS_STARTED);
 						}
 						break;
 					case Task.ACTION_STOP:
 						status.setStatus(GlobalStatus.STATUS_STOPPING);
 						Logg.i("DaemonManager stopping");
+						Logg.d("Disconnecting wpa_ctrl_iface");
+						wpaControl.close();
 						Logg.d("Stopping wpa_supplicant");
 						if(wpa != null) wpa.stop();
 						Logg.d("Restarting Android wifi");
@@ -201,9 +211,31 @@ public class DaemonManager extends Service {
 		/**
 		 * Given a folder, scans through the control sockets inside it and chooses the best one.
 		 * @param parentFolder
+		 * @throws MissingFeatureException 
 		 */
-		protected String findCtrlSocket(File parentFolder) {
-			throw new RuntimeException("Not implemented");
+		protected File findCtrlSocket(File parentFolder) throws MissingFeatureException {
+			File[] children = parentFolder.listFiles();
+			if(children == null) throw new MissingFeatureException(
+					"Couldn't find wpa_supplicant socket folder", R.string.wpa_no_ctrl);
+			switch(children.length) {
+			case 0:
+				throw new MissingFeatureException(
+					"Couldn't find wpa_supplicant socket folder", R.string.wpa_no_ctrl);
+			case 1:
+				return children[0];
+			default: // Try to find the one with this iface name
+				try {
+					String wifi = app.getInfoCollector().getWifiIface();
+					for(File child : children) {
+						if(child.getName().equals(wifi))
+							return child;
+					}
+					return children[0];
+				} catch (UnknownHostException e) {
+					Logg.i("Couldn't get Wifi interface name for ctrl choice, will choose first iface", e);
+					return children[0];
+				}
+			}
 		}
 		
 		@Override

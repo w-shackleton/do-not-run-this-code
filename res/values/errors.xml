@@ -6,5 +6,5 @@
     <string name="no_su">Superuser is missing from this device. Please root this device in order to use this program.</string>
     
     <string name="wpa_no_start">Couldn\'t start wpa_supplicant executable.</string>
-    <string name="wpa_no_ctrl">Couldn\'t connect to wpa_supplicant. Most likely it didn't start properly.</string>
+    <string name="wpa_no_ctrl">Couldn\'t connect to wpa_supplicant. Most likely it didn\'t start properly.</string>
 </resources>
