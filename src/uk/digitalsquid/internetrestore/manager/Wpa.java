@@ -1,13 +1,16 @@
 package uk.digitalsquid.internetrestore.manager;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.UnknownHostException;
 
 import uk.digitalsquid.internetrestore.App;
 import uk.digitalsquid.internetrestore.Logg;
 import uk.digitalsquid.internetrestore.R;
 import uk.digitalsquid.internetrestore.util.MissingFeatureException;
+import uk.digitalsquid.internetrestore.util.StreamGobbler;
 import uk.digitalsquid.internetrestore.util.file.FileInstaller;
 
 /**
@@ -66,23 +69,28 @@ public class Wpa {
 		final String wpa_supplicant_conf = app.getFileInstaller().getConfFilePath(FileInstaller.CONF_WPA_SUPPLICANT).getAbsolutePath();
 		final String entropy_bin = app.getFileInstaller().getConfFilePath(FileInstaller.CONF_ENTROPY_BIN).getAbsolutePath();
 		final String run_wpa_supplicant = app.getFileInstaller().getScriptPath(FileInstaller.BIN_RUN_WPA_SUPPLICANT);
+		// wpa_supplicant socket directory
+		final String socket_dir = app.getFileInstaller().getSockPath(FileInstaller.SOCK_CTRL).getAbsolutePath();
 		
 		// We have to use this helper script to call everything to cd after becoming root.
 		
 		String cwd;
 		try {
-			cwd = app.getWpaSettings().getWpaDir().getAbsolutePath();
+			cwd = new File(app.getWpaSettings().getWpaDir().getParentFile(), "wifi.inetrestore").getAbsolutePath();
 		} catch (FileNotFoundException e1) {
 			cwd = ".";
 		}
 		
-		final String wpaCmdLine = String.format("%s %s %s -i %s -c %s -e %s",
+		Logg.d("CWD is " + cwd);
+		
+		final String wpaCmdLine = String.format("%s %s %s %s %s %s %s",
 				run_wpa_supplicant,
 				cwd,
 				wpa_supplicant,
 				iface,
 				wpa_supplicant_conf,
-				entropy_bin
+				entropy_bin,
+				socket_dir
 				);
 		Logg.d("Running command line \"" + wpaCmdLine + "\"");
 		
@@ -91,7 +99,26 @@ public class Wpa {
 				"-c",
 				wpaCmdLine);
 		
+		pb.environment().put("BB", app.getFileFinder().getBusyboxPath());
+		
 		instance = pb.start();
+		
+		new StreamGobbler(instance.getInputStream(), "wpa cout");
+		new StreamGobbler(instance.getErrorStream(), "wpa cerr");
+	}
+	
+	/**
+	 * Writes a blank line to the stdin of the process. Silently fails
+	 */
+	private void writeLine() {
+		try {
+			if(instance == null) return;
+			OutputStream os = instance.getOutputStream();
+			if(os == null) return;
+			os.write("\n".getBytes());
+		} catch (IOException e) {
+			Logg.w("Failed to write line to wpa stdin");
+		}
 	}
 	
 	/**
@@ -99,8 +126,13 @@ public class Wpa {
 	 * @return The exit code of wpa_supplicant
 	 */
 	public synchronized int stop() {
+		Logg.d("Stopping wpa_supplicant");
 		if(instance == null)
 			return -1;
+		writeLine();
+		try {
+			Thread.sleep(1200);
+		} catch (InterruptedException e1) { }
 		instance.destroy();
 		int ret = -1;
 		try {

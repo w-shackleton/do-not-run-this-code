@@ -1,5 +1,6 @@
 package uk.digitalsquid.internetrestore;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
@@ -7,6 +8,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import uk.digitalsquid.internetrestore.Task.StartTask;
+import uk.digitalsquid.internetrestore.jni.WpaControl;
 import uk.digitalsquid.internetrestore.manager.AndroidWifi;
 import uk.digitalsquid.internetrestore.manager.Wpa;
 import uk.digitalsquid.internetrestore.util.MissingFeatureException;
@@ -117,6 +119,7 @@ public class DaemonManager extends Service {
 		GlobalStatus status = new GlobalStatus();
 		
 		Wpa wpa;
+		WpaControl wpaControl;
 		AndroidWifi androidWifi;
 
 		@Override
@@ -158,6 +161,8 @@ public class DaemonManager extends Service {
 								showDialogue(R.string.wpa_no_start);
 								stopSelf();
 							}
+							
+							// Connect to control interface
 							status.setStatus(GlobalStatus.STATUS_STARTED);
 						}
 						break;
@@ -191,6 +196,14 @@ public class DaemonManager extends Service {
 		protected void showDialogue(int stringId) {
 			dialogMessages.add(stringId);
 			publishProgress(status); // Notify UI of new dialog
+		}
+		
+		/**
+		 * Given a folder, scans through the control sockets inside it and chooses the best one.
+		 * @param parentFolder
+		 */
+		protected String findCtrlSocket(File parentFolder) {
+			throw new RuntimeException("Not implemented");
 		}
 		
 		@Override

@@ -1,5 +1,8 @@
 package uk.digitalsquid.internetrestore.jni;
 
+import uk.digitalsquid.internetrestore.R;
+import uk.digitalsquid.internetrestore.util.MissingFeatureException;
+
 /**
  * wpa_supplicant control class
  * @author william
@@ -7,8 +10,10 @@ package uk.digitalsquid.internetrestore.jni;
  */
 public class WpaControl {
 	
-	public WpaControl(String ctrlPath) {
+	public WpaControl(String ctrlPath) throws MissingFeatureException {
 		wpa_ctrl = openCtrl(ctrlPath);
+		if(wpa_ctrl == 0)
+			throw new MissingFeatureException("Failed to connect to wpa_supplicant control interface", R.string.no_wifi_iface);
 	}
 	
 	static {

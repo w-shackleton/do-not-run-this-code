@@ -16,20 +16,25 @@ import android.content.res.Resources.NotFoundException;
 public final class FileInstaller {
 	private static final String BIN_DIR = "/bin";
 	private static final String CONF_DIR = "/conf";
+	private static final String SOCK_DIR = "/sock";
 	private final Context context;
 	
 	public static final String CONF_WPA_SUPPLICANT = "wpa_supplicant.conf";
 	public static final String CONF_ENTROPY_BIN = "entropy.bin";
 	public static final String BIN_BUSYBOX = "busybox";
 	public static final String BIN_RUN_WPA_SUPPLICANT = "run_wpa_supplicant";
+	/**
+	 * wpa_supplicant socket
+	 */
+	public static final String SOCK_CTRL = "ctrl";
 	
-	private final File binDir;
-	private final File confDir;
+	private final File binDir, confDir, sockDir;
 	
 	public FileInstaller(Context context) {
 		this.context = context;
 		binDir = new File(context.getFilesDir().getParent() + BIN_DIR);
 		confDir = new File(context.getFilesDir().getParent() + CONF_DIR);
+		sockDir = new File(context.getFilesDir().getParent() + SOCK_DIR);
 		try {
 			new File(context.getFilesDir().getParent() + BIN_DIR).mkdir();
 		} catch (NullPointerException e) {
@@ -71,6 +76,10 @@ public final class FileInstaller {
 		return new File(confDir.getAbsolutePath(), confFileName);
 	}
 	
+	public File getSockPath(String socketName) {
+		return new File(sockDir.getAbsolutePath(), socketName);
+	}
+	
 	/**
 	 * Installs necessary files from assets folder to bin folder
 	 * @throws IOException 
@@ -84,5 +93,8 @@ public final class FileInstaller {
 		File entropy = getConfFilePath(CONF_ENTROPY_BIN);
 		entropy.getParentFile().mkdirs();
 		entropy.createNewFile();
+		
+		sockDir.mkdir();
+		FileUtil.setPublicVisible(sockDir.getAbsolutePath(), true);
 	}
 }

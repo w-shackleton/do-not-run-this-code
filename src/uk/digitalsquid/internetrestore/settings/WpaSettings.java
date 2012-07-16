@@ -8,6 +8,7 @@ import uk.digitalsquid.internetrestore.App;
 import uk.digitalsquid.internetrestore.AsyncTaskHelper;
 import uk.digitalsquid.internetrestore.Logg;
 import uk.digitalsquid.internetrestore.settings.wpa.WpaCollection;
+import uk.digitalsquid.internetrestore.settings.wpa.WpaVal;
 import uk.digitalsquid.internetrestore.util.ProcessRunner;
 import uk.digitalsquid.internetrestore.util.ProcessRunner.ProcessResult;
 import uk.digitalsquid.internetrestore.util.file.FileIO;
@@ -121,6 +122,26 @@ public class WpaSettings {
 	}
 	
 	public void writeLocalConfig(WpaCollection config) throws IOException {
+		// First, update the ctrl_interface path. This path is relative, but the
+		// script changes dir before running wpa_supplicant
+		
+		boolean changed = false;
+		for(int i = 0; i < config.size(); i++) {
+			WpaVal val = config.get(i);
+			if(val.getKey().equalsIgnoreCase("ctrl_interface")) {
+				config.remove(i);
+				WpaVal newVal = new WpaVal("ctrl_interface",
+						app.getFileInstaller().getSockPath(FileInstaller.SOCK_CTRL).getAbsolutePath());
+				config.add(i, newVal);
+				changed = true;
+			}
+		}
+		if(!changed) { // Add a value
+				WpaVal newVal = new WpaVal("ctrl_interface",
+						app.getFileInstaller().getSockPath(FileInstaller.SOCK_CTRL).getAbsolutePath());
+				config.add(0, newVal);
+		}
+		
 		StringBuilder out = new StringBuilder();
 		config.write(out);
 		

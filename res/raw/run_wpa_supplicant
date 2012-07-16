@@ -1,13 +1,56 @@
 #!/system/bin/sh
 
+# Copies conf files to a location visible to wpa_supplicant then runs it.
+# ARGUMENTS: directory, wpa_supplicant, iface, wpa_supplicant.conf, entropy.bin, socket_dir
 
-# This script should be run as root. It takes a folder as its first argument,
-# followed by the command that should be run and its arguments.
-# It allows the running of binaries whose working directories are hidden
-# from the normal user.
+DIR=$1
+WPA_SUPPLICANT=$2
+IFACE=$3
+WPA_SUPPLICANT_CONF=$4
+ENTROPY_BIN=$5
+SOCKET_DIR=$6
 
-cd $1
+WPA_SUPPLICANT_CONF_NEW="$DIR/wpa_supplicant.conf"
+ENTROPY_BIN_NEW="$DIR/entropy.bin"
 
-shift
+echo "Creating Wifi settings dir"
 
-$@
+mkdir -p $DIR
+chmod 770 $DIR
+chown wifi:wifi $DIR
+
+echo "Copying conf files"
+
+cp $WPA_SUPPLICANT_CONF $WPA_SUPPLICANT_CONF_NEW
+cp $ENTROPY_BIN $ENTROPY_BIN_NEW
+
+echo "Setting conf file permissions"
+
+chmod 660 $WPA_SUPPLICANT_CONF_NEW
+chmod 660 $ENTROPY_BIN_NEW
+
+chown wifi:wifi $WPA_SUPPLICANT_CONF_NEW
+chown wifi:wifi $ENTROPY_BIN_NEW
+
+cd $DIR
+
+$WPA_SUPPLICANT -i $IFACE -c $WPA_SUPPLICANT_CONF_NEW -e $ENTROPY_BIN_NEW &
+WPAPID=$!
+
+// Wait for socket to appear
+i=0
+while $BB test ! -e $SOCKET_DIR && test $i -lt 10
+do
+sleep 1
+i=$(($i+1))
+done
+
+chmod 777 $SOCKET_DIR
+chmod 666 $SOCKET_DIR/*
+
+# Wait
+read
+
+kill $!
+sleep 1
+kill -9 $! 2>/dev/null

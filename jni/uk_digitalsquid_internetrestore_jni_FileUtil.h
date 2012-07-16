@@ -15,6 +15,14 @@ extern "C" {
 JNIEXPORT void JNICALL Java_uk_digitalsquid_internetrestore_jni_FileUtil_setExecutable
   (JNIEnv *, jclass, jstring);
 
+/*
+ * Class:     uk_digitalsquid_internetrestore_jni_FileUtil
+ * Method:    setPublicVisible
+ * Signature: (Ljava/lang/String;Z)V
+ */
+JNIEXPORT void JNICALL Java_uk_digitalsquid_internetrestore_jni_FileUtil_setPublicVisible
+  (JNIEnv *, jclass, jstring, jboolean);
+
 #ifdef __cplusplus
 }
 #endif
