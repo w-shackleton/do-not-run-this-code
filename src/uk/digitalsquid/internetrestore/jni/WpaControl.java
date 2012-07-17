@@ -4,12 +4,18 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import uk.digitalsquid.internetrestore.App;
 import uk.digitalsquid.internetrestore.AsyncTaskHelper;
 import uk.digitalsquid.internetrestore.Logg;
 import uk.digitalsquid.internetrestore.R;
+import uk.digitalsquid.internetrestore.settings.wpa.WpaCollection;
 import uk.digitalsquid.internetrestore.util.MissingFeatureException;
 import uk.digitalsquid.internetrestore.util.NumberParser;
+import android.Manifest;
+import android.content.Intent;
+import android.net.wifi.SupplicantState;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.util.SparseArray;
 
 /**
@@ -19,7 +25,15 @@ import android.util.SparseArray;
  */
 public class WpaControl {
 	
-	public WpaControl(String ctrlPath, String localPath) throws MissingFeatureException {
+	public static final String INTENT_WPASTATUS = "uk.digitalsquid.internetrestore.jni.WpaControl.WpaStatus";
+	public static final String INTENT_EXTRA_SUPPLICANT_STATE = "uk.digitalsquid.internetrestore.jni.WpaControl.WpaStatus.SupplicantState";
+	public static final String INTENT_EXTRA_SSID = "uk.digitalsquid.internetrestore.jni.WpaControl.WpaStatus.SSID";
+	public static final String INTENT_EXTRA_CONNECTED = "uk.digitalsquid.internetrestore.jni.WpaControl.WpaStatus.Connected";
+	
+	private final App app;
+	
+	public WpaControl(App app, String ctrlPath, String localPath) throws MissingFeatureException {
+		this.app = app;
 		wpa_ctrl = openCtrl(ctrlPath, localPath);
 		if(wpa_ctrl == 0)
 			throw new MissingFeatureException("Failed to connect to wpa_supplicant control interface", R.string.wpa_no_ctrl);
@@ -153,6 +167,8 @@ public class WpaControl {
 				Logg.v(String.format("wpa_ctrl message: %s", msg));
 				WpaMessage parsedMessage = parseStatusMessage(msg);
 				if(parsedMessage == null) continue;
+				
+				reloadConfiguredNetworks(); // Do it here on the async - this will do nothing once we have the results
 				publishProgress(parsedMessage);
 			}
 			detach(wpa_ctrl);
@@ -184,12 +200,57 @@ public class WpaControl {
 		@Override
 		protected void onProgressUpdate(WpaMessage... values) {
 			super.onProgressUpdate(values);
+			for(WpaMessage msg : values) {
+				processMessage(msg);
+			}
 		}
 		
 		protected void onPostExecute(Void result) {
 			taskRunning = false;
 		}
 	};
+	
+	private boolean connected;
+	private String ssid;
+	private SupplicantState state;
+	
+	private void processMessage(WpaMessage msg) {
+		WpaCollection props;
+		int id;
+		switch(msg.code) {
+		case WPA_EVENT_CONNECTED:
+			connected = true;
+			int propStart = msg.getMessage().indexOf('[')+1;
+			int propEnd = msg.getMessage().indexOf(']', propStart)-1;
+			if(propEnd < propStart) {
+				Logg.i("Couldn't find properties in message " + msg.getMessage());
+			}
+			props = new WpaCollection(msg.getMessage().substring(propStart, propEnd), " ");
+			id = NumberParser.parseIntSafe(props.get("id").getValue());
+			ssid = getNetworkName(id);
+			break;
+		case WPA_EVENT_DISCONNECTED:
+			ssid = "";
+			connected = false;
+			break;
+		case WPA_EVENT_STATE_CHANGE:
+			props = new WpaCollection(msg.getMessage(), " ");
+			id = NumberParser.parseIntSafe(props.get("id").getValue());
+			int stateId = NumberParser.parseIntSafe(props.get("state").getValue());
+			ssid = getNetworkName(id);
+			try {
+				state = SupplicantState.values()[stateId];
+			} catch(IndexOutOfBoundsException e) { }
+			break;
+		default:
+			break;
+		}
+		Intent intent = new Intent(INTENT_WPASTATUS);
+		intent.putExtra(INTENT_EXTRA_CONNECTED, connected);
+		intent.putExtra(INTENT_EXTRA_SSID, ssid);
+		intent.putExtra(INTENT_EXTRA_SUPPLICANT_STATE, (Parcelable)state);
+		app.sendBroadcast(intent, Manifest.permission.ACCESS_WIFI_STATE);
+	}
 	
 	/**
 	 * Starts listening for messages
@@ -233,7 +294,6 @@ public class WpaControl {
 	}
 	
 	public String getNetworkName(int id) {
-		reloadConfiguredNetworks();
 		if(networkIDs == null) return String.format("Network %d", id);
 		return networkIDs.get(id, String.format("Network %d", id));
 	}

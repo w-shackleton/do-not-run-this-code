@@ -177,7 +177,7 @@ public class DaemonManager extends Service {
 									Logg.v("Permissions of ctrl read as " + perm);
 									Logg.v(String.format("Using control socket %s", ctrl.getAbsolutePath()));
 									
-									wpaControl = new WpaControl(ctrl.getAbsolutePath(), local.getAbsolutePath());
+									wpaControl = new WpaControl(app, ctrl.getAbsolutePath(), local.getAbsolutePath());
 									wpaControlExc = null;
 									break; // Successful
 								} catch (MissingFeatureException e) {

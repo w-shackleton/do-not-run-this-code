@@ -13,6 +13,7 @@ public class NumberParser {
 	 * @return
 	 */
 	public static final int parseIntSafe(String number) {
+		if(number == null) return 0;
 		try {
 			return Integer.parseInt(number);
 		} catch(NumberFormatException e) {

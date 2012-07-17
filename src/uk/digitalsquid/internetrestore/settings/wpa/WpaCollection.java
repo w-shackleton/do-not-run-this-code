@@ -7,6 +7,7 @@ import uk.digitalsquid.internetrestore.Logg;
 
 /**
  * Represents a wpa_supplicant.conf file, or a subsection of it.
+ * Also used to represent any sort of key/value pairs
  * @author william
  *
  */
@@ -23,7 +24,15 @@ public class WpaCollection extends ArrayList<WpaVal> {
 	 * @param contents
 	 */
 	public WpaCollection(String contents) {
-		StringTokenizer tk = new StringTokenizer(contents, "\n\r");
+		this(contents, "\n\r");
+	}
+	
+	/**
+	 * Fills in a {@link WpaCollection} with the given contents.
+	 * @param contents
+	 */
+	public WpaCollection(String contents, String lineDelimiter) {
+		StringTokenizer tk = new StringTokenizer(contents, lineDelimiter);
 		while(tk.hasMoreTokens()) {
 			StringBuilder lines = new StringBuilder();
 			
@@ -107,6 +116,19 @@ public class WpaCollection extends ArrayList<WpaVal> {
 	 */
 	boolean hasKey(WpaVal key) {
 		return hasKey(key.getKey());
+	}
+	
+	/**
+	 * Gets the first {@link WpaVal} with the given key.
+	 * @param key
+	 * @return The {@link WpaVal}, or <code>null</code> on failure
+	 */
+	public WpaVal get(String key) {
+		for(WpaVal val : this) {
+			if(val.getKey().equals(key))
+				return val;
+		}
+		return null;
 	}
 	
 	/**
