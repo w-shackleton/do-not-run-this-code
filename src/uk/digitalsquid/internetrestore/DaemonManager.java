@@ -165,12 +165,36 @@ public class DaemonManager extends Service {
 							}
 							
 							// Connect to control interface
-							try {
-								File ctrl = findCtrlSocket(app.getFileInstaller().getSockPath(FileInstaller.SOCK_CTRL));
-								wpaControl = new WpaControl(ctrl.getAbsolutePath());
-							} catch (MissingFeatureException e) {
-								Logg.e("Failed to find or connect to wpa socket", e);
+							MissingFeatureException wpaControlExc = null;
+							for(int i = 0; i < 30; i++) {
+								try {
+									File ctrl = findCtrlSocket(app.getFileInstaller().getSockPath(FileInstaller.SOCK_CTRL));
+									File local = app.getFileInstaller().getSockPath(FileInstaller.SOCK_LOCAL);
+									int perm = 0;
+									if(ctrl.canRead()) perm += 4;
+									if(ctrl.canWrite()) perm += 2;
+									if(ctrl.canExecute()) perm += 1;
+									Logg.v("Permissions of ctrl read as " + perm);
+									Logg.v(String.format("Using control socket %s", ctrl.getAbsolutePath()));
+									
+									wpaControl = new WpaControl(ctrl.getAbsolutePath(), local.getAbsolutePath());
+									wpaControlExc = null;
+									break; // Successful
+								} catch (MissingFeatureException e) {
+									wpaControlExc = e;
+									Logg.d(String.format("Failed to find or connect to wpa socket (%d)", i));
+									Thread.sleep(300);
+								}
 							}
+							// Throw exception if it still remains
+							if(wpaControlExc != null) {
+								Logg.e("Failed to connect to wpa socket (final)", wpaControlExc);
+								showDialogue(wpaControlExc.getLocalisedMessageId());
+								stopSelf();
+							}
+							
+							// Connect to socket
+							if(wpaControl != null) wpaControl.start();
 							status.setStatus(GlobalStatus.STATUS_STARTED);
 						}
 						break;
@@ -178,7 +202,8 @@ public class DaemonManager extends Service {
 						status.setStatus(GlobalStatus.STATUS_STOPPING);
 						Logg.i("DaemonManager stopping");
 						Logg.d("Disconnecting wpa_ctrl_iface");
-						wpaControl.close();
+						if(wpaControl != null) wpaControl.stop();
+						if(wpaControl != null) wpaControl.close();
 						Logg.d("Stopping wpa_supplicant");
 						if(wpa != null) wpa.stop();
 						Logg.d("Restarting Android wifi");
@@ -216,11 +241,11 @@ public class DaemonManager extends Service {
 		protected File findCtrlSocket(File parentFolder) throws MissingFeatureException {
 			File[] children = parentFolder.listFiles();
 			if(children == null) throw new MissingFeatureException(
-					"Couldn't find wpa_supplicant socket folder", R.string.wpa_no_ctrl);
+					"Couldn't find wpa_supplicant socket folder (1)", R.string.wpa_no_ctrl);
 			switch(children.length) {
 			case 0:
 				throw new MissingFeatureException(
-					"Couldn't find wpa_supplicant socket folder", R.string.wpa_no_ctrl);
+					"Couldn't find wpa_supplicant socket folder (2)", R.string.wpa_no_ctrl);
 			case 1:
 				return children[0];
 			default: // Try to find the one with this iface name

@@ -37,7 +37,7 @@ cd $DIR
 $WPA_SUPPLICANT -i $IFACE -c $WPA_SUPPLICANT_CONF_NEW -e $ENTROPY_BIN_NEW &
 WPAPID=$!
 
-// Wait for socket to appear
+# Wait for socket to appear
 i=0
 while $BB test ! -e $SOCKET_DIR && test $i -lt 10
 do
@@ -46,7 +46,9 @@ i=$(($i+1))
 done
 
 chmod 777 $SOCKET_DIR
-chmod 666 $SOCKET_DIR/*
+chmod 777 $SOCKET_DIR/*
+chown 10008:10008 $SOCKET_DIR
+chown 10008:10008 $SOCKET_DIR/*
 
 # Wait
 read

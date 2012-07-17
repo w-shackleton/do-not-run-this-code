@@ -16,11 +16,11 @@ public class Logg implements LogConf {
 	
 	public static void v(String msg) {
 		if(Log.VERBOSE >= LEVEL)
-			Log.d(TAG, msg);
+			Log.v(TAG, msg);
 	}
 	public static void v(String msg, Throwable t) {
 		if(Log.VERBOSE >= LEVEL)
-			Log.d(TAG, msg, t);
+			Log.v(TAG, msg, t);
 	}
 	public static void d(String msg) {
 		if(Log.DEBUG >= LEVEL)
@@ -32,26 +32,26 @@ public class Logg implements LogConf {
 	}
 	public static void i(String msg) {
 		if(Log.INFO >= LEVEL)
-			Log.d(TAG, msg);
+			Log.i(TAG, msg);
 	}
 	public static void i(String msg, Throwable t) {
 		if(Log.INFO >= LEVEL)
-			Log.d(TAG, msg, t);
+			Log.i(TAG, msg, t);
 	}
 	public static void w(String msg) {
 		if(Log.WARN >= LEVEL)
-			Log.d(TAG, msg);
+			Log.w(TAG, msg);
 	}
 	public static void w(String msg, Throwable t) {
 		if(Log.WARN >= LEVEL)
-			Log.d(TAG, msg, t);
+			Log.w(TAG, msg, t);
 	}
 	public static void e(String msg) {
 		if(Log.ERROR >= LEVEL)
-			Log.d(TAG, msg);
+			Log.e(TAG, msg);
 	}
 	public static void e(String msg, Throwable t) {
 		if(Log.ERROR >= LEVEL)
-			Log.d(TAG, msg, t);
+			Log.e(TAG, msg, t);
 	}
 }

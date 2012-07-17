@@ -31,6 +31,7 @@
 #include "common.h"
 
 
+
 #if defined(CONFIG_CTRL_IFACE_UNIX) || defined(CONFIG_CTRL_IFACE_UDP)
 #define CTRL_IFACE_SOCKET
 #ifdef ANDROID
@@ -68,7 +69,7 @@ struct wpa_ctrl {
 
 #ifdef CONFIG_CTRL_IFACE_UNIX
 
-struct wpa_ctrl * wpa_ctrl_open(const char *ctrl_path)
+struct wpa_ctrl * wpa_ctrl_open(const char *ctrl_path, const char *local_ctrl_path)
 {
 	struct wpa_ctrl *ctrl;
 	static int counter = 0;
@@ -86,12 +87,17 @@ struct wpa_ctrl * wpa_ctrl_open(const char *ctrl_path)
 
 	ctrl->local.sun_family = AF_UNIX;
 	os_snprintf(ctrl->local.sun_path, sizeof(ctrl->local.sun_path),
+			"%s-%d", local_ctrl_path, counter++);
+	unlink(ctrl->local.sun_path); // Remove old socket
+	/*
+	os_snprintf(ctrl->local.sun_path, sizeof(ctrl->local.sun_path),
 #ifdef ANDROID	
 		    "%s/%s%d-%d", local_socket_dir, local_socket_prefix,
                     getpid(), counter++);
-#else /* ANDROID */
+#else /* ANDROID * /
 		    "/tmp/wpa_ctrl_%d-%d", getpid(), counter++);
 #endif		    
+		    */
 	if (bind(ctrl->s, (struct sockaddr *) &ctrl->local,
 		    sizeof(ctrl->local)) < 0) {
 		close(ctrl->s);
@@ -100,8 +106,9 @@ struct wpa_ctrl * wpa_ctrl_open(const char *ctrl_path)
 	}
 
 #ifdef ANDROID
-        chmod(ctrl->local.sun_path, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
-        chown(ctrl->local.sun_path, AID_SYSTEM, AID_WIFI);
+		chmod(ctrl->local.sun_path, 0777);
+        // chmod(ctrl->local.sun_path, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
+        // chown(ctrl->local.sun_path, AID_SYSTEM, AID_WIFI);
 	/*
 	 * If the ctrl_path isn't an absolute pathname, assume that
 	 * it's the name of a socket in the Android reserved namespace.

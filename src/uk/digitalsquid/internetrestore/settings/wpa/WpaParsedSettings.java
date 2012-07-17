@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 
 import uk.digitalsquid.internetrestore.util.ListProxy;
+import uk.digitalsquid.internetrestore.util.NumberParser;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiConfiguration.AuthAlgorithm;
 import android.net.wifi.WifiConfiguration.GroupCipher;
@@ -140,28 +141,6 @@ public class WpaParsedSettings extends ListProxy<WifiConfiguration> implements S
 		return sb.toString();
 	}
 	
-	/**
-	 * Parses an integer safely. Returns 0 on error.
-	 * @param number
-	 * @return
-	 */
-	private static int parseIntSafe(String number) {
-		try {
-			return Integer.parseInt(number);
-		} catch(NumberFormatException e) {
-			return 0;
-		}
-	}
-	
-	private static boolean parseBoolSafe(String bool) {
-		String val = bool.toLowerCase();
-		if("true".equals(val)) return true;
-		if("false".equals(val)) return false;
-		if("1".equals(val)) return true;
-		if("0".equals(val)) return false;
-		return false;
-	}
-	
 	private static WifiConfiguration convertConfToNetwork(WpaVal config) {
 		WifiConfiguration conf = new WifiConfiguration();
 		conf.wepKeys = new String[4];
@@ -185,9 +164,9 @@ public class WpaParsedSettings extends ListProxy<WifiConfiguration> implements S
 			} else if(key.equals("psk"))
 				conf.preSharedKey = value;
 			else if(key.equals("priority"))
-				conf.priority = parseIntSafe(value);
+				conf.priority = NumberParser.parseIntSafe(value);
 			else if(key.equals("scan_ssid"))
-				conf.hiddenSSID = parseBoolSafe(value);
+				conf.hiddenSSID = NumberParser.parseBoolSafe(value);
 			else if(key.equals("proto")) {
 				BitSet proto = new BitSet();
 				if(valLower.contains("wpa"))
@@ -238,7 +217,7 @@ public class WpaParsedSettings extends ListProxy<WifiConfiguration> implements S
 			else if(key.equals("wep_key3"))
 				conf.wepKeys[3] = value;
 			else if(key.equals("wep_tx_keyidx"))
-				conf.wepTxKeyIndex = parseIntSafe(value);
+				conf.wepTxKeyIndex = NumberParser.parseIntSafe(value);
 		}
 		return conf;
 	}

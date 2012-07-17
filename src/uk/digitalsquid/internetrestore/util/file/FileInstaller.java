@@ -27,6 +27,7 @@ public final class FileInstaller {
 	 * wpa_supplicant socket
 	 */
 	public static final String SOCK_CTRL = "ctrl";
+	public static final String SOCK_LOCAL = "local";
 	
 	private final File binDir, confDir, sockDir;
 	
