@@ -316,7 +316,7 @@ public class WpaControl {
 			String line = lines.nextToken();
 			if(line.contains("network id")) continue; // Header
 			StringTokenizer elements = new StringTokenizer(line, "\t");
-			if(elements.countTokens() != 4) {
+			if(elements.countTokens() != 4 && elements.countTokens() != 3) {
 				Logg.d(String.format("Line with incorrect token count found: %s", line));
 				continue;
 			}

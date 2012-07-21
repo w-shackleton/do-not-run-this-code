@@ -3,6 +3,31 @@
 #include "wpa_control.h"
 #include "ext/wpa_ctrl.h"
 #include "alog.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+void hexdump(void *ptr, int buflen) {
+	unsigned char *buf = (unsigned char*)ptr;
+	int i, j;
+	for (i=0; i<buflen; i+=16) {
+		char *out = malloc(100);
+		int pos = 0;
+		memset(out, 0, 100);
+		pos += sprintf(out + pos, "%06x: ", i);
+		for (j=0; j<16; j++)
+			if (i+j < buflen)
+				pos += sprintf(out + pos, "%02x ", buf[i+j]);
+			else
+				pos += sprintf(out + pos, "   ");
+		pos += sprintf(out + pos, " ");
+		for (j=0; j<16; j++)
+			if (i+j < buflen)
+				pos += sprintf(out + pos, "%c", isprint(buf[i+j]) ? buf[i+j] : '.');
+		pos += sprintf(out + pos, "\n");
+		LOGV(out);
+		free(out);
+	}
+}
 
 JNIEXPORT jint JNICALL Java_uk_digitalsquid_internetrestore_jni_WpaControl_openCtrl
   (JNIEnv *env, jclass class, jstring path, jstring local) {
@@ -46,8 +71,8 @@ JNIEXPORT jint JNICALL Java_uk_digitalsquid_internetrestore_jni_WpaControl_recv
 
 JNIEXPORT jint JNICALL Java_uk_digitalsquid_internetrestore_jni_WpaControl_request
   (JNIEnv *env, jclass class, jint ptr, jbyteArray in, jbyteArray out) {
-	int inSize = (*env)->GetArrayLength(env, in);
-	size_t outSize = 0;
+	size_t inSize = (*env)->GetArrayLength(env, in);
+	size_t outSize = (*env)->GetArrayLength(env, out);
 
 	jbyte *cIn = (*env)->GetByteArrayElements(env, in, NULL);
 	jbyte *cOut = (*env)->GetByteArrayElements(env, out, NULL);

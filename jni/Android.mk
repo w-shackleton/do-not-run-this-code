@@ -17,7 +17,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE    := wpa
 LOCAL_SRC_FILES := wpa_control.c ext/common.c ext/os_unix.c ext/wpa_ctrl.c
 LOCAL_LDFLAGS := -lcutils -L$(LOCAL_PATH)
-LOCAL_CFLAGS := -g
+LOCAL_CFLAGS := -g -ggdb
 
 include $(BUILD_SHARED_LIBRARY)
 
@@ -26,6 +26,6 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := misc
 LOCAL_SRC_FILES := file_util.c
-LOCAL_CFLAGS := -g
+LOCAL_CFLAGS := -g -ggdb
 
 include $(BUILD_SHARED_LIBRARY)
