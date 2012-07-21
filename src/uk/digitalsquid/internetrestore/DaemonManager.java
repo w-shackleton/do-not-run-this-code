@@ -16,7 +16,11 @@ import uk.digitalsquid.internetrestore.util.MissingFeatureException;
 import uk.digitalsquid.internetrestore.util.file.FileInstaller;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.wifi.SupplicantState;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
@@ -53,6 +57,9 @@ public class DaemonManager extends Service {
     private void start() {
     	AsyncTaskHelper.execute(thread);
     	
+    	IntentFilter filter = new IntentFilter(WpaControl.INTENT_WPASTATUS);
+    	registerReceiver(wpaReceiver, filter);
+    	
     	queueTask(new Task.StartTask());
     	
 		notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -63,16 +70,33 @@ public class DaemonManager extends Service {
     @Override
     public void onDestroy() {
     	super.onDestroy();
+    	unregisterReceiver(wpaReceiver);
     	queueTask(new Task(Task.ACTION_STOP));
     }
     
 	private GlobalStatus status;
+	private boolean wpaConnected;
+	private String wpaSsid = "<Unknown>";
+	private SupplicantState wpaSupplicantState = SupplicantState.UNINITIALIZED;
 	private void setStatus(GlobalStatus status) {
-		this.status = status;
-		broadcastStatus();
+		if(status != null) this.status = status;
+		if(this.status != null) {
+			this.status.setConnected(wpaConnected);
+			this.status.setSsid(wpaSsid);
+			this.status.setState(wpaSupplicantState);
+			broadcastStatus();
+		}
 	}
 	public GlobalStatus getStatus() {
 		return status;
+	}
+	
+	private void setWpaStatus(boolean connected, String ssid, SupplicantState state) {
+		wpaConnected = connected;
+		wpaSsid = ssid;
+		wpaSupplicantState = state;
+		// Update & broadcast
+		setStatus(null);
 	}
 	
 	public void broadcastStatus() {
@@ -80,6 +104,17 @@ public class DaemonManager extends Service {
 		intent.putExtra(INTENT_EXTRA_STATUS, getStatus());
 		sendBroadcast(intent);
 	}
+	
+	private BroadcastReceiver wpaReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			boolean connected = intent.getBooleanExtra(WpaControl.INTENT_EXTRA_CONNECTED, false);
+			String ssid = intent.getStringExtra(WpaControl.INTENT_EXTRA_SSID);
+			if(ssid == null) ssid = "";
+			SupplicantState state = intent.getParcelableExtra(WpaControl.INTENT_EXTRA_SUPPLICANT_STATE);
+			setWpaStatus(connected, ssid, state);
+		}
+	};
     
 	/**
 	 * Gets the ID of the next dialogue message. If there are none, returns 0.
@@ -135,6 +170,7 @@ public class DaemonManager extends Service {
 					case Task.ACTION_SUBCLASSED:
 						if(task instanceof StartTask) {
 							status.setStatus(GlobalStatus.STATUS_STARTING);
+							publishProgress(status);
 							StartTask startTask = (StartTask) task;
 							// Initiate managers
 							Logg.d("Init AndroidWifi");
@@ -146,6 +182,7 @@ public class DaemonManager extends Service {
 								Logg.e("Failed to initiate wpa", e);
 								showDialogue(e.getLocalisedMessageId());
 								stopSelf();
+								break;
 							}
 							// Stop wifi
 							Logg.d("Stop AndroidWifi");
@@ -158,10 +195,12 @@ public class DaemonManager extends Service {
 								Logg.e("Failed to start wpa", e);
 								showDialogue(e.getLocalisedMessageId());
 								stopSelf();
+								break;
 							} catch (IOException e) {
 								Logg.e("Failed to start wpa", e);
 								showDialogue(R.string.wpa_no_start);
 								stopSelf();
+								break;
 							}
 							
 							// Connect to control interface
@@ -191,15 +230,18 @@ public class DaemonManager extends Service {
 								Logg.e("Failed to connect to wpa socket (final)", wpaControlExc);
 								showDialogue(wpaControlExc.getLocalisedMessageId());
 								stopSelf();
+								break;
 							}
 							
 							// Connect to socket
 							if(wpaControl != null) wpaControl.start();
 							status.setStatus(GlobalStatus.STATUS_STARTED);
+							publishProgress(status);
 						}
 						break;
 					case Task.ACTION_STOP:
 						status.setStatus(GlobalStatus.STATUS_STOPPING);
+						publishProgress(status);
 						Logg.i("DaemonManager stopping");
 						Logg.d("Disconnecting wpa_ctrl_iface");
 						if(wpaControl != null) wpaControl.stop();
@@ -210,6 +252,7 @@ public class DaemonManager extends Service {
 						if(androidWifi != null) androidWifi.startWifiIfNecessary();
 						Logg.i("DaemonManager stopped");
 						status.setStatus(GlobalStatus.STATUS_STOPPED);
+						publishProgress(status);
 						running = false;
 						break;
 					}

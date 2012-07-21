@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.TextView;
 
 public class InetRestoreActivity extends Activity implements OnClickListener {
 	
@@ -117,10 +118,33 @@ public class InetRestoreActivity extends Activity implements OnClickListener {
 				if(service != null) {
 					// Check message queues
 					int msgId = service.getNextDialogueMessage();
-					Bundle bundle = new Bundle();
-					bundle.putInt("id", msgId);
-					showDialog(dialogPoolId++, bundle);
+					if(msgId != 0) {
+						Bundle bundle = new Bundle();
+						bundle.putInt("id", msgId);
+						showDialog(dialogPoolId++, bundle);
+					}
 				}
+				
+				String statusText;
+				switch(status.getStatus()) {
+				case GlobalStatus.STATUS_STARTING:
+					statusText = "Starting";
+					break;
+				case GlobalStatus.STATUS_STARTED:
+					statusText = "Started";
+					break;
+				case GlobalStatus.STATUS_STOPPING:
+					statusText = "Stopping";
+					break;
+				default:
+				case GlobalStatus.STATUS_STOPPED:
+					statusText = "Stopped";
+					break;
+				}
+				((TextView)findViewById(R.id.status)).setText(statusText);
+				((TextView)findViewById(R.id.connected)).setText(status.isConnected() ? "Connected" : "Not connected");
+				((TextView)findViewById(R.id.ssid)).setText(status.getSsid() == null ? "<Unknown>" : status.getSsid());
+				((TextView)findViewById(R.id.state)).setText(status.getState().name());
 			}
 		}
 	};

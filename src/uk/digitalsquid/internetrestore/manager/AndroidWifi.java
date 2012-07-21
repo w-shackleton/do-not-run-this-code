@@ -50,7 +50,9 @@ public class AndroidWifi {
 	 * Restarts Android's wifi if it was started before.
 	 */
 	public void startWifiIfNecessary() {
-		app.unregisterReceiver(wifiReceiver);
+		try {
+			app.unregisterReceiver(wifiReceiver);
+		} catch(IllegalArgumentException e) { }
 		if(!wasRunningBefore) return;
 		Logg.i("Wifi was running previously, restarting");
 		wifiManager.setWifiEnabled(true);

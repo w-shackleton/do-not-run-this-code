@@ -47,14 +47,14 @@ JNIEXPORT jint JNICALL Java_uk_digitalsquid_internetrestore_jni_WpaControl_recv
 JNIEXPORT jint JNICALL Java_uk_digitalsquid_internetrestore_jni_WpaControl_request
   (JNIEnv *env, jclass class, jint ptr, jbyteArray in, jbyteArray out) {
 	int inSize = (*env)->GetArrayLength(env, in);
-	int outSize = 0;
+	size_t outSize = 0;
 
 	jbyte *cIn = (*env)->GetByteArrayElements(env, in, NULL);
 	jbyte *cOut = (*env)->GetByteArrayElements(env, out, NULL);
 
 	int result = wpa_ctrl_request((struct wpa_ctrl*) ptr, cIn, inSize, cOut, &outSize, NULL);
 
-	LOGV("Received %d bytes for request %s", outSize, cIn);
+	LOGV("Received %d bytes for request %s(%d) - %d", outSize, cIn, inSize, result);
 
 	(*env)->ReleaseByteArrayElements(env, in, cIn, 0);
 	(*env)->ReleaseByteArrayElements(env, out, cOut, 0);

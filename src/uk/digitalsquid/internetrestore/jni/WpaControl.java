@@ -157,7 +157,7 @@ public class WpaControl {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			attach(wpa_ctrl);
+			boolean ret = attach(wpa_ctrl);
 			byte[] buf = new byte[2048];
 			request(wpa_ctrl, "LEVEL 2", buf);
 			while(!isCancelled()) {
@@ -168,7 +168,6 @@ public class WpaControl {
 				WpaMessage parsedMessage = parseStatusMessage(msg);
 				if(parsedMessage == null) continue;
 				
-				reloadConfiguredNetworks(); // Do it here on the async - this will do nothing once we have the results
 				publishProgress(parsedMessage);
 			}
 			detach(wpa_ctrl);
@@ -214,7 +213,10 @@ public class WpaControl {
 	private String ssid;
 	private SupplicantState state;
 	
+	private WpaMessage lastMsg;
+	
 	private void processMessage(WpaMessage msg) {
+		lastMsg = msg;
 		WpaCollection props;
 		int id;
 		switch(msg.code) {
@@ -259,23 +261,55 @@ public class WpaControl {
 		if(taskRunning) return;
 		taskRunning = true;
 		AsyncTaskHelper.execute(task);
+		AsyncTaskHelper.execute(networkNameTask);
 	}
 	
 	public synchronized void stop() {
 		if(!taskRunning) return;
 		task.cancel(false);
+		networkNameTask.cancel(false);
 	}
 	
 	private SparseArray<String> networkIDs;
 	
 	/**
-	 * Returns an ID -> SSID map of configured networks
+	 * Keeps refreshing the network names until a valid set is returned.
 	 */
-	private synchronized void reloadConfiguredNetworks() {
-		if(networkIDs != null) return;
+	private AsyncTask<Void, Void, Void> networkNameTask = new AsyncTask<Void, Void, Void>() {
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			while(!isCancelled()) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) { }
+				if(reloadConfiguredNetworks()) {
+					publishProgress();
+					Logg.v("Received valid network name list");
+				}
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) { }
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onProgressUpdate(Void... values) {
+			super.onProgressUpdate(values);
+			processMessage(lastMsg);
+		}
+	};
+	
+	/**
+	 * Returns an ID -> SSID map of configured networks
+	 * @return <code>true</code> if the list was updated
+	 */
+	private synchronized boolean reloadConfiguredNetworks() {
+		if(networkIDs != null) return false;
 		byte[] result = new byte[0x1000];
 		int len = request(wpa_ctrl_msg, "LIST_NETWORKS", result);
-		if(len <= 0) return; // No info available yet.
+		if(len <= 0) return false; // No info available yet.
 		StringTokenizer lines = new StringTokenizer(new String(result, 0, len), "\n");
 		networkIDs = new SparseArray<String>();
 		while(lines.hasMoreTokens()) {
@@ -291,9 +325,10 @@ public class WpaControl {
 			String ssid = elements.nextToken();
 			networkIDs.append(id, ssid);
 		}
+		return true;
 	}
 	
-	public String getNetworkName(int id) {
+	public synchronized String getNetworkName(int id) {
 		if(networkIDs == null) return String.format("Network %d", id);
 		return networkIDs.get(id, String.format("Network %d", id));
 	}
