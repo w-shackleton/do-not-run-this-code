@@ -60,6 +60,7 @@ public class Wpa {
 	 * @throws MissingFeatureException 
 	 */
 	public synchronized void start() throws IOException {
+		if(instance != null) return;
 		// First check that wpa_supplicant.conf contains at least one network.
 		int networkCount = app.getWpaSettings().readLocalConfig().getNetworkCount();
 		if(networkCount == 0) throw new MissingFeatureException("No networks are available in config", R.string.no_networks);

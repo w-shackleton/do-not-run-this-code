@@ -157,7 +157,7 @@ public class WpaControl {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			boolean ret = attach(wpa_ctrl);
+			attach(wpa_ctrl);
 			byte[] buf = new byte[2048];
 			request(wpa_ctrl, "LEVEL 2", buf);
 			while(!isCancelled()) {

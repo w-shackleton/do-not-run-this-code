@@ -26,7 +26,7 @@ public class StreamGobbler extends Thread {
 	 * Otherwise, this will be prefixed to each log entry.
 	 */
 	public StreamGobbler(InputStream is, String logPrefix) {
-		super("StreamGobbler");
+		super("StreamGobbler - " + logPrefix);
 		reader = new BufferedReader(new InputStreamReader(is));
 		this.logPrefix = logPrefix;
 		setDaemon(true);

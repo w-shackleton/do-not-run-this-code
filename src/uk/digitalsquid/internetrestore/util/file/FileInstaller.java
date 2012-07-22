@@ -22,6 +22,7 @@ public final class FileInstaller {
 	public static final String CONF_WPA_SUPPLICANT = "wpa_supplicant.conf";
 	public static final String CONF_ENTROPY_BIN = "entropy.bin";
 	public static final String BIN_BUSYBOX = "busybox";
+	public static final String BIN_KILL_DHCPCD = "kill_dhcpcd";
 	public static final String BIN_RUN_WPA_SUPPLICANT = "run_wpa_supplicant";
 	/**
 	 * wpa_supplicant socket
@@ -87,14 +88,21 @@ public final class FileInstaller {
 	 * @throws NotFoundException 
 	 */
 	public void installFiles() throws NotFoundException, IOException {
+		Logg.d("Installing xtables-multi");
 		installScript("xtables-multi", R.raw.xtables);
+		Logg.d("Installing busybox");
 		installScript(BIN_BUSYBOX, R.raw.busybox);
+		Logg.d("Installing run_wpa_supplicant");
 		installScript(BIN_RUN_WPA_SUPPLICANT, R.raw.run_wpa_supplicant);
+		Logg.d("Installing dhcpcd");
+		installScript(BIN_KILL_DHCPCD, R.raw.kill_dhcpcd);
 		
+		Logg.d("Creating entropy.bin");
 		File entropy = getConfFilePath(CONF_ENTROPY_BIN);
 		entropy.getParentFile().mkdirs();
 		entropy.createNewFile();
 		
+		Logg.d("Creating socket dir");
 		sockDir.mkdir();
 		FileUtil.setPublicVisible(sockDir.getAbsolutePath(), true);
 	}

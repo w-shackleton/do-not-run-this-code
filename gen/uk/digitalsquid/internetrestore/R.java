@@ -63,8 +63,9 @@ public final class R {
     }
     public static final class raw {
         public static final int busybox=0x7f040000;
-        public static final int run_wpa_supplicant=0x7f040001;
-        public static final int xtables=0x7f040002;
+        public static final int kill_dhcpcd=0x7f040001;
+        public static final int run_wpa_supplicant=0x7f040002;
+        public static final int xtables=0x7f040003;
     }
     public static final class string {
         public static final int addNetwork=0x7f050008;

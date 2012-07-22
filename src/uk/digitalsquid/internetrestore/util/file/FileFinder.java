@@ -22,6 +22,7 @@ public final class FileFinder {
 		systemBusybox = findBusybox(false, prefs);
 		su = findSu(prefs);
 		wpa_supplicant = findWpa(prefs);
+		dhcpcd = findDhcpcd(prefs);
 	}
 	private final App app;
 	
@@ -36,27 +37,36 @@ public final class FileFinder {
 	
 	private String wpa_supplicant = "";
 	
+	private String dhcpcd = "";
+	
 	public String getSuPath() throws FileNotFoundException {
-		if(su == "")
+		if(su.equals(""))
 			throw new FileNotFoundException("su");
 		return su;
 	}
 	
 	public String getBusyboxPath() throws FileNotFoundException {
-		if(busybox == "")
+		if(busybox.equals(""))
 			throw new FileNotFoundException("busybox");
 		return busybox;
 	}
 	
 	public String getWpaSupplicantPath() throws FileNotFoundException {
-		if(wpa_supplicant == "")
+		if(wpa_supplicant.equals(""))
 			throw new FileNotFoundException("wpa_supplicant");
 		return wpa_supplicant;
+	}
+	
+	public String getDhcpcdPath() throws FileNotFoundException {
+		if(dhcpcd.equals(""))
+			throw new FileNotFoundException("dhcpcd");
+		return dhcpcd;
 	}
 	
 	private static final String[] BB_PATHS = { "/system/bin/busybox", "/system/xbin/busybox", "/system/sbin/busybox", "/vendor/bin/busybox", "busybox" };
 	private static final String[] SU_PATHS = { "/system/bin/su", "/system/xbin/su", "/system/sbin/su", "/vendor/bin/su", "su" };
 	private static final String[] WPA_PATHS = { "/system/bin/wpa_supplicant", "/system/xbin/wpa_supplicant", "/system/sbin/wpa_supplicant", "/vendor/bin/wpa_supplicant", "wpa_supplicant" };
+	private static final String[] DHCPCD_PATHS = { "/system/bin/dhcpcd", "/system/xbin/dhcpcd", "/system/sbin/dhcpcd", "/vendor/bin/dhcpcd", "dhcpcd" };
 	
 	/**
 	 * Searches for the busybox executable. Uses the builtin one if user wants. This is also the default behaviour.
@@ -115,6 +125,23 @@ public final class FileFinder {
 	}
 	
 	/**
+	 * Searches for the dhcpcd executable
+	 * @return
+	 */
+	private String findDhcpcd(SharedPreferences prefs) {
+		if(prefs != null) {
+			String customPath = prefs.getString("pathToDhcpcd", "");
+			if(!customPath.equals("") && new File(customPath).exists()) return customPath;
+		}
+		for(String dhcpcd : DHCPCD_PATHS) {
+			if(new File(dhcpcd).exists()) {
+				return dhcpcd;
+			}
+		}
+		return "";
+	}
+	
+	/**
 	 * Returns a list of missing files.
 	 * @return
 	 */
@@ -123,6 +150,7 @@ public final class FileFinder {
 		if(busybox.equals("")) list.add("busybox");
 		if(su.equals("")) list.add("su");
 		if(wpa_supplicant.equals("")) list.add("wpa_supplicant");
+		if(dhcpcd.equals("")) list.add("dhcpcd");
 		addBBMissingFunctions(list);
 		return list.toArray(null);
 	}
