@@ -3,3 +3,4 @@ libs/armeabi/libwpa.so
 bin/*
 libs/armeabi/gdbserver
 libs/armeabi/gdb.setup
+jni/obj

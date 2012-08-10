@@ -4,7 +4,7 @@
 #include "ext/wpa_ctrl.h"
 #include "alog.h"
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib-min.h>
 
 void hexdump(void *ptr, int buflen) {
 	unsigned char *buf = (unsigned char*)ptr;
