@@ -1,5 +1,7 @@
 package uk.digitalsquid.internetrestore;
 
+import java.net.InetAddress;
+
 import android.net.wifi.SupplicantState;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -21,11 +23,14 @@ public class GlobalStatus implements Parcelable {
 	private String ssid;
 	private SupplicantState state;
 	
+	private InetAddress addr;
+	
 	public GlobalStatus() {
 		setStatus(0);
 		setConnected(false);
 		setSsid("<Unknown>");
 		setState(SupplicantState.UNINITIALIZED);
+		setAddr(null);
 	}
 	
 	public GlobalStatus(int status) {
@@ -33,6 +38,7 @@ public class GlobalStatus implements Parcelable {
 		setConnected(false);
 		setSsid("<Unknown>");
 		setState(SupplicantState.UNINITIALIZED);
+		setAddr(null);
 	}
 	
 	GlobalStatus(Parcel in) {
@@ -40,6 +46,7 @@ public class GlobalStatus implements Parcelable {
 		setConnected(in.readByte() == 1);
 		setSsid(in.readString());
 		setState((SupplicantState) in.readParcelable(null));
+		setAddr((InetAddress) in.readSerializable());
 	}
 
 	@Override
@@ -53,6 +60,7 @@ public class GlobalStatus implements Parcelable {
 		p.writeByte((byte) (isConnected() ? 1 : 0));
 		p.writeString(getSsid());
 		p.writeParcelable(getState(), 0);
+		p.writeSerializable(getAddr());
 	}
 	
 	int getStatus() {
@@ -86,6 +94,19 @@ public class GlobalStatus implements Parcelable {
 	public void setState(SupplicantState state) {
 		if(state == null) state = SupplicantState.UNINITIALIZED;
 		this.state = state;
+	}
+
+	public InetAddress getAddr() {
+		return addr;
+	}
+	
+	public String getAddrString() {
+		if(addr == null) return "(Acquiring IP)";
+		return addr.getHostAddress();
+	}
+
+	public void setAddr(InetAddress addr) {
+		this.addr = addr;
 	}
 
 	public static final Creator<GlobalStatus> CREATOR = new Creator<GlobalStatus>() {

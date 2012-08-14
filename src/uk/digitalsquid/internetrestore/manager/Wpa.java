@@ -55,6 +55,10 @@ public class Wpa {
 		}
 	}
 	
+	public String getWifiIface() {
+		return iface;
+	}
+	
 	/**
 	 * Starts the WPA daemon using the saved config
 	 * @throws MissingFeatureException 

@@ -145,6 +145,7 @@ public class InetRestoreActivity extends Activity implements OnClickListener {
 				((TextView)findViewById(R.id.connected)).setText(status.isConnected() ? "Connected" : "Not connected");
 				((TextView)findViewById(R.id.ssid)).setText(status.getSsid() == null ? "<Unknown>" : status.getSsid());
 				((TextView)findViewById(R.id.state)).setText(status.getState().name());
+				((TextView)findViewById(R.id.ip)).setText(status.getAddrString());
 			}
 		}
 	};

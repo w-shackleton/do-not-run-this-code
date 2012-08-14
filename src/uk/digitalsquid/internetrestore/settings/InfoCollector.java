@@ -68,4 +68,22 @@ public class InfoCollector {
 		}
 		throw new UnknownHostException("Couldn't identify iface by mac");
 	}
+	
+	public Enumeration<InetAddress> getIpsFromIface(String ifaceName) throws SocketException {
+		Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces();
+		while(ifaces.hasMoreElements()) {
+			NetworkInterface iface = ifaces.nextElement();
+			if(iface.getDisplayName().equals(ifaceName))
+				return iface.getInetAddresses();
+		}
+		return null;
+	}
+	
+	public InetAddress getIpFromIface(String ifaceName) throws SocketException {
+		Enumeration<InetAddress> ips = getIpsFromIface(ifaceName);
+		if(ips == null) return null;
+		if(ips.hasMoreElements())
+			return ips.nextElement();
+		return null;
+	}
 }

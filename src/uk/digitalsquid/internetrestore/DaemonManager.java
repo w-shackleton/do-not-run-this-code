@@ -2,6 +2,7 @@ package uk.digitalsquid.internetrestore;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
@@ -11,6 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import uk.digitalsquid.internetrestore.Task.StartTask;
 import uk.digitalsquid.internetrestore.jni.WpaControl;
 import uk.digitalsquid.internetrestore.manager.AndroidWifi;
+import uk.digitalsquid.internetrestore.manager.Dhcpcd;
 import uk.digitalsquid.internetrestore.manager.Wpa;
 import uk.digitalsquid.internetrestore.util.MissingFeatureException;
 import uk.digitalsquid.internetrestore.util.file.FileInstaller;
@@ -60,6 +62,9 @@ public class DaemonManager extends Service {
     	IntentFilter filter = new IntentFilter(WpaControl.INTENT_WPASTATUS);
     	registerReceiver(wpaReceiver, filter);
     	
+    	filter = new IntentFilter(Dhcpcd.INTENT_IPSTATUS);
+    	registerReceiver(ipReceiver, filter);
+    	
     	queueTask(new Task.StartTask());
     	
 		notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -71,12 +76,14 @@ public class DaemonManager extends Service {
     public void onDestroy() {
     	super.onDestroy();
     	unregisterReceiver(wpaReceiver);
+    	unregisterReceiver(ipReceiver);
     	queueTask(new Task(Task.ACTION_STOP));
     }
     
 	private GlobalStatus status;
 	private boolean wpaConnected;
 	private String wpaSsid = "<Unknown>";
+	private InetAddress ipAddr;
 	private SupplicantState wpaSupplicantState = SupplicantState.UNINITIALIZED;
 	private void setStatus(GlobalStatus status) {
 		if(status != null) this.status = status;
@@ -84,6 +91,7 @@ public class DaemonManager extends Service {
 			this.status.setConnected(wpaConnected);
 			this.status.setSsid(wpaSsid);
 			this.status.setState(wpaSupplicantState);
+			this.status.setAddr(ipAddr);
 			broadcastStatus();
 		}
 	}
@@ -96,6 +104,10 @@ public class DaemonManager extends Service {
 		wpaSsid = ssid;
 		wpaSupplicantState = state;
 		// Update & broadcast
+		setStatus(null);
+	}
+	private void setIpStatus(InetAddress addr) {
+		this.ipAddr = addr;
 		setStatus(null);
 	}
 	
@@ -113,6 +125,14 @@ public class DaemonManager extends Service {
 			if(ssid == null) ssid = "";
 			SupplicantState state = intent.getParcelableExtra(WpaControl.INTENT_EXTRA_SUPPLICANT_STATE);
 			setWpaStatus(connected, ssid, state);
+		}
+	};
+	
+	private BroadcastReceiver ipReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			InetAddress addr = (InetAddress) intent.getSerializableExtra(Dhcpcd.INTENT_EXTRA_INET_ADDR);
+			setIpStatus(addr);
 		}
 	};
     
@@ -158,6 +178,7 @@ public class DaemonManager extends Service {
 		Wpa wpa;
 		WpaControl wpaControl;
 		AndroidWifi androidWifi;
+		Dhcpcd dhcpcd;
 
 		@Override
 		protected Void doInBackground(Void... arg0) {
@@ -210,9 +231,9 @@ public class DaemonManager extends Service {
 									File ctrl = findCtrlSocket(app.getFileInstaller().getSockPath(FileInstaller.SOCK_CTRL));
 									File local = app.getFileInstaller().getSockPath(FileInstaller.SOCK_LOCAL);
 									int perm = 0;
-									if(ctrl.canRead()) perm += 4;
-									if(ctrl.canWrite()) perm += 2;
-									if(ctrl.canExecute()) perm += 1;
+									if(ctrl.canRead()) perm |= 04;
+									if(ctrl.canWrite()) perm |= 02;
+									if(ctrl.canExecute()) perm |= 01;
 									Logg.v("Permissions of ctrl read as " + perm);
 									Logg.v(String.format("Using control socket %s", ctrl.getAbsolutePath()));
 									
@@ -235,6 +256,22 @@ public class DaemonManager extends Service {
 							
 							// Connect to socket
 							if(wpaControl != null) wpaControl.start();
+							
+							// Start dhcpcd
+							try {
+								Logg.d("Init dhcpcd");
+								dhcpcd = new Dhcpcd(app);
+							} catch (MissingFeatureException e) {
+								Logg.e("Failed to initialise dhcpcd", e);
+								showDialogue(e.getLocalisedMessageId());
+								stopSelf();
+								break;
+							}
+							try {
+								dhcpcd.start();
+							} catch (IOException e) {
+								Logg.e("Failed to start dhcpcd", e);
+							}
 							status.setStatus(GlobalStatus.STATUS_STARTED);
 							publishProgress(status);
 						}
@@ -243,6 +280,8 @@ public class DaemonManager extends Service {
 						status.setStatus(GlobalStatus.STATUS_STOPPING);
 						publishProgress(status);
 						Logg.i("DaemonManager stopping");
+						Logg.d("Stopping dhcpcd");
+						if(dhcpcd != null) dhcpcd.stop();
 						Logg.d("Disconnecting wpa_ctrl_iface");
 						if(wpaControl != null) wpaControl.stop();
 						if(wpaControl != null) wpaControl.close();

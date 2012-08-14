@@ -7,4 +7,6 @@
     
     <string name="wpa_no_start">Couldn\'t start wpa_supplicant executable.</string>
     <string name="wpa_no_ctrl">Couldn\'t connect to wpa_supplicant. Most likely it didn\'t start properly.</string>
+    
+    <string name="no_dhcpcd">Couldn\'t find dhcpcd executable on phone. This most likely means that this phone won\'t work with %d.   </string>
 </resources>
