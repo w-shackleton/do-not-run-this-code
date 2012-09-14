@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import android.net.wifi.SupplicantState;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.SparseArray;
 
 /**
  * General status type. Should be subclassed for more detailed statuses.
@@ -21,7 +22,9 @@ public class GlobalStatus implements Parcelable {
 	
 	private boolean connected;
 	private String ssid;
+	private int id;
 	private SupplicantState state;
+	private SparseArray<String> networkIDs;
 	
 	private InetAddress addr;
 	
@@ -41,12 +44,15 @@ public class GlobalStatus implements Parcelable {
 		setAddr(null);
 	}
 	
+	@SuppressWarnings("unchecked")
 	GlobalStatus(Parcel in) {
 		setStatus(in.readInt());
 		setConnected(in.readByte() == 1);
 		setSsid(in.readString());
+		setId(in.readInt());
 		setState((SupplicantState) in.readParcelable(null));
 		setAddr((InetAddress) in.readSerializable());
+		setNetworkIDs(in.readSparseArray(null));
 	}
 
 	@Override
@@ -54,13 +60,17 @@ public class GlobalStatus implements Parcelable {
 		return 0;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void writeToParcel(Parcel p, int flags) {
 		p.writeInt(getStatus());
 		p.writeByte((byte) (isConnected() ? 1 : 0));
 		p.writeString(getSsid());
+		p.writeInt(getId());
 		p.writeParcelable(getState(), 0);
 		p.writeSerializable(getAddr());
+		// Horrible, horrible method.
+		p.writeSparseArray((SparseArray)networkIDs);
 	}
 	
 	int getStatus() {
@@ -107,6 +117,22 @@ public class GlobalStatus implements Parcelable {
 
 	public void setAddr(InetAddress addr) {
 		this.addr = addr;
+	}
+
+	public SparseArray<String> getNetworkIDs() {
+		return networkIDs;
+	}
+
+	public void setNetworkIDs(SparseArray<String> networkIDs) {
+		this.networkIDs = networkIDs;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public static final Creator<GlobalStatus> CREATOR = new Creator<GlobalStatus>() {

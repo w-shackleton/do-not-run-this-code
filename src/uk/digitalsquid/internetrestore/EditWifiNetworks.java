@@ -5,6 +5,7 @@ import java.io.IOException;
 import uk.digitalsquid.internetrestore.settings.WpaSettings.Config;
 import uk.digitalsquid.internetrestore.settings.wpa.WpaCollection;
 import uk.digitalsquid.internetrestore.settings.wpa.WpaParsedSettings;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
@@ -199,7 +200,14 @@ public class EditWifiNetworks extends Activity implements OnItemClickListener {
 	        WifiConfiguration conf = getItem(position);
 	        
 	        name.setText(conf.SSID);
-	        description.setText("Description");
+	        
+			if(conf.allowedAuthAlgorithms.get(AuthAlgorithm.SHARED)) { // WEP
+		        description.setText("Secured with WEP");
+			} else if(conf.allowedKeyManagement.get(KeyMgmt.WPA_PSK)) { // WPA
+		        description.setText("Secured with WPA");
+			} else {
+		        description.setText("Open network");
+			}
 	        
 	        return convertView;
 		}
@@ -221,6 +229,7 @@ public class EditWifiNetworks extends Activity implements OnItemClickListener {
 		app.getWpaSettings().readConfigAsync(Config.SYSTEM_CONFIG, networksReadHandler);
 	}
 	
+	@SuppressLint("HandlerLeak")
 	private Handler networksReadHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {

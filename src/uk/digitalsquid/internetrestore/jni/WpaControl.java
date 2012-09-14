@@ -11,10 +11,12 @@ import uk.digitalsquid.internetrestore.R;
 import uk.digitalsquid.internetrestore.settings.wpa.WpaCollection;
 import uk.digitalsquid.internetrestore.util.MissingFeatureException;
 import uk.digitalsquid.internetrestore.util.NumberParser;
+import uk.digitalsquid.internetrestore.util.Util;
 import android.Manifest;
 import android.content.Intent;
 import android.net.wifi.SupplicantState;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.SparseArray;
 
@@ -28,6 +30,8 @@ public class WpaControl {
 	public static final String INTENT_WPASTATUS = "uk.digitalsquid.internetrestore.jni.WpaControl.WpaStatus";
 	public static final String INTENT_EXTRA_SUPPLICANT_STATE = "uk.digitalsquid.internetrestore.jni.WpaControl.WpaStatus.SupplicantState";
 	public static final String INTENT_EXTRA_SSID = "uk.digitalsquid.internetrestore.jni.WpaControl.WpaStatus.SSID";
+	public static final String INTENT_EXTRA_SSID_ID = "uk.digitalsquid.internetrestore.jni.WpaControl.WpaStatus.SSIDid";
+	public static final String INTENT_EXTRAS = "uk.digitalsquid.internetrestore.jni.WpaControl.WpaStatus.Extras";
 	public static final String INTENT_EXTRA_CONNECTED = "uk.digitalsquid.internetrestore.jni.WpaControl.WpaStatus.Connected";
 	
 	private final App app;
@@ -210,7 +214,7 @@ public class WpaControl {
 	};
 	
 	private boolean connected;
-	private String ssid;
+	private String ssid; private int id;
 	private SupplicantState state;
 	
 	private WpaMessage lastMsg;
@@ -218,7 +222,6 @@ public class WpaControl {
 	private void processMessage(WpaMessage msg) {
 		lastMsg = msg;
 		WpaCollection props;
-		int id;
 		switch(msg.code) {
 		case WPA_EVENT_CONNECTED:
 			connected = true;
@@ -250,6 +253,13 @@ public class WpaControl {
 		Intent intent = new Intent(INTENT_WPASTATUS);
 		intent.putExtra(INTENT_EXTRA_CONNECTED, connected);
 		intent.putExtra(INTENT_EXTRA_SSID, ssid);
+		intent.putExtra(INTENT_EXTRA_SSID_ID, id);
+		
+		Bundle extras = new Bundle();
+		// If anyone can find a better way of doing this I would appreciate it being changed
+		extras.putSparseParcelableArray("networks", Util.stringSparseArrayToParcelable(networkIDs));
+		
+		intent.putExtra(INTENT_EXTRAS, extras);
 		intent.putExtra(INTENT_EXTRA_SUPPLICANT_STATE, (Parcelable)state);
 		app.sendBroadcast(intent, Manifest.permission.ACCESS_WIFI_STATE);
 	}
@@ -331,5 +341,18 @@ public class WpaControl {
 	public synchronized String getNetworkName(int id) {
 		if(networkIDs == null) return String.format("Network %d", id);
 		return networkIDs.get(id, String.format("Network %d", id));
+	}
+	
+	// TODO: Change synchronization to per-object, rather than whole instance
+	/**
+	 * Requests that the given network is selected for use.
+	 * @param id
+	 * @return
+	 */
+	public synchronized boolean selectNetwork(int id) {
+		byte[] result = new byte[0x1000];
+		int len = request(wpa_ctrl_msg, String.format("SELECT_NETWORK %d", id), result);
+		Logg.d("Requested network select. Returned message was " + len + "bytes long");
+		return true;
 	}
 }

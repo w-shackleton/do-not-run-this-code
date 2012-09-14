@@ -9,4 +9,7 @@
     <string name="wpa_no_ctrl">Couldn\'t connect to wpa_supplicant. Most likely it didn\'t start properly.</string>
     
     <string name="no_dhcpcd">Couldn\'t find dhcpcd executable on phone. This most likely means that this phone won\'t work with %d.   </string>
+    <string name="setup_failed">Setup failed</string>
+    <string name="setup_failed_nospace">There was insufficient space on this device to copy the required files.</string>
+    <string name="setup_failed_other">An unknown error occured while copying the required files to this device.</string>
 </resources>

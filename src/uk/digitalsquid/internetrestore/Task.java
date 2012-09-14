@@ -77,4 +77,43 @@ public class Task implements Parcelable {
 		};
 		// TODO: Startup info here
 	}
+	
+	public static class ChangeNetworkTask extends Task {
+		public ChangeNetworkTask(int networkID) {
+			super(ACTION_SUBCLASSED);
+			setNetworkID(networkID);
+		}
+		
+		private int networkID;
+		
+		ChangeNetworkTask(Parcel in) {
+			super(in);
+			networkID = in.readInt();
+		}
+		
+		@Override
+		public void writeToParcel(Parcel dest, int flags) {
+			super.writeToParcel(dest, flags);
+			dest.writeInt(networkID);
+		}
+		
+		public int getNetworkID() {
+			return networkID;
+		}
+
+		public void setNetworkID(int networkID) {
+			this.networkID = networkID;
+		}
+
+		public static final Creator<ChangeNetworkTask> CREATOR = new Creator<ChangeNetworkTask>() {
+			@Override
+			public ChangeNetworkTask createFromParcel(Parcel in) {
+				return new ChangeNetworkTask(in);
+			}
+			@Override
+			public ChangeNetworkTask[] newArray(int len) {
+				return new ChangeNetworkTask[len];
+			}
+		};
+	}
 }

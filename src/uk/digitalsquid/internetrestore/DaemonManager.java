@@ -9,12 +9,15 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import uk.digitalsquid.internetrestore.Task.ChangeNetworkTask;
 import uk.digitalsquid.internetrestore.Task.StartTask;
 import uk.digitalsquid.internetrestore.jni.WpaControl;
 import uk.digitalsquid.internetrestore.manager.AndroidWifi;
 import uk.digitalsquid.internetrestore.manager.Dhcpcd;
 import uk.digitalsquid.internetrestore.manager.Wpa;
 import uk.digitalsquid.internetrestore.util.MissingFeatureException;
+import uk.digitalsquid.internetrestore.util.Util;
+import uk.digitalsquid.internetrestore.util.Util.StringP;
 import uk.digitalsquid.internetrestore.util.file.FileInstaller;
 import android.app.NotificationManager;
 import android.app.Service;
@@ -25,7 +28,9 @@ import android.content.IntentFilter;
 import android.net.wifi.SupplicantState;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.util.SparseArray;
 
 /**
  * Manages process daemons when the program is running.
@@ -75,6 +80,7 @@ public class DaemonManager extends Service {
     @Override
     public void onDestroy() {
     	super.onDestroy();
+    	started = false;
     	unregisterReceiver(wpaReceiver);
     	unregisterReceiver(ipReceiver);
     	queueTask(new Task(Task.ACTION_STOP));
@@ -83,15 +89,19 @@ public class DaemonManager extends Service {
 	private GlobalStatus status;
 	private boolean wpaConnected;
 	private String wpaSsid = "<Unknown>";
+	private int wpaId = -1;
 	private InetAddress ipAddr;
 	private SupplicantState wpaSupplicantState = SupplicantState.UNINITIALIZED;
+	private SparseArray<String> wpaNetworkIDs = new SparseArray<String>();
 	private void setStatus(GlobalStatus status) {
 		if(status != null) this.status = status;
 		if(this.status != null) {
 			this.status.setConnected(wpaConnected);
 			this.status.setSsid(wpaSsid);
+			this.status.setId(wpaId);
 			this.status.setState(wpaSupplicantState);
 			this.status.setAddr(ipAddr);
+			this.status.setNetworkIDs(wpaNetworkIDs);
 			broadcastStatus();
 		}
 	}
@@ -99,10 +109,12 @@ public class DaemonManager extends Service {
 		return status;
 	}
 	
-	private void setWpaStatus(boolean connected, String ssid, SupplicantState state) {
+	private void setWpaStatus(boolean connected, String ssid, int id, SupplicantState state, SparseArray<String> networkIDs) {
 		wpaConnected = connected;
 		wpaSsid = ssid;
+		wpaId = id;
 		wpaSupplicantState = state;
+		wpaNetworkIDs = networkIDs;
 		// Update & broadcast
 		setStatus(null);
 	}
@@ -122,9 +134,15 @@ public class DaemonManager extends Service {
 		public void onReceive(Context context, Intent intent) {
 			boolean connected = intent.getBooleanExtra(WpaControl.INTENT_EXTRA_CONNECTED, false);
 			String ssid = intent.getStringExtra(WpaControl.INTENT_EXTRA_SSID);
+			int id = intent.getIntExtra(WpaControl.INTENT_EXTRA_SSID_ID, -1);
 			if(ssid == null) ssid = "";
+			
+			Bundle extras = intent.getBundleExtra(WpaControl.INTENT_EXTRAS);
+			SparseArray<StringP> networkIDsP = extras.getSparseParcelableArray("networks");
+			SparseArray<String> networkIDs = Util.stringPSparseArrayToSparseArray(networkIDsP);
+			
 			SupplicantState state = intent.getParcelableExtra(WpaControl.INTENT_EXTRA_SUPPLICANT_STATE);
-			setWpaStatus(connected, ssid, state);
+			setWpaStatus(connected, ssid, id, state, networkIDs);
 		}
 	};
 	
@@ -167,6 +185,23 @@ public class DaemonManager extends Service {
 		tasks.add(task);
 	}
 	
+	public boolean isStarted() {
+		return started;
+	}
+
+	public void setStarted(boolean started) {
+		this.started = started;
+	}
+	
+	/**
+	 * Sends a request to the wpa_supplicant daemon to connect to the network with
+	 * the given ID
+	 * @param id
+	 */
+	public void requestConnectionTo(int id) {
+		queueTask(new Task.ChangeNetworkTask(id));
+	}
+
 	private final DaemonManagerThread thread = new DaemonManagerThread();
 	
 	private class DaemonManagerThread extends AsyncTask<Void, GlobalStatus, Void> {
@@ -274,6 +309,13 @@ public class DaemonManager extends Service {
 							}
 							status.setStatus(GlobalStatus.STATUS_STARTED);
 							publishProgress(status);
+						} else if(task instanceof Task.ChangeNetworkTask) {
+							ChangeNetworkTask changeTask = (ChangeNetworkTask) task;
+							if(wpaControl != null) {
+								if(wpaControl.isConnectionOpen()) {
+									wpaControl.selectNetwork(changeTask.getNetworkID());
+								}
+							}
 						}
 						break;
 					case Task.ACTION_STOP:

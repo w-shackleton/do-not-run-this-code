@@ -13,20 +13,38 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.Resources.NotFoundException;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class InetRestoreActivity extends Activity implements OnClickListener {
+public class InetRestoreActivity extends Activity implements OnClickListener, OnItemSelectedListener {
+	
+	static final int DIALOG_INSTALL_COPYING_FAILED = 1;
+	static final int DIALOG_INSTALL_FAILED_OTHER = 2;
+	
+	private Button start, stop;
+	private Spinner currentNetworks;
+	private SparseArray<String> currentNetworkList;
 	
 	/**
 	 * The start of the incrementing {@link Dialog} pool
 	 */
-	static final int DIALOG_POOL = 1;
+	static final int DIALOG_POOL = 3;
 	/**
 	 * The next {@link Dialog} ID to use
 	 */
@@ -37,22 +55,26 @@ public class InetRestoreActivity extends Activity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.main);
         app = (App) getApplication();
         
-        findViewById(R.id.start).setOnClickListener(this);
-        findViewById(R.id.stop).setOnClickListener(this);
+        networkAdapter = new NetworkAdapter(this);
+        
+        start = (Button) findViewById(R.id.start);
+        start.setOnClickListener(this);
+        start.setEnabled(false);
+        stop = (Button) findViewById(R.id.stop);
+        stop.setOnClickListener(this);
+        stop.setEnabled(false);
+        
+        currentNetworks = (Spinner) findViewById(R.id.currentNetwork);
+        currentNetworks.setOnItemSelectedListener(this);
+        currentNetworks.setAdapter(networkAdapter);
         
         serviceIntent = new Intent(this, DaemonManager.class);
         
-        // Run File installer - this needs to be moved to a BG thread on load
-        try {
-			app.getFileInstaller().installFiles();
-		} catch (NotFoundException e1) {
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+        AsyncTaskHelper.execute(loadTask);
     }
     
     @Override
@@ -115,6 +137,11 @@ public class InetRestoreActivity extends Activity implements OnClickListener {
 			if(intent.getAction().equals(DaemonManager.INTENT_STATUSUPDATE)) {
 				GlobalStatus status = intent.getParcelableExtra(DaemonManager.INTENT_EXTRA_STATUS);
 				
+				currentNetworkList = status.getNetworkIDs();
+				networkAdapter.setNetworks(status.getNetworkIDs());
+				int selectedIndex = currentNetworkList.indexOfKey(status.getId());
+				currentNetworks.setSelection(selectedIndex < 0 ? 0 : selectedIndex);
+				
 				if(service != null) {
 					// Check message queues
 					int msgId = service.getNextDialogueMessage();
@@ -129,16 +156,25 @@ public class InetRestoreActivity extends Activity implements OnClickListener {
 				switch(status.getStatus()) {
 				case GlobalStatus.STATUS_STARTING:
 					statusText = "Starting";
+					start.setVisibility(View.GONE);
+					stop.setVisibility(View.VISIBLE);
 					break;
 				case GlobalStatus.STATUS_STARTED:
 					statusText = "Started";
+					start.setVisibility(View.GONE);
+					stop.setVisibility(View.VISIBLE);
 					break;
 				case GlobalStatus.STATUS_STOPPING:
 					statusText = "Stopping";
+					start.setVisibility(View.VISIBLE);
+					stop.setVisibility(View.GONE);
 					break;
 				default:
 				case GlobalStatus.STATUS_STOPPED:
 					statusText = "Stopped";
+					start.setVisibility(View.VISIBLE);
+					stop.setVisibility(View.GONE);
+					resetStatusText();
 					break;
 				}
 				((TextView)findViewById(R.id.status)).setText(statusText);
@@ -149,6 +185,13 @@ public class InetRestoreActivity extends Activity implements OnClickListener {
 			}
 		}
 	};
+	
+	/**
+	 * Resets the various onscreen statuses
+	 */
+	private void resetStatusText() {
+		networkAdapter.setNetworks(null);
+	}
 	
 	DaemonManager service;
 	
@@ -163,6 +206,13 @@ public class InetRestoreActivity extends Activity implements OnClickListener {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			DaemonManagerBinder binder = (DaemonManagerBinder) service;
 			InetRestoreActivity.this.service = binder.getService();
+			if(InetRestoreActivity.this.service.isStarted()) {
+				start.setVisibility(View.GONE);
+				stop.setVisibility(View.VISIBLE);
+			} else {
+				start.setVisibility(View.VISIBLE);
+				stop.setVisibility(View.GONE);
+			}
 		}
 	};
 	
@@ -170,6 +220,14 @@ public class InetRestoreActivity extends Activity implements OnClickListener {
 		super.onCreateDialog(id, args);
 		Builder builder = new Builder(this);
 		switch(id) {
+		case DIALOG_INSTALL_COPYING_FAILED:
+			builder.setTitle(R.string.setup_failed);
+			builder.setMessage(R.string.setup_failed_nospace);
+			return builder.create();
+		case DIALOG_INSTALL_FAILED_OTHER:
+			builder.setTitle(R.string.setup_failed);
+			builder.setMessage(R.string.setup_failed_other);
+			return builder.create();
 		default:
 			int msgId = args.getInt("id");
 			builder.setMessage(msgId);
@@ -177,4 +235,109 @@ public class InetRestoreActivity extends Activity implements OnClickListener {
 			return builder.create();
 		}
 	}
+	
+	static enum LoadError {
+		NO_ERROR,
+		COPYING_FAILED,
+		OTHER_ERROR,
+	}
+	
+	AsyncTask<Void, Void, LoadError> loadTask = new AsyncTask<Void, Void, LoadError>() {
+		
+		@Override
+		protected void onPreExecute() {
+			setProgressBarIndeterminateVisibility(true);
+		}
+
+		@Override
+		protected LoadError doInBackground(Void... params) {
+	        // Run File installer - this needs to be moved to a BG thread on load
+	        try {
+				app.getFileInstaller().installFiles();
+			} catch (NotFoundException e1) {
+				Logg.e("Files not found in APK", e1);
+				return LoadError.OTHER_ERROR;
+			} catch (IOException e1) {
+				Logg.e("Failed to copy installation files", e1);
+				return LoadError.COPYING_FAILED;
+			}
+	        return LoadError.NO_ERROR;
+		}
+		
+		@Override
+		protected void onPostExecute(LoadError result) {
+			setProgressBarIndeterminateVisibility(false);
+			switch(result) {
+			case COPYING_FAILED:
+				showDialog(DIALOG_INSTALL_COPYING_FAILED);
+				break;
+			case OTHER_ERROR:
+				showDialog(DIALOG_INSTALL_FAILED_OTHER);
+				break;
+			case NO_ERROR:
+				break;
+			}
+	        start.setEnabled(true);
+	        stop.setEnabled(true);
+		}
+	};
+
+	@Override
+	public void onItemSelected(AdapterView<?> adapter, View view, int position,
+			long id) {
+		if(service != null) {
+			service.requestConnectionTo((int)id);
+		} else {
+			Toast.makeText(this, "Couldn't change network", Toast.LENGTH_LONG).show();
+		}
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> adapter) { }
+	
+	private NetworkAdapter networkAdapter;
+	
+	private static class NetworkAdapter extends BaseAdapter {
+		
+		LayoutInflater inflater;
+		
+		public NetworkAdapter(Context context) {
+			inflater = LayoutInflater.from(context);
+		}
+
+		@Override
+		public int getCount() {
+			return networkIDs.size();
+		}
+
+		@Override
+		public String getItem(int position) {
+			return networkIDs.valueAt(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return networkIDs.keyAt(position);
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+	        if (convertView == null) {
+	            convertView = inflater.inflate(R.layout.spinner_item, null);
+	        }
+	        TextView text = (TextView) convertView.findViewById(R.id.text);
+	        
+	        text.setText(getItem(position));
+	        
+	        return convertView;
+		}
+		
+		private SparseArray<String> networkIDs = new SparseArray<String>();
+		
+		public void setNetworks(SparseArray<String> networkIDs) {
+			this.networkIDs = networkIDs;
+			if(this.networkIDs == null) this.networkIDs = new SparseArray<String>();
+			notifyDataSetChanged();
+		}
+	};
 }
