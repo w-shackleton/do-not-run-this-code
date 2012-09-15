@@ -47,8 +47,8 @@ done
 
 chmod 777 $SOCKET_DIR
 chmod 777 $SOCKET_DIR/*
-chown 10008:10008 $SOCKET_DIR
-chown 10008:10008 $SOCKET_DIR/*
+# chown 10008:10008 $SOCKET_DIR
+# chown 10008:10008 $SOCKET_DIR/*
 
 # Wait
 read

@@ -4,6 +4,7 @@
     <string name="no_networks">Please add at least 1 network to connect to. This will be the network on which internet will be restored.</string>
     <string name="no_wifi_iface">Couldn\'t get Wifi interface name. This most likely indicates that this device has an incompatible / missing Wifi device.</string>
     <string name="no_su">Superuser is missing from this device. Please root this device in order to use this program.</string>
+    <string name="no_busybox">Busybox is missing from this device. Please install busybox.</string>
     
     <string name="wpa_no_start">Couldn\'t start wpa_supplicant executable.</string>
     <string name="wpa_no_ctrl">Couldn\'t connect to wpa_supplicant. Most likely it didn\'t start properly.</string>

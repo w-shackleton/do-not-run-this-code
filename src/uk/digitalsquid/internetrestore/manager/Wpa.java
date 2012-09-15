@@ -32,13 +32,13 @@ public class Wpa {
 			wpa_supplicant = app.getFileFinder().getWpaSupplicantPath();
 			su = app.getFileFinder().getSuPath();
 		} catch (FileNotFoundException e) {
-			if(e.getMessage().equalsIgnoreCase("wpa_supplicant))")) {
+			if(e.getMessage().equalsIgnoreCase("wpa_supplicant")) {
 				MissingFeatureException exc =
 						new MissingFeatureException("wpa_supplicant is missing",
 								R.string.no_wpa, app.getAppName());
 				exc.initCause(e);
 				throw exc;
-			} else if(e.getMessage().equalsIgnoreCase("su))")) {
+			} else if(e.getMessage().equalsIgnoreCase("su")) {
 				MissingFeatureException exc =
 						new MissingFeatureException("su is missing",
 								R.string.no_su);

@@ -24,6 +24,8 @@ public final class FileInstaller {
 	public static final String BIN_BUSYBOX = "busybox";
 	public static final String BIN_KILL_DHCPCD = "kill_dhcpcd";
 	public static final String BIN_RUN_WPA_SUPPLICANT = "run_wpa_supplicant";
+	public static final String BIN_XTABLES = "xtables-multi";
+	
 	/**
 	 * wpa_supplicant socket
 	 */
@@ -89,7 +91,7 @@ public final class FileInstaller {
 	 */
 	public void installFiles() throws NotFoundException, IOException {
 		Logg.d("Installing xtables-multi");
-		installScript("xtables-multi", R.raw.xtables);
+		installScript(BIN_XTABLES, R.raw.xtables);
 		Logg.d("Installing busybox");
 		installScript(BIN_BUSYBOX, R.raw.busybox);
 		Logg.d("Installing run_wpa_supplicant");
