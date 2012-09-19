@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# This script will listen on stdin for an interface. When an interface
+# is received, it reconfigures the nat tables to hide that address.
+# A blank line closes the program
+# Required env: BB, XTABLES
+# Set XTABLES to 'echo' to debug
+
+while true
+do
+	read iface
+done

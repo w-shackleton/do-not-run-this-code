@@ -1,6 +1,5 @@
 package uk.digitalsquid.internetrestore.manager;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -59,15 +58,7 @@ public final class Nat {
 		
 		// We have to use this helper script to call everything to cd after becoming root.
 		
-		final String natCmdLine = String.format("%s %s %s %s %s %s %s",
-				run_wpa_supplicant,
-				cwd,
-				wpa_supplicant,
-				iface,
-				wpa_supplicant_conf,
-				entropy_bin,
-				socket_dir
-				);
+		final String natCmdLine = String.format("");
 		Logg.d("Running command line \"" + natCmdLine + "\"");
 		
 		ProcessBuilder pb = new ProcessBuilder(
