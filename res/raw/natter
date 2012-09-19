@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/sh
 
 # This script will listen on stdin for an interface. When an interface
 # is received, it reconfigures the nat tables to hide that address.
@@ -6,7 +6,72 @@
 # Required env: BB, XTABLES
 # Set XTABLES to 'echo' to debug
 
+# Based on various NAT examples and taking inspiration from the android-wifi-tether project.
+
+echo 1 > /proc/sys/net/ipv4/ip_forward
+
+FCHAIN=internet-restore-forward
+
+# Create chain
+echo "(1)"
+$XTABLES iptables -N "$FCHAIN"
+echo "(2)"
+$XTABLES iptables -F "$FCHAIN"
+
+# Flush tables
+echo "(3)"
+$XTABLES iptables -F FORWARD
+echo "(4)"
+$XTABLES iptables -t nat -F PREROUTING
+echo "(5)"
+$XTABLES iptables -t nat -F POSTROUTING
+
+# Add chain to FORWARD
+
+$XTABLES iptables -A FORWARD -m state --state INVALID -j DROP
+$XTABLES iptables -A FORWARD -j "$FCHAIN"
+
 while true
 do
 	read iface
+	
+	# TODO: Check if this is already the set iface.
+
+	if test "$iface" = ""
+	then
+		break
+	fi
+
+	echo "Reconfiguring iptables for iface $iface"
+
+	# Flush chain first
+	echo "(6)"
+	$XTABLES iptables -F "$FCHAIN"
+	echo "(7)"
+	$XTABLES iptables -t nat -F POSTROUTING
+	echo "(8)"
+	$XTABLES iptables -A "$FCHAIN" -m state --state ESTABLISHED,RELATED -j ACCEPT
+	echo "(9)"
+	$XTABLES iptables -A "$FCHAIN" -s $iface -j ACCEPT
+	echo "(10)"
+	$XTABLES iptables -A "$FCHAIN" -j DROP
+
+	echo "(11)"
+	$XTABLES iptables -t nat -I POSTROUTING -s $iface -j MASQUERADE
 done
+
+echo "Reverting settings to normal configuration"
+
+	echo "(12)"
+$XTABLES iptables -F "$FCHAIN"
+	echo "(13)"
+$XTABLES iptables -X "$FCHAIN"
+
+	echo "(14)"
+$XTABLES iptables -F FORWARD
+	echo "(15)"
+$XTABLES iptables -t nat -F POSTROUTING
+	echo "(16)"
+$XTABLES iptables -t nat -F PREROUTING
+
+echo 0 > /proc/sys/net/ipv4/ip_forward

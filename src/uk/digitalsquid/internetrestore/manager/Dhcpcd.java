@@ -2,7 +2,7 @@ package uk.digitalsquid.internetrestore.manager;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.InetAddress;
+import java.net.InterfaceAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
@@ -30,6 +30,7 @@ import android.os.AsyncTask;
 public class Dhcpcd {
 	public static final String INTENT_IPSTATUS = "uk.digitalsquid.internetrestore.manager.Dhcpcd.InetAddress";
 	public static final String INTENT_EXTRA_INET_ADDR = "uk.digitalsquid.internetrestore.manager.Dhcpcd.InetAddress.addr";
+	public static final String INTENT_EXTRA_SUBNET_MASK = "uk.digitalsquid.internetrestore.manager.Dhcpcd.InetAddress.subnet";
 	
 	private String dhcpcd, su;
 	private final App app;
@@ -123,7 +124,7 @@ public class Dhcpcd {
 		}
 	}
 	
-	static final class IpListener extends AsyncTask<Void, InetAddress, Void> {
+	static final class IpListener extends AsyncTask<Void, InterfaceAddress, Void> {
 		
 		private final App app;
 		private final String iface;
@@ -132,8 +133,13 @@ public class Dhcpcd {
 			this.app = app;
 			this.iface = iface;
 			// Start monitoring network ifaces for changes.
-			// Also receive signals from WpaControl that something has happened
-	    	
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			
+			// Receive signals from WpaControl that something has happened
 	    	IntentFilter filter = new IntentFilter(WpaControl.INTENT_WPASTATUS);
 	    	app.registerReceiver(wpaReceiver, filter);
 		}
@@ -146,23 +152,29 @@ public class Dhcpcd {
 					Thread.sleep(2000);
 				} catch (InterruptedException e1) { }
 				try {
-					InetAddress addr = app.getInfoCollector().getIpFromIface(iface);
-					publishProgress(addr);
+					InterfaceAddress addr = app.getInfoCollector().getIpFromIface(iface);
+					if(addr != null) publishProgress(addr);
 				} catch (SocketException e) {
 					Logg.w("Failed to get address of Wifi (2)", e);
 				}
 			}
 			Logg.i("IP checker stopped");
-			app.unregisterReceiver(wpaReceiver);
 			return null;
 		}
 		
 		@Override
-		protected void onProgressUpdate(InetAddress... values) {
+		protected void onProgressUpdate(InterfaceAddress... values) {
 			super.onProgressUpdate(values);
 			Intent intent = new Intent(INTENT_IPSTATUS);
-			intent.putExtra(INTENT_EXTRA_INET_ADDR, values[0]);
+			intent.putExtra(INTENT_EXTRA_INET_ADDR, values[0].getAddress());
+			intent.putExtra(INTENT_EXTRA_SUBNET_MASK, values[0].getNetworkPrefixLength());
 			app.sendBroadcast(intent, Manifest.permission.ACCESS_WIFI_STATE);
+		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			app.unregisterReceiver(wpaReceiver);
 		}
 		
 		final BroadcastReceiver wpaReceiver = new BroadcastReceiver() {
@@ -171,8 +183,8 @@ public class Dhcpcd {
 				boolean connected = intent.getBooleanExtra(WpaControl.INTENT_EXTRA_CONNECTED, false);
 				if(connected) {
 					try {
-						InetAddress addr = app.getInfoCollector().getIpFromIface(iface);
-						onProgressUpdate(addr);
+						InterfaceAddress addr = app.getInfoCollector().getIpFromIface(iface);
+						if(addr != null) onProgressUpdate(addr);
 					} catch (SocketException e) {
 						Logg.w("Failed to get address of Wifi (1)", e);
 					}

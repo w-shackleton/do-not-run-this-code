@@ -28,12 +28,15 @@ public class GlobalStatus implements Parcelable {
 	
 	private InetAddress addr;
 	
+	private short subnet;
+	
 	public GlobalStatus() {
 		setStatus(0);
 		setConnected(false);
 		setSsid("<Unknown>");
 		setState(SupplicantState.UNINITIALIZED);
 		setAddr(null);
+		setSubnet(24);
 	}
 	
 	public GlobalStatus(int status) {
@@ -42,6 +45,7 @@ public class GlobalStatus implements Parcelable {
 		setSsid("<Unknown>");
 		setState(SupplicantState.UNINITIALIZED);
 		setAddr(null);
+		setSubnet(24);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -53,6 +57,7 @@ public class GlobalStatus implements Parcelable {
 		setState((SupplicantState) in.readParcelable(null));
 		setAddr((InetAddress) in.readSerializable());
 		setNetworkIDs(in.readSparseArray(null));
+		setSubnet(in.readInt());
 	}
 
 	@Override
@@ -71,6 +76,7 @@ public class GlobalStatus implements Parcelable {
 		p.writeSerializable(getAddr());
 		// Horrible, horrible method.
 		p.writeSparseArray((SparseArray)networkIDs);
+		p.writeInt(getSubnet());
 	}
 	
 	int getStatus() {
@@ -133,6 +139,18 @@ public class GlobalStatus implements Parcelable {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public short getSubnet() {
+		return subnet;
+	}
+
+	public void setSubnet(short subnet) {
+		this.subnet = subnet;
+	}
+	
+	public void setSubnet(int subnet) {
+		this.subnet = (short)subnet;
 	}
 
 	public static final Creator<GlobalStatus> CREATOR = new Creator<GlobalStatus>() {

@@ -24,6 +24,7 @@ public final class FileInstaller {
 	public static final String BIN_BUSYBOX = "busybox";
 	public static final String BIN_KILL_DHCPCD = "kill_dhcpcd";
 	public static final String BIN_RUN_WPA_SUPPLICANT = "run_wpa_supplicant";
+	public static final String BIN_NATTER = "natter";
 	public static final String BIN_XTABLES = "xtables-multi";
 	
 	/**
@@ -96,6 +97,8 @@ public final class FileInstaller {
 		installScript(BIN_BUSYBOX, R.raw.busybox);
 		Logg.d("Installing run_wpa_supplicant");
 		installScript(BIN_RUN_WPA_SUPPLICANT, R.raw.run_wpa_supplicant);
+		Logg.d("Installing natter");
+		installScript(BIN_NATTER, R.raw.natter);
 		Logg.d("Installing dhcpcd");
 		installScript(BIN_KILL_DHCPCD, R.raw.kill_dhcpcd);
 		

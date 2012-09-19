@@ -2,7 +2,7 @@ package uk.digitalsquid.internetrestore.manager;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.UnknownHostException;
+import java.io.OutputStreamWriter;
 
 import uk.digitalsquid.internetrestore.App;
 import uk.digitalsquid.internetrestore.Logg;
@@ -15,7 +15,6 @@ public final class Nat {
 	
 	final App app;
 	private String xtables, su, bb;
-	private String iface;
 	
 	public Nat(App app) throws MissingFeatureException {
 		this.app = app;
@@ -38,16 +37,11 @@ public final class Nat {
 				throw exc;
 			}
 		}
-		try {
-			iface = app.getInfoCollector().getWifiIface();
-		} catch (UnknownHostException e) {
-			MissingFeatureException exc = new MissingFeatureException("Couldn't getWifiIface()", R.string.no_wifi_iface);
-			exc.initCause(e);
-			throw exc;
-		}
 	}
 	
 	private Process instance;
+	
+	private OutputStreamWriter stdin;
 	
 	/**
 	 * Runs the script to set up the iptables config
@@ -56,9 +50,9 @@ public final class Nat {
 	public synchronized void start() throws IOException {
 		if(instance != null) return;
 		
-		// We have to use this helper script to call everything to cd after becoming root.
+		final String natter = app.getFileInstaller().getScriptPath(FileInstaller.BIN_NATTER);
 		
-		final String natCmdLine = String.format("");
+		final String natCmdLine = String.format("%s", natter);
 		Logg.d("Running command line \"" + natCmdLine + "\"");
 		
 		ProcessBuilder pb = new ProcessBuilder(
@@ -66,13 +60,42 @@ public final class Nat {
 				"-c",
 				natCmdLine);
 		
-		pb.environment().put("BB", app.getFileFinder().getBusyboxPath());
-		pb.environment().put("XTABLES", app.getFileFinder().getBusyboxPath());
+		pb.environment().put("BB", bb);
+		pb.environment().put("XTABLES", xtables);
 		
 		instance = pb.start();
 		
+		stdin = new OutputStreamWriter(instance.getOutputStream());
 		new StreamGobbler(instance.getInputStream(), "nat cout");
 		new StreamGobbler(instance.getErrorStream(), "nat cerr");
 	}
 	
+	public synchronized void stop() {
+		try {
+			stdin.write("\n");
+			stdin.flush();
+		} catch (IOException e1) {
+			Logg.w("Couldn't stop natter", e1);
+		}
+		
+		try { Thread.sleep(1500); } catch (InterruptedException e) { }
+		
+		instance.destroy();
+		instance = null;
+	}
+	
+	/**
+	 * Sets the subnet to be put behind the NAT firewall.
+	 * @param subnet A subnet in the form a.b.c.d/s, ie. 10.1.2.0/24
+	 * @throws IOException 
+	 */
+	public synchronized void setMasqueradedSubnet(String subnet) throws IOException {
+		if(instance == null) {
+			Logg.w("Attempt was made to set new subnet while natter isn't running");
+			return;
+		}
+		Logg.i(String.format("Setting new masqueraded subnet to %s", subnet));
+		stdin.write(String.format("%s\n", subnet));
+		stdin.flush();
+	}
 }

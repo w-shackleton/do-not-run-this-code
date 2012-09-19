@@ -14,8 +14,10 @@ import uk.digitalsquid.internetrestore.Task.StartTask;
 import uk.digitalsquid.internetrestore.jni.WpaControl;
 import uk.digitalsquid.internetrestore.manager.AndroidWifi;
 import uk.digitalsquid.internetrestore.manager.Dhcpcd;
+import uk.digitalsquid.internetrestore.manager.Nat;
 import uk.digitalsquid.internetrestore.manager.Wpa;
 import uk.digitalsquid.internetrestore.util.MissingFeatureException;
+import uk.digitalsquid.internetrestore.util.Network;
 import uk.digitalsquid.internetrestore.util.Util;
 import uk.digitalsquid.internetrestore.util.Util.StringP;
 import uk.digitalsquid.internetrestore.util.file.FileInstaller;
@@ -91,6 +93,7 @@ public class DaemonManager extends Service {
 	private String wpaSsid = "<Unknown>";
 	private int wpaId = -1;
 	private InetAddress ipAddr;
+	private short subnet;
 	private SupplicantState wpaSupplicantState = SupplicantState.UNINITIALIZED;
 	private SparseArray<String> wpaNetworkIDs = new SparseArray<String>();
 	private void setStatus(GlobalStatus status) {
@@ -101,6 +104,7 @@ public class DaemonManager extends Service {
 			this.status.setId(wpaId);
 			this.status.setState(wpaSupplicantState);
 			this.status.setAddr(ipAddr);
+			this.status.setSubnet(subnet);
 			this.status.setNetworkIDs(wpaNetworkIDs);
 			broadcastStatus();
 		}
@@ -118,8 +122,9 @@ public class DaemonManager extends Service {
 		// Update & broadcast
 		setStatus(null);
 	}
-	private void setIpStatus(InetAddress addr) {
+	private void setIpStatus(InetAddress addr, short subnet) {
 		this.ipAddr = addr;
+		this.subnet = subnet;
 		setStatus(null);
 	}
 	
@@ -147,10 +152,16 @@ public class DaemonManager extends Service {
 	};
 	
 	private BroadcastReceiver ipReceiver = new BroadcastReceiver() {
+		
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			InetAddress addr = (InetAddress) intent.getSerializableExtra(Dhcpcd.INTENT_EXTRA_INET_ADDR);
-			setIpStatus(addr);
+			short subnet = intent.getShortExtra(Dhcpcd.INTENT_EXTRA_SUBNET_MASK, (short)24);
+			
+			setIpStatus(addr, subnet);
+			Logg.i(String.format("Connection to %s/%d made", addr.toString(), subnet));
+			
+			queueTask(new Task.ChangeNatTask(ipAddr, subnet));
 		}
 	};
     
@@ -214,6 +225,7 @@ public class DaemonManager extends Service {
 		WpaControl wpaControl;
 		AndroidWifi androidWifi;
 		Dhcpcd dhcpcd;
+		Nat nat;
 
 		@Override
 		protected Void doInBackground(Void... arg0) {
@@ -227,7 +239,7 @@ public class DaemonManager extends Service {
 						if(task instanceof StartTask) {
 							status.setStatus(GlobalStatus.STATUS_STARTING);
 							publishProgress(status);
-							StartTask startTask = (StartTask) task;
+							// StartTask startTask = (StartTask) task;
 							// Initiate managers
 							Logg.d("Init AndroidWifi");
 							androidWifi = new AndroidWifi(app);
@@ -307,6 +319,18 @@ public class DaemonManager extends Service {
 							} catch (IOException e) {
 								Logg.e("Failed to start dhcpcd", e);
 							}
+							try {
+								nat = new Nat(app);
+							} catch (MissingFeatureException e) {
+								Logg.e("Failed to initialise nat", e);
+								showDialogue(e.getLocalisedMessageId());
+								stopSelf();
+							}
+							try {
+								nat.start();
+							} catch (IOException e) {
+								Logg.e("Failed to start nat");
+							}
 							status.setStatus(GlobalStatus.STATUS_STARTED);
 							publishProgress(status);
 						} else if(task instanceof Task.ChangeNetworkTask) {
@@ -316,6 +340,15 @@ public class DaemonManager extends Service {
 									wpaControl.selectNetwork(changeTask.getNetworkID());
 								}
 							}
+						} else if(task instanceof Task.ChangeNatTask) {
+							if(nat != null) {
+								try {
+									InetAddress subnet = Network.getSubnetAddress(((Task.ChangeNatTask) task).getAddress(), ((Task.ChangeNatTask) task).getSubnet());
+									nat.setMasqueradedSubnet(String.format("%s/%d", subnet.getHostAddress(), ((Task.ChangeNatTask) task).getSubnet()));
+								} catch (IOException e) {
+									Logg.e("Failed to set new NAT settings", e);
+								}
+							}
 						}
 						break;
 					case Task.ACTION_STOP:
@@ -323,6 +356,7 @@ public class DaemonManager extends Service {
 						publishProgress(status);
 						Logg.i("DaemonManager stopping");
 						Logg.d("Stopping dhcpcd");
+						if(nat != null) nat.stop();
 						if(dhcpcd != null) dhcpcd.stop();
 						Logg.d("Disconnecting wpa_ctrl_iface");
 						if(wpaControl != null) wpaControl.stop();

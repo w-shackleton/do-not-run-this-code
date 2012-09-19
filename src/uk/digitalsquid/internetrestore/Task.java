@@ -1,5 +1,7 @@
 package uk.digitalsquid.internetrestore;
 
+import java.net.InetAddress;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -113,6 +115,66 @@ public class Task implements Parcelable {
 			@Override
 			public ChangeNetworkTask[] newArray(int len) {
 				return new ChangeNetworkTask[len];
+			}
+		};
+	}
+	
+	/**
+	 * This task instructs the worker thread to change the subnet which is being
+	 * NATted.
+	 * @author william
+	 *
+	 */
+	public static class ChangeNatTask extends Task {
+		public ChangeNatTask(InetAddress addr, short subnet) {
+			super(ACTION_SUBCLASSED);
+			this.addr = addr;
+			this.subnet = subnet;
+		}
+		
+		private short subnet;
+		private InetAddress addr;
+		
+		ChangeNatTask(Parcel in) {
+			super(in);
+			subnet = (short) in.readInt();
+			addr = (InetAddress) in.readSerializable();
+		}
+		
+		public short getSubnet() {
+			return subnet;
+		}
+		
+		public void setSubnet(short subnet) {
+			this.subnet = subnet;
+		}
+		public void setSubnet(int subnet) {
+			this.subnet = (short)subnet;
+		}
+		
+		public InetAddress getAddress() {
+			return addr;
+		}
+		
+		public void setSubnet(InetAddress address) {
+			addr = address;
+		}
+		
+		@Override
+		public void writeToParcel(Parcel dest, int flags) {
+			super.writeToParcel(dest, flags);
+			dest.writeInt(subnet);
+			dest.writeSerializable(addr);
+		}
+
+		public static final Creator<ChangeNatTask> CREATOR = new Creator<ChangeNatTask>() {
+			@Override
+			public ChangeNatTask createFromParcel(Parcel in) {
+				return new ChangeNatTask(in);
+			}
+			@Override
+			public ChangeNatTask[] newArray(int len) {
+				return new ChangeNatTask[len];
 			}
 		};
 	}

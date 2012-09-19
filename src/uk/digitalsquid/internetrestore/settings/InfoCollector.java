@@ -1,10 +1,12 @@
 package uk.digitalsquid.internetrestore.settings;
 
 import java.net.InetAddress;
+import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
+import java.util.List;
 
 import uk.digitalsquid.internetrestore.Logg;
 import uk.digitalsquid.internetrestore.util.net.IP;
@@ -69,21 +71,20 @@ public class InfoCollector {
 		throw new UnknownHostException("Couldn't identify iface by mac");
 	}
 	
-	public Enumeration<InetAddress> getIpsFromIface(String ifaceName) throws SocketException {
+	public List<InterfaceAddress> getIpsFromIface(String ifaceName) throws SocketException {
 		Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces();
 		while(ifaces.hasMoreElements()) {
 			NetworkInterface iface = ifaces.nextElement();
 			if(iface.getDisplayName().equals(ifaceName))
-				return iface.getInetAddresses();
+				return iface.getInterfaceAddresses();
 		}
 		return null;
 	}
 	
-	public InetAddress getIpFromIface(String ifaceName) throws SocketException {
-		Enumeration<InetAddress> ips = getIpsFromIface(ifaceName);
+	public InterfaceAddress getIpFromIface(String ifaceName) throws SocketException {
+		List<InterfaceAddress> ips = getIpsFromIface(ifaceName);
 		if(ips == null) return null;
-		if(ips.hasMoreElements())
-			return ips.nextElement();
+		if(ips.size() > 0) return ips.get(0);
 		return null;
 	}
 }
