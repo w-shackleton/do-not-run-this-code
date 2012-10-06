@@ -4,3 +4,4 @@ bin/*
 libs/armeabi/gdbserver
 libs/armeabi/gdb.setup
 jni/obj
+libs/armeabi/runner

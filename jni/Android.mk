@@ -29,3 +29,10 @@ LOCAL_SRC_FILES := file_util.c
 LOCAL_CFLAGS := -g -ggdb
 
 include $(BUILD_SHARED_LIBRARY)
+
+# Build runner
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := runner
+LOCAL_SRC_FILES := runner.cpp
+include $(BUILD_EXECUTABLE)
