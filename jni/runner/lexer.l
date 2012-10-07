@@ -8,6 +8,7 @@ env			return TOKENV;
 create			return TOKCREATE;
 set			return TOKSET;
 args			return TOKARGS;
+start			return TOKSTART;
 list			return TOKLIST;
 [a-zA-Z0-9/+]*		yylval=strdup(yytext); return TEXT;
 \"(\\.|[^"])*\"		{

@@ -1,0 +1,3 @@
+create test;
+set args test ls -l;
+start test;

@@ -1,8 +1,8 @@
 
 includes = $(wildcard *.h)
 
-runner: y.tab.o lex.yy.o main.o
-	gcc -o runner lex.yy.o y.tab.o main.o
+runner: y.tab.o lex.yy.o main.o proc.o
+	gcc -o runner lex.yy.o y.tab.o main.o proc.o
 
 %.o: %.c $(includes)
 	gcc -c $(CFLAGS) $< -o $@

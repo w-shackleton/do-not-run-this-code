@@ -39,7 +39,7 @@ WPAPID=$!
 
 # Wait for socket to appear
 i=0
-while $BB test ! -e $SOCKET_DIR && test $i -lt 10
+while $BB test ! -e $SOCKET_DIR && test $i -lt 20
 do
 sleep 1
 i=$(($i+1))

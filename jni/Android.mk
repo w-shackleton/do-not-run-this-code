@@ -32,7 +32,7 @@ include $(BUILD_SHARED_LIBRARY)
 
 # Build runner
 
-include $(CLEAR_VARS)
-LOCAL_MODULE := runner
-LOCAL_SRC_FILES := runner.cpp
-include $(BUILD_EXECUTABLE)
+# include $(CLEAR_VARS)
+# LOCAL_MODULE := runner
+# LOCAL_SRC_FILES := runner.cpp
+# include $(BUILD_EXECUTABLE)

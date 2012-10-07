@@ -2,10 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 #include "defs.h"
+#include "proc.h"
  
 %}
 
-%token TOKENV TOKCREATE TOKSET TOKARGS TOKLIST TEXT QTEXT EQ QUOTE SEMICOLON
+%token TOKENV TOKCREATE TOKSET TOKARGS TOKLIST TOKSTART TEXT QTEXT EQ QUOTE SEMICOLON
 
 %%
 
@@ -19,7 +20,8 @@ command:
         env_add |
 	task_create |
 	task_set_args |
-	task_list
+	task_list |
+	task_start
         ;
 
 env_add:
@@ -95,6 +97,23 @@ task_list:
 		}
 	 }
 	 ;
+
+task_start:
+	  TOKSTART text
+	  {
+	     	char* name = $2;
+
+		task *t = tasks;
+		while(t) {
+			if(strcmp(name, t->name) == 0) {
+				startTask(t);
+				break;
+			}
+			t = t->next;
+		}
+	  }
+	  ;
+
 
 text:
 	QTEXT
