@@ -12,7 +12,9 @@ typedef struct _task {
 	struct _task *next;
 	char *name;
 	pid_t pid;
+	pid_t helperpid;
 	int input[2];
+	int output[2];
 	argument *args;
 } task;
 

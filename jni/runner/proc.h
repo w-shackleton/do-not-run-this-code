@@ -4,5 +4,6 @@
 #include "defs.h"
 
 void startTask(task *task);
+void stopTask(task *task);
 
 #endif

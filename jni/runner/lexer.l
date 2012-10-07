@@ -9,8 +9,11 @@ create			return TOKCREATE;
 set			return TOKSET;
 args			return TOKARGS;
 start			return TOKSTART;
+stop			return TOKSTOP;
 list			return TOKLIST;
-[a-zA-Z0-9/+]*		yylval=strdup(yytext); return TEXT;
+sleep			return TOKSLEEP;
+[0-9]+			yylval=atoi(yytext); return NUMBER;
+[a-zA-Z0-9/+-\.]*	yylval=strdup(yytext); return TEXT;
 \"(\\.|[^"])*\"		{
 	int newlen = strlen(yytext)-2;
 	char *str = malloc(newlen+1);

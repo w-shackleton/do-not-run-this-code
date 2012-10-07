@@ -1,3 +1,11 @@
 create test;
 set args test ls -l;
+
+create test2;
+set args test2 ping -c20 google.com;
+
 start test;
+start test2;
+sleep 5;
+stop test;
+stop test2;
