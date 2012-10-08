@@ -3,14 +3,12 @@ package uk.digitalsquid.internetrestore.manager;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.UnknownHostException;
 
 import uk.digitalsquid.internetrestore.App;
 import uk.digitalsquid.internetrestore.Logg;
 import uk.digitalsquid.internetrestore.R;
 import uk.digitalsquid.internetrestore.util.MissingFeatureException;
-import uk.digitalsquid.internetrestore.util.StreamGobbler;
 import uk.digitalsquid.internetrestore.util.file.FileInstaller;
 
 /**
@@ -19,29 +17,22 @@ import uk.digitalsquid.internetrestore.util.file.FileInstaller;
  *
  */
 public class Wpa {
-	private String wpa_supplicant, su;
+	private String wpa_supplicant;
 	private final App app;
+	private final Runner runner;
 	
 	private final String iface;
 	
-	private Process instance;
-	
-	public Wpa(App app) throws MissingFeatureException {
+	public Wpa(App app, Runner runner) throws MissingFeatureException {
 		this.app = app;
+		this.runner = runner;
 		try {
 			wpa_supplicant = app.getFileFinder().getWpaSupplicantPath();
-			su = app.getFileFinder().getSuPath();
 		} catch (FileNotFoundException e) {
 			if(e.getMessage().equalsIgnoreCase("wpa_supplicant")) {
 				MissingFeatureException exc =
 						new MissingFeatureException("wpa_supplicant is missing",
 								R.string.no_wpa, app.getAppName());
-				exc.initCause(e);
-				throw exc;
-			} else if(e.getMessage().equalsIgnoreCase("su")) {
-				MissingFeatureException exc =
-						new MissingFeatureException("su is missing",
-								R.string.no_su);
 				exc.initCause(e);
 				throw exc;
 			}
@@ -64,7 +55,7 @@ public class Wpa {
 	 * @throws MissingFeatureException 
 	 */
 	public synchronized void start() throws IOException {
-		if(instance != null) return;
+		if(runner.isRunning("wpa")) return;
 		// First check that wpa_supplicant.conf contains at least one network.
 		int networkCount = app.getWpaSettings().readLocalConfig().getNetworkCount();
 		if(networkCount == 0) throw new MissingFeatureException("No networks are available in config", R.string.no_networks);
@@ -99,57 +90,27 @@ public class Wpa {
 				);
 		Logg.d("Running command line \"" + wpaCmdLine + "\"");
 		
-		ProcessBuilder pb = new ProcessBuilder(
-				su,
-				"-c",
-				wpaCmdLine);
-		
-		pb.environment().put("BB", app.getFileFinder().getBusyboxPath());
-		
-		instance = pb.start();
-		
-		new StreamGobbler(instance.getInputStream(), "wpa cout");
-		new StreamGobbler(instance.getErrorStream(), "wpa cerr");
-	}
-	
-	/**
-	 * Writes a blank line to the stdin of the process. Silently fails
-	 */
-	private void writeLine() {
-		try {
-			if(instance == null) return;
-			OutputStream os = instance.getOutputStream();
-			if(os == null) return;
-			os.write("\n".getBytes());
-		} catch (IOException e) {
-			Logg.w("Failed to write line to wpa stdin");
-		}
+		runner.sendCommand("create wpa;");
+		runner.sendCommand(String.format("set args wpa %s;", wpaCmdLine));
 	}
 	
 	/**
 	 * Stops wpa_supplicant, if it is running.
 	 * @return The exit code of wpa_supplicant
+	 * @throws IOException 
 	 */
-	public synchronized int stop() {
+	public synchronized void stop() {
 		Logg.d("Stopping wpa_supplicant");
-		if(instance == null)
-			return -1;
-		writeLine();
 		try {
-			Thread.sleep(1200);
-		} catch (InterruptedException e1) { }
-		instance.destroy();
-		int ret = -1;
-		try {
-			ret = instance.waitFor();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+			runner.sendCommand("send wpa \"stop\";");
+			runner.sendCommand("sleep 1;");
+			runner.sendCommand("stop wpa;");
+		} catch (IOException e) {
+			Logg.e("Failed to stop WPA", e);
 		}
-		instance = null;
-		return ret;
 	}
 	
 	public boolean isRunning() {
-		return instance != null;
+		return runner.isRunning("wpa");
 	}
 }

@@ -32,7 +32,14 @@ include $(BUILD_SHARED_LIBRARY)
 
 # Build runner
 
-# include $(CLEAR_VARS)
-# LOCAL_MODULE := runner
-# LOCAL_SRC_FILES := runner.cpp
-# include $(BUILD_EXECUTABLE)
+runner/y.tab.c: runner/parser.y
+	cd runner; yacc -d parser.y
+
+runner/lex.yy.c: runner/lexer.l
+	cd runner; flex lexer.l
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := runner
+LOCAL_SRC_FILES := runner/y.tab.c runner/lex.yy.c runner/main.c runner/proc.c
+LOCAL_LDFLAGS := -llog
+include $(BUILD_EXECUTABLE)

@@ -6,7 +6,7 @@
  
 %}
 
-%token TOKENV TOKCREATE TOKSET TOKARGS TOKLIST TOKSTART TOKSTOP TOKSEND TOKSLEEP TEXT QTEXT EQ QUOTE SEMICOLON NUMBER
+%token TOKENV TOKCREATE TOKSET TOKARGS TOKLIST TOKSTART TOKSTOP TOKSEND TOKSLEEP TOKRUNNING TEXT QTEXT EQ QUOTE SEMICOLON NUMBER
 
 %%
 
@@ -24,6 +24,7 @@ command:
 	task_start |
 	task_stop |
 	task_send |
+	task_running |
 	sleep
         ;
 
@@ -131,6 +132,26 @@ task_stop:
 		}
 	 }
 	 ;
+	 
+task_running:
+	TOKRUNNING text
+	{
+	    char* name = $2;
+
+		task *t = tasks;
+		while(t) {
+			if(strcmp(name, t->name) == 0) {
+				// Send test signal
+				if(t->pid && kill(t->pid, 0)) {
+					printf("RUNNING\n");
+					return;
+				}
+			}
+			t = t->next;
+		}
+		printf("NOTRUNNING\n");
+	}
+	;
 
 task_send:
 	 TOKSEND text text
@@ -162,6 +183,13 @@ text:
 	;
 text:
 	TEXT
+	{
+		$$=$1;
+	}
+	;
+
+text:
+	NUMBER
 	{
 		$$=$1;
 	}

@@ -15,6 +15,7 @@ import uk.digitalsquid.internetrestore.jni.WpaControl;
 import uk.digitalsquid.internetrestore.manager.AndroidWifi;
 import uk.digitalsquid.internetrestore.manager.Dhcpcd;
 import uk.digitalsquid.internetrestore.manager.Nat;
+import uk.digitalsquid.internetrestore.manager.Runner;
 import uk.digitalsquid.internetrestore.manager.Wpa;
 import uk.digitalsquid.internetrestore.util.MissingFeatureException;
 import uk.digitalsquid.internetrestore.util.Network;
@@ -221,6 +222,7 @@ public class DaemonManager extends Service {
 		
 		GlobalStatus status = new GlobalStatus();
 		
+		Runner runner;
 		Wpa wpa;
 		WpaControl wpaControl;
 		AndroidWifi androidWifi;
@@ -241,11 +243,20 @@ public class DaemonManager extends Service {
 							publishProgress(status);
 							// StartTask startTask = (StartTask) task;
 							// Initiate managers
+							Logg.d("Init Runner");
+							try {
+								runner = new Runner(app);
+							} catch (MissingFeatureException e1) {
+								Logg.e("Failed to initiate runner", e1);
+								showDialogue(e1.getLocalisedMessageId());
+								stopSelf();
+								break;
+							}
 							Logg.d("Init AndroidWifi");
 							androidWifi = new AndroidWifi(app);
 							Logg.d("Init Wpa");
 							try {
-								wpa = new Wpa(app);
+								wpa = new Wpa(app, runner);
 							} catch (MissingFeatureException e) {
 								Logg.e("Failed to initiate wpa", e);
 								showDialogue(e.getLocalisedMessageId());
@@ -255,6 +266,15 @@ public class DaemonManager extends Service {
 							// Stop wifi
 							Logg.d("Stop AndroidWifi");
 							androidWifi.stopWifiSync();
+							// Start runner
+							try {
+								runner.start();
+							} catch (IOException e) {
+								Logg.e("Failed to start runner", e);
+								showDialogue(R.string.no_su);
+								stopSelf();
+								break;
+							}
 							// Start wpa_supplicant
 							Logg.d("Start Wpa");
 							try {
@@ -319,13 +339,7 @@ public class DaemonManager extends Service {
 							} catch (IOException e) {
 								Logg.e("Failed to start dhcpcd", e);
 							}
-							try {
-								nat = new Nat(app);
-							} catch (MissingFeatureException e) {
-								Logg.e("Failed to initialise nat", e);
-								showDialogue(e.getLocalisedMessageId());
-								stopSelf();
-							}
+							nat = new Nat(app, runner);
 							try {
 								nat.start();
 							} catch (IOException e) {

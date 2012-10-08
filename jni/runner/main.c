@@ -15,6 +15,7 @@ int yywrap()
   
 main()
 {
-        yyparse();
+	printf("STARTED\n");
+	yyparse();
 } 
 

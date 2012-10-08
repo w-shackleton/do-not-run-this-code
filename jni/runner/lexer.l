@@ -13,6 +13,7 @@ stop			return TOKSTOP;
 list			return TOKLIST;
 send			return TOKSEND;
 sleep			return TOKSLEEP;
+running			return TOKRUNNING;
 [0-9]+			yylval=atoi(yytext); return NUMBER;
 [a-zA-Z0-9/+-\.]*	yylval=strdup(yytext); return TEXT;
 \"(\\.|[^"])*\"		{

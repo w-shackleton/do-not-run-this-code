@@ -19,6 +19,10 @@ public class StreamGobbler extends Thread {
 	
 	String logPrefix;
 	
+	public static interface Callback {
+		public void onOutput(String line);
+	}
+	
 	/**
 	 * 
 	 * @param is
@@ -33,6 +37,25 @@ public class StreamGobbler extends Thread {
 		start();
 	}
 	
+	public StreamGobbler(BufferedReader is, String logPrefix) {
+		super("StreamGobbler - " + logPrefix);
+		reader = is;
+		this.logPrefix = logPrefix;
+		setDaemon(true);
+		start();
+	}
+	
+	private Callback callback;
+	
+	public StreamGobbler(InputStream is, String logPrefix, Callback callback) {
+		this(is, logPrefix);
+		this.callback = callback;
+	}
+	public StreamGobbler(BufferedReader is, String logPrefix, Callback callback) {
+		this(is, logPrefix);
+		this.callback = callback;
+	}
+	
 	@Override
 	public void run() {
 		String line;
@@ -40,6 +63,7 @@ public class StreamGobbler extends Thread {
 			while((line = reader.readLine()) != null) {
 				if(logPrefix != null) {
 					Logg.d(String.format("%s: %s", logPrefix, line));
+					if(callback != null) callback.onOutput(line);
 				}
 			}
 		} catch (IOException e) {
