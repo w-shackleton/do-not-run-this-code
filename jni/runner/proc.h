@@ -5,5 +5,6 @@
 
 void startTask(task *task);
 void stopTask(task *task);
+void sendMessage(task *task, char *msg);
 
 #endif

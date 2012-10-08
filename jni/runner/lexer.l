@@ -11,6 +11,7 @@ args			return TOKARGS;
 start			return TOKSTART;
 stop			return TOKSTOP;
 list			return TOKLIST;
+send			return TOKSEND;
 sleep			return TOKSLEEP;
 [0-9]+			yylval=atoi(yytext); return NUMBER;
 [a-zA-Z0-9/+-\.]*	yylval=strdup(yytext); return TEXT;

@@ -1,5 +1,7 @@
 #include "proc.h"
 
+#include "log.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -11,6 +13,10 @@ void startTask(task *task) {
 	pipe(task->input);
 	pipe(task->output);
 
+	if(!(task->inputfp = fdopen(task->input[1], "w"))) {
+		printf("Failed to fdopen: %s(%d)\n", strerror(errno), errno);
+	}
+
 	fflush(stdout);
 	fflush(stderr);
 
@@ -20,18 +26,18 @@ void startTask(task *task) {
 		char buf[0x1000];
 		char *b = buf;
 		while((b = fgets(b, 0x1000, fp))) {
-			printf("Msg recv: %s\n", b);
+			LOG("%s: %s", task->name, b);
 		}
 
 		fclose(fp);
 		close(task->output[0]);
 
-		printf("Ending\n");
+		LOGT("Ending");
 		_exit(0);
 	}
 	if((task->pid = fork()) == 0) {
 		// Create child process
-		dup2(task->input[1], 0);
+		dup2(task->input[0], 0);
 		dup2(task->output[1], 1);
 		dup2(task->output[1], 2);
 
@@ -58,13 +64,14 @@ void startTask(task *task) {
 		if(count) {
 			execvp(argArray[0], argArray);
 		}
-		printf("Failed to run program: %s(%d)\n", strerror(errno), errno);
+		LOG("Failed to run program: %s(%d)", strerror(errno), errno);
 
 		_exit(0);
 	}
 }
 
 void stopTask(task *task) {
+	fclose(task->inputfp);
 	close(task->input[0]);
 	close(task->input[1]);
 	close(task->output[0]);
@@ -76,4 +83,12 @@ void stopTask(task *task) {
 	kill(task->helperpid, SIGTERM);
 	task->pid = 0;
 	task->helperpid = 0;
+}
+
+void sendMessage(task *task, char *msg) {
+	if(task->pid && fprintf(task->inputfp, "%s\n", msg) != EOF) {
+		fflush(task->inputfp);
+	} else {
+		LOG("Failed to send message to stopped task %s", task->name);
+	}
 }
