@@ -92,6 +92,7 @@ public class Wpa {
 		
 		runner.sendCommand("create wpa;");
 		runner.sendCommand(String.format("set args wpa %s;", wpaCmdLine));
+		runner.sendCommand("start wpa;");
 	}
 	
 	/**

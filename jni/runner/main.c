@@ -2,10 +2,12 @@
 #include <string.h>
 
 #include "defs.h"
+#include "log.h"
 
 void yyerror(const char *str)
 {
-        fprintf(stderr,"error: %s\n",str);
+        fprintf(stderr,"Input error: %s\n",str);
+        LOG("Input error: %s", str);
 }
  
 int yywrap()
@@ -16,6 +18,9 @@ int yywrap()
 main()
 {
 	printf("STARTED\n");
+	LOGT("Runner Started");
+	fflush(stdout);
+	// fflush(stderr);
 	yyparse();
 } 
 

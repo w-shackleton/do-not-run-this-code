@@ -4,12 +4,13 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.OutputStream;
 
 import uk.digitalsquid.internetrestore.App;
 import uk.digitalsquid.internetrestore.Logg;
 import uk.digitalsquid.internetrestore.R;
 import uk.digitalsquid.internetrestore.util.MissingFeatureException;
+import uk.digitalsquid.internetrestore.util.NoCloseInputStream;
 import uk.digitalsquid.internetrestore.util.StreamGobbler;
 import uk.digitalsquid.internetrestore.util.StreamGobbler.Callback;
 import uk.digitalsquid.internetrestore.util.file.FileInstaller;
@@ -62,19 +63,22 @@ public class Runner {
 		
 		instance = pb.start();
 		
-		BufferedReader reader = new BufferedReader(new InputStreamReader(instance.getInputStream()));
+		stdin = instance.getOutputStream();
+		new StreamGobbler(instance.getErrorStream(), "runner cerr");
+		
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new NoCloseInputStream(instance.getInputStream())));
 		boolean found = false;
 		for(int i = 0; i < 5; i++) {
-			if(reader.readLine().equals("STARTED")) {
+			if("STARTED".equals(reader.readLine())) {
+				Logg.v("Found line indicating runner starting");
 				found = true;
 				break;
 			}
 		}
+		reader.close();
 		if(!found) throw new IOException("Runner failed to start, possibly SU wasn't accepted");
 		
 		new StreamGobbler(instance.getInputStream(), "runner cout");
-		new StreamGobbler(instance.getErrorStream(), "runner cerr");
-		stdin = new OutputStreamWriter(instance.getOutputStream());
 		
 		// Add environment
 		sendCommand(String.format("env BB=\"%s\";", app.getFileFinder().getBusyboxPath()));
@@ -88,6 +92,7 @@ public class Runner {
 	public synchronized void stop() {
 		if(instance == null) return;
 		try {
+			sendCommand("quit;");
 			stdin.close();
 		} catch (IOException e) { }
 		instance.destroy();
@@ -95,11 +100,14 @@ public class Runner {
 		stdin = null;
 	}
 	
-	private OutputStreamWriter stdin;
+	private OutputStream stdin;
 	
 	public synchronized void sendCommand(String command) throws IOException {
 		if(instance == null) start();
-		stdin.write(command);
+		Logg.v(String.format("Runner: \"%s\"", command));
+		// This newline prompts yacc to parse what has been entered
+		command = String.format("%s\n", command);
+		stdin.write(command.getBytes());
 		stdin.flush();
 	}
 	

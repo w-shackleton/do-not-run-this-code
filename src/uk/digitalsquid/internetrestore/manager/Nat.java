@@ -31,6 +31,7 @@ public final class Nat {
 		
 		runner.sendCommand("create natter;");
 		runner.sendCommand("set args natter natCmdLine;");
+		runner.sendCommand("start natter");
 	}
 	
 	public synchronized void stop() {

@@ -12,8 +12,6 @@ import uk.digitalsquid.internetrestore.Logg;
 import uk.digitalsquid.internetrestore.R;
 import uk.digitalsquid.internetrestore.jni.WpaControl;
 import uk.digitalsquid.internetrestore.util.MissingFeatureException;
-import uk.digitalsquid.internetrestore.util.ProcessRunner;
-import uk.digitalsquid.internetrestore.util.StreamGobbler;
 import uk.digitalsquid.internetrestore.util.file.FileInstaller;
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -32,31 +30,24 @@ public class Dhcpcd {
 	public static final String INTENT_EXTRA_INET_ADDR = "uk.digitalsquid.internetrestore.manager.Dhcpcd.InetAddress.addr";
 	public static final String INTENT_EXTRA_SUBNET_MASK = "uk.digitalsquid.internetrestore.manager.Dhcpcd.InetAddress.subnet";
 	
-	private String dhcpcd, su;
+	private String dhcpcd;
+	private final Runner runner;
 	private final App app;
 	
 	private final String iface;
 	
-	private Process instance;
-	
 	private IpListener ipListener;
 	
-	public Dhcpcd(App app) throws MissingFeatureException {
+	public Dhcpcd(App app, Runner runner) throws MissingFeatureException {
 		this.app = app;
+		this.runner = runner;
 		try {
 			dhcpcd = app.getFileFinder().getDhcpcdPath();
-			su = app.getFileFinder().getSuPath();
 		} catch (FileNotFoundException e) {
 			if(e.getMessage().equalsIgnoreCase("dhcpcd))")) {
 				MissingFeatureException exc =
 						new MissingFeatureException("dhcpcd is missing",
 								R.string.no_dhcpcd, app.getAppName());
-				exc.initCause(e);
-				throw exc;
-			} else if(e.getMessage().equalsIgnoreCase("su))")) {
-				MissingFeatureException exc =
-						new MissingFeatureException("su is missing",
-								R.string.no_su);
 				exc.initCause(e);
 				throw exc;
 			}
@@ -75,7 +66,6 @@ public class Dhcpcd {
 	 * @throws IOException 
 	 */
 	public synchronized void start() throws IOException {
-		if(instance != null) return;
 		// Note that this method of running processes only works on SDK >= 9.
 		// This is fine for this app as we are using SDK 10.
 		final String cmdLine = String.format("%s %s",
@@ -84,17 +74,9 @@ public class Dhcpcd {
 				);
 		Logg.d("Running command line \"" + cmdLine + "\"");
 		
-		ProcessBuilder pb = new ProcessBuilder(
-				su,
-				"-c",
-				cmdLine);
-		
-		pb.environment().put("BB", app.getFileFinder().getBusyboxPath());
-		
-		instance = pb.start();
-		
-		new StreamGobbler(instance.getInputStream(), "dhcpcd cout");
-		new StreamGobbler(instance.getErrorStream(), "dhcpcd cerr");
+		runner.sendCommand("create dhcpcd;");
+		runner.sendCommand(String.format("set args dhcpcd %s;", cmdLine));
+		runner.sendCommand("start dhcpcd;");
 		
 		ipListener = new IpListener(app, iface);
 		AsyncTaskHelper.execute(ipListener);
@@ -110,17 +92,16 @@ public class Dhcpcd {
 			ipListener = null;
 		}
 		
-		if(instance == null) return;
-		instance.destroy();
-		
 		String kill_dhcpcd = app.getFileInstaller().getScriptPath(FileInstaller.BIN_KILL_DHCPCD);
 		
-		// Process is killed if dhcpcd hadn't detached.
-		// Now run a script to kill it using the pidfile
 		try {
-			ProcessRunner.runProcess(su, "-c", kill_dhcpcd);
+			runner.sendCommand("create dhcpcdkill;");
+			runner.sendCommand(String.format("set args dhcpcdkill %s;", kill_dhcpcd));
+			runner.sendCommand("start dhcpcdkill;");
+			runner.sendCommand("sleep 2;");
+			runner.sendCommand("stop dhcpcd;");
 		} catch (IOException e) {
-			Logg.w("Dhcpcd couldn't be killed", e);
+			Logg.e("Failed to stop dhcpcd (runner error), ", e);
 		}
 	}
 	

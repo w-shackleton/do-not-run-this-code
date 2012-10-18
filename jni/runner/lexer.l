@@ -4,6 +4,7 @@
 extern YYSTYPE yylval;
 %}
 %%
+quit			return TOKQUIT;
 env			return TOKENV;
 create			return TOKCREATE;
 set			return TOKSET;
@@ -15,7 +16,7 @@ send			return TOKSEND;
 sleep			return TOKSLEEP;
 running			return TOKRUNNING;
 [0-9]+			yylval=atoi(yytext); return NUMBER;
-[a-zA-Z0-9/+-\.]*	yylval=strdup(yytext); return TEXT;
+[a-zA-Z0-9/+_\.-]*	yylval=strdup(yytext); return TEXT;
 \"(\\.|[^"])*\"		{
 	int newlen = strlen(yytext)-2;
 	char *str = malloc(newlen+1);

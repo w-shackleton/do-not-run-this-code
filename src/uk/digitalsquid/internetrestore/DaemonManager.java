@@ -267,6 +267,7 @@ public class DaemonManager extends Service {
 							Logg.d("Stop AndroidWifi");
 							androidWifi.stopWifiSync();
 							// Start runner
+							Logg.d("Start runner");
 							try {
 								runner.start();
 							} catch (IOException e) {
@@ -327,7 +328,7 @@ public class DaemonManager extends Service {
 							// Start dhcpcd
 							try {
 								Logg.d("Init dhcpcd");
-								dhcpcd = new Dhcpcd(app);
+								dhcpcd = new Dhcpcd(app, runner);
 							} catch (MissingFeatureException e) {
 								Logg.e("Failed to initialise dhcpcd", e);
 								showDialogue(e.getLocalisedMessageId());
@@ -377,6 +378,8 @@ public class DaemonManager extends Service {
 						if(wpaControl != null) wpaControl.close();
 						Logg.d("Stopping wpa_supplicant");
 						if(wpa != null) wpa.stop();
+						Logg.d("Stopping runner");
+						if(runner != null) runner.stop();
 						Logg.d("Restarting Android wifi");
 						if(androidWifi != null) androidWifi.startWifiIfNecessary();
 						Logg.i("DaemonManager stopped");

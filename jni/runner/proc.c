@@ -43,7 +43,6 @@ void startTask(task *task) {
 
 		close(task->output[1]);
 
-		// TODO: Exec here
 		// Count args
 		argument *args = task->args;
 		int count = 0;
@@ -61,26 +60,33 @@ void startTask(task *task) {
 		}
 		argArray[count] = NULL;
 
+		if(argArray[0]) LOG("Running %s", argArray[0]);
+
 		if(count) {
 			execvp(argArray[0], argArray);
 		}
 		LOG("Failed to run program: %s(%d)", strerror(errno), errno);
+
+		kill(task->helperpid, SIGTERM);
 
 		_exit(0);
 	}
 }
 
 void stopTask(task *task) {
-	fclose(task->inputfp);
-	close(task->input[0]);
-	close(task->input[1]);
-	close(task->output[0]);
-	close(task->output[1]);
+	if(task->pid) {
+		if(task->inputfp) fclose(task->inputfp);
+		close(task->input[0]);
+		close(task->input[1]);
+		close(task->output[0]);
+		close(task->output[1]);
+		kill(task->pid, SIGTERM);
+		sleep(1);
+		kill(task->pid, SIGKILL);
+	}
 
-	kill(task->pid, SIGTERM);
-	sleep(1);
-	kill(task->pid, SIGKILL);
-	kill(task->helperpid, SIGTERM);
+	if(task->helperpid)
+		kill(task->helperpid, SIGTERM);
 	task->pid = 0;
 	task->helperpid = 0;
 }

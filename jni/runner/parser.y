@@ -2,11 +2,26 @@
 #include <stdio.h>
 #include <string.h>
 #include "defs.h"
+#include "log.h"
 #include "proc.h"
+
+task* deleteTask(task* list, char *name) {
+	if(!list) return NULL;
+	
+	if(strcmp(list->name, name) == 0) {
+		task* newNext = list->next;
+		stopTask(list);
+		free(list);
+		return newNext;
+	}
+	
+	list->next = deleteTask(list->next, name);
+	return list;
+}
  
 %}
 
-%token TOKENV TOKCREATE TOKSET TOKARGS TOKLIST TOKSTART TOKSTOP TOKSEND TOKSLEEP TOKRUNNING TEXT QTEXT EQ QUOTE SEMICOLON NUMBER
+%token TOKQUIT TOKENV TOKCREATE TOKSET TOKARGS TOKLIST TOKSTART TOKSTOP TOKSEND TOKSLEEP TOKRUNNING TEXT QTEXT EQ QUOTE SEMICOLON NUMBER
 
 %%
 
@@ -25,8 +40,20 @@ command:
 	task_stop |
 	task_send |
 	task_running |
-	sleep
+	sleep |
+        prog_quit
         ;
+
+prog_quit:
+    TOKQUIT
+    {
+    	task *t = tasks;
+	while(t) {
+		stopTask(t);
+		t = t->next;
+	}
+    }
+    ;
 
 env_add:
         TOKENV text EQ text
@@ -38,7 +65,10 @@ env_add:
 task_create:
 	   TOKCREATE text
 	   {
+	   DLOG("Create");
+	   tasks = deleteTask(tasks, $2);
 	   task* t = malloc(sizeof(task));
+	   memset(t, 0, sizeof(task));
 	   t->name = $2;
 	   t->next = tasks;
 	   t->args = NULL;
@@ -49,6 +79,7 @@ task_create:
 task_set_args:
 	     TOKSET TOKARGS text args
 	     {
+	 	DLOG("Set Args");
 	     	char* name = $3;
 		argument *args = $4;
 
@@ -87,6 +118,7 @@ arg:
 task_list:
 	 TOKLIST
 	 {
+	 	DLOG("List");
 	 	task *ts = tasks;
 		while(ts) {
 			printf("Task %s\n", ts->name);
@@ -105,6 +137,7 @@ task_list:
 task_start:
 	  TOKSTART text
 	  {
+	 	DLOG("Start");
 	     	char* name = $2;
 
 		task *t = tasks;
@@ -120,6 +153,7 @@ task_start:
 task_stop:
 	 TOKSTOP text
 	 {
+	 	DLOG("Stop");
 	     	char* name = $2;
 
 		task *t = tasks;
@@ -156,6 +190,7 @@ task_running:
 task_send:
 	 TOKSEND text text
 	 {
+	 	DLOG("Send");
 	     	char* name = $2;
 
 		task *t = tasks;
