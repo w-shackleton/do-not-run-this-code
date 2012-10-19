@@ -23,6 +23,14 @@ JNIEXPORT void JNICALL Java_uk_digitalsquid_internetrestore_jni_FileUtil_setExec
 JNIEXPORT void JNICALL Java_uk_digitalsquid_internetrestore_jni_FileUtil_setPublicVisible
   (JNIEnv *, jclass, jstring, jboolean);
 
+/*
+ * Class:     uk_digitalsquid_internetrestore_jni_FileUtil
+ * Method:    mkfifo
+ * Signature: (Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_uk_digitalsquid_internetrestore_jni_FileUtil_mkfifo
+  (JNIEnv *, jclass, jstring);
+
 #ifdef __cplusplus
 }
 #endif

@@ -2,6 +2,22 @@
 #include <stdio.h>
 #include "y.tab.h"
 extern YYSTYPE yylval;
+
+#define YY_INPUT(buf,result,max_size) \
+		{ \
+		int c = '*'; \
+		size_t n; \
+		for ( n = 0; n < max_size && \
+			     (c = getc( yyin )) != EOF && c != '\n'; ++n ) \
+			buf[n] = (char) c; \
+		if ( c == '\n' ) \
+			buf[n++] = (char) c; \
+		if ( c == EOF && ferror( yyin ) ) \
+			YY_FATAL_ERROR( "input in flex scanner failed" ); \
+		result = n; \
+		} \
+\
+
 %}
 %%
 quit			return TOKQUIT;

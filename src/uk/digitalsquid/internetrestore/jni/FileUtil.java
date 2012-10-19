@@ -14,4 +14,10 @@ public class FileUtil {
 	 * @param path
 	 */
 	public static native void setPublicVisible(String path, boolean isDirectory);
+	
+	/**
+	 * Wrapper around the c mkfifo function
+	 * @param path
+	 */
+	public static native void mkfifo(String path);
 }

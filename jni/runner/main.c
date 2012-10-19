@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "defs.h"
 #include "log.h"
@@ -14,13 +15,24 @@ int yywrap()
 {
         return 1;
 } 
+
+extern FILE *yyin;
   
-main()
+main(int argc, char **argv)
 {
 	printf("STARTED\n");
 	LOGT("Runner Started");
 	fflush(stdout);
 	// fflush(stderr);
+
+	if(argc > 1) {
+		yyin = fopen(argv[1], "r");
+	}
+
 	yyparse();
+
+	if(argc > 1) {
+		fclose(yyin);
+	}
 } 
 

@@ -28,6 +28,7 @@ public class Runner {
 	
 	public Runner(App app) throws MissingFeatureException {
 		this.app = app;
+		
 		try {
 			runner = app.getFileInstaller().getScriptPath(FileInstaller.BIN_RUNNER);
 			su = app.getFileFinder().getSuPath();
@@ -51,9 +52,10 @@ public class Runner {
 	 */
 	public synchronized void start() throws IOException {
 		if(instance != null) return;
+		
 		// Note that this method of running processes only works on SDK >= 9.
 		// This is fine for this app as we are using SDK 10.
-		final String cmdLine = runner;
+		final String cmdLine = String.format("%s", runner);
 		Logg.d("Running command line \"" + cmdLine + "\"");
 		
 		ProcessBuilder pb = new ProcessBuilder(

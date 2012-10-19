@@ -6,6 +6,8 @@
 #define PUBLIC_FILE_PERM	((S_IRUSR | S_IWUSR) | (S_IRGRP | S_IWGRP) | (S_IROTH | S_IWOTH)) /* 00777 */
 #define PUBLIC_FOLDER_PERM	((S_IRUSR | S_IWUSR | S_IXUSR) | (S_IRGRP | S_IWGRP | S_IXGRP) | (S_IROTH | S_IWOTH | S_IXOTH)) /* 00777 */
 
+#define WRITE_PERM ((S_IRUSR | S_IWUSR) | (S_IRGRP | S_IWGRP) | (S_IROTH | S_IWOTH)) /* 00644 */
+
 JNIEXPORT void JNICALL Java_uk_digitalsquid_internetrestore_jni_FileUtil_setExecutable
   (JNIEnv *env, jclass class, jstring path) {
 	const char *mpath = (*env)->GetStringUTFChars(env, path, NULL);
@@ -24,6 +26,17 @@ JNIEXPORT void JNICALL Java_uk_digitalsquid_internetrestore_jni_FileUtil_setPubl
 		chmod(mpath, PUBLIC_FOLDER_PERM);
 	else
 		chmod(mpath, PUBLIC_FILE_PERM);
+
+	// Clean up
+	(*env)->ReleaseStringUTFChars(env, path, mpath);
+}
+
+JNIEXPORT void JNICALL Java_uk_digitalsquid_internetrestore_jni_FileUtil_mkfifo
+  (JNIEnv *env, jclass class, jstring path) {
+	const char *mpath = (*env)->GetStringUTFChars(env, path, NULL);
+
+	remove(mpath);
+	mkfifo(mpath, WRITE_PERM);
 
 	// Clean up
 	(*env)->ReleaseStringUTFChars(env, path, mpath);
