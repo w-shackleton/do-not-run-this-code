@@ -4,7 +4,7 @@
   android:orientation="vertical"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
-    <uk.digitalsquid.contactrecall.ingame.GameView android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/gameView"></uk.digitalsquid.contactrecall.ingame.GameView>
+    <android.support.v4.view.ViewPager android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/pager"></android.support.v4.view.ViewPager>
 
     <LinearLayout
         android:id="@+id/pauseGameView"

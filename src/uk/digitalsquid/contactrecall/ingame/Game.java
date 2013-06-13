@@ -3,12 +3,13 @@ package uk.digitalsquid.contactrecall.ingame;
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.game.GameDescriptor;
-import uk.digitalsquid.contactrecall.game.GameInstance;
-import android.app.Activity;
+import uk.digitalsquid.contactrecall.ingame.games.GameAdapter;
+import uk.digitalsquid.contactrecall.ingame.games.PhotoNameGame;
+import uk.digitalsquid.contactrecall.misc.Config;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnClickListener;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -16,115 +17,48 @@ import android.widget.Toast;
  * @author william
  *
  */
-public class Game extends Activity implements GameCallbacks, OnClickListener {
+public class Game extends FragmentActivity implements Config {
 	
 	public static final String GAME_DESRIPTOR = "uk.digitalsquid.contactrecall.gameInstance";
 	
-	private App app;
-	
-	GameInstance gameInstance;
-	GameDescriptor gameDesc;
-	
-	private GameView view;
-	
-	private ViewGroup pauseMenu;
+	App app;
+	GameAdapter pagerAdapter;
+	GameDescriptor gameDescriptor;
+	ViewPager viewPager;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.game);
-		view = (GameView) findViewById(R.id.gameView);
-		view.setGameCallbacks(this);
-		pauseMenu = (ViewGroup) findViewById(R.id.pauseGameView);
-		pauseMenu.setVisibility(View.GONE);
+		app = (App)getApplication();
 		
-		findViewById(R.id.resume).setOnClickListener(this);
-		findViewById(R.id.leave).setOnClickListener(this);
-		
-		app = (App) getApplication();
-		if(savedInstanceState != null && savedInstanceState.getBoolean("gameStarted", false)) {
-			gameDesc = savedInstanceState.getParcelable("gameDesc");
-			gameInstance = app.getCurrentGame();
-			if(gameInstance == null) {
-				gameInstance = gameDesc.createGameInstance(app);
-				app.setCurrentGame(gameInstance);
-			}
-		} else {
-			gameDesc = getIntent().getExtras().getParcelable(GAME_DESRIPTOR);
-			if(gameDesc == null) {
-				Toast.makeText(this, "Game settings not found!", Toast.LENGTH_LONG).show();
-				finish();
-			} else {
-				gameInstance = gameDesc.createGameInstance(app);
-				app.setCurrentGame(gameInstance);
-			}
+		// Get game descriptor
+		try {
+			gameDescriptor = getIntent().getParcelableExtra(GAME_DESRIPTOR);
+		} catch(Exception e) { // Who knows
+			Log.e(TAG, "Failed to get game descriptor", e);
+		}
+		if(gameDescriptor == null) {
+			Toast.makeText(this,  "Failed to load game", Toast.LENGTH_LONG).show();
+			finish();
+			return;
 		}
 		
-		view.setGame(gameInstance);
-		
-		// If this is the first time playing
-		if(savedInstanceState == null || !savedInstanceState.getBoolean("gameStarted", false)) {
-			// Start immediately
-			view.resume();
-		}
-		
-		if(savedInstanceState != null) view.restoreState(savedInstanceState);
+		pagerAdapter = getGameAdapter(gameDescriptor);
+		viewPager = (ViewPager) findViewById(R.id.pager);
+		viewPager.setAdapter(pagerAdapter);
 	}
 	
-	@Override
-	protected void onPause() {
-		super.onPause();
-		view.pause();
-		view.onPause();
-	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		view.onResume();
-	}
-	
-	protected void onSaveInstanceState(Bundle out) {
-		out.putParcelable("gameDesc", gameDesc);
-		out.putBoolean("gameStarted", true);
-		view.saveState(out);
-	}
-
-	@Override
-	public void onGamePaused() {
-		pauseMenu.setVisibility(View.VISIBLE);
-	}
-
-	@Override
-	public void onGameResumed() {
-		pauseMenu.setVisibility(View.GONE);
-	}
-
-	@Override
-	public void onGameCancelled() {
-		finish();
-	}
-	
-	@Override
-	public void onBackPressed() {
-		if(view.isRunning())
-			view.pause();
-		else
-			view.resume();
-	}
-
 	/**
-	 * Button presses.
+	 * Generates a {@link GameAdapter}
+	 * @param descriptor
+	 * @return
 	 */
-	@Override
-	public void onClick(View v) {
-		switch(v.getId()) {
-		case R.id.resume:
-			view.resume();
-			break;
-		case R.id.leave:
-			view.cancelGame();
-			break;
+	GameAdapter getGameAdapter(GameDescriptor descriptor) {
+		switch(descriptor.getType()) {
+		case GameDescriptor.GAME_PHOTO_TO_NAME:
+			return new PhotoNameGame(getSupportFragmentManager(), app);
+		default:
+			return null;
 		}
 	}
 }

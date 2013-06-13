@@ -1,6 +1,5 @@
 package uk.digitalsquid.contactrecall.game;
 
-import uk.digitalsquid.contactrecall.App;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -26,7 +25,6 @@ public class GameDescriptor implements Parcelable {
 	public int getType() {
 		return type;
 	}
-	
 
 	@Override
 	public int describeContents() {
@@ -46,13 +44,22 @@ public class GameDescriptor implements Parcelable {
 			return new GameDescriptor[size];
 		}
 	};
-
-	public GameInstance createGameInstance(App app) {
-		switch(type) {
-		case GAME_PHOTO_TO_NAME:
-			return new PhotoToNameGame(app);
-		default:
-			return null;
-		}
+	
+	/**
+	 * How contacts will be selected from the possible contacts
+	 * @author william
+	 *
+	 */
+	public static enum SelectionMode {
+		RANDOM
+	}
+	
+	/**
+	 * How selected contacts will be shuffled
+	 * @author william
+	 *
+	 */
+	public static enum ShufflingMode {
+		RANDOM
 	}
 }
