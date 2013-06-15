@@ -31,6 +31,8 @@ public class Game extends FragmentActivity implements Config {
 		super.onCreate(savedInstanceState);
 		app = (App)getApplication();
 		
+		setContentView(R.layout.game);
+		
 		// Get game descriptor
 		try {
 			gameDescriptor = getIntent().getParcelableExtra(GAME_DESRIPTOR);

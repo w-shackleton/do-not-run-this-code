@@ -4,19 +4,31 @@ import java.util.Comparator;
 import java.util.LinkedList;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Represents the basic info about a contact in the phone's database.
  * @author william
  *
  */
-public class Contact {
+public class Contact implements Parcelable {
 	private int id;
 	
 	private String firstName;
 	private String lastName;
 	private String displayName;
 	
+    private Contact(Parcel in) {
+    	id = in.readInt();
+    	firstName = in.readString();
+    	lastName = in.readString();
+    	displayName = in.readString();
+    }
+	
+	public Contact() {
+	}
+
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -86,4 +98,29 @@ public class Contact {
 			return lhs.getDisplayName().compareToIgnoreCase(rhs.getDisplayName());
 		}
 	};
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(id);
+		dest.writeString(firstName);
+		dest.writeString(lastName);
+		dest.writeString(displayName);
+	}
+	
+	public static final Parcelable.Creator<Contact> CREATOR =
+			new Creator<Contact>() {
+				@Override
+				public Contact[] newArray(int size) {
+					return new Contact[size];
+				}
+				
+				@Override
+				public Contact createFromParcel(Parcel source) {
+					return new Contact(source);
+				}
+			};
 }

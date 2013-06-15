@@ -3,7 +3,9 @@ package uk.digitalsquid.contactrecall.ingame.games;
 import java.util.LinkedList;
 
 import uk.digitalsquid.contactrecall.App;
+import uk.digitalsquid.contactrecall.ingame.fragments.PhotoNameFragment;
 import uk.digitalsquid.contactrecall.mgr.Contact;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
@@ -19,15 +21,12 @@ public class PhotoNameGame extends GameAdapter {
 	}
 
 	@Override
-	public Fragment getItem(int arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Fragment getItem(int pos) {
+		Contact contact = get(pos);
+        Fragment fragment = new PhotoNameFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(PhotoNameFragment.ARG_CONTACT, contact);
+        fragment.setArguments(args);
+		return fragment;
 	}
-
-	@Override
-	public int getCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 }

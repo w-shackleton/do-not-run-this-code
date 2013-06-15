@@ -1,6 +1,7 @@
 package uk.digitalsquid.contactrecall.ingame.games;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 
@@ -45,6 +46,7 @@ public abstract class GameAdapter extends FragmentStatePagerAdapter {
 		
 		ArrayList<Contact> selection =
 				selectContacts(possibleContacts, maxNum, selectionMode);
+		selectedContacts = shuffleContacts(selection, shufflingMode);
 	}
 
 	@Override
@@ -53,7 +55,14 @@ public abstract class GameAdapter extends FragmentStatePagerAdapter {
 			if(selectedContacts == null) return 0;
 			return selectedContacts.size();
 		}
-		return 1000; // Infinite game?!?
+		return 1000; // TODO: Infinite game?!?
+	}
+	
+	protected final Contact get(int pos) {
+		if(selectedContacts == null) return null;
+		if(gameIsFinite)
+			return selectedContacts.get(pos);
+		throw new RuntimeException("Infinite mode not yet implemented");
 	}
 
 	protected abstract LinkedList<Contact> getPossibleContacts();
@@ -78,7 +87,17 @@ public abstract class GameAdapter extends FragmentStatePagerAdapter {
 		case RANDOM:
 			return ListUtils.selectRandomExclusiveDistinctSet(possibles, getContactComparator(), null, num);
 		default:
-			return null;
+			return new ArrayList<Contact>(possibles);
+		}
+	}
+
+	private ArrayList<Contact> shuffleContacts(ArrayList<Contact> selection, ShufflingMode mode) {
+		switch(mode) {
+		case RANDOM:
+			Collections.shuffle(selection);
+			return selection;
+		default:
+			return selection;
 		}
 	}
 }

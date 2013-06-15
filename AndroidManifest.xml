@@ -15,9 +15,9 @@
             </intent-filter>
         </activity>
         <activity android:name="ContactViewer" android:label="@string/viewcontacts"></activity>
-        <activity android:label="@string/capturephoto" android:name="PhotoCapture" android:theme="@android:style/Theme.Dialog"></activity>
-        <activity android:label="@string/selectMode" android:name="ModeSelect" android:theme="@android:style/Theme.Light"></activity>
-        <activity android:name=".ingame.Game" android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+        <activity android:label="@string/capturephoto" android:name="PhotoCapture" android:theme="@style/dialog"></activity>
+        <activity android:label="@string/selectMode" android:name="ModeSelect" android:theme="@style/light"></activity>
+        <activity android:name=".ingame.Game" android:theme="@style/light"></activity>
 
     </application>
 </manifest>
