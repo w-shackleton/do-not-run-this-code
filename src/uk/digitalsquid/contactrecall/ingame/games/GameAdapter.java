@@ -11,12 +11,16 @@ import uk.digitalsquid.contactrecall.game.GameDescriptor.SelectionMode;
 import uk.digitalsquid.contactrecall.game.GameDescriptor.ShufflingMode;
 import uk.digitalsquid.contactrecall.mgr.Contact;
 import uk.digitalsquid.contactrecall.misc.ListUtils;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.content.Context;
+import android.database.DataSetObserver;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.widget.Adapter;
 
-public abstract class GameAdapter extends FragmentStatePagerAdapter {
+public abstract class GameAdapter implements Adapter, Parcelable {
 	
-	protected final App app;
+	protected transient App app;
+	protected transient Context context;
 	
 	// TODO: These will be settings at some point
 	private boolean gameIsFinite = true;
@@ -48,9 +52,9 @@ public abstract class GameAdapter extends FragmentStatePagerAdapter {
 	ArrayList<Contact> selectedContacts;
 
 	@SuppressWarnings("unchecked")
-	public GameAdapter(FragmentManager fm, App app, GameDescriptor descriptor) {
-		super(fm);
+	public GameAdapter(Context context, App app, GameDescriptor descriptor) {
 		this.app = app;
+		this.context = context;
 		possibleContacts = getPossibleContacts();
 		
 		ArrayList<Contact> badContacts = null; // TODO: Implement
@@ -71,8 +75,14 @@ public abstract class GameAdapter extends FragmentStatePagerAdapter {
 		}
 		return 1000; // TODO: Infinite game?!?
 	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
 	
-	protected final Contact get(int pos) {
+	@Override
+	public Contact getItem(int pos) {
 		if(selectedContacts == null) return null;
 		if(gameIsFinite)
 			return selectedContacts.get(pos);
@@ -117,5 +127,67 @@ public abstract class GameAdapter extends FragmentStatePagerAdapter {
 	
 	protected Contact[] getOtherAnswers() {
 		return otherAnswers;
+	}
+
+	// Not needed for this
+	@Override
+	public int getItemViewType(int position) {
+		return 0;
+	}
+	@Override
+	public int getViewTypeCount() {
+		return 1;
+	}
+
+	@Override
+	public boolean hasStableIds() {
+		return true;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return selectedContacts == null;
+	}
+
+	@Override
+	public void registerDataSetObserver(DataSetObserver observer) { }
+
+	@Override
+	public void unregisterDataSetObserver(DataSetObserver observer) { }
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(gameIsFinite ? 1 : 0);
+		dest.writeInt(maxNum);
+		dest.writeFloat(maxTimePerContact);
+		dest.writeParcelableArray(otherAnswers, 0);
+		dest.writeInt(numberOfChoices);
+		// Eurgh
+		dest.writeString(selectionMode.name());
+		dest.writeString(shufflingMode.name());
+		
+		dest.writeList(possibleContacts);
+		dest.writeList(selectedContacts);
+	}
+	
+	GameAdapter(Parcel in) {
+		gameIsFinite = in.readInt() == 1;
+		maxNum = in.readInt();
+		maxTimePerContact = in.readFloat();
+		otherAnswers = (Contact[]) in.readParcelableArray(null);
+		numberOfChoices = in.readInt();
+		
+		selectionMode = SelectionMode.valueOf(in.readString());
+		shufflingMode = ShufflingMode.valueOf(in.readString());
+		
+		possibleContacts = new LinkedList<Contact>();
+		in.readList(possibleContacts, null);
+		selectedContacts = new ArrayList<Contact>();
+		in.readList(selectedContacts, null);
 	}
 }

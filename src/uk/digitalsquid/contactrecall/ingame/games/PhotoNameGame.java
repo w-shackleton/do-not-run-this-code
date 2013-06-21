@@ -4,11 +4,13 @@ import java.util.LinkedList;
 
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.game.GameDescriptor;
-import uk.digitalsquid.contactrecall.ingame.fragments.PhotoNameFragment;
+import uk.digitalsquid.contactrecall.ingame.fragments.PhotoNameView;
 import uk.digitalsquid.contactrecall.mgr.Contact;
+import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.os.Parcel;
+import android.view.View;
+import android.view.ViewGroup;
 
 /**
  * Using {@link Contact} as the answer type so we can encapsulate
@@ -18,8 +20,8 @@ import android.support.v4.app.FragmentManager;
  */
 public class PhotoNameGame extends GameAdapter {
 	
-	public PhotoNameGame(FragmentManager fm, App app, GameDescriptor descriptor) {
-		super(fm, app, descriptor);
+	public PhotoNameGame(Context context, App app, GameDescriptor descriptor) {
+		super(context, app, descriptor);
 	}
 	
 	protected LinkedList<Contact> getPossibleContacts() {
@@ -27,16 +29,22 @@ public class PhotoNameGame extends GameAdapter {
 	}
 
 	@Override
-	public Fragment getItem(int pos) {
-		Contact contact = get(pos);
-        Fragment fragment = new PhotoNameFragment();
+	public View getView(int position, View convertView, ViewGroup parent) {
+		Contact contact = getItem(position);
         Bundle args = new Bundle();
         
-        args.putParcelable(PhotoNameFragment.ARG_CONTACT, contact);
-        args.putInt(PhotoNameFragment.ARG_NUMBER_CHOICES, numberOfChoices);
-        args.putParcelableArray(PhotoNameFragment.ARG_OTHER_NAMES, getOtherAnswers());
+        args.putParcelable(PhotoNameView.ARG_CONTACT, contact);
+        args.putInt(PhotoNameView.ARG_NUMBER_CHOICES, numberOfChoices);
+        args.putParcelableArray(PhotoNameView.ARG_OTHER_NAMES, getOtherAnswers());
         
-        fragment.setArguments(args);
-		return fragment;
+        PhotoNameView viewCreator = new PhotoNameView(app, context, parent, args);
+        
+		return viewCreator.getRootView();
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		// TODO Auto-generated method stub
+		
 	}
 }

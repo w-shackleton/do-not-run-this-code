@@ -5,36 +5,32 @@ import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.game.GameDescriptor.NamePart;
 import uk.digitalsquid.contactrecall.mgr.Contact;
 import uk.digitalsquid.contactrecall.misc.Const;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
-public class PhotoNameFragment extends Fragment {
+public class PhotoNameView {
 	public static final String ARG_CONTACT = "contact";
 	public static final String ARG_OTHER_NAMES = "othernames";
 	public static final String ARG_NUMBER_CHOICES = "numchoices";
 	
-	private App app;
 	private ImageView photo;
 	private Button[] choiceButtons = new Button[8];
 	private int correctChoice;
 	private int numberOfChoices;
 	
-    @Override
-    public View onCreateView(LayoutInflater inflater,
-            ViewGroup container, Bundle savedInstanceState) {
-        app = (App) getActivity().getApplication();
-        
+	private View rootView;
+	
+	public PhotoNameView(App app, Context context, ViewGroup root, Bundle args) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
-        View rootView = inflater.inflate(
-                R.layout.photonameview, container, false);
-        Bundle args = getArguments();
+        rootView = LayoutInflater.from(context).inflate(
+                R.layout.photonameview, root, false);
         
         // TODO: Customisable
         NamePart answerNamePart = NamePart.DISPLAY;
@@ -60,6 +56,8 @@ public class PhotoNameFragment extends Fragment {
         
         // Configure game - either restore state or create anew.
         
+        // TODO: ?????
+        Bundle savedInstanceState = null;
         if(savedInstanceState != null) {
         	correctChoice = savedInstanceState.getInt("correctChoice");
         	for(int i = 0; i < numberOfChoices; i++) {
@@ -87,17 +85,18 @@ public class PhotoNameFragment extends Fragment {
         // Show photo
         Bitmap bmp = contact.getPhoto(app.getPhotos());
         photo.setImageBitmap(bmp);
-        
-        return rootView;
-    }
-    
-    @Override
+	}
+	
+	// TODO: ????
     public void onSaveInstanceState(Bundle outState) {
-    	super.onSaveInstanceState(outState);
     	outState.putInt("correctChoice", correctChoice);
     	for(int i = 0; i < numberOfChoices; i++) {
     		outState.putString(String.format("choiceButtonText%d", i),
     				choiceButtons[i].getText().toString());
     	}
     }
+
+	public View getRootView() {
+		return rootView;
+	}
 }
