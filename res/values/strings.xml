@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, StartActivity!</string>
     <string name="app_name">Contact Recaller</string>
     <string name="changegroups">Contact Groups</string>
     <string name="groups">Groups</string>
@@ -10,7 +9,6 @@
     <string name="capturephoto">Take image</string>
     <string name="processing">Processing...</string>
     <string name="selectMode">Select a mode</string>
-    <string name="mode_nameGuess">Picture -&gt; names</string>
     <string name="start">Start</string>
     <string name="resume">Resume</string>
     <string name="back">Leave game</string>

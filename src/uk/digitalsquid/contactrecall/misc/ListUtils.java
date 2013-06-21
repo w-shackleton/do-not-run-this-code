@@ -95,4 +95,18 @@ public final class ListUtils {
 		}
 		return ret;
 	}
+	
+	/**
+	 * Concatenates all given lists into empty
+	 * @param empty An empty list
+	 * @param lists
+	 * @return
+	 */
+	public static <T extends List<E>, E> T concat(T empty, T...lists) {
+		for(T list : lists) {
+			if(list != null)
+				empty.addAll(list);
+		}
+		return empty;
+	}
 }

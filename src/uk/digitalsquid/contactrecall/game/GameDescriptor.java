@@ -14,8 +14,11 @@ public class GameDescriptor implements Parcelable {
 	
 	private int type;
 	
+	private int optionSources;
+	
 	private GameDescriptor(Parcel parcel) {
 		type = parcel.readInt();
+		optionSources = parcel.readInt();
 	}
 	public GameDescriptor(int type) {
 		this.type = type;
@@ -34,8 +37,16 @@ public class GameDescriptor implements Parcelable {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeInt(type);
+		dest.writeInt(optionSources);
 	}
 	
+	public int getOptionSources() {
+		return optionSources;
+	}
+	public void setOptionSources(int optionSources) {
+		this.optionSources = optionSources;
+	}
+
 	public static final Parcelable.Creator<GameDescriptor> CREATOR = new Parcelable.Creator<GameDescriptor>() {
 		public GameDescriptor createFromParcel(Parcel in) {
 			return new GameDescriptor(in);
@@ -62,4 +73,29 @@ public class GameDescriptor implements Parcelable {
 	public static enum ShufflingMode {
 		RANDOM
 	}
+	
+	/**
+	 * The part of the name to use
+	 * @author william
+	 *
+	 */
+	public static enum NamePart {
+		FIRST,
+		LAST,
+		DISPLAY,
+		RANDOM
+	}
+	
+	/**
+	 * Contacts who the user is bad at remembering
+	 */
+	public static final int OPTION_SOURCE_BAD_CONTACTS = 1;
+	/**
+	 * All contacts
+	 */
+	public static final int OPTION_SOURCE_ALL_CONTACTS = 2;
+	/**
+	 * Lists of names
+	 */
+	public static final int OPTION_SOURCE_NAME_LISTS = 4;
 }

@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 
 import uk.digitalsquid.contactrecall.App;
+import uk.digitalsquid.contactrecall.game.GameDescriptor;
 import uk.digitalsquid.contactrecall.game.GameDescriptor.SelectionMode;
 import uk.digitalsquid.contactrecall.game.GameDescriptor.ShufflingMode;
 import uk.digitalsquid.contactrecall.mgr.Contact;
@@ -24,6 +25,13 @@ public abstract class GameAdapter extends FragmentStatePagerAdapter {
 	// Value of 0 will indicate no timer
 	private float maxTimePerContact = 5;
 	
+	private Contact[] otherAnswers;
+	
+	/**
+	 * How many choices are presented per question
+	 */
+	protected int numberOfChoices = 4;
+	
 	SelectionMode selectionMode = SelectionMode.RANDOM;
 	ShufflingMode shufflingMode = ShufflingMode.RANDOM;
 	
@@ -39,10 +47,16 @@ public abstract class GameAdapter extends FragmentStatePagerAdapter {
 	 */
 	ArrayList<Contact> selectedContacts;
 
-	public GameAdapter(FragmentManager fm, App app) {
+	@SuppressWarnings("unchecked")
+	public GameAdapter(FragmentManager fm, App app, GameDescriptor descriptor) {
 		super(fm);
 		this.app = app;
 		possibleContacts = getPossibleContacts();
+		
+		ArrayList<Contact> badContacts = null; // TODO: Implement
+		ArrayList<Contact> allContacts = new ArrayList<Contact>(app.getContacts().getContacts());
+		ArrayList<Contact> nameLists = null; // TODO: Implement
+		otherAnswers = ListUtils.concat(new ArrayList<Contact>(), badContacts, allContacts, nameLists).toArray(new Contact[0]);
 		
 		ArrayList<Contact> selection =
 				selectContacts(possibleContacts, maxNum, selectionMode);
@@ -99,5 +113,9 @@ public abstract class GameAdapter extends FragmentStatePagerAdapter {
 		default:
 			return selection;
 		}
+	}
+	
+	protected Contact[] getOtherAnswers() {
+		return otherAnswers;
 	}
 }
