@@ -22,11 +22,19 @@ public class PhotoNameGame extends GameAdapter {
 	
 	public PhotoNameGame(Context context, App app, GameDescriptor descriptor) {
 		super(context, app, descriptor);
+		state = new Bundle();
+	}
+	
+	public PhotoNameGame(Parcel in) {
+		super(in);
+		state = in.readBundle();
 	}
 	
 	protected LinkedList<Contact> getPossibleContacts() {
 		return app.getGame().getAllPhotoContacts();
 	}
+	
+	Bundle state;
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
@@ -37,14 +45,32 @@ public class PhotoNameGame extends GameAdapter {
         args.putInt(PhotoNameView.ARG_NUMBER_CHOICES, numberOfChoices);
         args.putParcelableArray(PhotoNameView.ARG_OTHER_NAMES, getOtherAnswers());
         
-        PhotoNameView viewCreator = new PhotoNameView(app, context, parent, args);
+        Bundle viewState = state.getBundle(String.format("view%d", position));
+        PhotoNameView viewCreator = new PhotoNameView(app, context, parent, args, viewState);
+        
+        Bundle viewStateModified = new Bundle();
+        viewCreator.onSaveInstanceState(viewStateModified);
+        state.putBundle(String.format("view%d", position), viewStateModified);
         
 		return viewCreator.getRootView();
 	}
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		// TODO Auto-generated method stub
-		
+		super.writeToParcel(dest, flags);
+		dest.writeBundle(state);
 	}
+	
+	public static final Creator<PhotoNameGame> CREATOR = new Creator<PhotoNameGame>() {
+
+		@Override
+		public PhotoNameGame createFromParcel(Parcel source) {
+			return new PhotoNameGame(source);
+		}
+
+		@Override
+		public PhotoNameGame[] newArray(int size) {
+			return new PhotoNameGame[size];
+		}
+	};
 }

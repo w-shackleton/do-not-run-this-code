@@ -190,4 +190,17 @@ public abstract class GameAdapter implements Adapter, Parcelable {
 		selectedContacts = new ArrayList<Contact>();
 		in.readList(selectedContacts, null);
 	}
+	
+	/**
+	 * Initialises the adapter's transient fields. Must be called after
+	 * de-parcelisation
+	 * @param app
+	 * @param context
+	 */
+	public void init(App app, Context context) {
+		if(app == null || context == null)
+			throw new IllegalArgumentException("Arguments must be non-null");
+		this.app = app;
+		this.context = context;
+	}
 }

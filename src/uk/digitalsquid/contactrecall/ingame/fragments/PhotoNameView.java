@@ -10,11 +10,17 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
-public class PhotoNameView {
+/**
+ * A view that shows a photo and a set of buttons representing names
+ * @author william
+ *
+ */
+public class PhotoNameView implements OnClickListener {
 	public static final String ARG_CONTACT = "contact";
 	public static final String ARG_OTHER_NAMES = "othernames";
 	public static final String ARG_NUMBER_CHOICES = "numchoices";
@@ -26,7 +32,7 @@ public class PhotoNameView {
 	
 	private View rootView;
 	
-	public PhotoNameView(App app, Context context, ViewGroup root, Bundle args) {
+	public PhotoNameView(App app, Context context, ViewGroup root, Bundle args, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
         rootView = LayoutInflater.from(context).inflate(
@@ -36,7 +42,7 @@ public class PhotoNameView {
         NamePart answerNamePart = NamePart.DISPLAY;
         
         Contact contact = args.getParcelable(ARG_CONTACT);
-        int numberOfChoices = args.getInt(ARG_NUMBER_CHOICES);
+        numberOfChoices = args.getInt(ARG_NUMBER_CHOICES);
         if(numberOfChoices == 0) numberOfChoices = 4;
         Contact[] otherAnswers = (Contact[]) args.getParcelableArray(ARG_OTHER_NAMES);
         
@@ -52,12 +58,11 @@ public class PhotoNameView {
         
         for(int i = numberOfChoices; i < choiceButtons.length; i++) {
         	choiceButtons[i].setVisibility(View.GONE);
+        	choiceButtons[i].setOnClickListener(this);
         }
         
         // Configure game - either restore state or create anew.
         
-        // TODO: ?????
-        Bundle savedInstanceState = null;
         if(savedInstanceState != null) {
         	correctChoice = savedInstanceState.getInt("correctChoice");
         	for(int i = 0; i < numberOfChoices; i++) {
@@ -87,7 +92,6 @@ public class PhotoNameView {
         photo.setImageBitmap(bmp);
 	}
 	
-	// TODO: ????
     public void onSaveInstanceState(Bundle outState) {
     	outState.putInt("correctChoice", correctChoice);
     	for(int i = 0; i < numberOfChoices; i++) {
@@ -98,5 +102,26 @@ public class PhotoNameView {
 
 	public View getRootView() {
 		return rootView;
+	}
+
+	@Override
+	public void onClick(View view) {
+		int choice;
+		switch(view.getId()) {
+		default:
+		case R.id.choice1: choice = 0;
+		case R.id.choice2: choice = 1;
+		case R.id.choice3: choice = 2;
+		case R.id.choice4: choice = 3;
+		case R.id.choice5: choice = 4;
+		case R.id.choice6: choice = 5;
+		case R.id.choice7: choice = 6;
+		case R.id.choice8: choice = 7;
+		}
+		// Disable further button clicking
+		// TODO: Check user can't cheat using Android multitouch features
+		for(int i = 0; i < numberOfChoices; i++) {
+			choiceButtons[i].setEnabled(false);
+		}
 	}
 }

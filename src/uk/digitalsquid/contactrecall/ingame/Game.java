@@ -127,7 +127,7 @@ public class Game extends Activity implements Config {
 			super.onActivityCreated(savedInstanceState);
 			app = (App)getActivity().getApplication();
 			
-			gameAdapter = getGameAdapter(gameDescriptor);
+			gameAdapter = getGameAdapter(gameDescriptor, savedInstanceState);
 			viewFlipper.setAdapter(gameAdapter);
 		}
 		
@@ -136,13 +136,27 @@ public class Game extends Activity implements Config {
 		 * @param descriptor
 		 * @return
 		 */
-		GameAdapter getGameAdapter(GameDescriptor descriptor) {
-			switch(descriptor.getType()) {
-			case GameDescriptor.GAME_PHOTO_TO_NAME:
-				return new PhotoNameGame(getActivity(), app, descriptor);
-			default:
-				return null;
+		GameAdapter getGameAdapter(GameDescriptor descriptor, Bundle savedInstanceState) {
+			if(savedInstanceState == null) {
+				switch(descriptor.getType()) {
+				case GameDescriptor.GAME_PHOTO_TO_NAME:
+					return new PhotoNameGame(getActivity(), app, descriptor);
+				default:
+					return null;
+				}
+			} else {
+				GameAdapter gameAdapter = savedInstanceState.getParcelable("gameAdapter");
+				if(gameAdapter == null) return getGameAdapter(descriptor, null);
+				gameAdapter.init(app, getActivity());
+				return gameAdapter;
 			}
+		}
+		
+		@Override
+		public void onSaveInstanceState(Bundle outState) {
+			super.onSaveInstanceState(outState);
+			if(gameAdapter != null)
+				outState.putParcelable("gameAdapter", gameAdapter);
 		}
 	}
 	
