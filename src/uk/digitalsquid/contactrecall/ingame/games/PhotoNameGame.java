@@ -3,7 +3,8 @@ package uk.digitalsquid.contactrecall.ingame.games;
 import java.util.LinkedList;
 
 import uk.digitalsquid.contactrecall.App;
-import uk.digitalsquid.contactrecall.game.GameDescriptor;
+import uk.digitalsquid.contactrecall.GameDescriptor;
+import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.ingame.fragments.PhotoNameView;
 import uk.digitalsquid.contactrecall.mgr.Contact;
 import android.content.Context;
@@ -20,8 +21,8 @@ import android.view.ViewGroup;
  */
 public class PhotoNameGame extends GameAdapter {
 	
-	public PhotoNameGame(Context context, App app, GameDescriptor descriptor) {
-		super(context, app, descriptor);
+	public PhotoNameGame(Context context, App app, GameDescriptor descriptor, GameCallbacks callbacks) {
+		super(context, app, descriptor, callbacks);
 		state = new Bundle();
 	}
 	
@@ -46,7 +47,7 @@ public class PhotoNameGame extends GameAdapter {
         args.putParcelableArray(PhotoNameView.ARG_OTHER_NAMES, getOtherAnswers());
         
         Bundle viewState = state.getBundle(String.format("view%d", position));
-        PhotoNameView viewCreator = new PhotoNameView(app, context, parent, args, viewState);
+        PhotoNameView viewCreator = new PhotoNameView(app, context, parent, args, viewState, callbacks);
         
         Bundle viewStateModified = new Bundle();
         viewCreator.onSaveInstanceState(viewStateModified);

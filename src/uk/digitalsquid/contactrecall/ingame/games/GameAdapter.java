@@ -6,9 +6,10 @@ import java.util.Comparator;
 import java.util.LinkedList;
 
 import uk.digitalsquid.contactrecall.App;
-import uk.digitalsquid.contactrecall.game.GameDescriptor;
-import uk.digitalsquid.contactrecall.game.GameDescriptor.SelectionMode;
-import uk.digitalsquid.contactrecall.game.GameDescriptor.ShufflingMode;
+import uk.digitalsquid.contactrecall.GameDescriptor;
+import uk.digitalsquid.contactrecall.GameDescriptor.SelectionMode;
+import uk.digitalsquid.contactrecall.GameDescriptor.ShufflingMode;
+import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.mgr.Contact;
 import uk.digitalsquid.contactrecall.misc.ListUtils;
 import android.content.Context;
@@ -21,6 +22,7 @@ public abstract class GameAdapter implements Adapter, Parcelable {
 	
 	protected transient App app;
 	protected transient Context context;
+	protected transient GameCallbacks callbacks;
 	
 	// TODO: These will be settings at some point
 	private boolean gameIsFinite = true;
@@ -52,9 +54,10 @@ public abstract class GameAdapter implements Adapter, Parcelable {
 	ArrayList<Contact> selectedContacts;
 
 	@SuppressWarnings("unchecked")
-	public GameAdapter(Context context, App app, GameDescriptor descriptor) {
+	public GameAdapter(Context context, App app, GameDescriptor descriptor, GameCallbacks callbacks) {
 		this.app = app;
 		this.context = context;
+		this.callbacks = callbacks;
 		possibleContacts = getPossibleContacts();
 		
 		ArrayList<Contact> badContacts = null; // TODO: Implement
@@ -197,10 +200,11 @@ public abstract class GameAdapter implements Adapter, Parcelable {
 	 * @param app
 	 * @param context
 	 */
-	public void init(App app, Context context) {
-		if(app == null || context == null)
+	public void init(App app, Context context, GameCallbacks callbacks) {
+		if(app == null || context == null || callbacks == null)
 			throw new IllegalArgumentException("Arguments must be non-null");
 		this.app = app;
 		this.context = context;
+		this.callbacks = callbacks;
 	}
 }

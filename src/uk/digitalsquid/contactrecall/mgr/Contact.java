@@ -3,7 +3,7 @@ package uk.digitalsquid.contactrecall.mgr;
 import java.util.Comparator;
 import java.util.LinkedList;
 
-import uk.digitalsquid.contactrecall.game.GameDescriptor.NamePart;
+import uk.digitalsquid.contactrecall.GameDescriptor.NamePart;
 import uk.digitalsquid.contactrecall.misc.Const;
 
 import android.graphics.Bitmap;

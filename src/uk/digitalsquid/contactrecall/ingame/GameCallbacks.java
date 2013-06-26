@@ -1,26 +1,16 @@
 package uk.digitalsquid.contactrecall.ingame;
 
 /**
- * Callback functions from the game itself to the activity that is hosting it.
+ * Callback functions from the game itself to the fragment that is hosting it.
  * @author william
  *
  */
-interface GameCallbacks {
-	void onGamePaused();
-	void onGameResumed();
-	void onGameCancelled();
-	
-	static final GameCallbacks EMPTY_CALLBACKS = new GameCallbacks() {
-		@Override
-		public void onGameResumed() {
-		}
-		
-		@Override
-		public void onGamePaused() {
-		}
-		
-		@Override
-		public void onGameCancelled() {
-		}
-	};
+public interface GameCallbacks {
+	/**
+	 * Notifies the activity / fragment that the user has made a choice
+	 * and that it is time to move on.
+	 * @param choice The number of the choice made TODO may not be used
+	 * @param correct If <code>true</code>, the choice was correct
+	 */
+	void choiceMade(int choice, boolean correct);
 }

@@ -1,4 +1,4 @@
-package uk.digitalsquid.contactrecall.game;
+package uk.digitalsquid.contactrecall;
 
 import android.os.Parcel;
 import android.os.Parcelable;

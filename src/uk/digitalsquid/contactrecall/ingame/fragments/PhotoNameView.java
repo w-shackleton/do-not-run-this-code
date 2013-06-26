@@ -1,8 +1,9 @@
 package uk.digitalsquid.contactrecall.ingame.fragments;
 
 import uk.digitalsquid.contactrecall.App;
+import uk.digitalsquid.contactrecall.GameDescriptor.NamePart;
 import uk.digitalsquid.contactrecall.R;
-import uk.digitalsquid.contactrecall.game.GameDescriptor.NamePart;
+import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.mgr.Contact;
 import uk.digitalsquid.contactrecall.misc.Const;
 import android.content.Context;
@@ -25,6 +26,9 @@ public class PhotoNameView implements OnClickListener {
 	public static final String ARG_OTHER_NAMES = "othernames";
 	public static final String ARG_NUMBER_CHOICES = "numchoices";
 	
+	private transient Context context;
+	private transient GameCallbacks callbacks;
+	
 	private ImageView photo;
 	private Button[] choiceButtons = new Button[8];
 	private int correctChoice;
@@ -32,7 +36,10 @@ public class PhotoNameView implements OnClickListener {
 	
 	private View rootView;
 	
-	public PhotoNameView(App app, Context context, ViewGroup root, Bundle args, Bundle savedInstanceState) {
+	public PhotoNameView(App app, Context context, ViewGroup root, Bundle args, Bundle savedInstanceState,
+			GameCallbacks callbacks) {
+		this.context = context;
+		this.callbacks = callbacks;
         // The last two arguments ensure LayoutParams are inflated
         // properly.
         rootView = LayoutInflater.from(context).inflate(
@@ -56,9 +63,11 @@ public class PhotoNameView implements OnClickListener {
         choiceButtons[7] = (Button) rootView.findViewById(R.id.choice8);
         photo = (ImageView) rootView.findViewById(R.id.photo);
         
+        for(int i = 0; i < numberOfChoices; i++) {
+        	choiceButtons[i].setOnClickListener(this);
+        }
         for(int i = numberOfChoices; i < choiceButtons.length; i++) {
         	choiceButtons[i].setVisibility(View.GONE);
-        	choiceButtons[i].setOnClickListener(this);
         }
         
         // Configure game - either restore state or create anew.
@@ -69,6 +78,11 @@ public class PhotoNameView implements OnClickListener {
         		String text = savedInstanceState.getString(
         				String.format("choiceButtonText%d", i));
         		if(text != null) choiceButtons[i].setText(text);
+        	}
+        	
+        	// TODO: Not recovering completed state
+        	if(savedInstanceState.getInt("completedChoice", -1) != -1) {
+        		completeView(savedInstanceState.getInt("completedChoice", -1));
         	}
         } else {
 	        correctChoice = Const.RAND.nextInt(numberOfChoices);
@@ -98,10 +112,47 @@ public class PhotoNameView implements OnClickListener {
     		outState.putString(String.format("choiceButtonText%d", i),
     				choiceButtons[i].getText().toString());
     	}
+    	outState.putInt("completedChoice", completedChoice);
     }
 
 	public View getRootView() {
 		return rootView;
+	}
+	
+	int completedChoice = -1;
+	
+	private void completeView(int choice) {
+		completedChoice = choice;
+		// Disable further button clicking
+		// TODO: Check user can't cheat using Android multitouch features,
+		// eg. press all four buttons at once.
+		for(int i = 0; i < numberOfChoices; i++) {
+			choiceButtons[i].setEnabled(false);
+		}
+		
+		// Set button styles accordingly
+		if(choice == correctChoice) {
+			choiceButtons[choice].setBackgroundColor(
+					context.getResources().getColor(R.color.correct_actual_bg));
+			/* TODO: Do we want to change BG col for other buttons
+			for(int i = 0; i < numberOfChoices; i++) {
+				if(i == choice) continue;
+				choiceButtons[i].setBackgroundColor(
+						context.getResources().getColor(R.color.correct_other_bg));
+			} */
+		} else {
+			choiceButtons[choice].setBackgroundColor(
+					context.getResources().getColor(R.color.incorrect_choice_bg));
+			choiceButtons[correctChoice].setBackgroundColor(
+					context.getResources().getColor(R.color.incorrect_actual_bg));
+			/* TODO: Do we want to change BG col for other buttons
+			for(int i = 0; i < numberOfChoices; i++) {
+				if(i == choice) continue;
+				choiceButtons[i].setBackgroundColor(
+						context.getResources().getColor(R.color.correct_other_bg));
+			} */
+		}
+		callbacks.choiceMade(choice, choice == correctChoice);
 	}
 
 	@Override
@@ -109,19 +160,15 @@ public class PhotoNameView implements OnClickListener {
 		int choice;
 		switch(view.getId()) {
 		default:
-		case R.id.choice1: choice = 0;
-		case R.id.choice2: choice = 1;
-		case R.id.choice3: choice = 2;
-		case R.id.choice4: choice = 3;
-		case R.id.choice5: choice = 4;
-		case R.id.choice6: choice = 5;
-		case R.id.choice7: choice = 6;
-		case R.id.choice8: choice = 7;
+		case R.id.choice1: choice = 0; break;
+		case R.id.choice2: choice = 1; break;
+		case R.id.choice3: choice = 2; break;
+		case R.id.choice4: choice = 3; break;
+		case R.id.choice5: choice = 4; break;
+		case R.id.choice6: choice = 5; break;
+		case R.id.choice7: choice = 6; break;
+		case R.id.choice8: choice = 7; break;
 		}
-		// Disable further button clicking
-		// TODO: Check user can't cheat using Android multitouch features
-		for(int i = 0; i < numberOfChoices; i++) {
-			choiceButtons[i].setEnabled(false);
-		}
+		completeView(choice);
 	}
 }

@@ -1,6 +1,5 @@
 package uk.digitalsquid.contactrecall;
 
-import uk.digitalsquid.contactrecall.game.GameDescriptor;
 import uk.digitalsquid.contactrecall.ingame.Game;
 import android.app.Activity;
 import android.content.Intent;
