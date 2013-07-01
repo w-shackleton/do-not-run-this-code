@@ -5,10 +5,13 @@ import uk.digitalsquid.contactrecall.GameDescriptor.NamePart;
 import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.mgr.Contact;
+import uk.digitalsquid.contactrecall.misc.Config;
 import uk.digitalsquid.contactrecall.misc.Const;
+import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,7 +24,7 @@ import android.widget.ImageView;
  * @author william
  *
  */
-public class PhotoNameView extends Fragment implements OnClickListener {
+public class PhotoNameView extends Fragment implements OnClickListener, Config {
 	public static final String ARG_CONTACT = "contact";
 	public static final String ARG_OTHER_NAMES = "othernames";
 	public static final String ARG_NUMBER_CHOICES = "numchoices";
@@ -41,7 +44,6 @@ public class PhotoNameView extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
 		super.onCreateView(inflater, root, savedInstanceState);
 		Bundle args = getArguments();
-		this.setCallbacks(callbacks);
         // The last two arguments ensure LayoutParams are inflated
         // properly.
         View rootView = inflater.inflate(
@@ -113,6 +115,15 @@ public class PhotoNameView extends Fragment implements OnClickListener {
         photo.setImageBitmap(bmp);
 	}
 	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		if(activity instanceof GameCallbacks)
+			callbacks = (GameCallbacks) activity;
+		else
+			Log.e(TAG, "onAttach - activity doesn't implement callbacks");
+	}
+	
     public void onSaveInstanceState(Bundle outState) {
     	outState.putInt("correctChoice", correctChoice);
     	for(int i = 0; i < numberOfChoices; i++) {
@@ -155,7 +166,8 @@ public class PhotoNameView extends Fragment implements OnClickListener {
 						getActivity().getResources().getColor(R.color.correct_other_bg));
 			} */
 		}
-		callbacks.choiceMade(choice, choice == correctChoice);
+		if(callbacks != null) callbacks.choiceMade(choice, choice == correctChoice);
+		else Log.e(TAG, "Callbacks are currently null!");
 	}
 
 	@Override
@@ -173,9 +185,5 @@ public class PhotoNameView extends Fragment implements OnClickListener {
 		case R.id.choice8: choice = 7; break;
 		}
 		completeView(choice);
-	}
-
-	public void setCallbacks(GameCallbacks callbacks) {
-		this.callbacks = callbacks;
 	}
 }

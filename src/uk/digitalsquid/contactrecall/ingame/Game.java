@@ -23,13 +23,19 @@ import android.widget.Toast;
  * @author william
  *
  */
-public class Game extends Activity implements Config {
+public class Game extends Activity implements GameCallbacks, Config {
 	
 	public static final String GAME_DESRIPTOR = "uk.digitalsquid.contactrecall.gameInstance";
 	
 	GameDescriptor gameDescriptor;
 	
 	boolean gamePaused = false;
+	
+	/**
+	 * This class implements {@link GameCallbacks} -
+	 * this implementation proxies to the given callbacks.
+	 */
+	GameCallbacks callbacks;
 	
 	View pauseLayout;
 	
@@ -41,6 +47,9 @@ public class Game extends Activity implements Config {
 		
 		if(savedInstanceState == null) {
 			GameFragment gameFragment = new GameFragment();
+			callbacks = gameFragment;
+			
+			// TODO: Callbacks won't be set when there is a savedInstanceState
 			
 			Bundle fragmentArgs = new Bundle();
 			
@@ -173,7 +182,15 @@ public class Game extends Activity implements Config {
 
 		@Override
 		public void choiceMade(int choice, boolean correct) {
-			// TODO: Check end-case
+			position++;
+			if(position == gameAdapter.getCount()) {
+				// TODO: End-case
+			}
+			
+			getFragmentManager().beginTransaction().
+				setCustomAnimations(R.animator.next_card_in, R.animator.next_card_out).
+				replace(R.id.pager, gameAdapter.getFragment(position)).
+				commit();
 		}
 	}
 	
@@ -203,5 +220,10 @@ public class Game extends Activity implements Config {
 				break;
 			}
 		}
+	}
+
+	@Override
+	public void choiceMade(int choice, boolean correct) {
+		callbacks.choiceMade(choice, correct);
 	}
 }
