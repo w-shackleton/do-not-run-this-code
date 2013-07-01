@@ -7,11 +7,10 @@ import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.ingame.fragments.PhotoNameView;
 import uk.digitalsquid.contactrecall.mgr.Contact;
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
-import android.view.View;
-import android.view.ViewGroup;
 
 /**
  * Using {@link Contact} as the answer type so we can encapsulate
@@ -38,7 +37,7 @@ public class PhotoNameGame extends GameAdapter {
 	Bundle state;
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public Fragment getFragment(int position) {
 		Contact contact = getItem(position);
         Bundle args = new Bundle();
         
@@ -46,14 +45,12 @@ public class PhotoNameGame extends GameAdapter {
         args.putInt(PhotoNameView.ARG_NUMBER_CHOICES, numberOfChoices);
         args.putParcelableArray(PhotoNameView.ARG_OTHER_NAMES, getOtherAnswers());
         
+        // TODO: Is this state needed?
         Bundle viewState = state.getBundle(String.format("view%d", position));
-        PhotoNameView viewCreator = new PhotoNameView(app, context, parent, args, viewState, callbacks);
+        PhotoNameView fragment = new PhotoNameView();
+        fragment.setArguments(args);
         
-        Bundle viewStateModified = new Bundle();
-        viewCreator.onSaveInstanceState(viewStateModified);
-        state.putBundle(String.format("view%d", position), viewStateModified);
-        
-		return viewCreator.getRootView();
+		return fragment;
 	}
 
 	@Override

@@ -6,7 +6,7 @@ import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.mgr.Contact;
 import uk.digitalsquid.contactrecall.misc.Const;
-import android.content.Context;
+import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,34 +21,36 @@ import android.widget.ImageView;
  * @author william
  *
  */
-public class PhotoNameView implements OnClickListener {
+public class PhotoNameView extends Fragment implements OnClickListener {
 	public static final String ARG_CONTACT = "contact";
 	public static final String ARG_OTHER_NAMES = "othernames";
 	public static final String ARG_NUMBER_CHOICES = "numchoices";
 	
-	private transient Context context;
 	private transient GameCallbacks callbacks;
 	
 	private ImageView photo;
+	private Contact contact;
 	private Button[] choiceButtons = new Button[8];
 	private int correctChoice;
 	private int numberOfChoices;
 	
-	private View rootView;
+	public PhotoNameView() {
+	}
 	
-	public PhotoNameView(App app, Context context, ViewGroup root, Bundle args, Bundle savedInstanceState,
-			GameCallbacks callbacks) {
-		this.context = context;
-		this.callbacks = callbacks;
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
+		super.onCreateView(inflater, root, savedInstanceState);
+		Bundle args = getArguments();
+		this.setCallbacks(callbacks);
         // The last two arguments ensure LayoutParams are inflated
         // properly.
-        rootView = LayoutInflater.from(context).inflate(
+        View rootView = inflater.inflate(
                 R.layout.photonameview, root, false);
         
         // TODO: Customisable
         NamePart answerNamePart = NamePart.DISPLAY;
         
-        Contact contact = args.getParcelable(ARG_CONTACT);
+        contact = args.getParcelable(ARG_CONTACT);
         numberOfChoices = args.getInt(ARG_NUMBER_CHOICES);
         if(numberOfChoices == 0) numberOfChoices = 4;
         Contact[] otherAnswers = (Contact[]) args.getParcelableArray(ARG_OTHER_NAMES);
@@ -100,8 +102,13 @@ public class PhotoNameView implements OnClickListener {
 	        	}
 	        }
         }
-        
+		return rootView;
+	}
+	
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
         // Show photo
+		App app = (App) getActivity().getApplication();
         Bitmap bmp = contact.getPhoto(app.getPhotos());
         photo.setImageBitmap(bmp);
 	}
@@ -114,10 +121,6 @@ public class PhotoNameView implements OnClickListener {
     	}
     	outState.putInt("completedChoice", completedChoice);
     }
-
-	public View getRootView() {
-		return rootView;
-	}
 	
 	int completedChoice = -1;
 	
@@ -133,23 +136,23 @@ public class PhotoNameView implements OnClickListener {
 		// Set button styles accordingly
 		if(choice == correctChoice) {
 			choiceButtons[choice].setBackgroundColor(
-					context.getResources().getColor(R.color.correct_actual_bg));
+					getActivity().getResources().getColor(R.color.correct_actual_bg));
 			/* TODO: Do we want to change BG col for other buttons
 			for(int i = 0; i < numberOfChoices; i++) {
 				if(i == choice) continue;
-				choiceButtons[i].setBackgroundColor(
-						context.getResources().getColor(R.color.correct_other_bg));
+				choiceButtons[i].setBackgroundColor(context
+						getActivity().getResources().getColor(R.color.correct_other_bg));
 			} */
 		} else {
 			choiceButtons[choice].setBackgroundColor(
-					context.getResources().getColor(R.color.incorrect_choice_bg));
+					getActivity().getResources().getColor(R.color.incorrect_choice_bg));
 			choiceButtons[correctChoice].setBackgroundColor(
-					context.getResources().getColor(R.color.incorrect_actual_bg));
+					getActivity().getResources().getColor(R.color.incorrect_actual_bg));
 			/* TODO: Do we want to change BG col for other buttons
 			for(int i = 0; i < numberOfChoices; i++) {
 				if(i == choice) continue;
 				choiceButtons[i].setBackgroundColor(
-						context.getResources().getColor(R.color.correct_other_bg));
+						getActivity().getResources().getColor(R.color.correct_other_bg));
 			} */
 		}
 		callbacks.choiceMade(choice, choice == correctChoice);
@@ -170,5 +173,9 @@ public class PhotoNameView implements OnClickListener {
 		case R.id.choice8: choice = 7; break;
 		}
 		completeView(choice);
+	}
+
+	public void setCallbacks(GameCallbacks callbacks) {
+		this.callbacks = callbacks;
 	}
 }

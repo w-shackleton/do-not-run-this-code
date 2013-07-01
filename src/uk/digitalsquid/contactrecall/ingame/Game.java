@@ -6,8 +6,6 @@ import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.ingame.games.GameAdapter;
 import uk.digitalsquid.contactrecall.ingame.games.PhotoNameGame;
 import uk.digitalsquid.contactrecall.misc.Config;
-import android.animation.AnimatorInflater;
-import android.animation.AnimatorSet;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -17,7 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterViewFlipper;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 /**
@@ -104,7 +102,9 @@ public class Game extends Activity implements Config {
 		
 		GameDescriptor gameDescriptor;
 		GameAdapter gameAdapter;
-		AdapterViewFlipper viewFlipper;
+		FrameLayout frameLayout;
+		
+		int position = 0;
 		
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
@@ -112,6 +112,9 @@ public class Game extends Activity implements Config {
 			Bundle args = getArguments();
 			if(args == null) return;
 			gameDescriptor = args.getParcelable("gameDescriptor");
+			
+			if(savedInstanceState != null)
+				position = savedInstanceState.getInt("position");
 		}
 		
 		@Override
@@ -119,7 +122,7 @@ public class Game extends Activity implements Config {
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.game_fragment, container, false);
 			
-			viewFlipper = (AdapterViewFlipper) rootView.findViewById(R.id.pager);
+			frameLayout = (FrameLayout) rootView.findViewById(R.id.pager);
 			
 			return rootView;
 		}
@@ -133,7 +136,9 @@ public class Game extends Activity implements Config {
 				gameAdapter = getGameAdapter(gameDescriptor, savedInstanceState);
 			else // Otherwise, replace context and app, to reduce dead objects
 				gameAdapter.init(app, getActivity(), this);
-			viewFlipper.setAdapter(gameAdapter);
+			
+			getFragmentManager().beginTransaction().
+				add(R.id.pager, gameAdapter.getFragment(position)).commit();
 		}
 		
 		/**
@@ -160,16 +165,15 @@ public class Game extends Activity implements Config {
 		@Override
 		public void onSaveInstanceState(Bundle outState) {
 			super.onSaveInstanceState(outState);
-			if(gameAdapter != null)
+			if(gameAdapter != null) {
 				outState.putParcelable("gameAdapter", gameAdapter);
+				outState.putInt("position", position);
+			}
 		}
 
 		@Override
 		public void choiceMade(int choice, boolean correct) {
 			// TODO: Check end-case
-			AnimatorSet animator = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.animator.next_card_out);
-			animator.setTarget(viewFlipper.getCurrentView());
-			viewFlipper.showNext();
 		}
 	}
 	
