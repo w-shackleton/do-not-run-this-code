@@ -12,13 +12,12 @@ import uk.digitalsquid.contactrecall.GameDescriptor.ShufflingMode;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.mgr.Contact;
 import uk.digitalsquid.contactrecall.misc.ListUtils;
+import android.app.Fragment;
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.widget.Adapter;
 
-public abstract class GameAdapter implements Adapter, Parcelable {
+public abstract class GameAdapter implements Parcelable {
 	
 	protected transient App app;
 	protected transient Context context;
@@ -70,7 +69,6 @@ public abstract class GameAdapter implements Adapter, Parcelable {
 		selectedContacts = shuffleContacts(selection, shufflingMode);
 	}
 
-	@Override
 	public int getCount() {
 		if(gameIsFinite) {
 			if(selectedContacts == null) return 0;
@@ -79,12 +77,6 @@ public abstract class GameAdapter implements Adapter, Parcelable {
 		return 1000; // TODO: Infinite game?!?
 	}
 
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
-	
-	@Override
 	public Contact getItem(int pos) {
 		if(selectedContacts == null) return null;
 		if(gameIsFinite)
@@ -132,31 +124,9 @@ public abstract class GameAdapter implements Adapter, Parcelable {
 		return otherAnswers;
 	}
 
-	// Not needed for this
-	@Override
-	public int getItemViewType(int position) {
-		return 0;
-	}
-	@Override
-	public int getViewTypeCount() {
-		return 1;
-	}
-
-	@Override
-	public boolean hasStableIds() {
-		return true;
-	}
-
-	@Override
 	public boolean isEmpty() {
 		return selectedContacts == null;
 	}
-
-	@Override
-	public void registerDataSetObserver(DataSetObserver observer) { }
-
-	@Override
-	public void unregisterDataSetObserver(DataSetObserver observer) { }
 
 	@Override
 	public int describeContents() {
@@ -207,4 +177,6 @@ public abstract class GameAdapter implements Adapter, Parcelable {
 		this.context = context;
 		this.callbacks = callbacks;
 	}
+	
+	public abstract Fragment getFragment(int position);
 }

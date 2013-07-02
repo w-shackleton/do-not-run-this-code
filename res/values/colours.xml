@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="correct_actual_bg">#22DD22</color>
+    <color name="correct_other_bg">#DDDDDD</color>
+    
+    <color name="incorrect_choice_bg">#DD2200</color>
+    <color name="incorrect_actual_bg">#22DD22</color>
+    <color name="incorrect_other_bg">#DDDDDD</color>
+    
+</resources>
