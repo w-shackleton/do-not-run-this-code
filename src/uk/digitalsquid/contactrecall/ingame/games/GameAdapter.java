@@ -7,10 +7,13 @@ import java.util.LinkedList;
 
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.GameDescriptor;
+import uk.digitalsquid.contactrecall.GameDescriptor.NamePart;
 import uk.digitalsquid.contactrecall.GameDescriptor.SelectionMode;
 import uk.digitalsquid.contactrecall.GameDescriptor.ShufflingMode;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.mgr.Contact;
+import uk.digitalsquid.contactrecall.mgr.Question;
+import uk.digitalsquid.contactrecall.misc.Const;
 import uk.digitalsquid.contactrecall.misc.ListUtils;
 import android.app.Fragment;
 import android.content.Context;
@@ -48,9 +51,9 @@ public abstract class GameAdapter implements Parcelable {
 	LinkedList<Contact> possibleContacts;
 	
 	/**
-	 * The contacts to use - usually pre-shuffled.
+	 * The questions to use - usually pre-shuffled.
 	 */
-	ArrayList<Contact> selectedContacts;
+	ArrayList<Question> questions;
 
 	@SuppressWarnings("unchecked")
 	public GameAdapter(Context context, App app, GameDescriptor descriptor, GameCallbacks callbacks) {
@@ -59,28 +62,36 @@ public abstract class GameAdapter implements Parcelable {
 		this.callbacks = callbacks;
 		possibleContacts = getPossibleContacts();
 		
+		// Construct the lists that are used as false answers to questions.
 		ArrayList<Contact> badContacts = null; // TODO: Implement
 		ArrayList<Contact> allContacts = new ArrayList<Contact>(app.getContacts().getContacts());
 		ArrayList<Contact> nameLists = null; // TODO: Implement
-		otherAnswers = ListUtils.concat(new ArrayList<Contact>(), badContacts, allContacts, nameLists).toArray(new Contact[0]);
+		otherAnswers = filterOtherAnswers(
+				ListUtils.concat(new ArrayList<Contact>(), badContacts, allContacts, nameLists)
+				.toArray(new Contact[0]));
 		
 		ArrayList<Contact> selection =
 				selectContacts(possibleContacts, maxNum, selectionMode);
-		selectedContacts = shuffleContacts(selection, shufflingMode);
+		ArrayList<Contact> selectedContacts = shuffleContacts(selection, shufflingMode);
+		
+		questions = new ArrayList<Question>(selectedContacts.size());
+		for(Contact contact : selectedContacts) {
+			questions.add(createQuestion(contact));
+		}
 	}
 
 	public int getCount() {
 		if(gameIsFinite) {
-			if(selectedContacts == null) return 0;
-			return selectedContacts.size();
+			if(questions == null) return 0;
+			return questions.size();
 		}
 		return 1000; // TODO: Infinite game?!?
 	}
 
-	public Contact getItem(int pos) {
-		if(selectedContacts == null) return null;
+	public Question getItem(int pos) {
+		if(questions == null) return null;
 		if(gameIsFinite)
-			return selectedContacts.get(pos);
+			return questions.get(pos);
 		throw new RuntimeException("Infinite mode not yet implemented");
 	}
 
@@ -120,17 +131,53 @@ public abstract class GameAdapter implements Parcelable {
 		}
 	}
 	
+	/**
+	 * Can be overridden to filter out some contacts, allowing only others
+	 * to be used as possible false answers.
+	 * For example, all contacts without photos could be filtered.
+	 * @param otherAnswers
+	 * @return
+	 */
+	protected Contact[] filterOtherAnswers(Contact[] otherAnswers) {
+		return otherAnswers;
+	}
+	
 	protected Contact[] getOtherAnswers() {
 		return otherAnswers;
 	}
 
 	public boolean isEmpty() {
-		return selectedContacts == null;
+		return questions == null;
 	}
 
 	@Override
 	public int describeContents() {
 		return 0;
+	}
+	
+	protected Question createQuestion(Contact contact) {
+		Question question = new Question(contact);
+		// TODO: Customise
+		question.setNamePart(NamePart.DISPLAY);
+		int numOtherChoices = 3;
+		question.setCorrectPosition(Const.RAND.nextInt(numOtherChoices + 1));
+		
+		Contact[] otherChoices = new Contact[numOtherChoices];
+        String correctText = contact.getNamePart(question.getNamePart());
+		for(int i = 0; i < otherChoices.length; i++) {
+    		String name = "";
+    		Contact other = Contact.getNullContact(); // TODO: Lots of nulls created
+    		for(int j = 0; j < 20; j++) { // Attempt to find a different name
+    			other = otherAnswers[Const.RAND.nextInt(otherAnswers.length)];
+    			if(!other.getNamePart(question.getNamePart())
+    					.equalsIgnoreCase(correctText)) break;
+    		}
+    		otherChoices[i] = other;
+		}
+		
+		question.setOtherAnswers(otherChoices);
+		
+		return question;
 	}
 
 	@Override
@@ -145,7 +192,7 @@ public abstract class GameAdapter implements Parcelable {
 		dest.writeString(shufflingMode.name());
 		
 		dest.writeList(possibleContacts);
-		dest.writeList(selectedContacts);
+		dest.writeList(questions);
 	}
 	
 	GameAdapter(Parcel in) {
@@ -160,8 +207,8 @@ public abstract class GameAdapter implements Parcelable {
 		
 		possibleContacts = new LinkedList<Contact>();
 		in.readList(possibleContacts, null);
-		selectedContacts = new ArrayList<Contact>();
-		in.readList(selectedContacts, null);
+		questions = new ArrayList<Question>();
+		in.readList(questions, null);
 	}
 	
 	/**
@@ -178,5 +225,14 @@ public abstract class GameAdapter implements Parcelable {
 		this.callbacks = callbacks;
 	}
 	
-	public abstract Fragment getFragment(int position);
+	protected abstract Fragment createFragment(int position);
+	
+	/**
+	 * Gets the {@link Fragment} at position.
+	 * @param position
+	 * @return
+	 */
+	public Fragment getFragment(int position) {
+		return createFragment(position);
+	}
 }

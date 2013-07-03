@@ -73,6 +73,9 @@ public class Game extends Activity implements GameCallbacks, Config {
 					beginTransaction().
 					add(R.id.container, gameFragment).
 					commit();
+		} else {
+			GameFragment gameFragment = (GameFragment) getFragmentManager().findFragmentById(R.id.container);
+			callbacks = gameFragment;
 		}
 	}
 	
@@ -129,6 +132,7 @@ public class Game extends Activity implements GameCallbacks, Config {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
+			super.onCreateView(inflater, container, savedInstanceState);
 			View rootView = inflater.inflate(R.layout.game_fragment, container, false);
 			
 			frameLayout = (FrameLayout) rootView.findViewById(R.id.pager);
@@ -147,7 +151,12 @@ public class Game extends Activity implements GameCallbacks, Config {
 				gameAdapter.init(app, getActivity(), this);
 			
 			getFragmentManager().beginTransaction().
-				add(R.id.pager, gameAdapter.getFragment(position)).commit();
+				replace(R.id.pager, gameAdapter.getFragment(position)).commit();
+		}
+		
+		@Override
+		public void onDestroyView() {
+			super.onDestroyView();
 		}
 		
 		/**
@@ -185,12 +194,12 @@ public class Game extends Activity implements GameCallbacks, Config {
 			position++;
 			if(position == gameAdapter.getCount()) {
 				// TODO: End-case
+			} else {
+				getFragmentManager().beginTransaction().
+					setCustomAnimations(R.animator.next_card_in, R.animator.next_card_out).
+					replace(R.id.pager, gameAdapter.getFragment(position)).
+					commit();
 			}
-			
-			getFragmentManager().beginTransaction().
-				setCustomAnimations(R.animator.next_card_in, R.animator.next_card_out).
-				replace(R.id.pager, gameAdapter.getFragment(position)).
-				commit();
 		}
 	}
 	

@@ -7,6 +7,7 @@ import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.ingame.fragments.PhotoNameView;
 import uk.digitalsquid.contactrecall.mgr.Contact;
+import uk.digitalsquid.contactrecall.mgr.Question;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -34,25 +35,22 @@ public class PhotoNameGame extends GameAdapter {
 		return app.getGame().getAllPhotoContacts();
 	}
 	
+	// TODO: Remove?
 	Bundle state;
 
 	@Override
-	public Fragment getFragment(int position) {
-		Contact contact = getItem(position);
+	protected Fragment createFragment(int position) {
+		Question question = getItem(position);
         Bundle args = new Bundle();
         
-        args.putParcelable(PhotoNameView.ARG_CONTACT, contact);
-        args.putInt(PhotoNameView.ARG_NUMBER_CHOICES, numberOfChoices);
-        args.putParcelableArray(PhotoNameView.ARG_OTHER_NAMES, getOtherAnswers());
+        args.putParcelable(PhotoNameView.ARG_QUESTION, question);
         
-        // TODO: Is this state needed?
-        Bundle viewState = state.getBundle(String.format("view%d", position));
         PhotoNameView fragment = new PhotoNameView();
         fragment.setArguments(args);
         
 		return fragment;
 	}
-
+	
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		super.writeToParcel(dest, flags);

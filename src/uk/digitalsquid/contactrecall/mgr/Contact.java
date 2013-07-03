@@ -146,4 +146,18 @@ public class Contact implements Parcelable {
 			}
 		}
 	}
+	
+	/**
+	 * Returns a null contact - one with blank details.
+	 * @return
+	 */
+	public static final Contact getNullContact() {
+		Contact c = new Contact();
+		// TODO: Localise
+		c.id = -1;
+		c.displayName = "MissingNo";
+		c.firstName = "Not found";
+		c.lastName = "Not found";
+		return c;
+	}
 }
