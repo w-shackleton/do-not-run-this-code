@@ -83,6 +83,7 @@ public class PhotoNameView extends Fragment implements OnClickListener, Config {
 		super.onActivityCreated(savedInstanceState);
         // Show photo
 		App app = (App) getActivity().getApplication();
+		// TODO: Background this?
         Bitmap bmp = question.getContact().getPhoto(app.getPhotos());
         photo.setImageBitmap(bmp);
 	}

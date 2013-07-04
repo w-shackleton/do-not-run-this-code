@@ -34,7 +34,7 @@ public class GameDataManager implements Config {
 	}
 	
 	public LinkedList<Contact> getAllPhotoContacts() {
-		final List<Integer> contactsWithIds = app.getPhotos().getContactsWithPictures();
+		final List<Integer> contactsWithIds = app.getOldPhotos().getContactsWithPictures();
 		return getContactSet(new ContactPredicate() {
 			@Override
 			public boolean include(Contact contact) {

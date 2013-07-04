@@ -5,16 +5,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.misc.Config;
+import uk.digitalsquid.contactrecall.misc.ListUtils;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.Handler;
 import android.provider.ContactsContract;
+import android.util.SparseArray;
 
 /**
  * Abstracts the contacts API to the list of contacts.
@@ -50,7 +52,8 @@ public final class ContactManager implements Config {
 				new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME },
 				null, null, ContactsContract.Contacts.DISPLAY_NAME + " ASC");
 		
-		Map<Integer, List<Integer>> groupContactRelations = app.getGroups().getGroupContactRelations(true);
+		SparseArray<List<Integer>> groupContactRelations = app.getGroups().getGroupContactRelations(true);
+		Set<List<Integer>> groupContactRelationsValues = ListUtils.values(groupContactRelations);
 		
 		contacts = new ArrayList<Contact>(cur.getCount());
 		
@@ -59,7 +62,7 @@ public final class ContactManager implements Config {
 				int id = cur.getInt(cur.getColumnIndex(ContactsContract.Contacts._ID));
 				String displayName = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 				
-				if(contactInVisibleGroup(groupContactRelations.values(), id)) {
+				if(contactInVisibleGroup(groupContactRelationsValues, id)) {
 					Contact contact = new Contact();
 					contact.setId(id);
 					contact.setDisplayName(displayName);

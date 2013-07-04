@@ -61,23 +61,33 @@ public class Contact implements Parcelable {
 	}
 	
 	/**
-	 * Loads the photo from the given manager. Returns the first one.
+	 * Loads the photo from the given manager.
+	 * A high-resolution photo can be requested
 	 */
 	public Bitmap getPhoto(PhotoManager mgr) {
-		return mgr.getContactPicture(id);
+		return getPhoto(mgr, true);
+	}
+	
+	/**
+	 * Loads the photo from the given manager. Returns the first one.
+	 */
+	public Bitmap getPhoto(PhotoManager mgr, boolean highRes) {
+		return mgr.getContactPicture(id, highRes);
 	}
 	
 	/**
 	 * Loads the photo from the given manager. Returns the nth one.
 	 */
-	public Bitmap getPhoto(PhotoManager mgr, int position) {
+	@Deprecated
+	public Bitmap getPhoto(OldPhotoManager mgr, int position) {
 		return mgr.getContactPicture(id, position);
 	}
 	
 	/**
 	 * Loads the photo from the given manager. Returns all photos.
 	 */
-	public LinkedList<Bitmap> getPhotos(PhotoManager mgr) {
+	@Deprecated
+	public LinkedList<Bitmap> getPhotos(OldPhotoManager mgr) {
 		return mgr.getContactPictures(id);
 	}
 	

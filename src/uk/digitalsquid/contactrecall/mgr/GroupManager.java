@@ -1,10 +1,8 @@
 package uk.digitalsquid.contactrecall.mgr;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import uk.digitalsquid.contactrecall.mgr.db.DB;
 import uk.digitalsquid.contactrecall.misc.Config;
@@ -12,6 +10,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
+import android.util.SparseArray;
 
 /**
  * Manages contact groups
@@ -30,9 +29,9 @@ public class GroupManager implements Config {
 		this.db = db;
 	}
 	
-	private final Map<Integer, Group> data = new HashMap<Integer, GroupManager.Group>();
+	private final SparseArray<Group> data = new SparseArray<GroupManager.Group>();
 	
-	public Map<Integer, Group> getContactGroups() {
+	public SparseArray<Group> getContactGroups() {
 		List<Integer> hiddenIds = db.groups.getHiddenGroupIds();
 		
 		Cursor cur = cr.query(ContactsContract.Groups.CONTENT_URI, null, null, null, null);
@@ -56,8 +55,8 @@ public class GroupManager implements Config {
 	 * @param visibleGroupsOnly If true, will only return mappings for visible groups
 	 * @return A map from group IDs to the contacts in that group.
 	 */
-	public Map<Integer, List<Integer>> getGroupContactRelations(boolean visibleGroupsOnly) {
-		final Map<Integer, List<Integer>> data = new HashMap<Integer, List<Integer>>();
+	public SparseArray<List<Integer>> getGroupContactRelations(boolean visibleGroupsOnly) {
+		final SparseArray<List<Integer>> data = new SparseArray<List<Integer>>();
 		final String groupWhere = ContactsContract.Data.MIMETYPE + " = ?";
 		
 		Cursor cur = cr.query(ContactsContract.Data.CONTENT_URI, new String[] {
@@ -65,7 +64,7 @@ public class GroupManager implements Config {
 				ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID },
 				groupWhere, new String[] {ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE}, null);
 		
-		Map<Integer, Group> visibleGroups = null;
+		SparseArray<Group> visibleGroups = null;
 		if(visibleGroupsOnly) {
 			visibleGroups = getContactGroups();
 		}

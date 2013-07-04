@@ -3,6 +3,7 @@ package uk.digitalsquid.contactrecall;
 import uk.digitalsquid.contactrecall.mgr.ContactManager;
 import uk.digitalsquid.contactrecall.mgr.GameDataManager;
 import uk.digitalsquid.contactrecall.mgr.GroupManager;
+import uk.digitalsquid.contactrecall.mgr.OldPhotoManager;
 import uk.digitalsquid.contactrecall.mgr.PhotoManager;
 import uk.digitalsquid.contactrecall.mgr.db.DB;
 import android.app.Application;
@@ -17,6 +18,7 @@ public class App extends Application {
 	
 	private GroupManager groups;
 	private ContactManager contacts;
+	private OldPhotoManager oldPhotos;
 	private PhotoManager photos;
 	private GameDataManager game;
 	
@@ -33,6 +35,12 @@ public class App extends Application {
 	public ContactManager getContacts() {
 		if(contacts == null) contacts = new ContactManager(getApplicationContext(), this);
 		return contacts;
+	}
+
+	@Deprecated
+	public OldPhotoManager getOldPhotos() {
+		if(oldPhotos == null) oldPhotos = new OldPhotoManager(getApplicationContext(), getDb());
+		return oldPhotos;
 	}
 
 	public PhotoManager getPhotos() {

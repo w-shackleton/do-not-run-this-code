@@ -7,7 +7,7 @@
     <string name="loading">Loading</string>
     <string name="addphoto">Add Photo</string>
     <string name="capturephoto">Take image</string>
-    <string name="processing">Processing...</string>
+    <string name="processing">Processing&#8230;</string>
     <string name="selectMode">Select a mode</string>
     <string name="start">Start</string>
     <string name="resume">Resume</string>

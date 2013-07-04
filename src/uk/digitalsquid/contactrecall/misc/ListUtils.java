@@ -2,7 +2,11 @@ package uk.digitalsquid.contactrecall.misc;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import android.util.SparseArray;
 
 /**
  * Static utilities for transforming lists.
@@ -108,5 +112,14 @@ public final class ListUtils {
 				empty.addAll(list);
 		}
 		return empty;
+	}
+	
+	public static <T> Set<T> values(SparseArray<T> array) {
+		Set<T> ret = new HashSet<T>(array.size());
+		for(int i = 0; i < array.size(); i++) {
+			T val = array.get(array.keyAt(i));
+			if(val != null) ret.add(val);
+		}
+		return ret;
 	}
 }

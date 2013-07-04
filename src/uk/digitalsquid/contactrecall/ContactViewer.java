@@ -2,7 +2,6 @@ package uk.digitalsquid.contactrecall;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -10,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import uk.digitalsquid.contactrecall.mgr.Contact;
 import uk.digitalsquid.contactrecall.mgr.ContactManager.ContactChangeListener;
 import uk.digitalsquid.contactrecall.mgr.GroupManager.Group;
+import uk.digitalsquid.contactrecall.misc.ListUtils;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
@@ -22,6 +22,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -105,11 +106,11 @@ public class ContactViewer extends Activity implements ContactChangeListener {
 			
 			builder.setTitle(R.string.changegroups);
 			
-			final Map<Integer, Group> groups = app.getGroups().getContactGroups();
+			final SparseArray<Group> groups = app.getGroups().getContactGroups();
 			String[] names = new String[groups.size()];
 			final boolean[] selecteds = new boolean[groups.size()];
 			int i = 0;
-			for(Group g : groups.values()) {
+			for(Group g : ListUtils.values(groups)) {
 				names[i] = g.name;
 				selecteds[i] = !g.hidden;
 				i++;
@@ -129,7 +130,7 @@ public class ContactViewer extends Activity implements ContactChangeListener {
 					// Create map of indices to new selected values
 					List<Integer> newSelectedValues = new LinkedList<Integer>();
 					int i = 0;
-					for(Group g : groups.values()) {
+					for(Group g : ListUtils.values(groups)) {
 						if(!selecteds[i]) {
 							newSelectedValues.add(g.id);
 						}
@@ -260,7 +261,7 @@ public class ContactViewer extends Activity implements ContactChangeListener {
 				try {
 					PhotoLoadRequest req = photoLoadQueue.poll(1000, TimeUnit.MILLISECONDS);
 					if(req != null) {
-				        req.bitmap = req.source.getPhoto(app.getPhotos());
+				        req.bitmap = req.source.getPhoto(app.getPhotos(), false);
 				        publishProgress(req);
 					}
 				} catch (InterruptedException e) {

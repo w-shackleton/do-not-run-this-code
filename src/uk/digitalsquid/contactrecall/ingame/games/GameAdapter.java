@@ -165,7 +165,6 @@ public abstract class GameAdapter implements Parcelable {
 		Contact[] otherChoices = new Contact[numOtherChoices];
         String correctText = contact.getNamePart(question.getNamePart());
 		for(int i = 0; i < otherChoices.length; i++) {
-    		String name = "";
     		Contact other = Contact.getNullContact(); // TODO: Lots of nulls created
     		for(int j = 0; j < 20; j++) { // Attempt to find a different name
     			other = otherAnswers[Const.RAND.nextInt(otherAnswers.length)];

@@ -134,7 +134,7 @@ public class PhotoCapture extends Activity implements Config {
 			break;
 		case 1:
 			Log.i(TAG, "1 contact, using it");
-			app.getPhotos().saveImageToContactAsync(image, rawContacts.get(0).getId(), new Runnable() {
+			app.getOldPhotos().saveImageToContactAsync(image, rawContacts.get(0).getId(), new Runnable() {
 				@Override
 				public void run() {
 					setResult(RESULT_OK);
@@ -202,7 +202,7 @@ public class PhotoCapture extends Activity implements Config {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					RawContact contact = contacts.get(which);
-					app.getPhotos().saveImageToContactAsync(image, contact.getId(), new Runnable() {
+					app.getOldPhotos().saveImageToContactAsync(image, contact.getId(), new Runnable() {
 						@Override
 						public void run() {
 							setResult(RESULT_OK);

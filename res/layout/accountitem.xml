@@ -4,5 +4,5 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:background="#FFFFFF">
-    <TextView android:text="TextView" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="match_parent" android:layout_margin="5dip" android:gravity="center_vertical" android:id="@+id/accountname" android:layout_weight="1" android:textColor="#000000"></TextView>
+    <TextView android:text="" android:layout_width="0dip" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="match_parent" android:layout_margin="5dip" android:gravity="center_vertical" android:id="@+id/accountname" android:layout_weight="1" android:textColor="#000000"></TextView>
 </LinearLayout>

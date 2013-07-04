@@ -2,19 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/photo"
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
+        android:layout_height="match_parent"
+        android:layout_width="0dip"
         android:layout_weight="1"
         android:layout_margin="5dip"
         android:contentDescription="@string/contentDescription_photo" />
 
     <LinearLayout 
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
+        android:layout_height="match_parent"
+        android:layout_width="0dip"
         android:layout_weight="1"
         android:orientation="vertical" >
 	    <LinearLayout 
@@ -28,35 +28,18 @@
 	            android:layout_weight="1"
 	            android:text=""></Button>
 	        <Button
-	            android:id="@+id/choice2"
-	            android:layout_width="0dip"
-	            android:layout_height="match_parent"
-	            android:layout_weight="1"
-	            android:text=""></Button>
-	    </LinearLayout>
-	    <LinearLayout 
-	        android:layout_width="match_parent"
-	        android:layout_height="0dip"
-	        android:layout_weight="1">
-	        <Button
-	            android:id="@+id/choice3"
-	            android:layout_width="0dip"
-	            android:layout_height="match_parent"
-	            android:layout_weight="1"
-	            android:text=""></Button>
-	        <Button
-	            android:id="@+id/choice4"
-	            android:layout_width="0dip"
-	            android:layout_height="match_parent"
-	            android:layout_weight="1"
-	            android:text=""></Button>
-	    </LinearLayout>
-	    <LinearLayout 
-	        android:layout_width="match_parent"
-	        android:layout_height="0dip"
-	        android:layout_weight="1">
-	        <Button
 	            android:id="@+id/choice5"
+	            android:layout_width="0dip"
+	            android:layout_height="match_parent"
+	            android:layout_weight="1"
+	            android:text=""></Button>
+	    </LinearLayout>
+	    <LinearLayout 
+	        android:layout_width="match_parent"
+	        android:layout_height="0dip"
+	        android:layout_weight="1">
+	        <Button
+	            android:id="@+id/choice2"
 	            android:layout_width="0dip"
 	            android:layout_height="match_parent"
 	            android:layout_weight="1"
@@ -73,7 +56,24 @@
 	        android:layout_height="0dip"
 	        android:layout_weight="1">
 	        <Button
+	            android:id="@+id/choice3"
+	            android:layout_width="0dip"
+	            android:layout_height="match_parent"
+	            android:layout_weight="1"
+	            android:text=""></Button>
+	        <Button
 	            android:id="@+id/choice7"
+	            android:layout_width="0dip"
+	            android:layout_height="match_parent"
+	            android:layout_weight="1"
+	            android:text=""></Button>
+	    </LinearLayout>
+	    <LinearLayout 
+	        android:layout_width="match_parent"
+	        android:layout_height="0dip"
+	        android:layout_weight="1">
+	        <Button
+	            android:id="@+id/choice4"
 	            android:layout_width="0dip"
 	            android:layout_height="match_parent"
 	            android:layout_weight="1"
