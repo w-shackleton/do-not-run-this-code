@@ -1,9 +1,12 @@
 package uk.digitalsquid.contactrecall.ingame.fragments;
 
 import uk.digitalsquid.contactrecall.App;
+import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.GameDescriptor.NamePart;
 import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
+import uk.digitalsquid.contactrecall.ingame.TimerView;
+import uk.digitalsquid.contactrecall.ingame.TimerView.OnFinishedListener;
 import uk.digitalsquid.contactrecall.mgr.Contact;
 import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.misc.Config;
@@ -24,14 +27,18 @@ import android.widget.ImageView;
  * @author william
  *
  */
-public class PhotoNameView extends Fragment implements OnClickListener, Config {
+public class PhotoNameView extends Fragment implements OnClickListener, OnFinishedListener, Config {
 	public static final String ARG_QUESTION = "question";
+	public static final String ARG_DESCRIPTOR = "descriptor";
 	
 	private transient GameCallbacks callbacks;
 	
-	private ImageView photo;
 	private Question question;
+	private GameDescriptor descriptor;
+	
+	private ImageView photo;
 	private Button[] choiceButtons = new Button[8];
+	private TimerView timer;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
@@ -44,6 +51,7 @@ public class PhotoNameView extends Fragment implements OnClickListener, Config {
         
         
         question = args.getParcelable(ARG_QUESTION);
+        descriptor = args.getParcelable(ARG_DESCRIPTOR);
         int correctChoice = question.getCorrectPosition();
         int numberOfChoices = question.getNumberOfChoices();
         Contact contact = question.getContact();
@@ -76,7 +84,28 @@ public class PhotoNameView extends Fragment implements OnClickListener, Config {
         				question.getOtherAnswers()[posThroughOthers++].getNamePart(answerNamePart));
         	}
         }
+        
+        timer = (TimerView) rootView.findViewById(R.id.timerView);
+        timer.setOnFinishedListener(this);
+        timer.setTotalTime(descriptor.getMaxTimePerContact());
+        
 		return rootView;
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+        if(timer != null) timer.start();
+	}
+	@Override
+	public void onStop() {
+		super.onStop();
+		if(timer != null) timer.cancel();
+	}
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if(timer != null) timer.setOnFinishedListener(null);
 	}
 	
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -97,9 +126,11 @@ public class PhotoNameView extends Fragment implements OnClickListener, Config {
 			Log.e(TAG, "onAttach - activity doesn't implement callbacks");
 	}
 	
-	int completedChoice = -1;
+	int completedChoice = -2;
 	
 	private void completeView(int choice) {
+		if(completedChoice != -2) return;
+		if(timer != null) timer.cancel();
 		completedChoice = choice;
 		// Disable further button clicking
 		// TODO: Check user can't cheat using Android multitouch features,
@@ -118,6 +149,9 @@ public class PhotoNameView extends Fragment implements OnClickListener, Config {
 				choiceButtons[i].setBackgroundColor(context
 						getActivity().getResources().getColor(R.color.correct_other_bg));
 			} */
+		} else if(choice == -1) {
+			choiceButtons[question.getCorrectPosition()].setBackgroundColor(
+					getActivity().getResources().getColor(R.color.incorrect_actual_bg));
 		} else {
 			choiceButtons[choice].setBackgroundColor(
 					getActivity().getResources().getColor(R.color.incorrect_choice_bg));
@@ -149,5 +183,12 @@ public class PhotoNameView extends Fragment implements OnClickListener, Config {
 		case R.id.choice8: choice = 7; break;
 		}
 		completeView(choice);
+	}
+
+	@Override
+	public void onTimerFinished(TimerView view) {
+		// -1 indicates no choice was made - advance once user has seen correct
+		// answer.
+		completeView(-1);
 	}
 }

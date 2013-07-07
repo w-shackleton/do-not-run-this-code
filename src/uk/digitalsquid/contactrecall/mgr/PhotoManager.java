@@ -55,7 +55,7 @@ public class PhotoManager implements Config {
 		try {
 			// This method handles null cases and errors
 			Bitmap bmp = BitmapFactory.decodeStream(in);
-			in.close();
+			if(in != null) in.close();
 			return bmp;
 		} catch (IOException e) {
 			Log.e(TAG, "Failed to decode contact photo", e);

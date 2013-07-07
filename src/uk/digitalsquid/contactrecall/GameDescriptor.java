@@ -13,16 +13,33 @@ public class GameDescriptor implements Parcelable {
 	public static final int GAME_PHOTO_TO_NAME = 1;
 	
 	private int type;
-	
 	private int optionSources;
+	private int maxQuestions;
+	private boolean finiteGame;
+	private float maxTimePerContact;
+	private SelectionMode selectionMode;
+	private ShufflingMode shufflingMode;
+	private NamePart namePart;
 	
 	private GameDescriptor(Parcel parcel) {
 		type = parcel.readInt();
 		optionSources = parcel.readInt();
+		maxQuestions = parcel.readInt();
+		finiteGame = parcel.readInt() == 1;
+		maxTimePerContact = parcel.readFloat();
+		selectionMode = SelectionMode.valueOf(parcel.readString());
+		shufflingMode = ShufflingMode.valueOf(parcel.readString());
+		namePart = NamePart.valueOf(parcel.readString());
 	}
 	public GameDescriptor(int type) {
 		this.type = type;
-		
+		optionSources = OPTION_SOURCE_ALL_CONTACTS;
+		maxQuestions = 10;
+		finiteGame = true;
+		maxTimePerContact = 5;
+		selectionMode = SelectionMode.RANDOM;
+		shufflingMode = ShufflingMode.RANDOM;
+		namePart = NamePart.DISPLAY;
 	}
 	
 	public int getType() {
@@ -38,6 +55,12 @@ public class GameDescriptor implements Parcelable {
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeInt(type);
 		dest.writeInt(optionSources);
+		dest.writeInt(maxQuestions);
+		dest.writeInt(finiteGame ? 1 : 0);
+		dest.writeFloat(maxTimePerContact);
+		dest.writeString(selectionMode.name());
+		dest.writeString(shufflingMode.name());
+		dest.writeString(namePart.name());
 	}
 	
 	public int getOptionSources() {
@@ -45,6 +68,48 @@ public class GameDescriptor implements Parcelable {
 	}
 	public void setOptionSources(int optionSources) {
 		this.optionSources = optionSources;
+	}
+
+	public int getMaxQuestions() {
+		return maxQuestions;
+	}
+	public void setMaxQuestions(int maxQuestions) {
+		this.maxQuestions = maxQuestions;
+	}
+
+	public boolean isFiniteGame() {
+		return finiteGame;
+	}
+	public void setFiniteGame(boolean finiteGame) {
+		this.finiteGame = finiteGame;
+	}
+
+	public float getMaxTimePerContact() {
+		return maxTimePerContact;
+	}
+	public void setMaxTimePerContact(float maxTimePerContact) {
+		this.maxTimePerContact = maxTimePerContact;
+	}
+
+	public SelectionMode getSelectionMode() {
+		return selectionMode;
+	}
+	public void setSelectionMode(SelectionMode selectionMode) {
+		this.selectionMode = selectionMode;
+	}
+
+	public ShufflingMode getShufflingMode() {
+		return shufflingMode;
+	}
+	public void setShufflingMode(ShufflingMode shufflingMode) {
+		this.shufflingMode = shufflingMode;
+	}
+
+	public NamePart getNamePart() {
+		return namePart;
+	}
+	public void setNamePart(NamePart namePart) {
+		this.namePart = namePart;
 	}
 
 	public static final Parcelable.Creator<GameDescriptor> CREATOR = new Parcelable.Creator<GameDescriptor>() {

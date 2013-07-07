@@ -26,22 +26,9 @@ public abstract class GameAdapter implements Parcelable {
 	protected transient Context context;
 	protected transient GameCallbacks callbacks;
 	
-	// TODO: These will be settings at some point
-	private boolean gameIsFinite = true;
-	// Only if game is finite
-	private int maxNum = 10;
-	// Value of 0 will indicate no timer
-	private float maxTimePerContact = 5;
+	protected GameDescriptor descriptor;
 	
 	private Contact[] otherAnswers;
-	
-	/**
-	 * How many choices are presented per question
-	 */
-	protected int numberOfChoices = 4;
-	
-	SelectionMode selectionMode = SelectionMode.RANDOM;
-	ShufflingMode shufflingMode = ShufflingMode.RANDOM;
 	
 	/**
 	 * Holds all the possible contacts we could use.
@@ -60,8 +47,9 @@ public abstract class GameAdapter implements Parcelable {
 		this.app = app;
 		this.context = context;
 		this.callbacks = callbacks;
+		this.descriptor = descriptor;
 		possibleContacts = getPossibleContacts();
-		
+
 		// Construct the lists that are used as false answers to questions.
 		ArrayList<Contact> badContacts = null; // TODO: Implement
 		ArrayList<Contact> allContacts = new ArrayList<Contact>(app.getContacts().getContacts());
@@ -71,8 +59,8 @@ public abstract class GameAdapter implements Parcelable {
 				.toArray(new Contact[0]));
 		
 		ArrayList<Contact> selection =
-				selectContacts(possibleContacts, maxNum, selectionMode);
-		ArrayList<Contact> selectedContacts = shuffleContacts(selection, shufflingMode);
+				selectContacts(possibleContacts, descriptor.getMaxQuestions(), descriptor.getSelectionMode());
+		ArrayList<Contact> selectedContacts = shuffleContacts(selection, descriptor.getShufflingMode());
 		
 		questions = new ArrayList<Question>(selectedContacts.size());
 		for(Contact contact : selectedContacts) {
@@ -81,7 +69,7 @@ public abstract class GameAdapter implements Parcelable {
 	}
 
 	public int getCount() {
-		if(gameIsFinite) {
+		if(descriptor.isFiniteGame()) {
 			if(questions == null) return 0;
 			return questions.size();
 		}
@@ -90,7 +78,7 @@ public abstract class GameAdapter implements Parcelable {
 
 	public Question getItem(int pos) {
 		if(questions == null) return null;
-		if(gameIsFinite)
+		if(descriptor.isFiniteGame())
 			return questions.get(pos);
 		throw new RuntimeException("Infinite mode not yet implemented");
 	}
@@ -181,28 +169,16 @@ public abstract class GameAdapter implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeInt(gameIsFinite ? 1 : 0);
-		dest.writeInt(maxNum);
-		dest.writeFloat(maxTimePerContact);
+		dest.writeParcelable(descriptor, 0);
 		dest.writeParcelableArray(otherAnswers, 0);
-		dest.writeInt(numberOfChoices);
-		// Eurgh
-		dest.writeString(selectionMode.name());
-		dest.writeString(shufflingMode.name());
 		
 		dest.writeList(possibleContacts);
 		dest.writeList(questions);
 	}
 	
 	GameAdapter(Parcel in) {
-		gameIsFinite = in.readInt() == 1;
-		maxNum = in.readInt();
-		maxTimePerContact = in.readFloat();
+		descriptor = in.readParcelable(null);
 		otherAnswers = (Contact[]) in.readParcelableArray(null);
-		numberOfChoices = in.readInt();
-		
-		selectionMode = SelectionMode.valueOf(in.readString());
-		shufflingMode = ShufflingMode.valueOf(in.readString());
 		
 		possibleContacts = new LinkedList<Contact>();
 		in.readList(possibleContacts, null);

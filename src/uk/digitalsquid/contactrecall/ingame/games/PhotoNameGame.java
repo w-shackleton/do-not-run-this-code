@@ -23,20 +23,15 @@ public class PhotoNameGame extends GameAdapter {
 	
 	public PhotoNameGame(Context context, App app, GameDescriptor descriptor, GameCallbacks callbacks) {
 		super(context, app, descriptor, callbacks);
-		state = new Bundle();
 	}
 	
 	public PhotoNameGame(Parcel in) {
 		super(in);
-		state = in.readBundle();
 	}
 	
 	protected LinkedList<Contact> getPossibleContacts() {
 		return app.getGame().getAllPhotoContacts();
 	}
-	
-	// TODO: Remove?
-	Bundle state;
 
 	@Override
 	protected Fragment createFragment(int position) {
@@ -44,6 +39,7 @@ public class PhotoNameGame extends GameAdapter {
         Bundle args = new Bundle();
         
         args.putParcelable(PhotoNameView.ARG_QUESTION, question);
+        args.putParcelable(PhotoNameView.ARG_DESCRIPTOR, descriptor);
         
         PhotoNameView fragment = new PhotoNameView();
         fragment.setArguments(args);
@@ -54,7 +50,6 @@ public class PhotoNameGame extends GameAdapter {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		super.writeToParcel(dest, flags);
-		dest.writeBundle(state);
 	}
 	
 	public static final Creator<PhotoNameGame> CREATOR = new Creator<PhotoNameGame>() {

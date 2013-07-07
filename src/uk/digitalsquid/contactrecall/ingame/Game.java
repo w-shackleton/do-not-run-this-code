@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -115,6 +116,7 @@ public class Game extends Activity implements GameCallbacks, Config {
 		GameDescriptor gameDescriptor;
 		GameAdapter gameAdapter;
 		FrameLayout frameLayout;
+		Handler handler = new Handler();
 		
 		int position = 0;
 		
@@ -195,10 +197,21 @@ public class Game extends Activity implements GameCallbacks, Config {
 			if(position == gameAdapter.getCount()) {
 				// TODO: End-case
 			} else {
-				getFragmentManager().beginTransaction().
-					setCustomAnimations(R.animator.next_card_in, R.animator.next_card_out).
-					replace(R.id.pager, gameAdapter.getFragment(position)).
-					commit();
+				// Run transition to next card after the given delay.
+				// The position has already been updated so we shouldn't have
+				// to worry about view rotation etc.
+				handler.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						getFragmentManager().beginTransaction().
+							setCustomAnimations(R.animator.next_card_in, R.animator.next_card_out).
+							replace(R.id.pager, gameAdapter.getFragment(position)).
+							commit();
+					}
+				}, getResources().getInteger(
+						correct ?
+								R.integer.page_correct_wait_time :
+								R.integer.page_incorrect_wait_time));
 			}
 		}
 	}

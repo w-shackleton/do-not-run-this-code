@@ -3,5 +3,7 @@
     <item type="integer" name="card_flip_time_full">800</item>
     <item type="integer" name="card_flip_time_half">400</item>
     <item type="integer" name="page_flip_time_full">300</item>
+    <item type="integer" name="page_incorrect_wait_time">2000</item>
+    <item type="integer" name="page_correct_wait_time">0</item>
     
 </resources>
