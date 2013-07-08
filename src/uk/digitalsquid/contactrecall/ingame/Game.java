@@ -5,6 +5,7 @@ import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.ingame.games.GameAdapter;
 import uk.digitalsquid.contactrecall.ingame.games.PhotoNameGame;
+import uk.digitalsquid.contactrecall.mgr.Contact;
 import uk.digitalsquid.contactrecall.misc.Config;
 import android.app.Activity;
 import android.app.Fragment;
@@ -192,7 +193,7 @@ public class Game extends Activity implements GameCallbacks, Config {
 		}
 
 		@Override
-		public void choiceMade(int choice, boolean correct) {
+		public void choiceMade(Contact choice, boolean correct, boolean timeout, float timeTaken) {
 			position++;
 			if(position == gameAdapter.getCount()) {
 				// TODO: End-case
@@ -213,6 +214,14 @@ public class Game extends Activity implements GameCallbacks, Config {
 								R.integer.page_correct_wait_time :
 								R.integer.page_incorrect_wait_time));
 			}
+			
+			// TODO: Background this?
+			if(timeout) app.getDb().progress.addTimeout(
+					gameAdapter.getItem(position-1).getContact(), timeTaken);
+			else if(correct) app.getDb().progress.addSuccess(
+					gameAdapter.getItem(position-1).getContact(), timeTaken);
+			else app.getDb().progress.addFail(
+					gameAdapter.getItem(position-1).getContact(), choice, timeTaken);
 		}
 	}
 	
@@ -245,7 +254,7 @@ public class Game extends Activity implements GameCallbacks, Config {
 	}
 
 	@Override
-	public void choiceMade(int choice, boolean correct) {
-		callbacks.choiceMade(choice, correct);
+	public void choiceMade(Contact choice, boolean correct, boolean timeout, float timeTaken) {
+		callbacks.choiceMade(choice, correct, timeout, timeTaken);
 	}
 }

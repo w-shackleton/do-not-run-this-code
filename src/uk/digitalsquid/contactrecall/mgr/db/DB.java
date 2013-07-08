@@ -15,16 +15,20 @@ public final class DB extends SQLiteOpenHelper {
 	static final String DB_NAME = "db";
 	
 	public final DBGroup groups;
+	public final ProgressDB progress;
 
 	public DB(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
 		groups = new DBGroup();
+		progress = new ProgressDB();
 		groups.setDb(getWritableDatabase());
+		progress.setDb(getWritableDatabase());
 	}
 	
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		groups.onCreate(db);
+		progress.onCreate(db);
 	}
 
 	@Override

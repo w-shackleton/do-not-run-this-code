@@ -48,7 +48,7 @@ public final class DBGroup extends DBSubclass {
 			db.delete(GROUPS, null, null); // Remove old list.
 			
 			for(int id : ids) {
-				ContentValues values = new ContentValues(ids.size());
+				ContentValues values = new ContentValues(1);
 				values.put(GROUPS_ID, id);
 				db.insert(GROUPS, null, values);
 			}

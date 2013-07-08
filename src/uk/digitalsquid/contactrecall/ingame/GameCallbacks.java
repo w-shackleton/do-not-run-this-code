@@ -1,5 +1,7 @@
 package uk.digitalsquid.contactrecall.ingame;
 
+import uk.digitalsquid.contactrecall.mgr.Contact;
+
 /**
  * Callback functions from the game itself to the fragment that is hosting it.
  * @author william
@@ -12,5 +14,5 @@ public interface GameCallbacks {
 	 * @param choice The number of the choice made TODO may not be used
 	 * @param correct If <code>true</code>, the choice was correct
 	 */
-	void choiceMade(int choice, boolean correct);
+	void choiceMade(Contact choice, boolean correct, boolean timeout, float timeTaken);
 }

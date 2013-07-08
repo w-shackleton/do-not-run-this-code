@@ -40,6 +40,8 @@ public class PhotoNameView extends Fragment implements OnClickListener, OnFinish
 	private Button[] choiceButtons = new Button[8];
 	private TimerView timer;
 	
+	long startTime;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
 		super.onCreateView(inflater, root, savedInstanceState);
@@ -84,6 +86,8 @@ public class PhotoNameView extends Fragment implements OnClickListener, OnFinish
         				question.getOtherAnswers()[posThroughOthers++].getNamePart(answerNamePart));
         	}
         }
+        
+        startTime = System.nanoTime();
         
         timer = (TimerView) rootView.findViewById(R.id.timerView);
         timer.setOnFinishedListener(this);
@@ -164,7 +168,15 @@ public class PhotoNameView extends Fragment implements OnClickListener, OnFinish
 						getActivity().getResources().getColor(R.color.correct_other_bg));
 			} */
 		}
-		if(callbacks != null) callbacks.choiceMade(choice, choice == question.getCorrectPosition());
+		
+		float delay = (float)(System.nanoTime() - startTime) / (float)1000000000L;
+		
+		Contact chosenContact = null;
+		if(choice >= 0 && choice < question.getOtherAnswers().length)
+			chosenContact = question.getOtherAnswers()[choice];
+		// TODO: Chosen contact is being null here.
+		if(callbacks != null) callbacks.choiceMade(chosenContact, choice == question.getCorrectPosition(),
+				choice == -1, delay);
 		else Log.e(TAG, "Callbacks are currently null!");
 	}
 
