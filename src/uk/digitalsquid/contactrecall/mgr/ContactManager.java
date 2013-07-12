@@ -119,6 +119,14 @@ public final class ContactManager implements Config {
 	public List<Contact> getContacts() {
 		return contacts;
 	}
+	
+	public Contact getContact(int id) {
+		for(Contact contact : contacts) {
+			if(contact.getId() == id)
+				return contact;
+		}
+		return null;
+	}
 
 	private final ContentObserver observer = new ContentObserver(new Handler()) {
 		@Override

@@ -170,4 +170,9 @@ public class Contact implements Parcelable {
 		c.lastName = "Not found";
 		return c;
 	}
+	
+	@Override
+	public int hashCode() {
+		return id;
+	}
 }

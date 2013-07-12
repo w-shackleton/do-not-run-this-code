@@ -1,8 +1,10 @@
 package uk.digitalsquid.contactrecall.mgr.db;
 
+import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.mgr.Contact;
 import uk.digitalsquid.contactrecall.mgr.db.DB.DBSubclass;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -17,9 +19,15 @@ import android.util.Log;
  */
 public class ProgressDB extends DBSubclass {
 	
-	private static final int ATTEMPT_STATUS_SUCCESS = 1;
-	private static final int ATTEMPT_STATUS_FAIL = 2;
-	private static final int ATTEMPT_STATUS_TIMEOUT = 3;
+	public static final int ATTEMPT_STATUS_SUCCESS = 1;
+	public static final int ATTEMPT_STATUS_FAIL = 2;
+	public static final int ATTEMPT_STATUS_TIMEOUT = 3;
+	
+	private final App app;
+	
+	ProgressDB(App app) {
+		this.app = app;
+	}
 	
 	/*
 	 * The attempts table stores every attempt the user makes at guessing a
@@ -70,5 +78,65 @@ public class ProgressDB extends DBSubclass {
 	}
 	public void addTimeout(Contact contact, float delay) {
 		addAttempt(contact.getId(), -1, delay, ATTEMPT_STATUS_TIMEOUT);
+	}
+	
+	/**
+	 * @return Data about contact attempt responses.
+	 * Some values in this array may be null.
+	 */
+	public GroupedMeanAttempt[] getGroupedMeanAttemptData() {
+		Cursor c = db.query(
+				"attempts",
+				new String[] { "contactId", "status", "AVERAGE(delay)", "COUNT(contactId)" },
+				null,
+				null,
+				"contactId, status",
+				null,
+				"contactId, status");
+		GroupedMeanAttempt[] result = new GroupedMeanAttempt[c.getCount()];
+		int i = 0;
+		while(c.moveToNext()) {
+			GroupedMeanAttempt val = new GroupedMeanAttempt();
+			
+			Contact contact = app.getContacts().getContact(c.getInt(0));
+			val.setContact(contact);
+			val.setStatus(c.getInt(1));
+			val.setMeanDelay(c.getFloat(2));
+			val.setCount(c.getInt(3));
+			result[i++] = val;
+		}
+		c.close();
+		return result;
+	}
+	
+	public static class GroupedMeanAttempt {
+		private Contact contact;
+		private int status;
+		private float meanDelay;
+		private int count;
+		public Contact getContact() {
+			return contact;
+		}
+		void setContact(Contact contact) {
+			this.contact = contact;
+		}
+		public int getStatus() {
+			return status;
+		}
+		void setStatus(int status) {
+			this.status = status;
+		}
+		public float getMeanDelay() {
+			return meanDelay;
+		}
+		void setMeanDelay(float meanDelay) {
+			this.meanDelay = meanDelay;
+		}
+		public int getCount() {
+			return count;
+		}
+		void setCount(int count) {
+			this.count = count;
+		}
 	}
 }

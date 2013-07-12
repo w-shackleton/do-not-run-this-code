@@ -6,6 +6,7 @@ import uk.digitalsquid.contactrecall.mgr.GroupManager;
 import uk.digitalsquid.contactrecall.mgr.OldPhotoManager;
 import uk.digitalsquid.contactrecall.mgr.PhotoManager;
 import uk.digitalsquid.contactrecall.mgr.db.DB;
+import uk.digitalsquid.contactrecall.stats.Stats;
 import android.app.Application;
 
 /**
@@ -21,6 +22,7 @@ public class App extends Application {
 	private OldPhotoManager oldPhotos;
 	private PhotoManager photos;
 	private GameDataManager game;
+	private Stats stats;
 	
 	public DB getDb() {
 		if(db == null) db = new DB(this);
@@ -51,5 +53,10 @@ public class App extends Application {
 	public GameDataManager getGame() {
 		if(game == null) game = new GameDataManager(getApplicationContext(), this);
 		return game;
+	}
+	
+	public Stats getStats() {
+		if(stats == null) stats = new Stats(getApplicationContext(), getDb());
+		return stats;
 	}
 }

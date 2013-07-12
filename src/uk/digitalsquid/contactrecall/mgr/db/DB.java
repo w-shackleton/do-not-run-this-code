@@ -1,7 +1,7 @@
 package uk.digitalsquid.contactrecall.mgr.db;
 
+import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.misc.Config;
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -17,10 +17,10 @@ public final class DB extends SQLiteOpenHelper {
 	public final DBGroup groups;
 	public final ProgressDB progress;
 
-	public DB(Context context) {
-		super(context, DB_NAME, null, DB_VERSION);
+	public DB(App app) {
+		super(app.getApplicationContext(), DB_NAME, null, DB_VERSION);
 		groups = new DBGroup();
-		progress = new ProgressDB();
+		progress = new ProgressDB(app);
 		groups.setDb(getWritableDatabase());
 		progress.setDb(getWritableDatabase());
 	}
