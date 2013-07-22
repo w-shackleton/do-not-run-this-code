@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
+import uk.digitalsquid.contactrecall.ingame.fragments.MultiChoiceView;
 import uk.digitalsquid.contactrecall.ingame.fragments.PhotoNameView;
 import uk.digitalsquid.contactrecall.mgr.Contact;
 import uk.digitalsquid.contactrecall.mgr.Question;
@@ -38,8 +39,8 @@ public class PhotoNameGame extends GameAdapter {
 		Question question = getItem(position);
         Bundle args = new Bundle();
         
-        args.putParcelable(PhotoNameView.ARG_QUESTION, question);
-        args.putParcelable(PhotoNameView.ARG_DESCRIPTOR, descriptor);
+        args.putParcelable(MultiChoiceView.ARG_QUESTION, question);
+        args.putParcelable(MultiChoiceView.ARG_DESCRIPTOR, descriptor);
         
         PhotoNameView fragment = new PhotoNameView();
         fragment.setArguments(args);

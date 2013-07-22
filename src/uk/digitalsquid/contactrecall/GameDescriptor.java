@@ -19,7 +19,6 @@ public class GameDescriptor implements Parcelable {
 	private float maxTimePerContact;
 	private SelectionMode selectionMode;
 	private ShufflingMode shufflingMode;
-	private NamePart namePart;
 	
 	private GameDescriptor(Parcel parcel) {
 		type = parcel.readInt();
@@ -29,7 +28,6 @@ public class GameDescriptor implements Parcelable {
 		maxTimePerContact = parcel.readFloat();
 		selectionMode = SelectionMode.valueOf(parcel.readString());
 		shufflingMode = ShufflingMode.valueOf(parcel.readString());
-		namePart = NamePart.valueOf(parcel.readString());
 	}
 	public GameDescriptor(int type) {
 		this.type = type;
@@ -39,7 +37,6 @@ public class GameDescriptor implements Parcelable {
 		maxTimePerContact = 5;
 		selectionMode = SelectionMode.RANDOM;
 		shufflingMode = ShufflingMode.RANDOM;
-		namePart = NamePart.DISPLAY;
 	}
 	
 	public int getType() {
@@ -60,7 +57,6 @@ public class GameDescriptor implements Parcelable {
 		dest.writeFloat(maxTimePerContact);
 		dest.writeString(selectionMode.name());
 		dest.writeString(shufflingMode.name());
-		dest.writeString(namePart.name());
 	}
 	
 	public int getOptionSources() {
@@ -105,13 +101,6 @@ public class GameDescriptor implements Parcelable {
 		this.shufflingMode = shufflingMode;
 	}
 
-	public NamePart getNamePart() {
-		return namePart;
-	}
-	public void setNamePart(NamePart namePart) {
-		this.namePart = namePart;
-	}
-
 	public static final Parcelable.Creator<GameDescriptor> CREATOR = new Parcelable.Creator<GameDescriptor>() {
 		public GameDescriptor createFromParcel(Parcel in) {
 			return new GameDescriptor(in);
@@ -140,15 +129,50 @@ public class GameDescriptor implements Parcelable {
 	}
 	
 	/**
-	 * The part of the name to use
+	 * Defines a possible pair of question and answer types.
 	 * @author william
 	 *
 	 */
-	public static enum NamePart {
-		FIRST,
-		LAST,
-		DISPLAY,
-		RANDOM
+	public static class QuestionAnswerPair implements Parcelable {
+		private int questionType;
+		private int answerType;
+		
+		public QuestionAnswerPair() { }
+		public QuestionAnswerPair(Parcel in) {
+			setQuestionType(in.readInt());
+			setAnswerType(in.readInt());
+		}
+
+		public static final Parcelable.Creator<QuestionAnswerPair> CREATOR = new Parcelable.Creator<QuestionAnswerPair>() {
+			public QuestionAnswerPair createFromParcel(Parcel in) {
+				return new QuestionAnswerPair(in);
+			}
+			public QuestionAnswerPair[] newArray(int size) {
+				return new QuestionAnswerPair[size];
+			}
+		};
+
+		@Override
+		public int describeContents() {
+			return 0;
+		}
+		@Override
+		public void writeToParcel(Parcel dest, int flags) {
+			dest.writeInt(getQuestionType());
+			dest.writeInt(getAnswerType());
+		}
+		public int getQuestionType() {
+			return questionType;
+		}
+		public void setQuestionType(int questionType) {
+			this.questionType = questionType;
+		}
+		public int getAnswerType() {
+			return answerType;
+		}
+		public void setAnswerType(int answerType) {
+			this.answerType = answerType;
+		}
 	}
 	
 	/**

@@ -1,15 +1,13 @@
 package uk.digitalsquid.contactrecall.ingame.fragments;
 
-import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.mgr.Contact;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.TextView;
 
 
 /**
@@ -18,7 +16,7 @@ import android.widget.ImageView;
  * @author william
  *
  */
-public class PhotoNameView extends MultiChoiceView<ImageView, Button> {
+public class TextTextView extends MultiChoiceView<TextView, Button> {
 
 	@Override
 	protected int getRootLayoutId() {
@@ -26,8 +24,8 @@ public class PhotoNameView extends MultiChoiceView<ImageView, Button> {
 	}
 
 	@Override
-	protected ImageView getQuestionView(View rootView) {
-        return (ImageView) rootView.findViewById(R.id.photo);
+	protected TextView getQuestionView(View rootView) {
+        return (TextView) rootView.findViewById(R.id.question);
 	}
 
 	@Override
@@ -51,7 +49,11 @@ public class PhotoNameView extends MultiChoiceView<ImageView, Button> {
         int correctChoice = question.getCorrectPosition();
         int numberOfChoices = question.getNumberOfChoices();
         Contact contact = question.getContact();
+        int questionType = question.getQuestionType();
         int answerType = question.getAnswerType();
+        
+        // Configure question
+        questionView.setText(contact.getNamePart(questionType));
         
         // Configure answers
         int posThroughOthers = 0;
@@ -64,15 +66,5 @@ public class PhotoNameView extends MultiChoiceView<ImageView, Button> {
         	}
         }
         return ret;
-	}
-
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-        // Show photo
-		App app = (App) getActivity().getApplication();
-		// TODO: Background this?
-        Bitmap bmp = question.getContact().getPhoto(app.getPhotos());
-        questionView.setImageBitmap(bmp);
 	}
 }

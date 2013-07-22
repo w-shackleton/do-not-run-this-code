@@ -3,9 +3,6 @@ package uk.digitalsquid.contactrecall.mgr;
 import java.util.Comparator;
 import java.util.LinkedList;
 
-import uk.digitalsquid.contactrecall.GameDescriptor.NamePart;
-import uk.digitalsquid.contactrecall.misc.Const;
-
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -135,25 +132,23 @@ public class Contact implements Parcelable {
 				public Contact createFromParcel(Parcel source) {
 					return new Contact(source);
 				}
-			};
+	};
 			
-	public String getNamePart(NamePart part) {
+	/**
+	 * Gets the part of a name. The part is defined in {@link Question}.
+	 * If an invalid part is given, the display name is returned as a fail-safe.
+	 * @param part
+	 * @return
+	 */
+	public String getNamePart(int part) {
 		switch(part) {
-		case DISPLAY:
+		case Question.TYPE_DISPLAY_NAME:
 		default:
 			return displayName;
-		case FIRST:
+		case Question.TYPE_FIRST_NAME:
 			return firstName;
-		case LAST:
+		case Question.TYPE_LAST_NAME:
 			return lastName;
-		case RANDOM:
-			switch(Const.RAND.nextInt(2)) {
-			case 0:
-				return firstName;
-			default:
-			case 1:
-				return lastName;
-			}
 		}
 	}
 	

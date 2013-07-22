@@ -1,6 +1,5 @@
 package uk.digitalsquid.contactrecall.mgr;
 
-import uk.digitalsquid.contactrecall.GameDescriptor.NamePart;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -18,10 +17,13 @@ public final class Question implements Parcelable {
 	
 	private int correctPosition;
 	
-	/**
-	 * The part of the name to show on-screen.
-	 */
-	private NamePart namePart;
+	public static final int TYPE_PHOTO = 1;
+	public static final int TYPE_FIRST_NAME = 2;
+	public static final int TYPE_LAST_NAME = 3;
+	public static final int TYPE_DISPLAY_NAME = 4;
+	
+	private int questionType;
+	private int answerType;
 	
 	public Question(Contact contact) {
 		this(contact, null);
@@ -36,7 +38,8 @@ public final class Question implements Parcelable {
 		contact = src.readParcelable(null);
 		otherAnswers = (Contact[]) src.readParcelableArray(null);
 		correctPosition = src.readInt();
-		namePart = NamePart.valueOf(src.readString());
+		questionType = src.readInt();
+		answerType = src.readInt();
 	}
 
 	public Contact getContact() {
@@ -70,7 +73,8 @@ public final class Question implements Parcelable {
 		dest.writeParcelable(contact, 0);
 		dest.writeParcelableArray(otherAnswers, 0);
 		dest.writeInt(correctPosition);
-		dest.writeString(namePart.name());
+		dest.writeInt(questionType);
+		dest.writeInt(answerType);
 	}
 	
 	public int getCorrectPosition() {
@@ -81,12 +85,20 @@ public final class Question implements Parcelable {
 		this.correctPosition = correctPosition;
 	}
 
-	public NamePart getNamePart() {
-		return namePart;
+	public int getQuestionType() {
+		return questionType;
 	}
 
-	public void setNamePart(NamePart namePart) {
-		this.namePart = namePart;
+	public void setQuestionType(int questionType) {
+		this.questionType = questionType;
+	}
+
+	public int getAnswerType() {
+		return answerType;
+	}
+
+	public void setAnswerType(int answerType) {
+		this.answerType = answerType;
 	}
 
 	public static final Creator<Question> CREATOR = new Creator<Question>() {

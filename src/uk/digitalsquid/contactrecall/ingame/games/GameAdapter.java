@@ -7,13 +7,11 @@ import java.util.LinkedList;
 
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.GameDescriptor;
-import uk.digitalsquid.contactrecall.GameDescriptor.NamePart;
 import uk.digitalsquid.contactrecall.GameDescriptor.SelectionMode;
 import uk.digitalsquid.contactrecall.GameDescriptor.ShufflingMode;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.mgr.Contact;
 import uk.digitalsquid.contactrecall.mgr.Question;
-import uk.digitalsquid.contactrecall.misc.Const;
 import uk.digitalsquid.contactrecall.misc.ListUtils;
 import android.app.Fragment;
 import android.content.Context;
@@ -146,17 +144,18 @@ public abstract class GameAdapter implements Parcelable {
 	protected Question createQuestion(Contact contact) {
 		Question question = new Question(contact);
 		// TODO: Customise
-		question.setNamePart(NamePart.DISPLAY);
+		question.setQuestionType(!!!!!!);
+		question.setAnswerType(!!!!!);
 		int numOtherChoices = 3;
 		question.setCorrectPosition(Const.RAND.nextInt(numOtherChoices + 1));
 		
 		Contact[] otherChoices = new Contact[numOtherChoices];
-        String correctText = contact.getNamePart(question.getNamePart());
+        String correctText = contact.getNamePart(question.getAnswerType());
 		for(int i = 0; i < otherChoices.length; i++) {
     		Contact other = Contact.getNullContact(); // TODO: Lots of nulls created
     		for(int j = 0; j < 20; j++) { // Attempt to find a different name
     			other = otherAnswers[Const.RAND.nextInt(otherAnswers.length)];
-    			if(!other.getNamePart(question.getNamePart())
+    			if(!other.getNamePart(question.getAnswerType())
     					.equalsIgnoreCase(correctText)) break;
     		}
     		otherChoices[i] = other;
