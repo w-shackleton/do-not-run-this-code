@@ -3,37 +3,37 @@ package uk.digitalsquid.contactrecall.ingame.games;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Set;
 
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.GameDescriptor;
+import uk.digitalsquid.contactrecall.GameDescriptor.QuestionAnswerPair;
 import uk.digitalsquid.contactrecall.GameDescriptor.SelectionMode;
 import uk.digitalsquid.contactrecall.GameDescriptor.ShufflingMode;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
-import uk.digitalsquid.contactrecall.mgr.Contact;
+import uk.digitalsquid.contactrecall.ingame.fragments.MultiChoiceView;
+import uk.digitalsquid.contactrecall.ingame.fragments.PhotoNameView;
 import uk.digitalsquid.contactrecall.mgr.Question;
+import uk.digitalsquid.contactrecall.mgr.details.Contact;
+import uk.digitalsquid.contactrecall.misc.Config;
+import uk.digitalsquid.contactrecall.misc.Const;
 import uk.digitalsquid.contactrecall.misc.ListUtils;
 import android.app.Fragment;
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
-public abstract class GameAdapter implements Parcelable {
+public class GameAdapter implements Parcelable, Config {
 	
 	protected transient App app;
 	protected transient Context context;
 	protected transient GameCallbacks callbacks;
 	
 	protected GameDescriptor descriptor;
-	
-	private Contact[] otherAnswers;
-	
-	/**
-	 * Holds all the possible contacts we could use.
-	 * Check for null-ness - this will be deleted in a
-	 * finite game once a subset has been collected.
-	 */
-	LinkedList<Contact> possibleContacts;
 	
 	/**
 	 * The questions to use - usually pre-shuffled.
@@ -46,23 +46,76 @@ public abstract class GameAdapter implements Parcelable {
 		this.context = context;
 		this.callbacks = callbacks;
 		this.descriptor = descriptor;
-		possibleContacts = getPossibleContacts();
 
 		// Construct the lists that are used as false answers to questions.
 		ArrayList<Contact> badContacts = null; // TODO: Implement
-		ArrayList<Contact> allContacts = new ArrayList<Contact>(app.getContacts().getContacts());
+		ArrayList<Contact> realContacts = new ArrayList<Contact>(app.getContacts().getContacts());
 		ArrayList<Contact> nameLists = null; // TODO: Implement
-		otherAnswers = filterOtherAnswers(
-				ListUtils.concat(new ArrayList<Contact>(), badContacts, allContacts, nameLists)
-				.toArray(new Contact[0]));
+
+		ArrayList<Contact> allContacts = 
+				ListUtils.concat(new ArrayList<Contact>(), badContacts, realContacts, nameLists);
+
+		// The types of contacts we must generate lists of
+		Set<Integer> usedFieldTypes = descriptor.getUsedFieldTypes();
+
+		// Construct groups of actual contacts.
+		HashMap<Integer, ArrayList<Contact>> contactGroups = new HashMap<Integer, ArrayList<Contact>>();
+		// For each field type, accumulate a list of contacts that contain that field type.
+		for(int usedFieldType : usedFieldTypes) {
+			ArrayList<Contact> contacts = new ArrayList<Contact>();
+			contactGroups.put(usedFieldType, contacts);
+			
+			for(Contact contact : realContacts) {
+				if(contact.hasField(usedFieldType))
+					contacts.add(contact);
+			}
+		}
+
+		// Construct groups of all types of contact to use as answers.
+		HashMap<Integer, ArrayList<Contact>> allContactGroups = new HashMap<Integer, ArrayList<Contact>>();
+		// For each field type, accumulate a list of contacts that contain that field type.
+		for(int usedFieldType : usedFieldTypes) {
+			ArrayList<Contact> contacts = new ArrayList<Contact>();
+			
+			for(Contact contact : allContacts) {
+				if(contact.hasField(usedFieldType))
+					contacts.add(contact);
+			}
 		
-		ArrayList<Contact> selection =
-				selectContacts(possibleContacts, descriptor.getMaxQuestions(), descriptor.getSelectionMode());
-		ArrayList<Contact> selectedContacts = shuffleContacts(selection, descriptor.getShufflingMode());
+			// Shuffle each group
+			allContactGroups.put(usedFieldType,
+					shuffleContacts(contacts, descriptor.getShufflingMode()));
+		}
 		
-		questions = new ArrayList<Question>(selectedContacts.size());
-		for(Contact contact : selectedContacts) {
-			questions.add(createQuestion(contact));
+		// Every time we hit an empty group this decrements
+		int emptyRetries = 10;
+		for(int i = 0; i < descriptor.getMaxQuestions(); i++) {
+			// Select a random question type
+			QuestionAnswerPair type =
+					descriptor.getQuestionTypes()[Const.RAND.nextInt(
+							descriptor.getQuestionTypes().length)];
+			
+			// Remove the first question from the grouped contact questions
+			ArrayList<Contact> possibles = contactGroups.get(type.getQuestionType());
+			if(possibles == null) {
+				Log.w(TAG, "Null array found in contactGroups - this shouldn't be possible");
+			}
+			
+			// Find the first contact that has both the question and answer types
+			Contact question = null;
+			for(int j = 0; j < possibles.size(); j++) {
+				Contact test = possibles.get(j);
+				if(test.hasField(type.getAnswerType())) {
+					question = test;
+					possibles.remove(j);
+				}
+			}
+			if(question == null) {
+				if(emptyRetries-- == 0) break;
+				else continue;
+			}
+			
+			createQuestion(question, type, allContactGroups);
 		}
 	}
 
@@ -81,8 +134,6 @@ public abstract class GameAdapter implements Parcelable {
 		throw new RuntimeException("Infinite mode not yet implemented");
 	}
 
-	protected abstract LinkedList<Contact> getPossibleContacts();
-	
 	/**
 	 * Compares two contacts. Default instance just compares by contact ID
 	 * @return
@@ -116,21 +167,6 @@ public abstract class GameAdapter implements Parcelable {
 			return selection;
 		}
 	}
-	
-	/**
-	 * Can be overridden to filter out some contacts, allowing only others
-	 * to be used as possible false answers.
-	 * For example, all contacts without photos could be filtered.
-	 * @param otherAnswers
-	 * @return
-	 */
-	protected Contact[] filterOtherAnswers(Contact[] otherAnswers) {
-		return otherAnswers;
-	}
-	
-	protected Contact[] getOtherAnswers() {
-		return otherAnswers;
-	}
 
 	public boolean isEmpty() {
 		return questions == null;
@@ -141,16 +177,18 @@ public abstract class GameAdapter implements Parcelable {
 		return 0;
 	}
 	
-	protected Question createQuestion(Contact contact) {
+	protected Question createQuestion(Contact contact, QuestionAnswerPair type, HashMap<Integer, ArrayList<Contact>> allContactGroups) {
 		Question question = new Question(contact);
+		question.setQuestionType(type.getQuestionType());
+		question.setAnswerType(type.getAnswerType());
 		// TODO: Customise
-		question.setQuestionType(!!!!!!);
-		question.setAnswerType(!!!!!);
 		int numOtherChoices = 3;
 		question.setCorrectPosition(Const.RAND.nextInt(numOtherChoices + 1));
 		
+		ArrayList<Contact> otherAnswers = allContactGroups.get(type.getAnswerType());
+		
 		Contact[] otherChoices = new Contact[numOtherChoices];
-        String correctText = contact.getNamePart(question.getAnswerType());
+        String correctIdentifier = contact.getStringFieldRepresentation(type.getAnswerType());
 		for(int i = 0; i < otherChoices.length; i++) {
     		Contact other = Contact.getNullContact(); // TODO: Lots of nulls created
     		for(int j = 0; j < 20; j++) { // Attempt to find a different name
@@ -169,7 +207,6 @@ public abstract class GameAdapter implements Parcelable {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeParcelable(descriptor, 0);
-		dest.writeParcelableArray(otherAnswers, 0);
 		
 		dest.writeList(possibleContacts);
 		dest.writeList(questions);
@@ -199,7 +236,43 @@ public abstract class GameAdapter implements Parcelable {
 		this.callbacks = callbacks;
 	}
 	
-	protected abstract Fragment createFragment(int position);
+	protected Fragment createFragment(int position) {
+		Question question = getItem(position);
+        Bundle args = new Bundle();
+        
+        args.putParcelable(MultiChoiceView.ARG_QUESTION, question);
+        args.putParcelable(MultiChoiceView.ARG_DESCRIPTOR, descriptor);
+        
+        // Find the correct fragment to use
+        // TODO: Write implementations for these other cases.
+        MultiChoiceView<?, ?> fragment;
+        switch(question.getQuestionFormat()) {
+        case Question.FORMAT_TEXT:
+    	default:
+    		switch(question.getAnswerFormat()) {
+    		case Question.FORMAT_TEXT:
+			default:
+				fragment = null;
+				break;
+			case Question.FORMAT_IMAGE:
+				fragment = null;
+				break;
+    		}
+    	case Question.FORMAT_IMAGE:
+    		switch(question.getAnswerFormat()) {
+    		case Question.FORMAT_TEXT:
+			default:
+				fragment = new PhotoNameView();
+				break;
+			case Question.FORMAT_IMAGE:
+				fragment = null;
+				break;
+    		}
+        }
+        fragment.setArguments(args);
+        
+		return fragment;
+	}
 	
 	/**
 	 * Gets the {@link Fragment} at position.
@@ -209,4 +282,17 @@ public abstract class GameAdapter implements Parcelable {
 	public Fragment getFragment(int position) {
 		return createFragment(position);
 	}
+	
+	public static final Creator<GameAdapter> CREATOR = new Creator<GameAdapter>() {
+
+		@Override
+		public GameAdapter createFromParcel(Parcel source) {
+			return new GameAdapter(source);
+		}
+
+		@Override
+		public GameAdapter[] newArray(int size) {
+			return new GameAdapter[size];
+		}
+	};
 }

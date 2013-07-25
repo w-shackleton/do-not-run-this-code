@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import uk.digitalsquid.contactrecall.App;
+import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import uk.digitalsquid.contactrecall.misc.Config;
 import android.content.Context;
 

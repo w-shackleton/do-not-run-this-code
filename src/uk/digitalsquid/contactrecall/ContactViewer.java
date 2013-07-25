@@ -1,14 +1,16 @@
 package uk.digitalsquid.contactrecall;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import uk.digitalsquid.contactrecall.mgr.Contact;
 import uk.digitalsquid.contactrecall.mgr.ContactManager.ContactChangeListener;
 import uk.digitalsquid.contactrecall.mgr.GroupManager.Group;
+import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import uk.digitalsquid.contactrecall.misc.ListUtils;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
@@ -63,13 +65,13 @@ public class ContactViewer extends Activity implements ContactChangeListener {
 	
 	private static final int ACTIVITY_PICTURE_RESULT = 1;
 	
-	private List<Contact> contacts;
+	private Collection<Contact> contacts;
 	
 	@Override
 	public void onResume() {
 		super.onResume();
 		contacts = app.getContacts().getContacts();
-		contactAdapter.setContacts(contacts);
+		contactAdapter.setContacts(new ArrayList<Contact>(contacts));
 	}
 	
 	@Override
@@ -230,8 +232,9 @@ public class ContactViewer extends Activity implements ContactChangeListener {
 	}
 
 	@Override
-	public void onContactsChanged(List<Contact> newContacts) {
-		contactAdapter.setContacts(newContacts);
+	public void onContactsChanged(Collection<Contact> newContacts) {
+		List<Contact> newContactList = new ArrayList<Contact>(newContacts);
+		contactAdapter.setContacts(newContactList);
 		contacts = newContacts;
 	};
 	

@@ -2,10 +2,10 @@ package uk.digitalsquid.contactrecall.stats;
 
 import java.util.HashMap;
 
-import uk.digitalsquid.contactrecall.mgr.Contact;
 import uk.digitalsquid.contactrecall.mgr.db.DB;
 import uk.digitalsquid.contactrecall.mgr.db.ProgressDB;
 import uk.digitalsquid.contactrecall.mgr.db.ProgressDB.GroupedMeanAttempt;
+import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import android.content.Context;
 
 /**

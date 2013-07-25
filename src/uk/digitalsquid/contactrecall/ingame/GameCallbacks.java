@@ -1,6 +1,6 @@
 package uk.digitalsquid.contactrecall.ingame;
 
-import uk.digitalsquid.contactrecall.mgr.Contact;
+import uk.digitalsquid.contactrecall.mgr.details.Contact;
 
 /**
  * Callback functions from the game itself to the fragment that is hosting it.

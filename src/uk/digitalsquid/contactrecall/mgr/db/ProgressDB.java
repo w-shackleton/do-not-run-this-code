@@ -1,8 +1,8 @@
 package uk.digitalsquid.contactrecall.mgr.db;
 
 import uk.digitalsquid.contactrecall.App;
-import uk.digitalsquid.contactrecall.mgr.Contact;
 import uk.digitalsquid.contactrecall.mgr.db.DB.DBSubclass;
+import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;

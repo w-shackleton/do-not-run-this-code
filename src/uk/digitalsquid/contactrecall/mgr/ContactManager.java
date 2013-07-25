@@ -1,21 +1,26 @@
 package uk.digitalsquid.contactrecall.mgr;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import uk.digitalsquid.contactrecall.App;
+import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import uk.digitalsquid.contactrecall.misc.Config;
 import uk.digitalsquid.contactrecall.misc.ListUtils;
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.Handler;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Email;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.util.SparseArray;
 
 /**
@@ -23,12 +28,14 @@ import android.util.SparseArray;
  * @author william
  *
  */
+@SuppressLint("UseSparseArrays")
 public final class ContactManager implements Config {
 	private final ContentResolver cr;
 	
 	private final Handler eventHandler;
 	
-	private List<Contact> contacts;
+	private HashMap<Integer, Contact> contacts;
+	private Collection<Contact> contactCollection;
 	
 	private final App app;
 	
@@ -50,13 +57,14 @@ public final class ContactManager implements Config {
 		
 		Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
 				new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME },
-				null, null, ContactsContract.Contacts.DISPLAY_NAME + " ASC");
+				null, null, ContactsContract.Contacts._ID + " ASC");
 		
 		SparseArray<List<Integer>> groupContactRelations = app.getGroups().getGroupContactRelations(true);
 		Set<List<Integer>> groupContactRelationsValues = ListUtils.values(groupContactRelations);
 		
-		contacts = new ArrayList<Contact>(cur.getCount());
+		contacts = new HashMap<Integer, Contact>();
 		
+		// Load base data and populate HashMap
 		if(cur.getCount() > 0) {
 			while(cur.moveToNext()) {
 				int id = cur.getInt(cur.getColumnIndex(ContactsContract.Contacts._ID));
@@ -67,10 +75,84 @@ public final class ContactManager implements Config {
 					contact.setId(id);
 					contact.setDisplayName(displayName);
 					
-					contacts.add(contact);
+					contacts.put(contact.getId(), contact);
 				}
 			}
 		}
+		cur.close();
+		
+		// Get data from Data table and populate contacts further
+		// This query could take a LONG time.
+		// TODO: In the future, show a loading screen whilst doing this.
+		cur = cr.query(ContactsContract.Data.CONTENT_URI,
+				new String[] {
+				ContactsContract.Data._ID,
+				ContactsContract.Data.MIMETYPE,
+				ContactsContract.CommonDataKinds.Organization.COMPANY,
+				ContactsContract.CommonDataKinds.Organization.DEPARTMENT,
+				ContactsContract.CommonDataKinds.Organization.TITLE,
+				ContactsContract.CommonDataKinds.Phone.NUMBER,
+				ContactsContract.CommonDataKinds.Phone.TYPE,
+				ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME,
+				ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME,
+				ContactsContract.CommonDataKinds.Email.DISPLAY_NAME,
+				ContactsContract.CommonDataKinds.Email.TYPE,
+		},
+				null, null, null);
+		int idIdx		= cur.getColumnIndexOrThrow(ContactsContract.Data._ID);
+		int mimeTypeIdx	= cur.getColumnIndexOrThrow(ContactsContract.Data.MIMETYPE);
+		int companyIdx	= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Organization.COMPANY);
+		int departmentIdx=cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Organization.DEPARTMENT);
+		int titleIdx	= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Organization.TITLE);
+		int numberIdx	= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER);
+		int numberTypeIdx=cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.TYPE);
+		int givenNameIdx= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+		int familyNameIdx=cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME);
+		int emailNameIdx= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Email.DISPLAY_NAME);
+		int emailtypeIdx= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Email.TYPE);
+		while(cur.moveToNext()) {
+			Contact contact = contacts.get(cur.getInt(idIdx));
+			if(contact == null) continue;
+			String mime = cur.getString(mimeTypeIdx);
+			if(mime == null) continue;
+			if(mime.equals(ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE)) {
+				contact.getDetails().setCompany(cur.getString(companyIdx));
+				contact.getDetails().setDepartment(cur.getString(departmentIdx));
+				contact.getDetails().setCompanyTitle(cur.getString(titleIdx));
+			}
+			else if(mime.equals(ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)) {
+				switch(cur.getInt(numberTypeIdx)) {
+				case Phone.TYPE_HOME:
+					contact.getDetails().setHomePhone(cur.getString(numberIdx)); break;
+				case Phone.TYPE_WORK:
+					contact.getDetails().setWorkPhone(cur.getString(numberIdx)); break;
+				case Phone.TYPE_MOBILE:
+					contact.getDetails().setMobilePhone(cur.getString(numberIdx)); break;
+				case Phone.TYPE_OTHER:
+					contact.getDetails().setOtherPhone(cur.getString(numberIdx)); break;
+				}
+			}
+			else if(mime.equals(ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)) {
+				contact.setFirstName(cur.getString(givenNameIdx));
+				contact.setLastName(cur.getString(familyNameIdx));
+			}
+			else if(mime.equals(ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)) {
+				switch(cur.getInt(emailtypeIdx)) {
+				case Email.TYPE_HOME:
+					contact.getDetails().setHomeEmail(cur.getString(emailNameIdx)); break;
+				case Email.TYPE_WORK:
+					contact.getDetails().setWorkEmail(cur.getString(emailNameIdx)); break;
+				case Email.TYPE_MOBILE:
+					contact.getDetails().setMobileEmail(cur.getString(emailNameIdx)); break;
+				case Email.TYPE_OTHER:
+					contact.getDetails().setOtherEmail(cur.getString(emailNameIdx)); break;
+				}
+			}
+		}
+		cur.close();
+		
+		// Convert to a Set for ease of use
+		contactCollection = contacts.values();
 	}
 	
 	/**
@@ -116,16 +198,15 @@ public final class ContactManager implements Config {
 		return new LinkedList<RawContact>();
 	}
 	
-	public List<Contact> getContacts() {
+	public Collection<Contact> getContacts() {
+		return contactCollection;
+	}
+	public Map<Integer, Contact> getContactMap() {
 		return contacts;
 	}
 	
 	public Contact getContact(int id) {
-		for(Contact contact : contacts) {
-			if(contact.getId() == id)
-				return contact;
-		}
-		return null;
+		return contacts.get(id);
 	}
 
 	private final ContentObserver observer = new ContentObserver(new Handler()) {
@@ -179,6 +260,6 @@ public final class ContactManager implements Config {
 		 * Called when the contacts list has changed.
 		 * @param newContacts
 		 */
-		public void onContactsChanged(List<Contact> newContacts);
+		public void onContactsChanged(Collection<Contact> newContacts);
 	}
 }

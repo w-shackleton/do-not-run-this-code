@@ -1,6 +1,8 @@
 package uk.digitalsquid.contactrecall;
 
+import uk.digitalsquid.contactrecall.GameDescriptor.QuestionAnswerPair;
 import uk.digitalsquid.contactrecall.ingame.Game;
+import uk.digitalsquid.contactrecall.mgr.Question;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,23 +20,19 @@ public class ModeSelect extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View view) {
+		GameDescriptor descriptor = new GameDescriptor();
 		switch(view.getId()) {
 		case R.id.guessName:
-			// Game entry buttons
-			GameDescriptor descriptor;
-			switch(view.getId()) {
-			case R.id.guessName:
-				descriptor = new GameDescriptor(GameDescriptor.GAME_PHOTO_TO_NAME);
-				break;
-			default:
-				descriptor = null;
-				break;
-			}
-			
-			Intent intent = new Intent(this, Game.class);
-			intent.putExtra(Game.GAME_DESRIPTOR, descriptor);
-			startActivity(intent);
+			descriptor.setQuestionTypes(new QuestionAnswerPair[] {
+					new QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
+			});
 			break;
+		default:
+			return;
 		}
+		
+		Intent intent = new Intent(this, Game.class);
+		intent.putExtra(Game.GAME_DESRIPTOR, descriptor);
+		startActivity(intent);
 	}
 }

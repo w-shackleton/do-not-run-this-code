@@ -4,8 +4,7 @@ import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.ingame.games.GameAdapter;
-import uk.digitalsquid.contactrecall.ingame.games.PhotoNameGame;
-import uk.digitalsquid.contactrecall.mgr.Contact;
+import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import uk.digitalsquid.contactrecall.misc.Config;
 import android.app.Activity;
 import android.app.Fragment;
@@ -169,12 +168,7 @@ public class Game extends Activity implements GameCallbacks, Config {
 		 */
 		GameAdapter getGameAdapter(GameDescriptor descriptor, Bundle savedInstanceState) {
 			if(savedInstanceState == null) {
-				switch(descriptor.getType()) {
-				case GameDescriptor.GAME_PHOTO_TO_NAME:
-					return new PhotoNameGame(getActivity(), app, descriptor, this);
-				default:
-					return null;
-				}
+				return new GameAdapter(getActivity(), app, descriptor, this);
 			} else {
 				GameAdapter gameAdapter = savedInstanceState.getParcelable("gameAdapter");
 				if(gameAdapter == null) return getGameAdapter(descriptor, null);

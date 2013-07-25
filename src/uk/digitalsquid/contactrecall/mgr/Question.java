@@ -1,5 +1,6 @@
 package uk.digitalsquid.contactrecall.mgr;
 
+import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -17,10 +18,15 @@ public final class Question implements Parcelable {
 	
 	private int correctPosition;
 	
-	public static final int TYPE_PHOTO = 1;
-	public static final int TYPE_FIRST_NAME = 2;
-	public static final int TYPE_LAST_NAME = 3;
-	public static final int TYPE_DISPLAY_NAME = 4;
+	// Types of question that can be asked.
+	public static final int FIELD_PHOTO = 1;
+	public static final int FIELD_FIRST_NAME = 2;
+	public static final int FIELD_LAST_NAME = 3;
+	public static final int FIELD_DISPLAY_NAME = 4;
+	
+	// Formats of different types of question, eg. should a picture be shown?
+	public static final int FORMAT_IMAGE = 1;
+	public static final int FORMAT_TEXT = 2;
 	
 	private int questionType;
 	private int answerType;
@@ -88,6 +94,18 @@ public final class Question implements Parcelable {
 	public int getQuestionType() {
 		return questionType;
 	}
+	
+	public int getQuestionFormat() {
+		switch(questionType) {
+		case FIELD_DISPLAY_NAME:
+		case FIELD_FIRST_NAME:
+		case FIELD_LAST_NAME:
+		default:
+			return FORMAT_TEXT;
+		case FIELD_PHOTO:
+			return FORMAT_IMAGE;
+		}
+	}
 
 	public void setQuestionType(int questionType) {
 		this.questionType = questionType;
@@ -95,6 +113,18 @@ public final class Question implements Parcelable {
 
 	public int getAnswerType() {
 		return answerType;
+	}
+	
+	public int getAnswerFormat() {
+		switch(answerType) {
+		case FIELD_DISPLAY_NAME:
+		case FIELD_FIRST_NAME:
+		case FIELD_LAST_NAME:
+		default:
+			return FORMAT_TEXT;
+		case FIELD_PHOTO:
+			return FORMAT_IMAGE;
+		}
 	}
 
 	public void setAnswerType(int answerType) {

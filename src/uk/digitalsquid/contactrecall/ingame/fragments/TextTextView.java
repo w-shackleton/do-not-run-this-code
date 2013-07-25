@@ -1,7 +1,7 @@
 package uk.digitalsquid.contactrecall.ingame.fragments;
 
 import uk.digitalsquid.contactrecall.R;
-import uk.digitalsquid.contactrecall.mgr.Contact;
+import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;

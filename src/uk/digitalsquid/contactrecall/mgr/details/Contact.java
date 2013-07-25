@@ -1,8 +1,9 @@
-package uk.digitalsquid.contactrecall.mgr;
+package uk.digitalsquid.contactrecall.mgr.details;
 
 import java.util.Comparator;
-import java.util.LinkedList;
 
+import uk.digitalsquid.contactrecall.mgr.PhotoManager;
+import uk.digitalsquid.contactrecall.mgr.Question;
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -12,21 +13,28 @@ import android.os.Parcelable;
  * @author william
  *
  */
-public class Contact implements Parcelable {
+public class Contact implements Parcelable, Comparable<Contact> {
 	private int id;
+	
+	private boolean realContact = true;
 	
 	private String firstName;
 	private String lastName;
 	private String displayName;
 	
+	private final Details details;
+	
     private Contact(Parcel in) {
     	id = in.readInt();
+    	realContact = in.readInt() == 1;
     	firstName = in.readString();
     	lastName = in.readString();
     	displayName = in.readString();
+    	details = new Details();
     }
 	
 	public Contact() {
+		details = new Details();
 	}
 
 	public void setId(int id) {
@@ -72,22 +80,6 @@ public class Contact implements Parcelable {
 		return mgr.getContactPicture(id, highRes);
 	}
 	
-	/**
-	 * Loads the photo from the given manager. Returns the nth one.
-	 */
-	@Deprecated
-	public Bitmap getPhoto(OldPhotoManager mgr, int position) {
-		return mgr.getContactPicture(id, position);
-	}
-	
-	/**
-	 * Loads the photo from the given manager. Returns all photos.
-	 */
-	@Deprecated
-	public LinkedList<Bitmap> getPhotos(OldPhotoManager mgr) {
-		return mgr.getContactPictures(id);
-	}
-	
 	@Override
 	public String toString() {
 		return displayName;
@@ -116,9 +108,11 @@ public class Contact implements Parcelable {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeInt(id);
+		dest.writeInt(realContact ? 1 : 0);
 		dest.writeString(firstName);
 		dest.writeString(lastName);
 		dest.writeString(displayName);
+		dest.writeParcelable(details, 0);
 	}
 	
 	public static final Parcelable.Creator<Contact> CREATOR =
@@ -140,34 +134,82 @@ public class Contact implements Parcelable {
 	 * @param part
 	 * @return
 	 */
+	@Deprecated
 	public String getNamePart(int part) {
 		switch(part) {
-		case Question.TYPE_DISPLAY_NAME:
+		case Question.FIELD_DISPLAY_NAME:
 		default:
 			return displayName;
-		case Question.TYPE_FIRST_NAME:
+		case Question.FIELD_FIRST_NAME:
 			return firstName;
-		case Question.TYPE_LAST_NAME:
+		case Question.FIELD_LAST_NAME:
 			return lastName;
 		}
 	}
 	
 	/**
-	 * Returns a null contact - one with blank details.
-	 * @return
+	 * Returns a {@link String} representation of the given field.
+	 * Note that this shouldn't be shown to the user, but only used
+	 * to compare two contacts in a certain aspect.
+	 * 
 	 */
-	public static final Contact getNullContact() {
-		Contact c = new Contact();
-		// TODO: Localise
-		c.id = -1;
-		c.displayName = "MissingNo";
-		c.firstName = "Not found";
-		c.lastName = "Not found";
-		return c;
+	public String getStringFieldRepresentation(int part) {
+		switch(part) {
+		case Question.FIELD_DISPLAY_NAME:
+			return displayName;
+		case Question.FIELD_FIRST_NAME:
+			return firstName;
+		case Question.FIELD_LAST_NAME:
+			return lastName;
+		case Question.FIELD_PHOTO: // Just use ID to differentiate photos.
+		default:
+			return "" + id;
+		}
+	}
+	
+	public static Contact getNullContact() {
+		Contact contact = new Contact();
+		contact.setDisplayName("");
+		contact.setFirstName("");
+		contact.setLastName("");
+		return contact;
 	}
 	
 	@Override
 	public int hashCode() {
 		return id;
+	}
+
+	@Override
+	public int compareTo(Contact another) {
+		if(another == null) return 1;
+		return getId() - another.getId();
+	}
+
+	public Details getDetails() {
+		return details;
+	}
+	
+	/**
+	 * @param field The field to check for (See {@link Question})
+	 * @return <code>true</code> if this contact has the specified field.
+	 */
+	public boolean hasField(int field) {
+		switch(field) {
+		case Question.FIELD_DISPLAY_NAME: return displayName != null;
+		case Question.FIELD_FIRST_NAME: return firstName != null;
+		case Question.FIELD_LAST_NAME: return lastName != null;
+		case Question.FIELD_PHOTO: return details.hasPicture();
+		default:
+			return false;
+		}
+	}
+
+	public boolean isRealContact() {
+		return realContact;
+	}
+
+	public void setRealContact(boolean realContact) {
+		this.realContact = realContact;
 	}
 }
