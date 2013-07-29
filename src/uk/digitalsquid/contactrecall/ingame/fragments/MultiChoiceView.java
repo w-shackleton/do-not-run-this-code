@@ -57,6 +57,9 @@ public abstract class MultiChoiceView<QView extends View, AButton extends Button
         View rootView = inflater.inflate(
                 getRootLayoutId(), root, false);
         
+        // Assign data error button if it exists
+        Button dataError = (Button) rootView.findViewById(R.id.data_error);
+        if(dataError != null) dataError.setOnClickListener(this);
         
         question = args.getParcelable(ARG_QUESTION);
         descriptor = args.getParcelable(ARG_DESCRIPTOR);
@@ -170,6 +173,10 @@ public abstract class MultiChoiceView<QView extends View, AButton extends Button
 		case R.id.choice6: choice = 5; break;
 		case R.id.choice7: choice = 6; break;
 		case R.id.choice8: choice = 7; break;
+		
+		case R.id.data_error:
+			// TODO: Show data error screen
+			return;
 		}
 		completeView(choice);
 	}

@@ -204,10 +204,11 @@ public class Game extends Activity implements GameCallbacks, Config {
 				handler.postDelayed(new Runnable() {
 					@Override
 					public void run() {
-						getFragmentManager().beginTransaction().
-							setCustomAnimations(R.animator.next_card_in, R.animator.next_card_out).
-							replace(R.id.pager, gameAdapter.getFragment(position)).
-							commit();
+						if(getFragmentManager() != null)
+							getFragmentManager().beginTransaction().
+								setCustomAnimations(R.animator.next_card_in, R.animator.next_card_out).
+								replace(R.id.pager, gameAdapter.getFragment(position)).
+								commit();
 					}
 				}, getResources().getInteger(
 						correct ?

@@ -20,7 +20,7 @@ public class TextTextView extends MultiChoiceView<TextView, Button> {
 
 	@Override
 	protected int getRootLayoutId() {
-		return R.layout.photonameview;
+		return R.layout.texttextview;
 	}
 
 	@Override

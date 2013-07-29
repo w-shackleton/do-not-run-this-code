@@ -22,7 +22,7 @@ public class PictureTextView extends MultiChoiceView<ImageView, Button> {
 
 	@Override
 	protected int getRootLayoutId() {
-		return R.layout.photonameview;
+		return R.layout.picturetextview;
 	}
 
 	@Override

@@ -16,8 +16,6 @@ import android.os.Parcelable;
 public class Contact implements Parcelable, Comparable<Contact> {
 	private int id;
 	
-	private boolean realContact = true;
-	
 	private String firstName;
 	private String lastName;
 	private String displayName;
@@ -26,7 +24,6 @@ public class Contact implements Parcelable, Comparable<Contact> {
 	
     private Contact(Parcel in) {
     	id = in.readInt();
-    	realContact = in.readInt() == 1;
     	firstName = in.readString();
     	lastName = in.readString();
     	displayName = in.readString();
@@ -108,7 +105,6 @@ public class Contact implements Parcelable, Comparable<Contact> {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeInt(id);
-		dest.writeInt(realContact ? 1 : 0);
 		dest.writeString(firstName);
 		dest.writeString(lastName);
 		dest.writeString(displayName);
@@ -128,25 +124,6 @@ public class Contact implements Parcelable, Comparable<Contact> {
 				}
 	};
 			
-	/**
-	 * Gets the part of a name. The part is defined in {@link Question}.
-	 * If an invalid part is given, the display name is returned as a fail-safe.
-	 * @param part
-	 * @return
-	 */
-	@Deprecated
-	public String getNamePart(int part) {
-		switch(part) {
-		case Question.FIELD_DISPLAY_NAME:
-		default:
-			return displayName;
-		case Question.FIELD_FIRST_NAME:
-			return firstName;
-		case Question.FIELD_LAST_NAME:
-			return lastName;
-		}
-	}
-	
 	/**
 	 * Returns a {@link String} representation of the given field.
 	 * Note that this shouldn't be shown to the user, but only used
@@ -171,16 +148,27 @@ public class Contact implements Parcelable, Comparable<Contact> {
 	 * Returns a human-readable string representation of a field.
 	 * If the specified part can't be string represented, the display
 	 * name is returned as a fail-safe.
+	 * Also, if this {@link Contact} doesn't have the specified field
+	 * then the display name is returned, also as a fail-safe.
 	 */
 	public String getTextField(int part) {
+		if(!hasField(part)) return displayName;
 		switch(part) {
 		default:
-		case Question.FIELD_DISPLAY_NAME:
-			return displayName;
-		case Question.FIELD_FIRST_NAME:
-			return firstName;
-		case Question.FIELD_LAST_NAME:
-			return lastName;
+		case Question.FIELD_DISPLAY_NAME:	return displayName;
+		case Question.FIELD_FIRST_NAME:		return firstName;
+		case Question.FIELD_LAST_NAME:		return lastName;
+		case Question.FIELD_COMPANY:		return details.getCompany();
+		case Question.FIELD_DEPARTMENT:		return details.getDepartment();
+		case Question.FIELD_COMPANY_TITLE:	return details.getCompanyTitle();
+		case Question.FIELD_PHONE_HOME:		return details.getHomePhone();
+		case Question.FIELD_PHONE_WORK:		return details.getWorkPhone();
+		case Question.FIELD_PHONE_MOBILE:	return details.getMobilePhone();
+		case Question.FIELD_PHONE_OTHER:	return details.getOtherPhone();
+		case Question.FIELD_EMAIL_HOME:		return details.getHomeEmail();
+		case Question.FIELD_EMAIL_WORK:		return details.getWorkEmail();
+		case Question.FIELD_EMAIL_MOBILE:	return details.getMobileEmail();
+		case Question.FIELD_EMAIL_OTHER:	return details.getOtherEmail();
 		}
 	}
 	
@@ -220,16 +208,20 @@ public class Contact implements Parcelable, Comparable<Contact> {
 		case Question.FIELD_FIRST_NAME: return firstName != null;
 		case Question.FIELD_LAST_NAME: return lastName != null;
 		case Question.FIELD_PHOTO: return details.hasPicture();
+
+		case Question.FIELD_COMPANY:		return details.getCompany() != null;
+		case Question.FIELD_DEPARTMENT:		return details.getDepartment() != null;
+		case Question.FIELD_COMPANY_TITLE:	return details.getCompanyTitle() != null;
+		case Question.FIELD_PHONE_HOME:		return details.getHomePhone() != null;
+		case Question.FIELD_PHONE_WORK:		return details.getWorkPhone() != null;
+		case Question.FIELD_PHONE_MOBILE:	return details.getMobilePhone() != null;
+		case Question.FIELD_PHONE_OTHER:	return details.getOtherPhone() != null;
+		case Question.FIELD_EMAIL_HOME:		return details.getHomeEmail() != null;
+		case Question.FIELD_EMAIL_WORK:		return details.getWorkEmail() != null;
+		case Question.FIELD_EMAIL_MOBILE:	return details.getMobileEmail() != null;
+		case Question.FIELD_EMAIL_OTHER:	return details.getOtherEmail() != null;
 		default:
-			return false;
+				return false;
 		}
-	}
-
-	public boolean isRealContact() {
-		return realContact;
-	}
-
-	public void setRealContact(boolean realContact) {
-		this.realContact = realContact;
 	}
 }

@@ -13,6 +13,7 @@ import uk.digitalsquid.contactrecall.GameDescriptor.ShufflingMode;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.ingame.fragments.MultiChoiceView;
 import uk.digitalsquid.contactrecall.ingame.fragments.PictureTextView;
+import uk.digitalsquid.contactrecall.ingame.fragments.TextTextView;
 import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import uk.digitalsquid.contactrecall.misc.Config;
@@ -188,9 +189,24 @@ public class GameAdapter implements Parcelable, Config {
 		for(int i = 0; i < otherChoices.length; i++) {
     		Contact other = Contact.getNullContact();
     		for(int j = 0; j < 20; j++) { // Attempt to find a different contact (as in different identifier)
-    			other = otherAnswers.get(Const.RAND.nextInt(otherAnswers.size()));
-    			if(!other.getStringFieldRepresentation(type.getAnswerType())
-    					.equalsIgnoreCase(correctIdentifier)) break;
+    			// Get a random contact to test against the other data
+    			Contact attempt = otherAnswers.get(Const.RAND.nextInt(otherAnswers.size()));
+    			// Check this answer against the actual answer
+    			String otherIdentifier = attempt.getStringFieldRepresentation(type.getAnswerType());
+    			if(!otherIdentifier.equalsIgnoreCase(correctIdentifier)) {
+    				// Then check this answer against all other answers
+    				boolean different = true;
+    				for(int k = 0; k < i; k++) {
+    					if(otherIdentifier.equalsIgnoreCase(
+    							otherChoices[k].getStringFieldRepresentation(
+    									type.getAnswerType()))) {
+    						different = false;
+    						break;
+    					}
+    				}
+    				if(different)
+    					other = attempt;
+    			}
     		}
     		otherChoices[i] = other;
 		}
@@ -238,18 +254,22 @@ public class GameAdapter implements Parcelable, Config {
         // Find the correct fragment to use
         // TODO: Write implementations for these other cases.
         MultiChoiceView<?, ?> fragment;
+        Log.v(TAG, String.format("Creating fragment of format (%d,%d)",
+        		question.getQuestionFormat(),
+        		question.getAnswerFormat()));
         switch(question.getQuestionFormat()) {
         case Question.FORMAT_TEXT:
     	default:
     		switch(question.getAnswerFormat()) {
     		case Question.FORMAT_TEXT:
 			default:
-				fragment = null;
+				fragment = new TextTextView();
 				break;
 			case Question.FORMAT_IMAGE:
 				fragment = null;
 				break;
     		}
+    		break;
     	case Question.FORMAT_IMAGE:
     		switch(question.getAnswerFormat()) {
     		case Question.FORMAT_TEXT:
@@ -260,6 +280,7 @@ public class GameAdapter implements Parcelable, Config {
 				fragment = null;
 				break;
     		}
+    		break;
         }
         fragment.setArguments(args);
         
