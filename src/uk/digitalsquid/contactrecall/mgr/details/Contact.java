@@ -167,12 +167,15 @@ public class Contact implements Parcelable, Comparable<Contact> {
 		}
 	}
 	
+	private static final Contact nullContact = new Contact();
+	static {
+		nullContact.setDisplayName("");
+		nullContact.setFirstName("");
+		nullContact.setLastName("");
+	}
+
 	public static Contact getNullContact() {
-		Contact contact = new Contact();
-		contact.setDisplayName("");
-		contact.setFirstName("");
-		contact.setLastName("");
-		return contact;
+		return nullContact;
 	}
 	
 	@Override

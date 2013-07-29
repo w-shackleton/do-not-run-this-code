@@ -2,6 +2,8 @@ package uk.digitalsquid.contactrecall.mgr;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import uk.digitalsquid.contactrecall.mgr.db.DB;
 import uk.digitalsquid.contactrecall.misc.Config;
@@ -9,6 +11,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -61,5 +64,23 @@ public class PhotoManager implements Config {
 			Log.e(TAG, "Failed to decode contact photo", e);
 		}
 		return null;
+	}
+	
+	/**
+	 * Gets the contact IDs of those with pictures available.
+	 * @param idNum
+	 */
+	public List<Integer> getContactsWithPictures() {
+		Cursor cur = cr.query(ContactsContract.Data.CONTENT_URI,
+				new String[] { ContactsContract.Data.CONTACT_ID },
+				ContactsContract.Data.MIMETYPE + " = ? AND " + ContactsContract.CommonDataKinds.Photo.PHOTO + " IS NOT NULL",
+				new String[] { ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE },
+				null);
+		List<Integer> ret = new ArrayList<Integer>(cur.getCount());
+		while(cur.moveToNext()) {
+			ret.add(cur.getInt(0));
+		}
+		cur.close();
+		return ret;
 	}
 }

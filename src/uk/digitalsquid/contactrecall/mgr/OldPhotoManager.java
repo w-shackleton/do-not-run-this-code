@@ -113,6 +113,7 @@ public class OldPhotoManager implements Config {
 		while(cur.moveToNext()) {
 			ret.add(cur.getInt(0));
 		}
+		cur.close();
 		return ret;
 	}
 	

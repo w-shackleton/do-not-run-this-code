@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Set;
 
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.GameDescriptor.QuestionAnswerPair;
-import uk.digitalsquid.contactrecall.GameDescriptor.SelectionMode;
 import uk.digitalsquid.contactrecall.GameDescriptor.ShufflingMode;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.ingame.fragments.MultiChoiceView;
@@ -20,6 +18,7 @@ import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import uk.digitalsquid.contactrecall.misc.Config;
 import uk.digitalsquid.contactrecall.misc.Const;
 import uk.digitalsquid.contactrecall.misc.ListUtils;
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -27,6 +26,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+@SuppressLint("UseSparseArrays")
 public class GameAdapter implements Parcelable, Config {
 	
 	protected transient App app;
@@ -46,6 +46,8 @@ public class GameAdapter implements Parcelable, Config {
 		this.context = context;
 		this.callbacks = callbacks;
 		this.descriptor = descriptor;
+		
+		questions = new ArrayList<Question>(descriptor.getMaxQuestions());
 
 		// Construct the lists that are used as false answers to questions.
 		ArrayList<Contact> badContacts = null; // TODO: Implement
@@ -108,6 +110,7 @@ public class GameAdapter implements Parcelable, Config {
 				if(test.hasField(type.getAnswerType())) {
 					question = test;
 					possibles.remove(j);
+					break;
 				}
 			}
 			if(question == null) {
@@ -115,7 +118,7 @@ public class GameAdapter implements Parcelable, Config {
 				else continue;
 			}
 			
-			createQuestion(question, type, allContactGroups);
+			questions.add(createQuestion(question, type, allContactGroups));
 		}
 	}
 
@@ -149,15 +152,6 @@ public class GameAdapter implements Parcelable, Config {
 		};
 	}
 	
-	private ArrayList<Contact> selectContacts(LinkedList<Contact> possibles, int num, SelectionMode mode) {
-		switch(mode) {
-		case RANDOM:
-			return ListUtils.selectRandomExclusiveDistinctSet(possibles, getContactComparator(), null, num);
-		default:
-			return new ArrayList<Contact>(possibles);
-		}
-	}
-
 	private ArrayList<Contact> shuffleContacts(ArrayList<Contact> selection, ShufflingMode mode) {
 		switch(mode) {
 		case RANDOM:
@@ -181,8 +175,10 @@ public class GameAdapter implements Parcelable, Config {
 		Question question = new Question(contact);
 		question.setQuestionType(type.getQuestionType());
 		question.setAnswerType(type.getAnswerType());
-		// TODO: Customise
-		int numOtherChoices = 3;
+		int numOtherChoices = Const.RAND.nextInt(
+						descriptor.getOtherAnswersMaximum() -
+						descriptor.getOtherAnswersMinimum() + 1) +
+						descriptor.getOtherAnswersMinimum();
 		question.setCorrectPosition(Const.RAND.nextInt(numOtherChoices + 1));
 		
 		ArrayList<Contact> otherAnswers = allContactGroups.get(type.getAnswerType());
@@ -190,11 +186,11 @@ public class GameAdapter implements Parcelable, Config {
 		Contact[] otherChoices = new Contact[numOtherChoices];
         String correctIdentifier = contact.getStringFieldRepresentation(type.getAnswerType());
 		for(int i = 0; i < otherChoices.length; i++) {
-    		Contact other = Contact.getNullContact(); // TODO: Lots of nulls created
-    		for(int j = 0; j < 20; j++) { // Attempt to find a different name
-    			other = otherAnswers[Const.RAND.nextInt(otherAnswers.length)];
-    			if(!other.getNamePart(question.getAnswerType())
-    					.equalsIgnoreCase(correctText)) break;
+    		Contact other = Contact.getNullContact();
+    		for(int j = 0; j < 20; j++) { // Attempt to find a different contact (as in different identifier)
+    			other = otherAnswers.get(Const.RAND.nextInt(otherAnswers.size()));
+    			if(!other.getStringFieldRepresentation(type.getAnswerType())
+    					.equalsIgnoreCase(correctIdentifier)) break;
     		}
     		otherChoices[i] = other;
 		}
@@ -208,16 +204,12 @@ public class GameAdapter implements Parcelable, Config {
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeParcelable(descriptor, 0);
 		
-		dest.writeList(possibleContacts);
 		dest.writeList(questions);
 	}
 	
 	GameAdapter(Parcel in) {
 		descriptor = in.readParcelable(null);
-		otherAnswers = (Contact[]) in.readParcelableArray(null);
 		
-		possibleContacts = new LinkedList<Contact>();
-		in.readList(possibleContacts, null);
 		questions = new ArrayList<Question>();
 		in.readList(questions, null);
 	}

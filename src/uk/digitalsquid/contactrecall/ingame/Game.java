@@ -152,6 +152,12 @@ public class Game extends Activity implements GameCallbacks, Config {
 			else // Otherwise, replace context and app, to reduce dead objects
 				gameAdapter.init(app, getActivity(), this);
 			
+			if(gameAdapter.getCount() == 0) {
+				Toast.makeText(getActivity(), "No questions to ask!", Toast.LENGTH_LONG).show();
+				getActivity().finish();
+				return;
+			}
+			
 			getFragmentManager().beginTransaction().
 				replace(R.id.pager, gameAdapter.getFragment(position)).commit();
 		}
