@@ -167,6 +167,23 @@ public class Contact implements Parcelable, Comparable<Contact> {
 		}
 	}
 	
+	/**
+	 * Returns a human-readable string representation of a field.
+	 * If the specified part can't be string represented, the display
+	 * name is returned as a fail-safe.
+	 */
+	public String getTextField(int part) {
+		switch(part) {
+		default:
+		case Question.FIELD_DISPLAY_NAME:
+			return displayName;
+		case Question.FIELD_FIRST_NAME:
+			return firstName;
+		case Question.FIELD_LAST_NAME:
+			return lastName;
+		}
+	}
+	
 	private static final Contact nullContact = new Contact();
 	static {
 		nullContact.setDisplayName("");

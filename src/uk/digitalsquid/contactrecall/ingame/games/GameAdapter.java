@@ -12,7 +12,7 @@ import uk.digitalsquid.contactrecall.GameDescriptor.QuestionAnswerPair;
 import uk.digitalsquid.contactrecall.GameDescriptor.ShufflingMode;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.ingame.fragments.MultiChoiceView;
-import uk.digitalsquid.contactrecall.ingame.fragments.PhotoNameView;
+import uk.digitalsquid.contactrecall.ingame.fragments.PictureTextView;
 import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import uk.digitalsquid.contactrecall.misc.Config;
@@ -254,7 +254,7 @@ public class GameAdapter implements Parcelable, Config {
     		switch(question.getAnswerFormat()) {
     		case Question.FORMAT_TEXT:
 			default:
-				fragment = new PhotoNameView();
+				fragment = new PictureTextView();
 				break;
 			case Question.FORMAT_IMAGE:
 				fragment = null;
