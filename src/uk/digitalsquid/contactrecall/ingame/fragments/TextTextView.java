@@ -20,7 +20,7 @@ public class TextTextView extends MultiChoiceView<TextView, Button> {
 
 	@Override
 	protected int getRootLayoutId() {
-		return R.layout.photonameview;
+		return R.layout.texttextview;
 	}
 
 	@Override
@@ -53,16 +53,16 @@ public class TextTextView extends MultiChoiceView<TextView, Button> {
         int answerType = question.getAnswerType();
         
         // Configure question
-        questionView.setText(contact.getNamePart(questionType));
+        questionView.setText(contact.getTextField(questionType));
         
         // Configure answers
         int posThroughOthers = 0;
         for(int i = 0; i < numberOfChoices; i++) {
         	if(i == correctChoice)
-		        choiceButtons[i].setText(contact.getNamePart(answerType));
+		        choiceButtons[i].setText(contact.getTextField(answerType));
         	else {
         		choiceButtons[i].setText(
-        				question.getOtherAnswers()[posThroughOthers++].getNamePart(answerType));
+        				question.getOtherAnswers()[posThroughOthers++].getTextField(answerType));
         	}
         }
         return ret;

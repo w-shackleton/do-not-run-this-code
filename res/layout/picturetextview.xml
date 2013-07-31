@@ -19,6 +19,16 @@
 	        android:layout_height="40dip"
 	        android:layout_width="40dip"
 	        android:id="@+id/timerView"/>
+
+	    <Button
+	        android:id="@+id/data_error"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_alignParentTop="true"
+	        style="@style/errorbutton"
+	        android:text="!" />
+
     </RelativeLayout>
 
     <LinearLayout 

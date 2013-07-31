@@ -4,22 +4,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Set;
 
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.GameDescriptor.QuestionAnswerPair;
-import uk.digitalsquid.contactrecall.GameDescriptor.SelectionMode;
 import uk.digitalsquid.contactrecall.GameDescriptor.ShufflingMode;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.ingame.fragments.MultiChoiceView;
-import uk.digitalsquid.contactrecall.ingame.fragments.PhotoNameView;
+import uk.digitalsquid.contactrecall.ingame.fragments.PictureTextView;
+import uk.digitalsquid.contactrecall.ingame.fragments.TextTextView;
 import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import uk.digitalsquid.contactrecall.misc.Config;
 import uk.digitalsquid.contactrecall.misc.Const;
 import uk.digitalsquid.contactrecall.misc.ListUtils;
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -27,6 +27,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+@SuppressLint("UseSparseArrays")
 public class GameAdapter implements Parcelable, Config {
 	
 	protected transient App app;
@@ -46,6 +47,8 @@ public class GameAdapter implements Parcelable, Config {
 		this.context = context;
 		this.callbacks = callbacks;
 		this.descriptor = descriptor;
+		
+		questions = new ArrayList<Question>(descriptor.getMaxQuestions());
 
 		// Construct the lists that are used as false answers to questions.
 		ArrayList<Contact> badContacts = null; // TODO: Implement
@@ -108,6 +111,7 @@ public class GameAdapter implements Parcelable, Config {
 				if(test.hasField(type.getAnswerType())) {
 					question = test;
 					possibles.remove(j);
+					break;
 				}
 			}
 			if(question == null) {
@@ -115,7 +119,7 @@ public class GameAdapter implements Parcelable, Config {
 				else continue;
 			}
 			
-			createQuestion(question, type, allContactGroups);
+			questions.add(createQuestion(question, type, allContactGroups));
 		}
 	}
 
@@ -149,15 +153,6 @@ public class GameAdapter implements Parcelable, Config {
 		};
 	}
 	
-	private ArrayList<Contact> selectContacts(LinkedList<Contact> possibles, int num, SelectionMode mode) {
-		switch(mode) {
-		case RANDOM:
-			return ListUtils.selectRandomExclusiveDistinctSet(possibles, getContactComparator(), null, num);
-		default:
-			return new ArrayList<Contact>(possibles);
-		}
-	}
-
 	private ArrayList<Contact> shuffleContacts(ArrayList<Contact> selection, ShufflingMode mode) {
 		switch(mode) {
 		case RANDOM:
@@ -181,8 +176,10 @@ public class GameAdapter implements Parcelable, Config {
 		Question question = new Question(contact);
 		question.setQuestionType(type.getQuestionType());
 		question.setAnswerType(type.getAnswerType());
-		// TODO: Customise
-		int numOtherChoices = 3;
+		int numOtherChoices = Const.RAND.nextInt(
+						descriptor.getOtherAnswersMaximum() -
+						descriptor.getOtherAnswersMinimum() + 1) +
+						descriptor.getOtherAnswersMinimum();
 		question.setCorrectPosition(Const.RAND.nextInt(numOtherChoices + 1));
 		
 		ArrayList<Contact> otherAnswers = allContactGroups.get(type.getAnswerType());
@@ -190,11 +187,26 @@ public class GameAdapter implements Parcelable, Config {
 		Contact[] otherChoices = new Contact[numOtherChoices];
         String correctIdentifier = contact.getStringFieldRepresentation(type.getAnswerType());
 		for(int i = 0; i < otherChoices.length; i++) {
-    		Contact other = Contact.getNullContact(); // TODO: Lots of nulls created
-    		for(int j = 0; j < 20; j++) { // Attempt to find a different name
-    			other = otherAnswers[Const.RAND.nextInt(otherAnswers.length)];
-    			if(!other.getNamePart(question.getAnswerType())
-    					.equalsIgnoreCase(correctText)) break;
+    		Contact other = Contact.getNullContact();
+    		for(int j = 0; j < 20; j++) { // Attempt to find a different contact (as in different identifier)
+    			// Get a random contact to test against the other data
+    			Contact attempt = otherAnswers.get(Const.RAND.nextInt(otherAnswers.size()));
+    			// Check this answer against the actual answer
+    			String otherIdentifier = attempt.getStringFieldRepresentation(type.getAnswerType());
+    			if(!otherIdentifier.equalsIgnoreCase(correctIdentifier)) {
+    				// Then check this answer against all other answers
+    				boolean different = true;
+    				for(int k = 0; k < i; k++) {
+    					if(otherIdentifier.equalsIgnoreCase(
+    							otherChoices[k].getStringFieldRepresentation(
+    									type.getAnswerType()))) {
+    						different = false;
+    						break;
+    					}
+    				}
+    				if(different)
+    					other = attempt;
+    			}
     		}
     		otherChoices[i] = other;
 		}
@@ -208,16 +220,12 @@ public class GameAdapter implements Parcelable, Config {
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeParcelable(descriptor, 0);
 		
-		dest.writeList(possibleContacts);
 		dest.writeList(questions);
 	}
 	
 	GameAdapter(Parcel in) {
 		descriptor = in.readParcelable(null);
-		otherAnswers = (Contact[]) in.readParcelableArray(null);
 		
-		possibleContacts = new LinkedList<Contact>();
-		in.readList(possibleContacts, null);
 		questions = new ArrayList<Question>();
 		in.readList(questions, null);
 	}
@@ -246,28 +254,33 @@ public class GameAdapter implements Parcelable, Config {
         // Find the correct fragment to use
         // TODO: Write implementations for these other cases.
         MultiChoiceView<?, ?> fragment;
+        Log.v(TAG, String.format("Creating fragment of format (%d,%d)",
+        		question.getQuestionFormat(),
+        		question.getAnswerFormat()));
         switch(question.getQuestionFormat()) {
         case Question.FORMAT_TEXT:
     	default:
     		switch(question.getAnswerFormat()) {
     		case Question.FORMAT_TEXT:
 			default:
-				fragment = null;
+				fragment = new TextTextView();
 				break;
 			case Question.FORMAT_IMAGE:
 				fragment = null;
 				break;
     		}
+    		break;
     	case Question.FORMAT_IMAGE:
     		switch(question.getAnswerFormat()) {
     		case Question.FORMAT_TEXT:
 			default:
-				fragment = new PhotoNameView();
+				fragment = new PictureTextView();
 				break;
 			case Question.FORMAT_IMAGE:
 				fragment = null;
 				break;
     		}
+    		break;
         }
         fragment.setArguments(args);
         

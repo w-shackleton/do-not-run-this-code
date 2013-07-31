@@ -1,5 +1,6 @@
 package uk.digitalsquid.contactrecall.mgr;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class GameDataManager implements Config {
 	 */
 	public LinkedList<Contact> getContactSet(ContactPredicate predicate) {
 		final LinkedList<Contact> set = new LinkedList<Contact>();
-		final List<Contact> potentials = app.getContacts().getContacts();
+		final Collection<Contact> potentials = app.getContacts().getContacts();
 		for(Contact c : potentials) {
 			if(predicate.include(c)) set.add(c);
 		}
@@ -35,7 +36,7 @@ public class GameDataManager implements Config {
 	}
 	
 	public LinkedList<Contact> getAllPhotoContacts() {
-		final List<Integer> contactsWithIds = app.getOldPhotos().getContactsWithPictures();
+		final List<Integer> contactsWithIds = app.getPhotos().getContactsWithPictures();
 		return getContactSet(new ContactPredicate() {
 			@Override
 			public boolean include(Contact contact) {

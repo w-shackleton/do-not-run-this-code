@@ -23,6 +23,19 @@ public final class Question implements Parcelable {
 	public static final int FIELD_FIRST_NAME = 2;
 	public static final int FIELD_LAST_NAME = 3;
 	public static final int FIELD_DISPLAY_NAME = 4;
+	public static final int FIELD_COMPANY = 5;
+	public static final int FIELD_DEPARTMENT = 6;
+	public static final int FIELD_COMPANY_TITLE = 7;
+
+	public static final int FIELD_PHONE_HOME = 8;
+	public static final int FIELD_PHONE_WORK = 9;
+	public static final int FIELD_PHONE_MOBILE = 10;
+	public static final int FIELD_PHONE_OTHER = 11;
+
+	public static final int FIELD_EMAIL_HOME = 12;
+	public static final int FIELD_EMAIL_WORK = 13;
+	public static final int FIELD_EMAIL_MOBILE = 14;
+	public static final int FIELD_EMAIL_OTHER = 15;
 	
 	// Formats of different types of question, eg. should a picture be shown?
 	public static final int FORMAT_IMAGE = 1;
@@ -97,13 +110,10 @@ public final class Question implements Parcelable {
 	
 	public int getQuestionFormat() {
 		switch(questionType) {
-		case FIELD_DISPLAY_NAME:
-		case FIELD_FIRST_NAME:
-		case FIELD_LAST_NAME:
-		default:
-			return FORMAT_TEXT;
 		case FIELD_PHOTO:
 			return FORMAT_IMAGE;
+		default:
+			return FORMAT_TEXT;
 		}
 	}
 
@@ -117,13 +127,10 @@ public final class Question implements Parcelable {
 	
 	public int getAnswerFormat() {
 		switch(answerType) {
-		case FIELD_DISPLAY_NAME:
-		case FIELD_FIRST_NAME:
-		case FIELD_LAST_NAME:
-		default:
-			return FORMAT_TEXT;
 		case FIELD_PHOTO:
 			return FORMAT_IMAGE;
+		default:
+			return FORMAT_TEXT;
 		}
 	}
 

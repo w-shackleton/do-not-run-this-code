@@ -18,11 +18,11 @@ import android.widget.ImageView;
  * @author william
  *
  */
-public class PhotoNameView extends MultiChoiceView<ImageView, Button> {
+public class PictureTextView extends MultiChoiceView<ImageView, Button> {
 
 	@Override
 	protected int getRootLayoutId() {
-		return R.layout.photonameview;
+		return R.layout.picturetextview;
 	}
 
 	@Override
@@ -57,10 +57,10 @@ public class PhotoNameView extends MultiChoiceView<ImageView, Button> {
         int posThroughOthers = 0;
         for(int i = 0; i < numberOfChoices; i++) {
         	if(i == correctChoice)
-		        choiceButtons[i].setText(contact.getNamePart(answerType));
+		        choiceButtons[i].setText(contact.getTextField(answerType));
         	else {
         		choiceButtons[i].setText(
-        				question.getOtherAnswers()[posThroughOthers++].getNamePart(answerType));
+        				question.getOtherAnswers()[posThroughOthers++].getTextField(answerType));
         	}
         }
         return ret;
@@ -71,7 +71,7 @@ public class PhotoNameView extends MultiChoiceView<ImageView, Button> {
 		super.onActivityCreated(savedInstanceState);
         // Show photo
 		App app = (App) getActivity().getApplication();
-		// TODO: Background this?
+		// TODO: Background this? Probably not - we want photo to appear along with UI
         Bitmap bmp = question.getContact().getPhoto(app.getPhotos());
         questionView.setImageBitmap(bmp);
 	}

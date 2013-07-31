@@ -151,6 +151,15 @@ public final class ContactManager implements Config {
 		}
 		cur.close();
 		
+		// Fill-in photo column
+		List<Integer> contactsWithPictures = app.getPhotos().getContactsWithPictures();
+		
+		for(int id : contactsWithPictures) {
+			Contact contact = contacts.get(id);
+			if(contact == null) continue;
+			contact.getDetails().setHasPicture(true);
+		}
+		
 		// Convert to a Set for ease of use
 		contactCollection = contacts.values();
 	}

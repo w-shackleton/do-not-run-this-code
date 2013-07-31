@@ -57,6 +57,9 @@ public abstract class MultiChoiceView<QView extends View, AButton extends Button
         View rootView = inflater.inflate(
                 getRootLayoutId(), root, false);
         
+        // Assign data error button if it exists
+        Button dataError = (Button) rootView.findViewById(R.id.data_error);
+        if(dataError != null) dataError.setOnClickListener(this);
         
         question = args.getParcelable(ARG_QUESTION);
         descriptor = args.getParcelable(ARG_DESCRIPTOR);
@@ -74,10 +77,11 @@ public abstract class MultiChoiceView<QView extends View, AButton extends Button
         
         startTime = System.nanoTime();
         
-        //TODO: This timer should be optional
-        timer = (TimerView) rootView.findViewById(R.id.timerView);
-        timer.setOnFinishedListener(this);
-        timer.setTotalTime(descriptor.getMaxTimePerContact());
+        if(descriptor.hasTimerPerContact()) {
+	        timer = (TimerView) rootView.findViewById(R.id.timerView);
+	        timer.setOnFinishedListener(this);
+	        timer.setTotalTime(descriptor.getMaxTimePerContact());
+        }
         
 		return rootView;
 	}
@@ -109,16 +113,20 @@ public abstract class MultiChoiceView<QView extends View, AButton extends Button
 	
 	int completedChoice = -2;
 	
-	private void completeView(int choice) {
+	private void completeView(final int choice) {
 		if(completedChoice != -2) return;
 		if(timer != null) timer.cancel();
 		completedChoice = choice;
 		// Disable further button clicking
-		// TODO: Check user can't cheat using Android multitouch features,
-		// eg. press all four buttons at once.
+		
+		// Even though multiple buttons can be pressed, it is
+		// when the button is let go that this callback is called
+
 		for(int i = 0; i < question.getNumberOfChoices(); i++) {
 			choiceButtons[i].setEnabled(false);
 		}
+		
+		Contact chosenContact = null;
 		
 		// Set button styles accordingly
 		if(choice == question.getCorrectPosition()) {
@@ -130,6 +138,7 @@ public abstract class MultiChoiceView<QView extends View, AButton extends Button
 				choiceButtons[i].setBackgroundColor(context
 						getActivity().getResources().getColor(R.color.correct_other_bg));
 			} */
+			chosenContact = question.getContact();
 		} else if(choice == -1) {
 			choiceButtons[question.getCorrectPosition()].setBackgroundColor(
 					getActivity().getResources().getColor(R.color.incorrect_actual_bg));
@@ -144,14 +153,17 @@ public abstract class MultiChoiceView<QView extends View, AButton extends Button
 				choiceButtons[i].setBackgroundColor(
 						getActivity().getResources().getColor(R.color.correct_other_bg));
 			} */
+
+			final int otherAnswersIndex =
+					choice <= question.getCorrectPosition() ?
+							choice : choice - 1;
+			if(otherAnswersIndex >= 0 && otherAnswersIndex < question.getOtherAnswers().length)
+				chosenContact = question.getOtherAnswers()[otherAnswersIndex];
 		}
 		
 		float delay = (float)(System.nanoTime() - startTime) / (float)1000000000L;
 		
-		Contact chosenContact = null;
-		if(choice >= 0 && choice < question.getOtherAnswers().length)
-			chosenContact = question.getOtherAnswers()[choice];
-		// TODO: Chosen contact is being null here.
+		Log.d(TAG, "Chosen contact is " + chosenContact);
 		if(callbacks != null) callbacks.choiceMade(chosenContact, choice == question.getCorrectPosition(),
 				choice == -1, delay);
 		else Log.e(TAG, "Callbacks are currently null!");
@@ -170,6 +182,10 @@ public abstract class MultiChoiceView<QView extends View, AButton extends Button
 		case R.id.choice6: choice = 5; break;
 		case R.id.choice7: choice = 6; break;
 		case R.id.choice8: choice = 7; break;
+		
+		case R.id.data_error:
+			// TODO: Show data error screen
+			return;
 		}
 		completeView(choice);
 	}

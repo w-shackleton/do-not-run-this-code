@@ -1,5 +1,6 @@
 package uk.digitalsquid.contactrecall;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 import uk.digitalsquid.contactrecall.misc.Const;
@@ -17,9 +18,16 @@ public class GameDescriptor implements Parcelable {
 	private int optionSources;
 	private int maxQuestions;
 	private boolean finiteGame;
+	/**
+	 * Maximum time to show each contact for, in seconds.
+	 * A value of zero indicates no timer per contact.
+	 */
 	private float maxTimePerContact;
 	private SelectionMode selectionMode;
 	private ShufflingMode shufflingMode;
+	
+	private int otherAnswersMinimum;
+	private int otherAnswersMaximum;
 	
 	public GameDescriptor() {
 		questionTypes = new QuestionAnswerPair[0];
@@ -29,15 +37,21 @@ public class GameDescriptor implements Parcelable {
 		maxTimePerContact = 3;
 		selectionMode = SelectionMode.RANDOM;
 		shufflingMode = ShufflingMode.RANDOM;
+		otherAnswersMinimum = 3;
+		otherAnswersMaximum = 3;
 	}
 	private GameDescriptor(Parcel parcel) {
-		setQuestionTypes((QuestionAnswerPair[]) parcel.readParcelableArray(null));
+		// Apparently you can't cast arrays easily
+		Parcelable[] array = parcel.readParcelableArray(QuestionAnswerPair.class.getClassLoader());
+		setQuestionTypes(Arrays.copyOf(array, array.length, QuestionAnswerPair[].class));
 		optionSources = parcel.readInt();
 		maxQuestions = parcel.readInt();
 		finiteGame = parcel.readInt() == 1;
 		maxTimePerContact = parcel.readFloat();
 		selectionMode = SelectionMode.valueOf(parcel.readString());
 		shufflingMode = ShufflingMode.valueOf(parcel.readString());
+		otherAnswersMinimum = parcel.readInt();
+		otherAnswersMaximum = parcel.readInt();
 	}
 	
 	@Override
@@ -54,6 +68,8 @@ public class GameDescriptor implements Parcelable {
 		dest.writeFloat(maxTimePerContact);
 		dest.writeString(selectionMode.name());
 		dest.writeString(shufflingMode.name());
+		dest.writeInt(otherAnswersMinimum);
+		dest.writeInt(otherAnswersMaximum);
 	}
 	
 	public int getOptionSources() {
@@ -77,9 +93,24 @@ public class GameDescriptor implements Parcelable {
 		this.finiteGame = finiteGame;
 	}
 
+	/**
+	 * Gets the maximum time to show each contact for, in seconds.
+	 * A value of zero indicates no timer per contact.
+	 */
 	public float getMaxTimePerContact() {
 		return maxTimePerContact;
 	}
+	/**
+	 * If <code>true</code>, a timer should be shown per question.
+	 * @return
+	 */
+	public boolean hasTimerPerContact() {
+		return maxTimePerContact != 0;
+	}
+	/**
+	 * Sets the maximum time per contact.
+	 * @param maxTimePerContact
+	 */
 	public void setMaxTimePerContact(float maxTimePerContact) {
 		this.maxTimePerContact = maxTimePerContact;
 	}
@@ -124,6 +155,20 @@ public class GameDescriptor implements Parcelable {
 		return result;
 	}
 
+	public int getOtherAnswersMinimum() {
+		return otherAnswersMinimum;
+	}
+	public void setOtherAnswersMinimum(int otherAnswersMinimum) {
+		this.otherAnswersMinimum = otherAnswersMinimum;
+	}
+
+	public int getOtherAnswersMaximum() {
+		return otherAnswersMaximum;
+	}
+	public void setOtherAnswersMaximum(int otherAnswersMaximum) {
+		this.otherAnswersMaximum = otherAnswersMaximum;
+	}
+
 	public static final Parcelable.Creator<GameDescriptor> CREATOR = new Parcelable.Creator<GameDescriptor>() {
 		public GameDescriptor createFromParcel(Parcel in) {
 			return new GameDescriptor(in);
@@ -138,6 +183,7 @@ public class GameDescriptor implements Parcelable {
 	 * @author william
 	 *
 	 */
+	@Deprecated
 	public static enum SelectionMode {
 		RANDOM
 	}

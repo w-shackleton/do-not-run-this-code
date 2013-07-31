@@ -16,6 +16,7 @@ public class ModeSelect extends Activity implements OnClickListener {
 		setContentView(R.layout.modeselect);
 		
 		findViewById(R.id.guessName).setOnClickListener(this);
+		findViewById(R.id.questionMix).setOnClickListener(this);
 	}
 
 	@Override
@@ -26,6 +27,17 @@ public class ModeSelect extends Activity implements OnClickListener {
 			descriptor.setQuestionTypes(new QuestionAnswerPair[] {
 					new QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
 			});
+			break;
+		case R.id.questionMix:
+			descriptor.setQuestionTypes(new QuestionAnswerPair[] {
+					new QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
+					new QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_FIRST_NAME),
+					new QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_LAST_NAME),
+					new QuestionAnswerPair(Question.FIELD_LAST_NAME, Question.FIELD_FIRST_NAME),
+			});
+			descriptor.setOtherAnswersMinimum(1);
+			descriptor.setOtherAnswersMaximum(7);
+			descriptor.setMaxQuestions(20);
 			break;
 		default:
 			return;

@@ -15,4 +15,6 @@ public interface GameCallbacks {
 	 * @param correct If <code>true</code>, the choice was correct
 	 */
 	void choiceMade(Contact choice, boolean correct, boolean timeout, float timeTaken);
+	
+	void setGamePaused(boolean paused);
 }
