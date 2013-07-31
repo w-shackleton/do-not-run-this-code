@@ -22,7 +22,10 @@ import android.widget.Toast;
 /**
  * The actual game itself.
  * @author william
- *
+ * TODO: Currently, the view hierarchy is too complicated.
+ * Container contains the pager, pause and summary screens.
+ * The pager contains the cards. It will probably work also
+ * if the container contains all these things. Might be worth doing.
  */
 public class Game extends Activity implements GameCallbacks, Config {
 	
@@ -30,7 +33,8 @@ public class Game extends Activity implements GameCallbacks, Config {
 	
 	GameDescriptor gameDescriptor;
 	
-	boolean gamePaused = false;
+	private boolean gamePaused = false;
+	private boolean gameRunning = true;
 	
 	/**
 	 * This class implements {@link GameCallbacks} -
@@ -49,8 +53,6 @@ public class Game extends Activity implements GameCallbacks, Config {
 		if(savedInstanceState == null) {
 			GameFragment gameFragment = new GameFragment();
 			callbacks = gameFragment;
-			
-			// TODO: Callbacks won't be set when there is a savedInstanceState
 			
 			Bundle fragmentArgs = new Bundle();
 			
@@ -77,13 +79,21 @@ public class Game extends Activity implements GameCallbacks, Config {
 		} else {
 			GameFragment gameFragment = (GameFragment) getFragmentManager().findFragmentById(R.id.container);
 			callbacks = gameFragment;
+			
+			gamePaused = savedInstanceState.getBoolean("gamePaused");
 		}
 	}
 	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putBoolean("gamePaused", gamePaused);
+	}
+	
 	private void resumeGame() {
-		if(gamePaused) {
+		if(isGamePaused()) {
 			// Let handler pop pause screen from stack
-			gamePaused = false; // TODO: Move this to a point where the game is
+			setGamePaused(false); // TODO: Move this to a point where the game is
 			// fully visible
 			super.onBackPressed();
 		}
@@ -91,9 +101,9 @@ public class Game extends Activity implements GameCallbacks, Config {
 	
 	@Override
 	public void onBackPressed() {
-		if(gamePaused) {
+		if(isGamePaused()) {
 			// Let handler pop pause screen from stack
-			gamePaused = false; // TODO: Move this to a point where the game is
+			setGamePaused(false); // TODO: Move this to a point where the game is
 			// fully visible
 			super.onBackPressed();
 		} else {
@@ -106,7 +116,7 @@ public class Game extends Activity implements GameCallbacks, Config {
 			transaction.replace(R.id.container, new GamePauseFragment());
 			transaction.addToBackStack(null);
 			transaction.commit();
-			gamePaused = true;
+			setGamePaused(true);
 		}
 	}
 	
@@ -118,6 +128,8 @@ public class Game extends Activity implements GameCallbacks, Config {
 		FrameLayout frameLayout;
 		Handler handler = new Handler();
 		
+		private boolean gamePaused;
+		
 		int position = 0;
 		
 		@Override
@@ -127,8 +139,10 @@ public class Game extends Activity implements GameCallbacks, Config {
 			if(args == null) return;
 			gameDescriptor = args.getParcelable("gameDescriptor");
 			
-			if(savedInstanceState != null)
+			if(savedInstanceState != null) {
 				position = savedInstanceState.getInt("position");
+				setGamePaused(savedInstanceState.getBoolean("gamePaused"));
+			}
 		}
 		
 		@Override
@@ -189,18 +203,38 @@ public class Game extends Activity implements GameCallbacks, Config {
 			if(gameAdapter != null) {
 				outState.putParcelable("gameAdapter", gameAdapter);
 				outState.putInt("position", position);
+				outState.putBoolean("gamePaused", gamePaused);
 			}
 		}
 
 		@Override
 		public void choiceMade(Contact choice, boolean correct, boolean timeout, float timeTaken) {
+			if(isGamePaused()) return;
 			position++;
 			if(position == gameAdapter.getCount()) {
-				// TODO: End-case
+				// Run transition to summary card.
+				handler.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						if(getFragmentManager() != null)
+							getFragmentManager().beginTransaction().
+								setCustomAnimations(R.animator.summary_card_in, R.animator.next_card_out).
+								replace(R.id.container, new SummaryFragment()).
+								commit();
+						Game activity = (Game) getActivity();
+						if(activity != null) {
+							activity.setGameFinished();
+						}
+					}
+				}, getResources().getInteger(
+						correct ?
+								R.integer.page_correct_wait_time :
+								R.integer.page_incorrect_wait_time));
 			} else {
 				// Run transition to next card after the given delay.
 				// The position has already been updated so we shouldn't have
-				// to worry about view rotation etc.
+				// to worry about view rotation etc., in which case
+				// the next card would be shown immediately
 				handler.postDelayed(new Runnable() {
 					@Override
 					public void run() {
@@ -223,6 +257,15 @@ public class Game extends Activity implements GameCallbacks, Config {
 					gameAdapter.getItem(position-1).getContact(), timeTaken);
 			else app.getDb().progress.addFail(
 					gameAdapter.getItem(position-1).getContact(), choice, timeTaken);
+		}
+
+		boolean isGamePaused() {
+			return gamePaused;
+		}
+
+		@Override
+		public void setGamePaused(boolean gamePaused) {
+			this.gamePaused = gamePaused;
 		}
 	}
 	
@@ -253,9 +296,49 @@ public class Game extends Activity implements GameCallbacks, Config {
 			}
 		}
 	}
+	
+	/**
+	 * Shows summary information about the game just played
+	 * @author william
+	 *
+	 */
+	public static class SummaryFragment extends Fragment implements OnClickListener {
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			View rootView = inflater.inflate(R.layout.summary_fragment, container, false);
+			
+			return rootView;
+		}
+		// TODO Auto-generated method stub
+		
+
+		@Override
+		public void onClick(View v) {
+		}
+	}
 
 	@Override
 	public void choiceMade(Contact choice, boolean correct, boolean timeout, float timeTaken) {
 		callbacks.choiceMade(choice, correct, timeout, timeTaken);
+	}
+
+	boolean isGamePaused() {
+		return gamePaused;
+	}
+
+	@Override
+	public void setGamePaused(boolean gamePaused) {
+		this.gamePaused = gamePaused;
+		callbacks.setGamePaused(gamePaused);
+	}
+
+	boolean isGameRunning() {
+		return gameRunning;
+	}
+
+	void setGameFinished() {
+		this.gameRunning = false;
 	}
 }

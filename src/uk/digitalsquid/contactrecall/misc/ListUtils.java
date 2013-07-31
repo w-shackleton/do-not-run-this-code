@@ -42,6 +42,7 @@ public final class ListUtils {
 	/**
 	 * Selects <code>num</code> random elements from the given list, making sure that none are the given variable <code>excluding</code>,
 	 * and that no two elements are the same.
+	 * TODO: Unused
 	 * @param from
 	 * @param num
 	 * @return
@@ -52,8 +53,6 @@ public final class ListUtils {
 		
 		final ArrayList<T> ret = new ArrayList<T>();
 		final int size = from.size();
-		
-		// FIXME / TODO: Could 2 contacts have the same name in Android? It usually combines them.
 		
 		// Is this necessary, considering the duplicate test below? It may reduce the test below's chance of being used.
 		final int[] choices = generateRandomDistinctNumbers(size, num);

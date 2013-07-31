@@ -18,6 +18,10 @@ public class GameDescriptor implements Parcelable {
 	private int optionSources;
 	private int maxQuestions;
 	private boolean finiteGame;
+	/**
+	 * Maximum time to show each contact for, in seconds.
+	 * A value of zero indicates no timer per contact.
+	 */
 	private float maxTimePerContact;
 	private SelectionMode selectionMode;
 	private ShufflingMode shufflingMode;
@@ -89,9 +93,24 @@ public class GameDescriptor implements Parcelable {
 		this.finiteGame = finiteGame;
 	}
 
+	/**
+	 * Gets the maximum time to show each contact for, in seconds.
+	 * A value of zero indicates no timer per contact.
+	 */
 	public float getMaxTimePerContact() {
 		return maxTimePerContact;
 	}
+	/**
+	 * If <code>true</code>, a timer should be shown per question.
+	 * @return
+	 */
+	public boolean hasTimerPerContact() {
+		return maxTimePerContact != 0;
+	}
+	/**
+	 * Sets the maximum time per contact.
+	 * @param maxTimePerContact
+	 */
 	public void setMaxTimePerContact(float maxTimePerContact) {
 		this.maxTimePerContact = maxTimePerContact;
 	}
