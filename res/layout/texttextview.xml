@@ -21,8 +21,8 @@
 	        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 	    <uk.digitalsquid.contactrecall.ingame.TimerView
-	        android:layout_height="40dip"
-	        android:layout_width="40dip"
+	        android:layout_height="wrap_content"
+	        android:layout_width="wrap_content"
 	        android:id="@+id/timerView"/>
 
     </RelativeLayout>

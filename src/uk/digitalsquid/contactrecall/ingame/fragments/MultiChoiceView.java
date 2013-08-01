@@ -77,10 +77,14 @@ public abstract class MultiChoiceView<QView extends View, AButton extends Button
         
         startTime = System.nanoTime();
         
+        timer = (TimerView) rootView.findViewById(R.id.timerView);
         if(descriptor.hasTimerPerContact()) {
-	        timer = (TimerView) rootView.findViewById(R.id.timerView);
 	        timer.setOnFinishedListener(this);
 	        timer.setTotalTime(descriptor.getMaxTimePerContact());
+	        timer.setTextAsCountdown();
+        } else {
+        	timer.setVisibility(View.GONE);
+        	timer = null; // Done with timer now
         }
         
 		return rootView;

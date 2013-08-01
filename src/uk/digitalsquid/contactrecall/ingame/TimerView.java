@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
 import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
 import android.graphics.Paint.Style;
@@ -20,6 +21,8 @@ public class TimerView extends View {
 	private float visualProgress = 0;
 	
 	private final float margin;
+	
+	private String text = "";
 	
 	protected CountDownTimer timer;
 	
@@ -40,6 +43,7 @@ public class TimerView extends View {
 		
 		margin = displayMetrics.density * 2;
 		
+		
 		outerPaint = new Paint();
 		outerPaint.setAntiAlias(true);
 		outerPaint.setStyle(Style.STROKE);
@@ -52,23 +56,37 @@ public class TimerView extends View {
 		innerPaint.setAntiAlias(false);
 		innerPaint.setStyle(Style.FILL);
 		innerPaint.setColor(Color.rgb(200, 200, 200));
+		
+		textPaint = new Paint();
+		textPaint.setAntiAlias(true);
+		textPaint.setColor(Color.rgb(0, 0, 0));
+		// TODO: Get text size from system, for accessibility etc.
+		textPaint.setTextSize(18 * displayMetrics.scaledDensity);
+		textPaint.setTextAlign(Align.CENTER);
 	}
 
 	public float getTotalTime() {
 		return totalTime;
 	}
-
+	
+	/**
+	 * Set by timer whilst running. (In seconds)
+	 */
+	float timeRemaining;
+	
 	public void setTotalTime(float totalTime) {
 		this.totalTime = totalTime;
-		timer = new CountDownTimer((int)(totalTime * 1000), (int)(totalTime * 1000)) {
-			
+		timer = new CountDownTimer((int)(totalTime * 1000), 200) {
 			@Override
 			public void onTick(long millisUntilFinished) {
+				timeRemaining = ((float) millisUntilFinished) / 1000f;
 			}
 			
 			@Override
 			public void onFinish() {
 				onFinishedListener.onTimerFinished(TimerView.this);
+				timeRemaining = 0;
+				invalidate();
 			}
 		};
 	}
@@ -104,6 +122,16 @@ public class TimerView extends View {
 	
 	private RectF box = new RectF();
 	private Paint outerPaint, innerPaint;
+	private Paint textPaint;
+	
+	@Override
+	public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		float textWidth = textPaint.measureText("000"); // Measure three digits of time
+		float textHeight = textPaint.getTextSize();
+		float textSize = Math.max(textWidth, textHeight);
+		int measuredSize = (int) (textSize + margin * 4); // Double margin - margin around timer and inside it.
+		setMeasuredDimension(measuredSize, measuredSize);
+	}
 	
 	@Override
 	public void onDraw(Canvas c) {
@@ -121,5 +149,32 @@ public class TimerView extends View {
 		
 		c.drawArc(box, -90, 360f * (1f-visualProgress), true, innerPaint);
 		c.drawArc(box, -90, 360f * (1f-visualProgress), true, outerPaint);
+		
+		String centreText = text.replace("%r", String.valueOf((int)Math.floor(timeRemaining)));
+		
+		c.drawText(
+				centreText,
+				c.getWidth() / 2,
+				c.getHeight() / 2 - (textPaint.descent() + textPaint.ascent()) / 2,
+				textPaint);
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	/**
+	 * Sets the text displayed at the centre of this timer.
+	 * The text %r will be replaced with the number of seconds left on the timer.
+	 * @param text
+	 */
+	public void setText(String text) {
+		if(text == null) this.text = "";
+		this.text = text;
+		invalidate();
+	}
+	
+	public void setTextAsCountdown() {
+		setText("%r");
 	}
 }

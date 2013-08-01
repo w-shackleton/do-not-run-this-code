@@ -311,8 +311,6 @@ public class Game extends Activity implements GameCallbacks, Config {
 			
 			return rootView;
 		}
-		// TODO Auto-generated method stub
-		
 
 		@Override
 		public void onClick(View v) {
