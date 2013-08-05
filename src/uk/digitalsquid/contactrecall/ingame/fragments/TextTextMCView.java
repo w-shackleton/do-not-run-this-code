@@ -16,7 +16,7 @@ import android.widget.TextView;
  * @author william
  *
  */
-public class TextTextView extends MultiChoiceView<TextView, Button> {
+public class TextTextMCView extends MultiChoiceView<TextView, Button> {
 
 	@Override
 	protected int getRootLayoutId() {

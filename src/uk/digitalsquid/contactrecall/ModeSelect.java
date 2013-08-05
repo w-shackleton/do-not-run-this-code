@@ -2,7 +2,6 @@ package uk.digitalsquid.contactrecall;
 
 import uk.digitalsquid.contactrecall.ingame.Game;
 import uk.digitalsquid.contactrecall.mgr.Question;
-import uk.digitalsquid.contactrecall.mgr.Question.QuestionAnswerPair;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +16,8 @@ public class ModeSelect extends Activity implements OnClickListener {
 		
 		findViewById(R.id.guessName).setOnClickListener(this);
 		findViewById(R.id.questionMix).setOnClickListener(this);
+		findViewById(R.id.trueFalse).setOnClickListener(this);
+		findViewById(R.id.pairings).setOnClickListener(this);
 	}
 
 	@Override
@@ -34,10 +35,16 @@ public class ModeSelect extends Activity implements OnClickListener {
 					new Question.QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_FIRST_NAME),
 					new Question.QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_LAST_NAME),
 					new Question.QuestionAnswerPair(Question.FIELD_LAST_NAME, Question.FIELD_FIRST_NAME),
+					new Question.QuestionAnswerPair(Question.STYLE_TRUE_FALSE, Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
 			});
 			descriptor.setOtherAnswersMinimum(1);
 			descriptor.setOtherAnswersMaximum(7);
 			descriptor.setMaxQuestions(20);
+			break;
+		case R.id.trueFalse:
+			descriptor.setQuestionTypes(new Question.QuestionAnswerPair[] {
+					new Question.QuestionAnswerPair(Question.STYLE_TRUE_FALSE, Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
+			});
 			break;
 		default:
 			return;

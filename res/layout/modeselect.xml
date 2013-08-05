@@ -3,10 +3,43 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
-    <TableLayout android:layout_height="match_parent" android:id="@+id/tableLayout1" android:layout_width="match_parent">
-        <TableRow android:id="@+id/tableRow1" android:layout_width="wrap_content" android:layout_height="wrap_content">
-            <ImageButton android:src="@drawable/icon_facetoname" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/guessName" style="@style/largebutton"></ImageButton>
-            <Button android:id="@+id/questionMix" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1" android:text="Question Mix" style="@style/largebutton"></Button>
+    <TableLayout
+        android:layout_height="match_parent"
+        android:id="@+id/tableLayout1"
+        android:layout_width="match_parent">
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageButton
+                android:src="@drawable/icon_facetoname"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:id="@+id/guessName"
+                style="@style/largebutton"></ImageButton>
+            <Button
+                android:id="@+id/questionMix"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Question Mix"
+                style="@style/largebutton"></Button>
+        </TableRow>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <Button
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:id="@+id/trueFalse"
+                android:text="True / False"
+                style="@style/largebutton"></Button>
+            <Button
+                android:id="@+id/pairings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Pairings"
+                style="@style/largebutton"></Button>
         </TableRow>
     </TableLayout>
 </LinearLayout>

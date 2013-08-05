@@ -11,9 +11,10 @@ import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.GameDescriptor.ShufflingMode;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
+import uk.digitalsquid.contactrecall.ingame.fragments.ImageTextTFView;
 import uk.digitalsquid.contactrecall.ingame.fragments.MultiChoiceView;
-import uk.digitalsquid.contactrecall.ingame.fragments.PictureTextView;
-import uk.digitalsquid.contactrecall.ingame.fragments.TextTextView;
+import uk.digitalsquid.contactrecall.ingame.fragments.ImageTextMCView;
+import uk.digitalsquid.contactrecall.ingame.fragments.TextTextMCView;
 import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.mgr.Question.QuestionAnswerPair;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
@@ -42,6 +43,15 @@ public class GameAdapter implements Parcelable, Config {
 	 */
 	ArrayList<Question> questions;
 
+	/**
+	 * Constructor.
+	 * This takes a LONG time (seconds), as there is a lot of data to crunch.
+	 * This needs to be backgrounded at a loading screen at some point.
+	 * @param context
+	 * @param app
+	 * @param descriptor
+	 * @param callbacks
+	 */
 	@SuppressWarnings("unchecked")
 	public GameAdapter(Context context, App app, GameDescriptor descriptor, GameCallbacks callbacks) {
 		this.app = app;
@@ -333,35 +343,72 @@ public class GameAdapter implements Parcelable, Config {
         args.putParcelable(MultiChoiceView.ARG_DESCRIPTOR, descriptor);
         
         // Find the correct fragment to use
-        // TODO: Write implementations for these other cases.
+        // TODO: Write implementations for these other cases. (Don't think image->image will be needed)
         MultiChoiceView<?, ?> fragment;
-        Log.v(TAG, String.format("Creating fragment of format (%d,%d)",
+        Log.v(TAG, String.format("Creating fragment of format (%d,%d,%d)",
+        		question.getQuestionStyle(),
         		question.getQuestionFormat(),
         		question.getAnswerFormat()));
-        switch(question.getQuestionFormat()) {
-        case Question.FORMAT_TEXT:
-    	default:
-    		switch(question.getAnswerFormat()) {
-    		case Question.FORMAT_TEXT:
-			default:
-				fragment = new TextTextView();
-				break;
-			case Question.FORMAT_IMAGE:
-				fragment = null;
-				break;
-    		}
-    		break;
-    	case Question.FORMAT_IMAGE:
-    		switch(question.getAnswerFormat()) {
-    		case Question.FORMAT_TEXT:
-			default:
-				fragment = new PictureTextView();
-				break;
-			case Question.FORMAT_IMAGE:
-				fragment = null;
-				break;
-    		}
-    		break;
+        switch(question.getQuestionStyle()) {
+        default:
+        case Question.STYLE_MULTI_CHOICE:
+	        switch(question.getQuestionFormat()) {
+	        case Question.FORMAT_TEXT:
+	    	default:
+	    		switch(question.getAnswerFormat()) {
+				default:
+	    		case Question.FORMAT_TEXT: fragment = new TextTextMCView(); break;
+				case Question.FORMAT_IMAGE: fragment = null; break;
+	    		}
+	    		break;
+	    	case Question.FORMAT_IMAGE:
+	    		switch(question.getAnswerFormat()) {
+				default:
+	    		case Question.FORMAT_TEXT: fragment = new ImageTextMCView(); break;
+				case Question.FORMAT_IMAGE: fragment = null; break;
+	    		}
+	    		break;
+	        }
+        	break;
+        	// TODO: Implement properly
+        case Question.STYLE_TRUE_FALSE:
+	        switch(question.getQuestionFormat()) {
+	        case Question.FORMAT_TEXT:
+	    	default:
+	    		switch(question.getAnswerFormat()) {
+				default:
+	    		case Question.FORMAT_TEXT: fragment = null; break;
+				case Question.FORMAT_IMAGE: fragment = null; break;
+	    		}
+	    		break;
+	    	case Question.FORMAT_IMAGE:
+	    		switch(question.getAnswerFormat()) {
+				default:
+	    		case Question.FORMAT_TEXT: fragment = new ImageTextTFView(); break;
+				case Question.FORMAT_IMAGE: fragment = null; break;
+	    		}
+	    		break;
+	        }
+        	break;
+        case Question.STYLE_PAIRING:
+	        switch(question.getQuestionFormat()) {
+	        case Question.FORMAT_TEXT:
+	    	default:
+	    		switch(question.getAnswerFormat()) {
+				default:
+	    		case Question.FORMAT_TEXT: fragment = null; break;
+				case Question.FORMAT_IMAGE: fragment = null; break;
+	    		}
+	    		break;
+	    	case Question.FORMAT_IMAGE:
+	    		switch(question.getAnswerFormat()) {
+				default:
+	    		case Question.FORMAT_TEXT: fragment = new ImageTextMCView(); break;
+				case Question.FORMAT_IMAGE: fragment = null; break;
+	    		}
+	    		break;
+	        }
+        	break;
         }
         fragment.setArguments(args);
         

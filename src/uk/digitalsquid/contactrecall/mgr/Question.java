@@ -128,14 +128,19 @@ public final class Question implements Parcelable {
 		dest.writeParcelable(getQuestionAnswerPair(), 0);
 	}
 	
+	/**
+	 * Gets the correct position through the other answers for the correct answer.
+	 * In the case of a true/false question, a value of 1 here indicates <code>false</code>,
+	 * 0 indicates <code>true</code>. This matches with "True" being the first button.
+	 */
 	public int getCorrectPosition() {
 		return correctPosition;
 	}
 
 	/**
 	 * Sets the correct position through the other answers for the correct answer.
-	 * In the case of a true/false question, a value of 0 here indicates <code>false</code>,
-	 * 1 indicates <code>true</code>.
+	 * In the case of a true/false question, a value of 1 here indicates <code>false</code>,
+	 * 0 indicates <code>true</code>.
 	 * @param correctPosition
 	 */
 	public void setCorrectPosition(int correctPosition) {
@@ -243,6 +248,12 @@ public final class Question implements Parcelable {
 		
 		public QuestionAnswerPair() { }
 		public QuestionAnswerPair(int questionType, int answerType) {
+			this.questionStyle = Question.STYLE_MULTI_CHOICE;
+			this.questionType = questionType;
+			this.answerType = answerType;
+		}
+		public QuestionAnswerPair(int style, int questionType, int answerType) {
+			this.questionStyle = style;
 			this.questionType = questionType;
 			this.answerType = answerType;
 		}

@@ -18,11 +18,11 @@ import android.widget.ImageView;
  * @author william
  *
  */
-public class PictureTextView extends MultiChoiceView<ImageView, Button> {
+public class ImageTextMCView extends MultiChoiceView<ImageView, Button> {
 
 	@Override
 	protected int getRootLayoutId() {
-		return R.layout.picturetextview;
+		return R.layout.imagetextmcview;
 	}
 
 	@Override
