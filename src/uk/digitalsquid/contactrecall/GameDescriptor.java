@@ -3,6 +3,7 @@ package uk.digitalsquid.contactrecall;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.misc.Const;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -14,7 +15,7 @@ import android.os.Parcelable;
  */
 public class GameDescriptor implements Parcelable {
 	
-	private QuestionAnswerPair[] questionTypes;
+	private Question.QuestionAnswerPair[] questionTypes;
 	private int optionSources;
 	private int maxQuestions;
 	private boolean finiteGame;
@@ -29,8 +30,11 @@ public class GameDescriptor implements Parcelable {
 	private int otherAnswersMinimum;
 	private int otherAnswersMaximum;
 	
+	private int pairingChoicesMinimum;
+	private int pairingChoicesMaximum;
+	
 	public GameDescriptor() {
-		questionTypes = new QuestionAnswerPair[0];
+		questionTypes = new Question.QuestionAnswerPair[0];
 		optionSources = OPTION_SOURCE_ALL_CONTACTS;
 		maxQuestions = 10;
 		finiteGame = true;
@@ -39,11 +43,13 @@ public class GameDescriptor implements Parcelable {
 		shufflingMode = ShufflingMode.RANDOM;
 		otherAnswersMinimum = 3;
 		otherAnswersMaximum = 3;
+		pairingChoicesMinimum = 4;
+		pairingChoicesMaximum = 4;
 	}
 	private GameDescriptor(Parcel parcel) {
 		// Apparently you can't cast arrays easily
-		Parcelable[] array = parcel.readParcelableArray(QuestionAnswerPair.class.getClassLoader());
-		setQuestionTypes(Arrays.copyOf(array, array.length, QuestionAnswerPair[].class));
+		Parcelable[] array = parcel.readParcelableArray(Question.QuestionAnswerPair.class.getClassLoader());
+		setQuestionTypes(Arrays.copyOf(array, array.length, Question.QuestionAnswerPair[].class));
 		optionSources = parcel.readInt();
 		maxQuestions = parcel.readInt();
 		finiteGame = parcel.readInt() == 1;
@@ -52,6 +58,8 @@ public class GameDescriptor implements Parcelable {
 		shufflingMode = ShufflingMode.valueOf(parcel.readString());
 		otherAnswersMinimum = parcel.readInt();
 		otherAnswersMaximum = parcel.readInt();
+		pairingChoicesMinimum = parcel.readInt();
+		pairingChoicesMaximum = parcel.readInt();
 	}
 	
 	@Override
@@ -70,6 +78,8 @@ public class GameDescriptor implements Parcelable {
 		dest.writeString(shufflingMode.name());
 		dest.writeInt(otherAnswersMinimum);
 		dest.writeInt(otherAnswersMaximum);
+		dest.writeInt(pairingChoicesMinimum);
+		dest.writeInt(pairingChoicesMaximum);
 	}
 	
 	public int getOptionSources() {
@@ -129,15 +139,15 @@ public class GameDescriptor implements Parcelable {
 		this.shufflingMode = shufflingMode;
 	}
 
-	public QuestionAnswerPair[] getQuestionTypes() {
+	public Question.QuestionAnswerPair[] getQuestionTypes() {
 		return questionTypes;
 	}
 
-	public void setQuestionTypes(QuestionAnswerPair[] questionTypes) {
+	public void setQuestionTypes(Question.QuestionAnswerPair[] questionTypes) {
 		this.questionTypes = questionTypes;
 	}
 	
-	public QuestionAnswerPair getRandomQuestionType() {
+	public Question.QuestionAnswerPair getRandomQuestionType() {
 		return questionTypes[Const.RAND.nextInt(questionTypes.length)];
 	}
 	
@@ -148,12 +158,14 @@ public class GameDescriptor implements Parcelable {
 	 */
 	public HashSet<Integer> getUsedFieldTypes() {
 		HashSet<Integer> result = new HashSet<Integer>();
-		for(QuestionAnswerPair pair : questionTypes) {
+		for(Question.QuestionAnswerPair pair : questionTypes) {
 			result.add(pair.getQuestionType());
 			result.add(pair.getAnswerType());
 		}
 		return result;
 	}
+	
+	// TODO: Sanitise input below
 
 	public int getOtherAnswersMinimum() {
 		return otherAnswersMinimum;
@@ -167,6 +179,20 @@ public class GameDescriptor implements Parcelable {
 	}
 	public void setOtherAnswersMaximum(int otherAnswersMaximum) {
 		this.otherAnswersMaximum = otherAnswersMaximum;
+	}
+
+	public int getPairingChoicesMinimum() {
+		return pairingChoicesMinimum;
+	}
+	public void setPairingChoicesMinimum(int pairingChoicesMinimum) {
+		this.pairingChoicesMinimum = pairingChoicesMinimum;
+	}
+
+	public int getPairingChoicesMaximum() {
+		return pairingChoicesMaximum;
+	}
+	public void setPairingChoicesMaximum(int pairingChoicesMaximum) {
+		this.pairingChoicesMaximum = pairingChoicesMaximum;
 	}
 
 	public static final Parcelable.Creator<GameDescriptor> CREATOR = new Parcelable.Creator<GameDescriptor>() {
@@ -195,57 +221,6 @@ public class GameDescriptor implements Parcelable {
 	 */
 	public static enum ShufflingMode {
 		RANDOM
-	}
-	
-	/**
-	 * Defines a possible pair of question and answer types.
-	 * @author william
-	 *
-	 */
-	public static class QuestionAnswerPair implements Parcelable {
-		private int questionType;
-		private int answerType;
-		
-		public QuestionAnswerPair() { }
-		public QuestionAnswerPair(int questionType, int answerType) {
-			this.questionType = questionType;
-			this.answerType = answerType;
-		}
-		public QuestionAnswerPair(Parcel in) {
-			setQuestionType(in.readInt());
-			setAnswerType(in.readInt());
-		}
-
-		public static final Parcelable.Creator<QuestionAnswerPair> CREATOR = new Parcelable.Creator<QuestionAnswerPair>() {
-			public QuestionAnswerPair createFromParcel(Parcel in) {
-				return new QuestionAnswerPair(in);
-			}
-			public QuestionAnswerPair[] newArray(int size) {
-				return new QuestionAnswerPair[size];
-			}
-		};
-
-		@Override
-		public int describeContents() {
-			return 0;
-		}
-		@Override
-		public void writeToParcel(Parcel dest, int flags) {
-			dest.writeInt(getQuestionType());
-			dest.writeInt(getAnswerType());
-		}
-		public int getQuestionType() {
-			return questionType;
-		}
-		public void setQuestionType(int questionType) {
-			this.questionType = questionType;
-		}
-		public int getAnswerType() {
-			return answerType;
-		}
-		public void setAnswerType(int answerType) {
-			this.answerType = answerType;
-		}
 	}
 	
 	/**

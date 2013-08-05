@@ -4,17 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.GameDescriptor;
-import uk.digitalsquid.contactrecall.GameDescriptor.QuestionAnswerPair;
 import uk.digitalsquid.contactrecall.GameDescriptor.ShufflingMode;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.ingame.fragments.MultiChoiceView;
 import uk.digitalsquid.contactrecall.ingame.fragments.PictureTextView;
 import uk.digitalsquid.contactrecall.ingame.fragments.TextTextView;
 import uk.digitalsquid.contactrecall.mgr.Question;
+import uk.digitalsquid.contactrecall.mgr.Question.QuestionAnswerPair;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import uk.digitalsquid.contactrecall.misc.Config;
 import uk.digitalsquid.contactrecall.misc.Const;
@@ -75,6 +76,7 @@ public class GameAdapter implements Parcelable, Config {
 		}
 
 		// Construct groups of all types of contact to use as answers.
+		// This is the same as contactGroups, but doesn't get removed from later.
 		HashMap<Integer, ArrayList<Contact>> allContactGroups = new HashMap<Integer, ArrayList<Contact>>();
 		// For each field type, accumulate a list of contacts that contain that field type.
 		for(int usedFieldType : usedFieldTypes) {
@@ -94,32 +96,78 @@ public class GameAdapter implements Parcelable, Config {
 		int emptyRetries = 10;
 		for(int i = 0; i < descriptor.getMaxQuestions(); i++) {
 			// Select a random question type
-			QuestionAnswerPair type =
+			Question.QuestionAnswerPair type =
 					descriptor.getQuestionTypes()[Const.RAND.nextInt(
 							descriptor.getQuestionTypes().length)];
 			
-			// Remove the first question from the grouped contact questions
-			ArrayList<Contact> possibles = contactGroups.get(type.getQuestionType());
-			if(possibles == null) {
-				Log.w(TAG, "Null array found in contactGroups - this shouldn't be possible");
-			}
-			
-			// Find the first contact that has both the question and answer types
-			Contact question = null;
-			for(int j = 0; j < possibles.size(); j++) {
-				Contact test = possibles.get(j);
-				if(test.hasField(type.getAnswerType())) {
-					question = test;
-					possibles.remove(j);
-					break;
+			// Switch based on question style
+			switch(type.getQuestionStyle()) {
+			case Question.STYLE_MULTI_CHOICE: // These two are quite similar
+			case Question.STYLE_TRUE_FALSE:
+			{
+				// Remove the first question from the grouped contact questions
+				ArrayList<Contact> possibles = contactGroups.get(type.getQuestionType());
+				if(possibles == null) {
+					Log.w(TAG, "Null array found in contactGroups - this shouldn't be possible");
 				}
+				
+				// Find the first contact that has both the question and answer types
+				Contact question = null;
+				for(int j = 0; j < possibles.size(); j++) {
+					Contact test = possibles.get(j);
+					if(test.hasField(type.getAnswerType())) {
+						question = test;
+						possibles.remove(j);
+						break;
+					}
+				}
+				if(question == null) {
+					if(emptyRetries-- == 0) break;
+					else continue;
+				}
+				
+				questions.add(createQuestion(question, type, allContactGroups));
 			}
-			if(question == null) {
-				if(emptyRetries-- == 0) break;
-				else continue;
+				break;
+			case Question.STYLE_PAIRING:
+			{
+				// Get the contacts that match the question criteria
+				// Note that we are not getting these from the depleting lists -
+				// contacts aren't deleted when constructing these questions.
+				ArrayList<Contact> orderedPossibles = allContactGroups.get(type.getQuestionType());
+				if(orderedPossibles == null) {
+					Log.w(TAG, "Null array found in contactGroups - this shouldn't be possible");
+				}
+				
+				// Shuffle contacts so that same ones don't get chosen repeatedly.
+				ArrayList<Contact> possibles = (ArrayList<Contact>) orderedPossibles.clone();
+				Collections.shuffle(possibles);
+				
+				ArrayList<Contact> choices = new ArrayList<Contact>();
+				
+				for(Contact possible : possibles) {
+					if(possible.hasField(type.getAnswerType())) {
+						// Possible contact found, check has different answer
+						// field to all other previous contacts.
+						String possibleRepresentation =
+								possible.getStringFieldRepresentation(type.getAnswerType());
+						boolean unique = true;
+						for(Contact test : choices) {
+							if(possibleRepresentation.equals(
+									test.getStringFieldRepresentation(type.getAnswerType())))
+								unique = false;
+						}
+						if(unique) choices.add(possible);
+					}
+				}
+				// If there are several matching contacts, add to question
+				if(choices.size() > 1)
+					questions.add(createPairingQuestion(
+							choices.toArray(new Contact[choices.size()]),
+							type));
 			}
-			
-			questions.add(createQuestion(question, type, allContactGroups));
+				break;
+			}
 		}
 	}
 
@@ -172,14 +220,32 @@ public class GameAdapter implements Parcelable, Config {
 		return 0;
 	}
 	
-	protected Question createQuestion(Contact contact, QuestionAnswerPair type, HashMap<Integer, ArrayList<Contact>> allContactGroups) {
+	/**
+	 * Creates a multi choice OR true/false question
+	 * @param contact The {@link Contact} to use as a question
+	 * @param type The type of question to ask. This includes the question and answer fields,
+	 * and the question style
+	 * @param allContactGroups Groups of contacts to use as other answers (multi-choice only)
+	 * @return
+	 */
+	protected Question createQuestion(Contact contact, Question.QuestionAnswerPair type, HashMap<Integer, ArrayList<Contact>> allContactGroups) {
 		Question question = new Question(contact);
-		question.setQuestionType(type.getQuestionType());
-		question.setAnswerType(type.getAnswerType());
-		int numOtherChoices = Const.RAND.nextInt(
-						descriptor.getOtherAnswersMaximum() -
-						descriptor.getOtherAnswersMinimum() + 1) +
-						descriptor.getOtherAnswersMinimum();
+		question.setQuestionAnswerPair(type);
+
+		int numOtherChoices = 0;
+		switch(type.getQuestionStyle()) {
+		case Question.STYLE_MULTI_CHOICE:
+			numOtherChoices = Const.RAND.nextInt(
+							descriptor.getOtherAnswersMaximum() -
+							descriptor.getOtherAnswersMinimum() + 1) +
+							descriptor.getOtherAnswersMinimum();
+			break;
+		case Question.STYLE_TRUE_FALSE:
+			numOtherChoices = 1; // Just one choice. See Question.setCorrectPosition for what this means.
+			break;
+		case Question.STYLE_PAIRING:
+			throw new IllegalArgumentException("For pairing questions, use createPairingQuestion");
+		}
 		question.setCorrectPosition(Const.RAND.nextInt(numOtherChoices + 1));
 		
 		ArrayList<Contact> otherAnswers = allContactGroups.get(type.getAnswerType());
@@ -216,10 +282,25 @@ public class GameAdapter implements Parcelable, Config {
 		return question;
 	}
 
+	protected Question createPairingQuestion(Contact[] contacts, QuestionAnswerPair type) {
+		Question question = new Question(contacts);
+		question.setQuestionAnswerPair(type);
+		
+		// Construct a sequential list (1, 2, 3, 4 etc), then shuffle it.
+		List<Integer> correctPairings = new ArrayList<Integer>(contacts.length);
+		for(int i = 0; i < contacts.length; i++) {
+			correctPairings.add(i);
+		}
+		
+		Collections.shuffle(correctPairings);
+		question.setCorrectPairings(correctPairings);
+
+		return question;
+	}
+
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeParcelable(descriptor, 0);
-		
 		dest.writeList(questions);
 	}
 	

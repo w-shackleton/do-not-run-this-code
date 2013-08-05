@@ -1,8 +1,8 @@
 package uk.digitalsquid.contactrecall;
 
-import uk.digitalsquid.contactrecall.GameDescriptor.QuestionAnswerPair;
 import uk.digitalsquid.contactrecall.ingame.Game;
 import uk.digitalsquid.contactrecall.mgr.Question;
+import uk.digitalsquid.contactrecall.mgr.Question.QuestionAnswerPair;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,16 +24,16 @@ public class ModeSelect extends Activity implements OnClickListener {
 		GameDescriptor descriptor = new GameDescriptor();
 		switch(view.getId()) {
 		case R.id.guessName:
-			descriptor.setQuestionTypes(new QuestionAnswerPair[] {
-					new QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
+			descriptor.setQuestionTypes(new Question.QuestionAnswerPair[] {
+					new Question.QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
 			});
 			break;
 		case R.id.questionMix:
-			descriptor.setQuestionTypes(new QuestionAnswerPair[] {
-					new QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
-					new QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_FIRST_NAME),
-					new QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_LAST_NAME),
-					new QuestionAnswerPair(Question.FIELD_LAST_NAME, Question.FIELD_FIRST_NAME),
+			descriptor.setQuestionTypes(new Question.QuestionAnswerPair[] {
+					new Question.QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
+					new Question.QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_FIRST_NAME),
+					new Question.QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_LAST_NAME),
+					new Question.QuestionAnswerPair(Question.FIELD_LAST_NAME, Question.FIELD_FIRST_NAME),
 			});
 			descriptor.setOtherAnswersMinimum(1);
 			descriptor.setOtherAnswersMaximum(7);

@@ -1,5 +1,8 @@
 package uk.digitalsquid.contactrecall.mgr;
 
+import java.util.Arrays;
+import java.util.List;
+
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -11,12 +14,18 @@ import android.os.Parcelable;
  *
  */
 public final class Question implements Parcelable {
-	
-	private Contact contact;
+
+	/**
+	 * The contact(s) to use as questions. For some question styles, this is
+	 * only one contact.
+	 */
+	private Contact[] contacts;
 	
 	private Contact[] otherAnswers;
 	
 	private int correctPosition;
+	
+	private int[] correctPairings;
 	
 	// Types of question that can be asked.
 	public static final int FIELD_PHOTO = 1;
@@ -41,32 +50,56 @@ public final class Question implements Parcelable {
 	public static final int FORMAT_IMAGE = 1;
 	public static final int FORMAT_TEXT = 2;
 	
-	private int questionType;
-	private int answerType;
+	// Styles of question
+	public static final int STYLE_MULTI_CHOICE = 1;
+	public static final int STYLE_TRUE_FALSE = 2;
+	public static final int STYLE_PAIRING = 3;
+	
+	private QuestionAnswerPair questionAnswerPair = new QuestionAnswerPair();
 	
 	public Question(Contact contact) {
 		this(contact, null);
 	}
+
+	public Question(Contact[] contacts) {
+		setContacts(contacts);
+	}
 	
 	public Question(Contact contact, Contact[] otherAnswers) {
-		this.contact = contact;
+		setContacts(new Contact[] { contact });
 		this.otherAnswers = otherAnswers;
 	}
 	
 	public Question(Parcel src) {
-		contact = src.readParcelable(null);
-		otherAnswers = (Contact[]) src.readParcelableArray(null);
+		Parcelable[] contacts = src.readParcelableArray(Contact.class.getClassLoader());
+		contacts = Arrays.copyOf(contacts, contacts.length);
+		otherAnswers = (Contact[]) src.readParcelableArray(Contact.class.getClassLoader());
 		correctPosition = src.readInt();
-		questionType = src.readInt();
-		answerType = src.readInt();
+		questionAnswerPair = src.readParcelable(QuestionAnswerPair.class.getClassLoader());
 	}
 
+	/**
+	 * Gets the question contact, if there is only one.
+	 * @return
+	 */
 	public Contact getContact() {
-		return contact;
+		return getContacts()[0];
 	}
 
+	/**
+	 * Sets the question contact, if there is only one.
+	 * @param contact
+	 */
 	public void setContact(Contact contact) {
-		this.contact = contact;
+		getContacts()[0] = contact;
+	}
+
+	public Contact[] getContacts() {
+		return contacts;
+	}
+
+	public void setContacts(Contact[] contacts) {
+		this.contacts = contacts;
 	}
 
 	public Contact[] getOtherAnswers() {
@@ -89,27 +122,32 @@ public final class Question implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeParcelable(contact, 0);
+		dest.writeParcelableArray(getContacts(), 0);
 		dest.writeParcelableArray(otherAnswers, 0);
 		dest.writeInt(correctPosition);
-		dest.writeInt(questionType);
-		dest.writeInt(answerType);
+		dest.writeParcelable(getQuestionAnswerPair(), 0);
 	}
 	
 	public int getCorrectPosition() {
 		return correctPosition;
 	}
 
+	/**
+	 * Sets the correct position through the other answers for the correct answer.
+	 * In the case of a true/false question, a value of 0 here indicates <code>false</code>,
+	 * 1 indicates <code>true</code>.
+	 * @param correctPosition
+	 */
 	public void setCorrectPosition(int correctPosition) {
 		this.correctPosition = correctPosition;
 	}
 
 	public int getQuestionType() {
-		return questionType;
+		return getQuestionAnswerPair().getQuestionType();
 	}
 	
 	public int getQuestionFormat() {
-		switch(questionType) {
+		switch(getQuestionType()) {
 		case FIELD_PHOTO:
 			return FORMAT_IMAGE;
 		default:
@@ -118,15 +156,15 @@ public final class Question implements Parcelable {
 	}
 
 	public void setQuestionType(int questionType) {
-		this.questionType = questionType;
+		getQuestionAnswerPair().setQuestionType(questionType);
 	}
 
 	public int getAnswerType() {
-		return answerType;
+		return getQuestionAnswerPair().getAnswerType();
 	}
 	
 	public int getAnswerFormat() {
-		switch(answerType) {
+		switch(getAnswerType()) {
 		case FIELD_PHOTO:
 			return FORMAT_IMAGE;
 		default:
@@ -135,7 +173,40 @@ public final class Question implements Parcelable {
 	}
 
 	public void setAnswerType(int answerType) {
-		this.answerType = answerType;
+		getQuestionAnswerPair().setAnswerType(answerType);
+	}
+	
+	public int getQuestionStyle() {
+		return questionAnswerPair.getQuestionStyle();
+	}
+	
+	public void setQuestionStyle(int style) {
+		questionAnswerPair.setQuestionStyle(style);
+	}
+	
+	private QuestionAnswerPair getQuestionAnswerPair() {
+		return questionAnswerPair;
+	}
+
+	public void setQuestionAnswerPair(QuestionAnswerPair questionAnswerPair) {
+		if(questionAnswerPair == null) return;
+		this.questionAnswerPair.answerType = questionAnswerPair.answerType;
+		this.questionAnswerPair.questionType = questionAnswerPair.questionType;
+		this.questionAnswerPair.questionStyle = questionAnswerPair.questionStyle;
+	}
+
+	public int[] getCorrectPairings() {
+		return correctPairings;
+	}
+
+	public void setCorrectPairings(int[] correctPairings) {
+		this.correctPairings = correctPairings;
+	}
+	public void setCorrectPairings(List<Integer> correctPairings) {
+		this.correctPairings = new int[correctPairings.size()];
+		int i = 0;
+		for(Integer p : correctPairings)
+			this.correctPairings[i++] = p;
 	}
 
 	public static final Creator<Question> CREATOR = new Creator<Question>() {
@@ -150,4 +221,73 @@ public final class Question implements Parcelable {
 			return new Question[size];
 		}
 	};
+	
+	/**
+	 * Defines a possible pair of question and answer types, and the style of question.
+	 * @author william
+	 *
+	 */
+	public static class QuestionAnswerPair implements Parcelable {
+		/**
+		 * The style of question, ie. multi-choice, pairing, true/false.
+		 */
+		private int questionStyle;
+		/**
+		 * The field to use for the question
+		 */
+		private int questionType;
+		/**
+		 * The field to use for the answer
+		 */
+		private int answerType;
+		
+		public QuestionAnswerPair() { }
+		public QuestionAnswerPair(int questionType, int answerType) {
+			this.questionType = questionType;
+			this.answerType = answerType;
+		}
+		public QuestionAnswerPair(Parcel in) {
+			setQuestionType(in.readInt());
+			setAnswerType(in.readInt());
+			setQuestionStyle(in.readInt());
+		}
+	
+		public static final Parcelable.Creator<QuestionAnswerPair> CREATOR = new Parcelable.Creator<QuestionAnswerPair>() {
+			public QuestionAnswerPair createFromParcel(Parcel in) {
+				return new QuestionAnswerPair(in);
+			}
+			public QuestionAnswerPair[] newArray(int size) {
+				return new QuestionAnswerPair[size];
+			}
+		};
+	
+		@Override
+		public int describeContents() {
+			return 0;
+		}
+		@Override
+		public void writeToParcel(Parcel dest, int flags) {
+			dest.writeInt(getQuestionType());
+			dest.writeInt(getAnswerType());
+			dest.writeInt(getQuestionStyle());
+		}
+		public int getQuestionType() {
+			return questionType;
+		}
+		public void setQuestionType(int questionType) {
+			this.questionType = questionType;
+		}
+		public int getAnswerType() {
+			return answerType;
+		}
+		public void setAnswerType(int answerType) {
+			this.answerType = answerType;
+		}
+		public int getQuestionStyle() {
+			return questionStyle;
+		}
+		public void setQuestionStyle(int questionStyle) {
+			this.questionStyle = questionStyle;
+		}
+	}
 }
