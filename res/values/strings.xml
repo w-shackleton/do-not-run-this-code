@@ -12,4 +12,9 @@
     <string name="start">Start</string>
     <string name="resume">Resume</string>
     <string name="back">Leave game</string>
+    <string name="review_contacts">Review contacts</string>
+    <string name="finish_game">Finish</string>
+    <string name="game_summary">Game Summary</string>
+    <string name="summary_bad_contacts">Some people you need to work on..</string>
+    <string name="photo_description">This contact\'s photo</string>
 </resources>

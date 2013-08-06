@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="main" parent="@android:style/Theme.Holo">
-        <item name="android:windowActionBar">true</item>
-    </style>
-    <style name="light" parent="android:Theme.Holo.Light"></style>
-    <style name="dialog" parent="android:Theme.Holo.Dialog"></style>
-    
-</resources>

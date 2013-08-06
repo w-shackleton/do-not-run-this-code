@@ -7,9 +7,40 @@
     >
 
     <TextView
+        android:id="@+id/summaryTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Game Summary"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:text="@string/summary_bad_contacts"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <GridView
+        android:id="@+id/contactGrid"
+        android:layout_width="wrap_content"
+        android:layout_weight="1"
+        android:layout_height="0dip"
+        android:numColumns="2" >
+    </GridView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/buttonBarStyle"
+        >
+
+        <Button
+            android:id="@+id/reviewContacts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+	        style="?android:attr/buttonBarButtonStyle"
+            android:text="@string/review_contacts" />
+
+        <Button
+            android:id="@+id/finish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+	        style="?android:attr/buttonBarButtonStyle"
+            android:text="@string/finish_game" />
+
+    </LinearLayout>
 
 </LinearLayout>

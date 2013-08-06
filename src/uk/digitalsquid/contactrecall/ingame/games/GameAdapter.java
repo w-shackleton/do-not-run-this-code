@@ -83,6 +83,10 @@ public class GameAdapter implements Parcelable, Config {
 				if(contact.hasField(usedFieldType))
 					contacts.add(contact);
 			}
+		
+			// Shuffle each group
+			contactGroups.put(usedFieldType,
+					shuffleContacts(contacts, descriptor.getShufflingMode()));
 		}
 
 		// Construct groups of all types of contact to use as answers.
