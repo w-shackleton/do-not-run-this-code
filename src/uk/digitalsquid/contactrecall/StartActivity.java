@@ -15,6 +15,7 @@ public class StartActivity extends Activity implements OnClickListener {
         
         findViewById(R.id.viewContacts).setOnClickListener(this);
         findViewById(R.id.start).setOnClickListener(this);
+        findViewById(R.id.leaderboard).setOnClickListener(this);
     }
 
 	@Override
@@ -25,6 +26,9 @@ public class StartActivity extends Activity implements OnClickListener {
 			break;
 		case R.id.start:
 			startActivity(new Intent(this, ModeSelect.class));
+			break;
+		case R.id.leaderboard:
+			startActivity(new Intent(this, Leaderboard.class));
 			break;
 		}
 	}
