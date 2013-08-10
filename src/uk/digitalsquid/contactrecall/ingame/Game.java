@@ -6,7 +6,6 @@ import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.ingame.Game.GameFragment.QuestionFailData;
-import uk.digitalsquid.contactrecall.ingame.games.GameAdapter;
 import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import uk.digitalsquid.contactrecall.misc.Config;

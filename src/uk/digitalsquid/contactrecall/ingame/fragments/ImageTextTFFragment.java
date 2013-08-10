@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ImageTextTFView extends TrueFalseView<ImageView> {
+public class ImageTextTFFragment extends TrueFalseFragment<ImageView> {
 
 	@Override
 	protected ImageView getQuestionView(View rootView) {

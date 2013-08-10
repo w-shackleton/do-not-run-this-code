@@ -46,6 +46,13 @@ public class Leaderboard extends Activity {
 		private LeaderboardAdapter adapter;
 		
 		@Override
+		public void onAttach(Activity activity) {
+			super.onAttach(activity);
+			adapter = new LeaderboardAdapter((App) activity.getApplication(),
+					getActivity());
+		}
+
+		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			super.onCreateView(inflater, container, savedInstanceState);
@@ -53,16 +60,9 @@ public class Leaderboard extends Activity {
 			View rootView = inflater.inflate(R.layout.leaderboard_fragment, container);
 			
 			leaderboard = (ListView) rootView.findViewById(R.id.leaderboard);
+			leaderboard.setAdapter(adapter);
 			
 			return rootView;
-		}
-		
-		@Override
-		public void onAttach(Activity activity) {
-			super.onAttach(activity);
-			adapter = new LeaderboardAdapter((App) activity.getApplication(),
-					getActivity());
-			leaderboard.setAdapter(adapter);
 		}
 	}
 	

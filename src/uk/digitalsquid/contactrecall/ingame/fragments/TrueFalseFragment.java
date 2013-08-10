@@ -4,7 +4,7 @@ import uk.digitalsquid.contactrecall.R;
 import android.view.View;
 import android.widget.Button;
 
-public abstract class TrueFalseView<QView extends View> extends MultiChoiceView<QView, Button> {
+public abstract class TrueFalseFragment<QView extends View> extends MultiChoiceFragment<QView, Button> {
 
 	@Override
 	protected Button[] getChoiceButtons(View rootView) {
