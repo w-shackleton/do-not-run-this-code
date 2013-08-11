@@ -47,6 +47,11 @@ public class ModeSelect extends Activity implements OnClickListener {
 					new Question.QuestionAnswerPair(Question.STYLE_TRUE_FALSE, Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
 			});
 			break;
+		case R.id.pairings:
+			descriptor.setQuestionTypes(new Question.QuestionAnswerPair[] {
+					new Question.QuestionAnswerPair(Question.STYLE_PAIRING, Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
+			});
+			break;
 		default:
 			return;
 		}

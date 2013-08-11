@@ -111,6 +111,9 @@ public final class Question implements Parcelable {
 	}
 
 	public int getNumberOfChoices() {
+		// In the case of a Pairing question, number of questions.
+		if(getQuestionStyle() == STYLE_PAIRING)
+			return contacts.length;
 		// All the other choices, plus the correct one.
 		return otherAnswers.length + 1;
 	}

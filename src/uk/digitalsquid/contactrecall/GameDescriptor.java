@@ -165,34 +165,32 @@ public class GameDescriptor implements Parcelable {
 		return result;
 	}
 	
-	// TODO: Sanitise input below
-
 	public int getOtherAnswersMinimum() {
 		return otherAnswersMinimum;
 	}
 	public void setOtherAnswersMinimum(int otherAnswersMinimum) {
-		this.otherAnswersMinimum = otherAnswersMinimum;
+		this.otherAnswersMinimum = trim(otherAnswersMinimum, 1, 8);
 	}
 
 	public int getOtherAnswersMaximum() {
 		return otherAnswersMaximum;
 	}
 	public void setOtherAnswersMaximum(int otherAnswersMaximum) {
-		this.otherAnswersMaximum = otherAnswersMaximum;
+		this.otherAnswersMaximum = trim(otherAnswersMaximum, 1, 8);
 	}
 
 	public int getPairingChoicesMinimum() {
 		return pairingChoicesMinimum;
 	}
 	public void setPairingChoicesMinimum(int pairingChoicesMinimum) {
-		this.pairingChoicesMinimum = pairingChoicesMinimum;
+		this.pairingChoicesMinimum = trim(pairingChoicesMinimum, 2, 4);
 	}
 
 	public int getPairingChoicesMaximum() {
 		return pairingChoicesMaximum;
 	}
 	public void setPairingChoicesMaximum(int pairingChoicesMaximum) {
-		this.pairingChoicesMaximum = pairingChoicesMaximum;
+		this.pairingChoicesMaximum = trim(pairingChoicesMaximum, 2, 4);
 	}
 
 	public static final Parcelable.Creator<GameDescriptor> CREATOR = new Parcelable.Creator<GameDescriptor>() {
@@ -235,4 +233,10 @@ public class GameDescriptor implements Parcelable {
 	 * Lists of names
 	 */
 	public static final int OPTION_SOURCE_NAME_LISTS = 4;
+	
+	private static final int trim(int num, int min, int max) {
+		if(num < min) return min;
+		if(num > max) return max;
+		return num;
+	}
 }

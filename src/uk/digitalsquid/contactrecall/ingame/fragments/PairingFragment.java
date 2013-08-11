@@ -3,6 +3,7 @@ package uk.digitalsquid.contactrecall.ingame.fragments;
 import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
+import uk.digitalsquid.contactrecall.ingame.PairingLayout;
 import uk.digitalsquid.contactrecall.ingame.TimerView;
 import uk.digitalsquid.contactrecall.ingame.TimerView.OnFinishedListener;
 import uk.digitalsquid.contactrecall.mgr.Question;
@@ -29,6 +30,7 @@ public abstract class PairingFragment<QView extends View, AView extends View>
 	
 	protected QView[] questionViews;
 	protected AView[] choiceViews;
+	protected PairingLayout pairingLayout;
 	private TimerView timer;
 	
 	long startTime;
@@ -61,6 +63,8 @@ public abstract class PairingFragment<QView extends View, AView extends View>
         // Assign data error button if it exists
         Button dataError = (Button) rootView.findViewById(R.id.data_error);
         if(dataError != null) dataError.setOnClickListener(this);
+        
+        pairingLayout = (PairingLayout) rootView.findViewById(R.id.pairingLayout);
         
         question = args.getParcelable(ARG_QUESTION);
         descriptor = args.getParcelable(ARG_DESCRIPTOR);

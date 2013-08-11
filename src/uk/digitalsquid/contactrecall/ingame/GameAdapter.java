@@ -10,9 +10,10 @@ import java.util.Set;
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.GameDescriptor.ShufflingMode;
+import uk.digitalsquid.contactrecall.ingame.fragments.ImageTextMCFragment;
+import uk.digitalsquid.contactrecall.ingame.fragments.ImageTextPFragment;
 import uk.digitalsquid.contactrecall.ingame.fragments.ImageTextTFFragment;
 import uk.digitalsquid.contactrecall.ingame.fragments.MultiChoiceFragment;
-import uk.digitalsquid.contactrecall.ingame.fragments.ImageTextMCFragment;
 import uk.digitalsquid.contactrecall.ingame.fragments.TextTextMCFragment;
 import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.mgr.Question.QuestionAnswerPair;
@@ -158,6 +159,11 @@ public class GameAdapter implements Parcelable, Config {
 				
 				ArrayList<Contact> choices = new ArrayList<Contact>();
 				
+				int pairingChoices = Const.RAND.nextInt(
+						descriptor.getPairingChoicesMaximum() -
+						descriptor.getPairingChoicesMinimum() + 1) +
+						descriptor.getPairingChoicesMinimum();
+				
 				for(Contact possible : possibles) {
 					if(possible.hasField(type.getAnswerType())) {
 						// Possible contact found, check has different answer
@@ -171,6 +177,7 @@ public class GameAdapter implements Parcelable, Config {
 								unique = false;
 						}
 						if(unique) choices.add(possible);
+						if(choices.size() >= pairingChoices) break;
 					}
 				}
 				// If there are several matching contacts, add to question
@@ -347,7 +354,7 @@ public class GameAdapter implements Parcelable, Config {
         
         // Find the correct fragment to use
         // TODO: Write implementations for these other cases. (Don't think image->image will be needed)
-        MultiChoiceFragment<?, ?> fragment;
+        Fragment fragment;
         Log.v(TAG, String.format("Creating fragment of format (%d,%d,%d)",
         		question.getQuestionStyle(),
         		question.getQuestionFormat(),
@@ -406,7 +413,7 @@ public class GameAdapter implements Parcelable, Config {
 	    	case Question.FORMAT_IMAGE:
 	    		switch(question.getAnswerFormat()) {
 				default:
-	    		case Question.FORMAT_TEXT: fragment = new ImageTextMCFragment(); break;
+	    		case Question.FORMAT_TEXT: fragment = new ImageTextPFragment(); break;
 				case Question.FORMAT_IMAGE: fragment = null; break;
 	    		}
 	    		break;

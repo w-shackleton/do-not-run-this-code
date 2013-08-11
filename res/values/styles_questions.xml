@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="Pairing">
+        
+    </style>
+    <!-- A row item -->
+    <style name="Pairing.Row">
+        <item name="android:layout_width">0dip</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+    <style name="Pairing.Row.Left">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">#FFFF00</item>
+    </style>
+
+    <style name="Pairing.Row.Right">
+    </style>
+    <style name="Pairing.Row.Right.TextView"></style>
+    <style name="Pairing.Row.Left.ImageView"></style>
+    <style name="Pairing.Row.Space">
+    </style>
+
+    <style name="pairing_tablerow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    
+</resources>

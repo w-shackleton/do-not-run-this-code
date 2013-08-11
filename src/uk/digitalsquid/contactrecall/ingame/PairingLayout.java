@@ -1,8 +1,9 @@
 package uk.digitalsquid.contactrecall.ingame;
 
+import uk.digitalsquid.contactrecall.misc.Config;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.GridLayout;
+import android.widget.TableLayout;
 
 /**
  * Shows pairs of questions and answers on-screen and allows the user to draw
@@ -10,10 +11,12 @@ import android.widget.GridLayout;
  * @author william
  *
  */
-public class PairingView extends GridLayout {
+public class PairingLayout extends TableLayout implements Config {
+	
+	Context context;
 
-	public PairingView(Context context, AttributeSet attrs) {
+	public PairingLayout(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		this.context = context;
 	}
-
 }
