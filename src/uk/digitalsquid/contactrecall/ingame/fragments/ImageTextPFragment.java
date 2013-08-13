@@ -4,11 +4,6 @@ import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,18 +69,7 @@ public final class ImageTextPFragment
         for(int i = 0; i < contacts.length; i++) {
 	        Bitmap bmp = contacts[i].getPhoto(app.getPhotos());
 
-	        // Temp hack to make sure that images are always same size
-	        Bitmap tmp = Bitmap.createBitmap(800, 600, Config.ARGB_8888);
-	        Canvas c = new Canvas(tmp);
-	        Paint p = new Paint();
-	        Paint p2 = new Paint();
-	        p.setColor(Color.RED);
-	        c.drawPaint(p);
-	        
-	        c.drawBitmap(bmp, new Rect(0, 0, bmp.getWidth(), bmp.getHeight()),
-	        		new Rect(300, 200, 500, 400), p2);
-
-	        questionViews[i].setImageBitmap(tmp);
+	        questionViews[i].setImageBitmap(bmp);
         }
 	}
 }

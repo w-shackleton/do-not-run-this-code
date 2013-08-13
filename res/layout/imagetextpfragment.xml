@@ -27,7 +27,7 @@
         android:layout_height="0dip" >
 
         <TableRow
-            style="@style/pairing_tablerow" >
+            style="@style/PairingRow" >
 		    <ImageView
 		        android:id="@+id/question1"
 		        style="@style/Pairing.Row.Left.ImageView"
@@ -41,7 +41,8 @@
         </TableRow>
 
         <TableRow
-            style="@style/pairing_tablerow" >
+            style="@style/PairingRow" >
+
 		    <ImageView
 		        android:id="@+id/question2"
 		        style="@style/Pairing.Row.Left.ImageView"
@@ -54,7 +55,7 @@
         </TableRow>
 
         <TableRow
-            style="@style/pairing_tablerow" >
+            style="@style/PairingRow" >
 		    <ImageView
 		        android:id="@+id/question3"
 		        style="@style/Pairing.Row.Left.ImageView"
@@ -67,7 +68,7 @@
         </TableRow>
 
         <TableRow
-            style="@style/pairing_tablerow" >
+            style="@style/PairingRow" >
 		    <ImageView
 		        android:id="@+id/question4"
 		        style="@style/Pairing.Row.Left.ImageView"
@@ -78,7 +79,7 @@
 		        style="@style/Pairing.Row.Right.TextView"
 		        android:text="@string/placeholder" />
         </TableRow>
-	
+
     </uk.digitalsquid.contactrecall.ingame.PairingLayout>
 
 </LinearLayout>

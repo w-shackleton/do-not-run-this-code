@@ -15,12 +15,17 @@ import uk.digitalsquid.contactrecall.misc.ListUtils;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.os.AsyncTask;
+import android.os.AsyncTask.Status;
 import android.os.Handler;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.util.SparseArray;
 
 /**
@@ -30,6 +35,11 @@ import android.util.SparseArray;
  */
 @SuppressLint("UseSparseArrays")
 public final class ContactManager implements Config {
+	public static final String BROADCAST_LOADSTATUS =
+			"uk.digitalsquid.contactrecall.mgr.ContactManager.LoadStatus";
+	public static final String LOADSTATUS_STATUS =
+			"uk.digitalsquid.contactrecall.mgr.ContactManager.LoadStatus.Value";
+
 	private final ContentResolver cr;
 	
 	private final Handler eventHandler;
@@ -39,33 +49,63 @@ public final class ContactManager implements Config {
 	
 	private final App app;
 	
+	private final LocalBroadcastManager localBroadcastManager;
+	
+	/**
+	 * Sync object for BG data loading.
+	 */
+	private Object loadingSync = new Object();
+	/**
+	 * If <code>true</code>, shows that the base data has been loaded.
+	 */
+	private boolean dataLoaded;
+	
 	public ContactManager(Context context, App app) {
 		this.app = app;
 		cr = context.getContentResolver();
 		
+		localBroadcastManager = LocalBroadcastManager.getInstance(context);
+		
 		eventHandler = new Handler();
 		
 		cr.registerContentObserver(ContactsContract.Contacts.CONTENT_URI, false, observer);
-		
-		loadBaseData();
+	}
+	
+	private void loadBaseData() {
+		loadBaseData(LoadingStatusListener.NULL_LISTENER);
+	}
+	
+	/**
+	 * 
+	 * @return <code>true</code> if all data is successfully loaded,
+	 * <code>false</code> if data isn't loaded or is being loaded.
+	 */
+	public boolean isLoaded() {
+		return dataLoaded;
 	}
 	
 	/**
 	 * Loads the contact base data, ie. the data from the first table. Extra data is only loaded as needed.
 	 */
-	private void loadBaseData() {
+	private synchronized void loadBaseData(LoadingStatusListener listener) {
 		
 		Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
 				new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME },
 				null, null, ContactsContract.Contacts._ID + " ASC");
 		
+		Log.d(TAG, "Starting load");
+		
 		SparseArray<List<Integer>> groupContactRelations = app.getGroups().getGroupContactRelations(true);
 		Set<List<Integer>> groupContactRelationsValues = ListUtils.values(groupContactRelations);
 		
+		Log.d(TAG, "Loaded groups");
+
 		contacts = new HashMap<Integer, Contact>();
 		
 		// Load base data and populate HashMap
-		if(cur.getCount() > 0) {
+		int total = cur.getCount();
+		int i = 0;
+		if(total > 0) {
 			while(cur.moveToNext()) {
 				int id = cur.getInt(cur.getColumnIndex(ContactsContract.Contacts._ID));
 				String displayName = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
@@ -77,10 +117,13 @@ public final class ContactManager implements Config {
 					
 					contacts.put(contact.getId(), contact);
 				}
+				listener.onBaseDataLoadProgress((float)(i++) / (float)total);
 			}
 		}
 		cur.close();
 		
+		Log.d(TAG, "Loaded base");
+
 		// Get data from Data table and populate contacts further
 		// This query could take a LONG time.
 		// TODO: In the future, show a loading screen whilst doing this.
@@ -110,8 +153,13 @@ public final class ContactManager implements Config {
 		int familyNameIdx=cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME);
 		int emailNameIdx= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Email.DISPLAY_NAME);
 		int emailtypeIdx= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Email.TYPE);
+
+		total = cur.getCount();
+		i = 0;
 		while(cur.moveToNext()) {
 			Contact contact = contacts.get(cur.getInt(idIdx));
+			// Send status
+			listener.onAuxiliaryDataLoadProgress((float)(i++) / (float)total);
 			if(contact == null) continue;
 			String mime = cur.getString(mimeTypeIdx);
 			if(mime == null) continue;
@@ -151,9 +199,13 @@ public final class ContactManager implements Config {
 		}
 		cur.close();
 		
+		Log.d(TAG, "Loaded aux");
+
 		// Fill-in photo column
 		List<Integer> contactsWithPictures = app.getPhotos().getContactsWithPictures();
 		
+		Log.d(TAG, "Loaded photos");
+
 		for(int id : contactsWithPictures) {
 			Contact contact = contacts.get(id);
 			if(contact == null) continue;
@@ -162,14 +214,16 @@ public final class ContactManager implements Config {
 		
 		// Convert to a Set for ease of use
 		contactCollection = contacts.values();
+		dataLoaded = true;
 	}
 	
 	/**
 	 * Checks if a contact is in any of the given group lists.
-	 * @param groups
-	 * @param contactId
-	 * @return
+	 * @param groups The groups to check against
+	 * @param contactId The ID of the contact to check
+	 * @return <code>true</code> if contactId is in a visible group.
 	 */
+	// Doesn't need loading synchronisation
 	final static boolean contactInVisibleGroup(Collection<List<Integer>> groups, int contactId) {
 		for(List<Integer> list : groups) {
 			if(list.contains(contactId)) return true;
@@ -177,6 +231,7 @@ public final class ContactManager implements Config {
 		return false;
 	}
 	
+	// Doesn't need loading synchronisation
 	public LinkedList<RawContact> getRawContacts(int contactId) {
 		Cursor cur = cr.query(ContactsContract.RawContacts.CONTENT_URI,
 				new String[] {
@@ -208,20 +263,31 @@ public final class ContactManager implements Config {
 	}
 	
 	public Collection<Contact> getContacts() {
+		synchronized(loadingSync) {
+			if(!dataLoaded) loadBaseData();
+		}
 		return contactCollection;
 	}
+	// TODO: Use this more?
 	public Map<Integer, Contact> getContactMap() {
+		synchronized(loadingSync) {
+			if(!dataLoaded) loadBaseData();
+		}
 		return contacts;
 	}
 	
 	public Contact getContact(int id) {
+		synchronized(loadingSync) {
+			if(!dataLoaded) loadBaseData();
+		}
 		return contacts.get(id);
 	}
 
 	private final ContentObserver observer = new ContentObserver(new Handler()) {
 		@Override
 		public void onChange(boolean selfChange) {
-			loadBaseData();
+			// TODO: Deal with changes more efficiently.
+			// loadBaseData();
 			eventHandler.post(new Runnable() {
 				@Override
 				public void run() {
@@ -238,7 +304,9 @@ public final class ContactManager implements Config {
 	};
 	
 	public void refresh() {
-		loadBaseData();
+		synchronized (loadingSync) {
+			loadBaseData();
+		}
 		observer.onChange(true); // Update UI
 	}
 	
@@ -271,4 +339,71 @@ public final class ContactManager implements Config {
 		 */
 		public void onContactsChanged(Collection<Contact> newContacts);
 	}
+	
+	private static interface LoadingStatusListener {
+		public void onBaseDataLoadProgress(float progress);
+		public void onAuxiliaryDataLoadProgress(float progress);
+		public static final LoadingStatusListener NULL_LISTENER = new LoadingStatusListener() {
+			@Override public void onBaseDataLoadProgress(float progress) { }
+			@Override public void onAuxiliaryDataLoadProgress(float progress) { }
+		};
+	}
+	
+	public synchronized void beginBackgroundLoad() {
+		if(dataLoaded) return;
+		if(backgroundLoader.getStatus() == Status.RUNNING) return;
+		backgroundLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+	}
+	
+	private final AsyncTask<Void, Float, Void> backgroundLoader = new AsyncTask<Void, Float, Void>() {
+		
+		private int broadcastCount = 0;
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			synchronized (loadingSync) {
+				// In this system we are assuming that base data is 1/4 of the job,
+				// aux is 3/4.
+				loadBaseData(new LoadingStatusListener() {
+					@Override
+					public void onBaseDataLoadProgress(float progress) {
+						if(broadcastCount++ == 10) {
+							Log.v(TAG, "Base data load " + (int)(progress * 100) + "%");
+							broadcastCount = 0;
+							publishProgress(progress / 4);
+						}
+					}
+					
+					@Override
+					public void onAuxiliaryDataLoadProgress(float progress) {
+						if(broadcastCount++ == 10) {
+							Log.v(TAG, "Aux data load " + (int)(progress * 100) + "%");
+							broadcastCount = 0;
+							publishProgress(0.25f + progress * 0.75f);
+						}
+					}
+				});
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onProgressUpdate(Float... values) {
+			for(float value : values) {
+				Intent broadcast = new Intent();
+				broadcast.setAction(BROADCAST_LOADSTATUS);
+				broadcast.putExtra(LOADSTATUS_STATUS, value);
+				localBroadcastManager.sendBroadcast(broadcast);
+			}
+		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			// Send completion broadcast. A value of 1 indicates completion
+			Intent broadcast = new Intent();
+			broadcast.setAction(BROADCAST_LOADSTATUS);
+			broadcast.putExtra(LOADSTATUS_STATUS, (float)1);
+			localBroadcastManager.sendBroadcast(broadcast);
+		}
+	};
 }

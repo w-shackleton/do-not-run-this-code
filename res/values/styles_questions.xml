@@ -6,24 +6,29 @@
     <!-- A row item -->
     <style name="Pairing.Row">
         <item name="android:layout_width">0dip</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
     </style>
     <style name="Pairing.Row.Left">
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:background">#FFFF00</item>
     </style>
 
     <style name="Pairing.Row.Right">
     </style>
-    <style name="Pairing.Row.Right.TextView"></style>
-    <style name="Pairing.Row.Left.ImageView"></style>
+    <style name="Pairing.Row.Right.TextView">
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="Pairing.Row.Left.ImageView">
+        <item name="android:adjustViewBounds">true</item>
+    </style>
     <style name="Pairing.Row.Space">
     </style>
 
-    <style name="pairing_tablerow">
+    <style name="PairingRow">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">0dip</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginBottom">15dip</item>
     </style>
     
 </resources>
