@@ -1,17 +1,24 @@
 package uk.digitalsquid.contactrecall.ingame.fragments;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.ingame.PairingLayout;
+import uk.digitalsquid.contactrecall.ingame.PairingLayout.OnPairingsChangeListener;
 import uk.digitalsquid.contactrecall.ingame.TimerView;
 import uk.digitalsquid.contactrecall.ingame.TimerView.OnFinishedListener;
 import uk.digitalsquid.contactrecall.mgr.Question;
+import uk.digitalsquid.contactrecall.mgr.details.Contact;
+import uk.digitalsquid.contactrecall.mgr.details.DataItem;
 import uk.digitalsquid.contactrecall.misc.Config;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,7 +26,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 public abstract class PairingFragment<QView extends View, AView extends View>
-		extends Fragment implements OnClickListener, OnFinishedListener, Config {
+		extends Fragment implements OnClickListener, OnFinishedListener,
+		OnPairingsChangeListener, Config {
 	public static final String ARG_QUESTION = "question";
 	public static final String ARG_DESCRIPTOR = "descriptor";
 	
@@ -34,6 +42,8 @@ public abstract class PairingFragment<QView extends View, AView extends View>
 	private TimerView timer;
 	
 	long startTime;
+
+	private transient int[] currentPairings;
 	
 	protected abstract int getRootLayoutId();
 	/**
@@ -65,10 +75,14 @@ public abstract class PairingFragment<QView extends View, AView extends View>
         if(dataError != null) dataError.setOnClickListener(this);
         
         pairingLayout = (PairingLayout) rootView.findViewById(R.id.pairingLayout);
+        pairingLayout.setOnPairingsChangeListener(this);
         
         question = args.getParcelable(ARG_QUESTION);
         descriptor = args.getParcelable(ARG_DESCRIPTOR);
         int numberOfChoices = question.getNumberOfChoices();
+        
+        currentPairings = new int[question.getContactCount()];
+        Arrays.fill(currentPairings, -1);
         
         questionViews = getQuestionViews(rootView);
         choiceViews = getChoiceViews(rootView);
@@ -122,33 +136,77 @@ public abstract class PairingFragment<QView extends View, AView extends View>
 	
 	int completedChoice = -2;
 	
-	/*
-	private void completeView() {
+	/**
+	 * Completes this question. If any values in pairings are still -1 then
+	 * a timeout is assumed.
+	 * @param pairings
+	 */
+	private void completeView(int[] pairings) {
 		if(timer != null) timer.cancel();
 		
 		float delay = (float)(System.nanoTime() - startTime) / (float)1000000000L;
 		
-		Log.d(TAG, "Chosen contact is " + chosenContact);
-		if(callbacks != null) callbacks.choiceMade(chosenContact, choice == question.getCorrectPosition(),
-				choice == -1, delay);
-		else Log.e(TAG, "Callbacks are currently null!");
+		int[] correctPairings = question.getCorrectPairings();
+		if(correctPairings.length != pairings.length) {
+			Log.e(TAG, "Malformed pairings detected");
+		}
+		// TODO: Do we want to store the contact they mistakenly thought was
+		// this contact?
+		ArrayList<Contact> correct = new ArrayList<Contact>(),
+				timeout = new ArrayList<Contact>();
+		ArrayList<Pair<Contact, Contact>> incorrect = new ArrayList<Pair<Contact,Contact>>();
+		for(int i = 0; i < Math.min(pairings.length, correctPairings.length); i++) {
+			if(pairings[i] == correctPairings[i])
+				correct.add(question.getContact(i));
+			else if(pairings[i] == -1)
+				timeout.add(question.getContact(i));
+			else {
+				if(pairings[i] < question.getContacts().length)
+					incorrect.add(new Pair<Contact, Contact>(
+							question.getContact(i),
+							question.getContact(pairings[i])));
+			}
+		}
+		
+		callbacks.pairingChoiceMade(correct, incorrect, timeout, delay);
 	}
-	*/
 
 	@Override
 	public void onClick(View view) {
 		switch(view.getId()) {
 		case R.id.data_error:
-			// TODO: Show data error screen
+			// Questions
+			ArrayList<DataItem> dataItems = new ArrayList<DataItem>();
+			for(Contact contact : question.getContacts()) {
+				DataItem item = new DataItem(contact, question.getQuestionType());
+				dataItems.add(item);
+			}
+			// Answers - in order
+			for(int idx : question.getCorrectPairings()) {
+				if(idx < question.getContactCount()) {
+					Contact contact = question.getContact(idx);
+					DataItem item = new DataItem(contact, question.getAnswerType());
+					dataItems.add(item);
+				}
+			}
+			callbacks.dataErrorFound(dataItems);
 			return;
 		}
 	}
-
+	
 	@Override
 	public void onTimerFinished(TimerView view) {
-		// -1 indicates no choice was made - advance once user has seen correct
-		// answer.
-		// TODO: Uncomment
-		// completeView(-1);
+		// Complete with the pairings as far as the user got.
+		completeView(currentPairings);
+	}
+
+	@Override
+	public void onPairingsChanged(int[] pairings) {
+		currentPairings = pairings;
+	}
+
+	@Override
+	public void onPairingsCompleted(int[] pairings) {
+		completeView(pairings);
 	}
 }

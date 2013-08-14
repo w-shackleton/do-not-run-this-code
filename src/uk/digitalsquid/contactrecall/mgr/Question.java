@@ -85,6 +85,15 @@ public final class Question implements Parcelable {
 	public Contact getContact() {
 		return getContacts()[0];
 	}
+	
+	/**
+	 * Returns the idxth contact
+	 * @param idx
+	 * @return
+	 */
+	public Contact getContact(int idx) {
+		return getContacts()[idx];
+	}
 
 	/**
 	 * Sets the question contact, if there is only one.
@@ -96,6 +105,10 @@ public final class Question implements Parcelable {
 
 	public Contact[] getContacts() {
 		return contacts;
+	}
+	
+	public int getContactCount() {
+		return contacts.length;
 	}
 
 	public void setContacts(Contact[] contacts) {

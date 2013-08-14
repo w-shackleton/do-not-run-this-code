@@ -57,6 +57,9 @@ public class PairingLayout extends TableLayout implements Config {
 	Paint linePaint = new Paint();
 	Paint finalisedLinePaint = new Paint();
 
+	private OnPairingsChangeListener onPairingsChangeListener =
+			OnPairingsChangeListener.NULL;
+	
 	public PairingLayout(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.context = context;
@@ -123,6 +126,7 @@ public class PairingLayout extends TableLayout implements Config {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		super.onTouchEvent(event);
+		if(!isEnabled()) return true;
 		int action = event.getActionMasked();
 		int index = event.getActionIndex();
 		switch(action) {
@@ -164,6 +168,7 @@ public class PairingLayout extends TableLayout implements Config {
 			Log.d(TAG, "PairingLayout: Pointer Up");
 			int id = event.getPointerId(index);
 			CurrentLineData finishedData = currentLineData.remove(id);
+			if(finishedData == null) break;
 			PointF correctedFinish = getCorrectedChoicePosition(
 					new PointF(event.getX(index),
 							event.getY(index)));
@@ -274,6 +279,17 @@ public class PairingLayout extends TableLayout implements Config {
 				pairings[i] = -1;
 		}
 		pairings[leftIdx] = rightIdx;
+		onPairingsChangeListener.onPairingsChanged(Arrays.copyOf(pairings, pairings.length));
+		// Check for completion
+		boolean complete = true;
+		for(int idx : pairings) {
+			if(idx == -1) {
+				complete = false;
+				break;
+			}
+		}
+		if(complete)
+			onPairingsChangeListener.onPairingsCompleted(pairings);
 	}
 	
 	/**
@@ -322,5 +338,34 @@ public class PairingLayout extends TableLayout implements Config {
 
 	public void setPairings(int[] pairings) {
 		this.pairings = pairings;
+	}
+	
+	public OnPairingsChangeListener getOnPairingsChangeListener() {
+		return onPairingsChangeListener;
+	}
+
+	public void setOnPairingsChangeListener(OnPairingsChangeListener onPairingsChangeListener) {
+		if(onPairingsChangeListener == null)
+			onPairingsChangeListener = OnPairingsChangeListener.NULL;
+		this.onPairingsChangeListener = onPairingsChangeListener;
+	}
+
+	public static interface OnPairingsChangeListener {
+		/**
+		 * Called when the pairings the user is selecting have changed
+		 * @param pairings
+		 */
+		public void onPairingsChanged(int[] pairings);
+		/**
+		 * Called when the pairings have been completely filled in. This
+		 * will be called as well as onPairingsChanged in this case.
+		 * @param pairings
+		 */
+		public void onPairingsCompleted(int[] pairings);
+		
+		OnPairingsChangeListener NULL = new OnPairingsChangeListener() {
+			@Override public void onPairingsCompleted(int[] pairings) { }
+			@Override public void onPairingsChanged(int[] pairings) { }
+		};
 	}
 }

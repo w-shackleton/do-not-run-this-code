@@ -1,13 +1,15 @@
 package uk.digitalsquid.contactrecall.ingame;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.R;
-import uk.digitalsquid.contactrecall.ingame.Game.GameFragment.QuestionFailData;
 import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
+import uk.digitalsquid.contactrecall.mgr.details.DataItem;
 import uk.digitalsquid.contactrecall.misc.Config;
 import android.app.Activity;
 import android.app.Fragment;
@@ -15,9 +17,8 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -155,7 +156,7 @@ public class Game extends Activity implements GameCallbacks, Config {
 				setGamePaused(savedInstanceState.getBoolean("gamePaused"));
 				failedContacts = savedInstanceState.getParcelableArrayList("failedContacts");
 			} else {
-				failedContacts = new ArrayList<Game.GameFragment.QuestionFailData>();
+				failedContacts = new ArrayList<QuestionFailData>();
 			}
 		}
 		
@@ -226,6 +227,71 @@ public class Game extends Activity implements GameCallbacks, Config {
 		public void choiceMade(Contact choice, boolean correct, boolean timeout, float timeTaken) {
 			if(isGamePaused()) return;
 			position++;
+			postAdvanceQuestion(correct);
+			
+			// TODO: Background this?
+			Question question = gameAdapter.getItem(position-1);
+			Contact contact = gameAdapter.getItem(position-1).getContact();
+			// Add to persistent DB
+			if(timeout) app.getDb().progress.addTimeout(
+					contact, timeTaken);
+			else if(correct) app.getDb().progress.addSuccess(
+					contact, timeTaken);
+			else app.getDb().progress.addFail(
+					contact, choice, timeTaken);
+			// Add to local data
+			if(timeout) {
+				QuestionFailData data = new QuestionFailData();
+				data.question = question;
+				data.contact = question.getContact();
+				failedContacts.add(data);
+			} else if(correct) {
+				
+			} else {
+				QuestionFailData data = new QuestionFailData();
+				data.question = question;
+				data.contact = question.getContact();
+				data.incorrectChoice = choice;
+				failedContacts.add(data);
+			}
+		}
+
+		@Override
+		public void pairingChoiceMade(ArrayList<Contact> correct,
+				ArrayList<Pair<Contact, Contact>> incorrect, ArrayList<Contact> timeout,
+				float timeTaken) {
+			if(isGamePaused()) return;
+			position++;
+			// true if all is fully correct
+			boolean allCorrect = incorrect.size() == 0 && timeout.size() == 0;
+			postAdvanceQuestion(allCorrect);
+			
+			// TODO: Background this?
+			Question question = gameAdapter.getItem(position-1);
+			// Add each type of result to persistent DB
+			for(Contact contact : correct) {
+				app.getDb().progress.addSuccess(contact, timeTaken);
+			}
+			for(Contact contact : timeout) {
+				app.getDb().progress.addTimeout(contact, timeTaken);
+
+				QuestionFailData data = new QuestionFailData();
+				data.question = question;
+				data.contact = contact;
+				failedContacts.add(data);
+			}
+			for(Pair<Contact, Contact> pair : incorrect) {
+				app.getDb().progress.addFail(pair.first, pair.second, timeTaken);
+
+				QuestionFailData data = new QuestionFailData();
+				data.question = question;
+				data.contact = pair.first;
+				data.incorrectChoice = pair.second;
+				failedContacts.add(data);
+			}
+		}
+		
+		private void postAdvanceQuestion(boolean correct) {
 			if(position == gameAdapter.getCount()) {
 				// Run transition to summary card.
 				handler.postDelayed(new Runnable() {
@@ -268,30 +334,6 @@ public class Game extends Activity implements GameCallbacks, Config {
 								R.integer.page_correct_wait_time :
 								R.integer.page_incorrect_wait_time));
 			}
-			
-			// TODO: Background this?
-			Question question = gameAdapter.getItem(position-1);
-			Contact contact = gameAdapter.getItem(position-1).getContact();
-			// Add to persistent DB
-			if(timeout) app.getDb().progress.addTimeout(
-					contact, timeTaken);
-			else if(correct) app.getDb().progress.addSuccess(
-					contact, timeTaken);
-			else app.getDb().progress.addFail(
-					contact, choice, timeTaken);
-			// Add to local data
-			if(timeout) {
-				QuestionFailData data = new QuestionFailData();
-				data.question = question;
-				failedContacts.add(data);
-			} else if(correct) {
-				
-			} else {
-				QuestionFailData data = new QuestionFailData();
-				data.question = question;
-				data.incorrectChoice = choice;
-				failedContacts.add(data);
-			}
 		}
 
 		boolean isGamePaused() {
@@ -305,43 +347,9 @@ public class Game extends Activity implements GameCallbacks, Config {
 		
 		private ArrayList<QuestionFailData> failedContacts;
 		
-		protected static class QuestionFailData implements Parcelable {
-			
-			public QuestionFailData() {}
-
-			public Question question;
-			/**
-			 * The incorrect choice the user made. <code>null</code> indicates
-			 * a timeout
-			 */
-			public Contact incorrectChoice;
-			@Override
-			public int describeContents() {
-				return 0;
-			}
-			@Override
-			public void writeToParcel(Parcel dest, int flags) {
-				dest.writeParcelable(question, 0);
-				dest.writeParcelable(incorrectChoice, 0);
-			}
-			
-			public QuestionFailData(Parcel source) {
-				question = source.readParcelable(Contact.class.getClassLoader());
-				incorrectChoice = source.readParcelable(Contact.class.getClassLoader());
-			}
-			
-			public static final Creator<QuestionFailData> CREATOR = new Creator<QuestionFailData>() {
-
-				@Override
-				public QuestionFailData createFromParcel(Parcel source) {
-					return new QuestionFailData(source);
-				}
-
-				@Override
-				public QuestionFailData[] newArray(int size) {
-					return new QuestionFailData[size];
-				}
-			};
+		@Override
+		public void dataErrorFound(ArrayList<DataItem> possibleErrors) {
+			Log.e(TAG, "dataErrorFound called inside fragment");
 		}
 	}
 	
@@ -388,7 +396,10 @@ public class Game extends Activity implements GameCallbacks, Config {
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
 			Bundle args = getArguments();
-			failedContacts = args.getParcelableArrayList("failedContacts");
+			// Remove duplicates through a linkedHashSet
+			ArrayList<QuestionFailData> data = args.getParcelableArrayList("failedContacts");
+			Set<QuestionFailData> dataSet = new LinkedHashSet<QuestionFailData>(data);
+			failedContacts = new ArrayList<QuestionFailData>(dataSet);
 		}
 
 		@Override
@@ -444,7 +455,7 @@ public class Game extends Activity implements GameCallbacks, Config {
 		        }
 		        
 		        Question question = getItem(position).question;
-		        Contact contact = question.getContact();
+		        Contact contact = getItem(position).contact;
 		        ImageView photo = (ImageView) convertView.findViewById(R.id.photo);
 		        TextView attr1 = (TextView) convertView.findViewById(R.id.contact_attr1);
 		        TextView attr2 = (TextView) convertView.findViewById(R.id.contact_attr2);
@@ -473,10 +484,47 @@ public class Game extends Activity implements GameCallbacks, Config {
 		public void onClick(View v) {
 		}
 	}
+	
+	/**
+	 * Allows the user to tell the app about an error in their contacts.
+	 * @author william
+	 *
+	 */
+	public static class DataErrorFragment extends Fragment {
+		
+		App app;
+		Context context;
+		
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+		}
+
+		@Override
+		public void onAttach(Activity activity) {
+			super.onAttach(activity);
+			app = (App) activity.getApplication();
+			context = activity.getBaseContext();
+		}
+		
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			View rootView = inflater.inflate(R.layout.data_error, container, false);
+			return rootView;
+		}
+		
+	}
 
 	@Override
 	public void choiceMade(Contact choice, boolean correct, boolean timeout, float timeTaken) {
 		callbacks.choiceMade(choice, correct, timeout, timeTaken);
+	}
+	@Override
+	public void pairingChoiceMade(ArrayList<Contact> correct,
+			ArrayList<Pair<Contact, Contact>> incorrect, ArrayList<Contact> timeout,
+			float timeTaken) {
+		callbacks.pairingChoiceMade(correct, incorrect, timeout, timeTaken);
 	}
 
 	boolean isGamePaused() {
@@ -495,5 +543,28 @@ public class Game extends Activity implements GameCallbacks, Config {
 
 	void setGameFinished() {
 		this.gameRunning = false;
+	}
+
+	/**
+	 * Show data error screen
+	 */
+	@Override
+	public void dataErrorFound(ArrayList<DataItem> possibleErrors) {
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		DataErrorFragment fragment = new DataErrorFragment();
+		Bundle args = new Bundle();
+		args.putParcelableArrayList("possibleErrors", possibleErrors);
+		fragment.setArguments(args);
+		// TODO: Different animations
+		transaction.setCustomAnimations(
+				R.animator.pause_flip_in,
+				R.animator.pause_flip_out,
+				R.animator.pause_pop_flip_in,
+				R.animator.pause_pop_flip_out);
+		transaction.replace(R.id.container, fragment);
+		// User can press back to get back
+		transaction.addToBackStack(null);
+		transaction.commit();
+		setGamePaused(true);
 	}
 }
