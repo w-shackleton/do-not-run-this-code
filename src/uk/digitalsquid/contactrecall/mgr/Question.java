@@ -175,6 +175,15 @@ public final class Question implements Parcelable {
 			return FORMAT_TEXT;
 		}
 	}
+	
+	public static int getFieldFormat(int field) {
+		switch(field) {
+		case FIELD_PHOTO:
+			return FORMAT_IMAGE;
+		default:
+			return FORMAT_TEXT;
+		}
+	}
 
 	public void setQuestionType(int questionType) {
 		getQuestionAnswerPair().setQuestionType(questionType);

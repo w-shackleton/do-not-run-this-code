@@ -23,4 +23,9 @@
     <string name="photo_description">This contact\'s photo</string>
     <string name="leaderboard">Leaderboard</string>
     <string name="dataErrorDescription">If something\'s not quite right with this question, select the incorrect detail below.</string>
+    <string name="data_error_confirm">What would you like to do with this contact detail?</string>
+    <string name="delete_detail">Delete it</string>
+    <string name="hide_detail">Hide detail (only within APPNAME)</string>
+    <string name="edit_contact">Edit Contact</string>
+    <string name="cancel">Cancel</string>
 </resources>

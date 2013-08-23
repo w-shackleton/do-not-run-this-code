@@ -68,8 +68,7 @@ public abstract class MultiChoiceFragment<QView extends View, AButton extends Bu
         choiceButtons = getChoiceButtons(rootView);
         questionView = getQuestionView(rootView);
         
-        // FIXME: Possibility of out of bounds error?
-        for(int i = 0; i < numberOfChoices; i++) {
+        for(int i = 0; i < numberOfChoices && i < choiceButtons.length; i++) {
         	choiceButtons[i].setOnClickListener(this);
         }
         for(int i = numberOfChoices; i < choiceButtons.length; i++) {

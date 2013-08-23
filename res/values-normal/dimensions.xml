@@ -4,5 +4,6 @@
     <dimen name="contactleaderitem_imgwidth">100dip</dimen>
 
     <dimen name="pairing_partwidth">150dip</dimen>
+    <dimen name="data_item_height">100dip</dimen>
     
 </resources>
