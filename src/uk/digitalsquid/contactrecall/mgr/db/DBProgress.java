@@ -17,7 +17,7 @@ import android.util.Log;
  * @author william
  *
  */
-public class ProgressDB extends DBSubclass {
+public class DBProgress extends DBSubclass {
 	
 	public static final int ATTEMPT_STATUS_SUCCESS = 1;
 	public static final int ATTEMPT_STATUS_FAIL = 2;
@@ -25,7 +25,7 @@ public class ProgressDB extends DBSubclass {
 	
 	private final App app;
 	
-	ProgressDB(App app) {
+	DBProgress(App app) {
 		this.app = app;
 	}
 	

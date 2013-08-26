@@ -66,6 +66,10 @@ public class DataItem implements Parcelable {
 	public void setField(int field) {
 		this.field = field;
 	}
+	
+	public int getFormat() {
+		return Question.getFieldFormat(field);
+	}
 
 	public static final Creator<DataItem> CREATOR = new Creator<DataItem>() {
 		@Override
@@ -114,7 +118,7 @@ public class DataItem implements Parcelable {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final DataItem item = getItem(position);
 			final Contact contact = item.contact;
-			final int format = Question.getFieldFormat(item.field);
+			final int format = item.getFormat();
 			final int layout = format == Question.FORMAT_IMAGE ? imageLayout : textLayout;
 	        if (convertView == null) {
 	            convertView = inflater.inflate(layout, null);

@@ -582,6 +582,21 @@ public class Game extends Activity implements GameCallbacks, Config {
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.data_error_confirm, container, false);
+			FrameLayout detailContainer = (FrameLayout) rootView.findViewById(R.id.detail_container);
+			View detailView;
+			switch(error.getFormat()) {
+			case Question.FORMAT_IMAGE:
+				detailView = inflater.inflate(R.layout.data_item_image, detailContainer);
+		        ImageView photo = (ImageView) detailView.findViewById(R.id.photo);
+		        photo.setImageBitmap(error.getContact().getPhoto(app.getPhotos()));
+				break;
+			case Question.FORMAT_TEXT:
+			default:
+				detailView = inflater.inflate(R.layout.data_item_text, detailContainer);
+		        TextView text = (TextView) detailView.findViewById(R.id.text);
+		        text.setText(error.getContact().getTextField(error.getField()));
+				break;
+			}
 			rootView.findViewById(R.id.delete_detail).setOnClickListener(this);
 			rootView.findViewById(R.id.hide_detail).setOnClickListener(this);
 			rootView.findViewById(R.id.edit_contact).setOnClickListener(this);

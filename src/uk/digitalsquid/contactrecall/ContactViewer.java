@@ -2,6 +2,7 @@ package uk.digitalsquid.contactrecall;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -234,6 +235,7 @@ public class ContactViewer extends Activity implements ContactChangeListener {
 	@Override
 	public void onContactsChanged(Collection<Contact> newContacts) {
 		List<Contact> newContactList = new ArrayList<Contact>(newContacts);
+		Collections.sort(newContactList);
 		contactAdapter.setContacts(newContactList);
 		contacts = newContacts;
 	};

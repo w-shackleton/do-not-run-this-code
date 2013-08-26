@@ -171,6 +171,30 @@ public class Contact implements Parcelable, Comparable<Contact> {
 		case Question.FIELD_EMAIL_OTHER:	return details.getOtherEmail();
 		}
 	}
+
+	/**
+	 * Removes the given field from this contact.
+	 * @param field
+	 */
+	public void removeField(int field) {
+		switch(field) {
+		default:
+		// case Question.FIELD_DISPLAY_NAME:	displayName = null; return;
+		case Question.FIELD_FIRST_NAME:		firstName = null; return;
+		case Question.FIELD_LAST_NAME:		lastName = null; return;
+		case Question.FIELD_COMPANY:		details.setCompany(null); return;
+		case Question.FIELD_DEPARTMENT:		details.setDepartment(null); return;
+		case Question.FIELD_COMPANY_TITLE:	details.setCompanyTitle(null); return;
+		case Question.FIELD_PHONE_HOME:		details.setHomePhone(null); return;
+		case Question.FIELD_PHONE_WORK:		details.setWorkPhone(null); return;
+		case Question.FIELD_PHONE_MOBILE:	details.setMobilePhone(null); return;
+		case Question.FIELD_PHONE_OTHER:	details.setOtherPhone(null); return;
+		case Question.FIELD_EMAIL_HOME:		details.setHomeEmail(null); return;
+		case Question.FIELD_EMAIL_WORK:		details.setWorkEmail(null); return;
+		case Question.FIELD_EMAIL_MOBILE:	details.setMobileEmail(null); return;
+		case Question.FIELD_EMAIL_OTHER:	details.setOtherEmail(null); return;
+		}
+	}
 	
 	private static final Contact nullContact = new Contact();
 	static {
