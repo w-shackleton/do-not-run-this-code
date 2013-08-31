@@ -3,8 +3,8 @@ package uk.digitalsquid.contactrecall.stats;
 import java.util.HashMap;
 
 import uk.digitalsquid.contactrecall.mgr.db.DB;
-import uk.digitalsquid.contactrecall.mgr.db.ProgressDB;
-import uk.digitalsquid.contactrecall.mgr.db.ProgressDB.GroupedMeanAttempt;
+import uk.digitalsquid.contactrecall.mgr.db.DBProgress;
+import uk.digitalsquid.contactrecall.mgr.db.DBProgress.GroupedMeanAttempt;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import android.content.Context;
 
@@ -16,7 +16,7 @@ import android.content.Context;
  */
 public final class Stats {
 	
-	private ProgressDB progress;
+	private DBProgress progress;
 	
 	/**
 	 * Do not call this constructor directly.
@@ -42,15 +42,15 @@ public final class Stats {
 			}
 			ContactStats stats = contactStats.get(meanAttempt.getContact());
 			switch(meanAttempt.getStatus()) {
-			case ProgressDB.ATTEMPT_STATUS_SUCCESS:
+			case DBProgress.ATTEMPT_STATUS_SUCCESS:
 				stats.successes = meanAttempt.getCount();
 				stats.successTime = meanAttempt.getMeanDelay();
 				break;
-			case ProgressDB.ATTEMPT_STATUS_FAIL:
+			case DBProgress.ATTEMPT_STATUS_FAIL:
 				stats.fails = meanAttempt.getCount();
 				stats.failTime = meanAttempt.getMeanDelay();
 				break;
-			case ProgressDB.ATTEMPT_STATUS_TIMEOUT:
+			case DBProgress.ATTEMPT_STATUS_TIMEOUT:
 				stats.timeouts = meanAttempt.getCount();
 				break;
 			}

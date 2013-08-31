@@ -15,20 +15,24 @@ public final class DB extends SQLiteOpenHelper {
 	static final String DB_NAME = "db";
 	
 	public final DBGroup groups;
-	public final ProgressDB progress;
+	public final DBProgress progress;
+	public final DBHidden hidden;
 
 	public DB(App app) {
 		super(app.getApplicationContext(), DB_NAME, null, DB_VERSION);
 		groups = new DBGroup();
-		progress = new ProgressDB(app);
+		progress = new DBProgress(app);
+		hidden = new DBHidden(app);
 		groups.setDb(getWritableDatabase());
 		progress.setDb(getWritableDatabase());
+		hidden.setDb(getWritableDatabase());
 	}
 	
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		groups.onCreate(db);
 		progress.onCreate(db);
+		hidden.onCreate(db);
 	}
 
 	@Override

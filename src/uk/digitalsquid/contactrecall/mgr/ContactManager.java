@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import uk.digitalsquid.contactrecall.App;
@@ -72,7 +73,7 @@ public final class ContactManager implements Config {
 	}
 	
 	private void loadBaseData() {
-		loadBaseData(LoadingStatusListener.NULL_LISTENER);
+		loadData(LoadingStatusListener.NULL_LISTENER);
 	}
 	
 	/**
@@ -85,9 +86,9 @@ public final class ContactManager implements Config {
 	}
 	
 	/**
-	 * Loads the contact base data, ie. the data from the first table. Extra data is only loaded as needed.
+	 * Loads all contact data.
 	 */
-	private synchronized void loadBaseData(LoadingStatusListener listener) {
+	private synchronized void loadData(LoadingStatusListener listener) {
 		
 		Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
 				new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME },
@@ -102,12 +103,16 @@ public final class ContactManager implements Config {
 
 		contacts = new HashMap<Integer, Contact>();
 		
+		// Get hidden contacts
+		Set<Integer> hiddenContacts = app.getDb().hidden.getHiddenContacts();
+		
 		// Load base data and populate HashMap
 		int total = cur.getCount();
 		int i = 0;
 		if(total > 0) {
 			while(cur.moveToNext()) {
 				int id = cur.getInt(cur.getColumnIndex(ContactsContract.Contacts._ID));
+				if(hiddenContacts.contains(id)) continue;
 				String displayName = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 				
 				if(contactInVisibleGroup(groupContactRelationsValues, id)) {
@@ -126,10 +131,9 @@ public final class ContactManager implements Config {
 
 		// Get data from Data table and populate contacts further
 		// This query could take a LONG time.
-		// TODO: In the future, show a loading screen whilst doing this.
 		cur = cr.query(ContactsContract.Data.CONTENT_URI,
 				new String[] {
-				ContactsContract.Data._ID,
+				ContactsContract.Data.CONTACT_ID,
 				ContactsContract.Data.MIMETYPE,
 				ContactsContract.CommonDataKinds.Organization.COMPANY,
 				ContactsContract.CommonDataKinds.Organization.DEPARTMENT,
@@ -142,7 +146,7 @@ public final class ContactManager implements Config {
 				ContactsContract.CommonDataKinds.Email.TYPE,
 		},
 				null, null, null);
-		int idIdx		= cur.getColumnIndexOrThrow(ContactsContract.Data._ID);
+		int idIdx		= cur.getColumnIndexOrThrow(ContactsContract.Data.CONTACT_ID);
 		int mimeTypeIdx	= cur.getColumnIndexOrThrow(ContactsContract.Data.MIMETYPE);
 		int companyIdx	= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Organization.COMPANY);
 		int departmentIdx=cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Organization.DEPARTMENT);
@@ -157,12 +161,13 @@ public final class ContactManager implements Config {
 		total = cur.getCount();
 		i = 0;
 		while(cur.moveToNext()) {
+			i++;
 			Contact contact = contacts.get(cur.getInt(idIdx));
 			// Send status
-			listener.onAuxiliaryDataLoadProgress((float)(i++) / (float)total);
 			if(contact == null) continue;
 			String mime = cur.getString(mimeTypeIdx);
 			if(mime == null) continue;
+			listener.onAuxiliaryDataLoadProgress((float)(i) / (float)total);
 			if(mime.equals(ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE)) {
 				contact.getDetails().setCompany(cur.getString(companyIdx));
 				contact.getDetails().setDepartment(cur.getString(departmentIdx));
@@ -210,6 +215,15 @@ public final class ContactManager implements Config {
 			Contact contact = contacts.get(id);
 			if(contact == null) continue;
 			contact.getDetails().setHasPicture(true);
+		}
+		
+		// Finally, remove all fields that the user wants to hide.
+		for(Entry<Integer, List<Integer>> pair : app.getDb().hidden.getHiddenFields().entrySet()) {
+			Contact contact = contacts.get(pair.getKey());
+			if(contact == null) continue;
+			for(Integer field : pair.getValue()) {
+				contact.removeField(field);
+			}
 		}
 		
 		// Convert to a Set for ease of use
@@ -364,7 +378,7 @@ public final class ContactManager implements Config {
 			synchronized (loadingSync) {
 				// In this system we are assuming that base data is 1/4 of the job,
 				// aux is 3/4.
-				loadBaseData(new LoadingStatusListener() {
+				loadData(new LoadingStatusListener() {
 					@Override
 					public void onBaseDataLoadProgress(float progress) {
 						if(broadcastCount++ == 10) {
@@ -406,4 +420,78 @@ public final class ContactManager implements Config {
 			localBroadcastManager.sendBroadcast(broadcast);
 		}
 	};
+	
+	static final String getMimetype(int field) {
+		switch(field) {
+		case Question.FIELD_DISPLAY_NAME:
+			Log.w(TAG, "Display name can't be deleted");
+			return null;
+		case Question.FIELD_PHOTO:
+			Log.w(TAG, "Photo can't be deleted with a mimetype");
+			return null;
+		case Question.FIELD_FIRST_NAME:
+		case Question.FIELD_LAST_NAME:
+		case Question.FIELD_COMPANY:
+		case Question.FIELD_DEPARTMENT:
+		case Question.FIELD_COMPANY_TITLE:
+		case Question.FIELD_PHONE_HOME:
+		case Question.FIELD_PHONE_WORK:
+		case Question.FIELD_PHONE_MOBILE:
+		case Question.FIELD_PHONE_OTHER:
+		case Question.FIELD_EMAIL_HOME:
+		case Question.FIELD_EMAIL_WORK:
+		case Question.FIELD_EMAIL_MOBILE:
+		case Question.FIELD_EMAIL_OTHER:
+		default:
+			return null;
+		}
+	}
+	
+	/**
+	 * Deletes the given field from the given {@link Contact}. If this
+	 * field doesn't exist for this {@link Contact}, nothing happens.
+	 * TODO: Implement
+	 * @param contact
+	 * @param field
+	 */
+	public void deleteContactField(Contact contact, int field) {
+		hideContactField(contact, field);
+		// TODO: Handle display name and photo
+		final int id = contact.getId();
+		final String mimetype = getMimetype(field);
+		if(mimetype == null) return;
+		cr.delete(ContactsContract.Data.CONTENT_URI,
+				ContactsContract.Data.CONTACT_ID + " == ? AND " +
+						ContactsContract.Data.MIMETYPE + " == ?",
+				new String[] {
+				String.valueOf(id),
+				mimetype
+		});
+	}
+	
+	/**
+	 * Removes the given field from the given {@link Contact},
+	 * but only in the temporary storage. This is used to
+	 * avoid the program from having to reload the entire {@link Contact}
+	 * list whenever a field is removed or hidden within this app.
+	 * @param contact
+	 * @param field
+	 */
+	public void hideContactField(Contact contact, int field) {
+		// Get original contact reference
+		Contact ref = getContact(contact.getId());
+		ref.removeField(field);
+	}
+	
+	/**
+	 * Removes the given {@link Contact} from the map and list,
+	 * but only in the temporary storage. This is used to avoid
+	 * the program having to reload the entire {@link Contact}
+	 * list whenever a contact is hidden.
+	 * @param contact
+	 */
+	public void hideContact(Contact contact) {
+		contacts.remove(contact.getId());
+		contactCollection.remove(contact);
+	}
 }
