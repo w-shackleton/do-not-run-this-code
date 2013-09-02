@@ -23,6 +23,7 @@ public class ModeSelect extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View view) {
 		GameDescriptor descriptor = new GameDescriptor();
+		descriptor.setMaxTime(60);
 		switch(view.getId()) {
 		case R.id.guessName:
 			descriptor.setQuestionTypes(new Question.QuestionAnswerPair[] {
@@ -51,7 +52,6 @@ public class ModeSelect extends Activity implements OnClickListener {
 			descriptor.setQuestionTypes(new Question.QuestionAnswerPair[] {
 					new Question.QuestionAnswerPair(Question.STYLE_PAIRING, Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
 			});
-			descriptor.setMaxTimePerContact(0);
 			break;
 		default:
 			return;

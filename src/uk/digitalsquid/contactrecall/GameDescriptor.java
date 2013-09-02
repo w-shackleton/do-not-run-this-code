@@ -4,16 +4,18 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import uk.digitalsquid.contactrecall.mgr.Question;
+import uk.digitalsquid.contactrecall.misc.Config;
 import uk.digitalsquid.contactrecall.misc.Const;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 /**
  * Describes a game config
  * @author william
  *
  */
-public class GameDescriptor implements Parcelable {
+public class GameDescriptor implements Parcelable, Config {
 	
 	private Question.QuestionAnswerPair[] questionTypes;
 	private int optionSources;
@@ -24,6 +26,10 @@ public class GameDescriptor implements Parcelable {
 	 * A value of zero indicates no timer per contact.
 	 */
 	private float maxTimePerContact;
+	/**
+	 * Maximum time for which a game may run.
+	 */
+	private float maxTime;
 	private SelectionMode selectionMode;
 	private ShufflingMode shufflingMode;
 	
@@ -38,7 +44,8 @@ public class GameDescriptor implements Parcelable {
 		optionSources = OPTION_SOURCE_ALL_CONTACTS;
 		maxQuestions = 10;
 		finiteGame = true;
-		maxTimePerContact = 3;
+		maxTimePerContact = 0;
+		maxTime = 0;
 		selectionMode = SelectionMode.RANDOM;
 		shufflingMode = ShufflingMode.RANDOM;
 		otherAnswersMinimum = 3;
@@ -54,6 +61,7 @@ public class GameDescriptor implements Parcelable {
 		maxQuestions = parcel.readInt();
 		finiteGame = parcel.readInt() == 1;
 		maxTimePerContact = parcel.readFloat();
+		maxTime = parcel.readFloat();
 		selectionMode = SelectionMode.valueOf(parcel.readString());
 		shufflingMode = ShufflingMode.valueOf(parcel.readString());
 		otherAnswersMinimum = parcel.readInt();
@@ -74,6 +82,7 @@ public class GameDescriptor implements Parcelable {
 		dest.writeInt(maxQuestions);
 		dest.writeInt(finiteGame ? 1 : 0);
 		dest.writeFloat(maxTimePerContact);
+		dest.writeFloat(maxTime);
 		dest.writeString(selectionMode.name());
 		dest.writeString(shufflingMode.name());
 		dest.writeInt(otherAnswersMinimum);
@@ -123,6 +132,8 @@ public class GameDescriptor implements Parcelable {
 	 */
 	public void setMaxTimePerContact(float maxTimePerContact) {
 		this.maxTimePerContact = maxTimePerContact;
+		if(maxTime != 0 && maxTimePerContact != 0)
+			Log.w(TAG, "maxTime and maxTimePerContact are both nonzero");
 	}
 
 	public SelectionMode getSelectionMode() {
@@ -238,5 +249,23 @@ public class GameDescriptor implements Parcelable {
 		if(num < min) return min;
 		if(num > max) return max;
 		return num;
+	}
+	public float getMaxTime() {
+		return maxTime;
+	}
+	public void setMaxTime(float maxTime) {
+		this.maxTime = maxTime;
+		if(maxTime != 0 && maxTimePerContact != 0)
+			Log.w(TAG, "maxTime and maxTimePerContact are both nonzero");
+	}
+	public void setMaxTime(int maxTime) {
+		setMaxTime((float)maxTime);
+	}
+	/**
+	 * If <code>true</code>, a timer should be shown for the game.
+	 * @return
+	 */
+	public boolean hasTimer() {
+		return maxTime != 0;
 	}
 }

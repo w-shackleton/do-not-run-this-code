@@ -7,6 +7,7 @@ import java.util.Set;
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.R;
+import uk.digitalsquid.contactrecall.ingame.TimerView.OnFinishedListener;
 import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import uk.digitalsquid.contactrecall.mgr.details.DataItem;
@@ -140,13 +141,15 @@ public class Game extends Activity implements GameCallbacks, Config {
 		} else finish();
 	}
 	
-	public static class GameFragment extends Fragment implements GameCallbacks {
+	public static class GameFragment extends Fragment implements GameCallbacks, OnFinishedListener {
 		App app;
 		
 		GameDescriptor gameDescriptor;
 		GameAdapter gameAdapter;
 		FrameLayout frameLayout;
 		Handler handler = new Handler();
+		
+		private TimerView timer;
 		
 		private boolean gamePaused;
 		
@@ -177,6 +180,16 @@ public class Game extends Activity implements GameCallbacks, Config {
 			
 			frameLayout = (FrameLayout) rootView.findViewById(R.id.pager);
 			
+			timer = (TimerView)rootView.findViewById(R.id.timer);
+	        if(gameDescriptor.hasTimer()) {
+		        timer.setOnFinishedListener(this);
+		        timer.setTotalTime(gameDescriptor.getMaxTime());
+		        timer.setTextAsCountdown();
+	        } else {
+	        	timer.setVisibility(View.GONE);
+	        	timer = null; // Done with timer now
+	        }
+			
 			return rootView;
 		}
 		
@@ -198,6 +211,7 @@ public class Game extends Activity implements GameCallbacks, Config {
 			
 			getFragmentManager().beginTransaction().
 				replace(R.id.pager, gameAdapter.getFragment(position)).commit();
+			timer.start();
 		}
 		
 		@Override
@@ -300,8 +314,12 @@ public class Game extends Activity implements GameCallbacks, Config {
 			}
 		}
 		
+		/**
+		 * Changes the view to the next question. Does not change any game data.
+		 * @param correct
+		 */
 		private void postAdvanceQuestion(boolean correct) {
-			if(position == gameAdapter.getCount()) {
+			if(position >= gameAdapter.getCount()) {
 				// Run transition to summary card.
 				handler.postDelayed(new Runnable() {
 					@Override
@@ -352,6 +370,7 @@ public class Game extends Activity implements GameCallbacks, Config {
 		@Override
 		public void setGamePaused(boolean gamePaused) {
 			this.gamePaused = gamePaused;
+			if(timer != null) timer.setPaused(gamePaused);
 		}
 		
 		private ArrayList<QuestionFailData> failedContacts;
@@ -359,6 +378,12 @@ public class Game extends Activity implements GameCallbacks, Config {
 		@Override
 		public void dataErrorFound(ArrayList<DataItem> possibleErrors) {
 			Log.e(TAG, "dataErrorFound called inside fragment");
+		}
+
+		@Override
+		public void onTimerFinished(TimerView view) {
+			position = gameAdapter.getCount();
+			postAdvanceQuestion(true);
 		}
 	}
 	
