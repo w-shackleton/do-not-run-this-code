@@ -62,6 +62,7 @@ public class GameAdapter implements Parcelable, Config {
 		questions = new ArrayList<Question>(descriptor.getMaxQuestions());
 
 		// Construct the lists that are used as false answers to questions.
+		// FIXME: Decide what to do here.
 		ArrayList<Contact> badContacts = null; // TODO: Implement
 		ArrayList<Contact> realContacts = new ArrayList<Contact>(app.getContacts().getContacts());
 		ArrayList<Contact> nameLists = null; // TODO: Implement

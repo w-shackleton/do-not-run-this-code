@@ -3,13 +3,15 @@ package uk.digitalsquid.contactrecall.mgr;
 import java.util.Arrays;
 import java.util.List;
 
+import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
  * Encapsulates a single question. The data contained here should be all
- * that is needed to display a question on-screen.
+ * that is needed to display a question on-screen, combined with a
+ * {@link GameDescriptor}.
  * @author william
  *
  */
@@ -21,13 +23,28 @@ public final class Question implements Parcelable {
 	 */
 	private Contact[] contacts;
 	
+	/**
+	 * The contacts to use as false answers.
+	 */
 	private Contact[] otherAnswers;
 	
+	/**
+	 * For true-false and multi-choice, the position that the correct contact
+	 * should be shown at.
+	 */
 	private int correctPosition;
 	
+	/**
+	 * For pairing questions, the correct combinations.
+	 */
 	private int[] correctPairings;
 	
-	// Types of question that can be asked.
+	/**
+	 * The question style, and question and answer field types.
+	 */
+	private QuestionAnswerPair questionAnswerPair = new QuestionAnswerPair();
+	
+	// Types of field that can be represented on-screen
 	public static final int FIELD_PHOTO = 1;
 	public static final int FIELD_FIRST_NAME = 2;
 	public static final int FIELD_LAST_NAME = 3;
@@ -46,7 +63,7 @@ public final class Question implements Parcelable {
 	public static final int FIELD_EMAIL_MOBILE = 14;
 	public static final int FIELD_EMAIL_OTHER = 15;
 	
-	// Formats of different types of question, eg. should a picture be shown?
+	// Formats of different types of question, ie. should a picture be shown?
 	public static final int FORMAT_IMAGE = 1;
 	public static final int FORMAT_TEXT = 2;
 	
@@ -54,8 +71,6 @@ public final class Question implements Parcelable {
 	public static final int STYLE_MULTI_CHOICE = 1;
 	public static final int STYLE_TRUE_FALSE = 2;
 	public static final int STYLE_PAIRING = 3;
-	
-	private QuestionAnswerPair questionAnswerPair = new QuestionAnswerPair();
 	
 	public Question(Contact contact) {
 		this(contact, null);
@@ -259,15 +274,20 @@ public final class Question implements Parcelable {
 	 */
 	public static class QuestionAnswerPair implements Parcelable {
 		/**
-		 * The style of question, ie. multi-choice, pairing, true/false.
+		 * The style of question. Can be:
+		 * <ul>
+		 * <li>Multi-choice - <code>Question.STYLE_MULTI_CHOICE</code></li>
+		 * <li>True-false - <code>Question.STYLE_TRUE_FALSE</code></li>
+		 * <li>Pairing - <code>Question.STYLE_PAIRING</code></li>
+		 * </ul>
 		 */
 		private int questionStyle;
 		/**
-		 * The field to use for the question
+		 * The field to use for the question - see <code>Question.FIELD_...</code>
 		 */
 		private int questionType;
 		/**
-		 * The field to use for the answer
+		 * The field to use for the answer - see <code>Question.FIELD_...</code>
 		 */
 		private int answerType;
 		

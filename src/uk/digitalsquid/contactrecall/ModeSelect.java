@@ -29,8 +29,7 @@ public class ModeSelect extends Activity implements OnClickListener {
 			descriptor.setQuestionTypes(new Question.QuestionAnswerPair[] {
 					new Question.QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
 			});
-			descriptor.setMaxQuestions(2);
-			break;
+			descriptor.setMaxQuestions(10);
 		case R.id.questionMix:
 			descriptor.setQuestionTypes(new Question.QuestionAnswerPair[] {
 					new Question.QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),

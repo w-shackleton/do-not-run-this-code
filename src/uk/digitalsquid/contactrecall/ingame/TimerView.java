@@ -1,7 +1,9 @@
 package uk.digitalsquid.contactrecall.ingame;
 
+import uk.digitalsquid.contactrecall.R;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -51,6 +53,12 @@ public class TimerView extends View {
 		super(context, attrs);
 		displayMetrics = context.getResources().getDisplayMetrics();
 		
+		// Get attributes
+		TypedArray customAttrs = context.getTheme().obtainStyledAttributes(
+				attrs,
+				R.styleable.PieChart,
+				0, 0);
+		
 		margin = displayMetrics.density * 5;
 		padding = displayMetrics.density * 10;
 		
@@ -74,6 +82,15 @@ public class TimerView extends View {
 		// TODO: Get text size from system, for accessibility etc.
 		textPaint.setTextSize(18 * displayMetrics.scaledDensity);
 		textPaint.setTextAlign(Align.CENTER);
+		
+		try {
+			innerPaint.setColor(
+					customAttrs.getColor(
+							R.styleable.PieChart_timerBackground,
+							Color.rgb(200, 200, 200)));
+		} finally {
+			customAttrs.recycle();
+		}
 
 		float textWidth = textPaint.measureText("000"); // Measure three digits of time
 		float textHeight = textPaint.getTextSize();

@@ -11,15 +11,37 @@ import android.os.Parcelable;
 import android.util.Log;
 
 /**
- * Describes a game config
+ * Describes a possible configuration for a game.
  * @author william
  *
  */
 public class GameDescriptor implements Parcelable, Config {
 	
+	/**
+	 * Types of question-answer pairs that can be used in a game.
+	 */
 	private Question.QuestionAnswerPair[] questionTypes;
+	/**
+	 * Sources of potential 'other' contacts. Can be:
+	 * <ul>
+	 * <li>User's contacts</li>
+	 * <li>Contacts the user struggles with</li>
+	 * <li>Lists of names</li>
+	 */
 	private int optionSources;
+	/**
+	 * The maximum number of questions to be shown - this is how many questions
+	 * are computed at the start of the game.
+	 */
 	private int maxQuestions;
+	/**
+	 * If <code>false</code>, have an 'infinite' number of questions.
+	 * This just means that the end of the timer will always be reached first,
+	 * or the user cancels.
+	 * This will be implemented by generating some (say 10) questions,
+	 * and at the end of that batch, generating more. This will mean that every
+	 * nth question there will be a small delay as more are generated.
+	 */
 	private boolean finiteGame;
 	/**
 	 * Maximum time to show each contact for, in seconds.
@@ -30,13 +52,30 @@ public class GameDescriptor implements Parcelable, Config {
 	 * Maximum time for which a game may run.
 	 */
 	private float maxTime;
-	private SelectionMode selectionMode;
+	/**
+	 * How questions within groups are shuffled once generated. This is currently
+	 * only random, and this option is planned for removal.
+	 */
 	private ShufflingMode shufflingMode;
 	
+	/**
+	 * For multi-choice questions, the minimum number of other choices
+	 * available.
+	 */
 	private int otherAnswersMinimum;
+	/**
+	 * For multi-choice questions, the maximum number of other choices
+	 * available.
+	 */
 	private int otherAnswersMaximum;
 	
+	/**
+	 * For pairing questions, the minimum number of choices available.
+	 */
 	private int pairingChoicesMinimum;
+	/**
+	 * For pairing questions, the maximum number of choices available.
+	 */
 	private int pairingChoicesMaximum;
 	
 	public GameDescriptor() {
@@ -46,7 +85,6 @@ public class GameDescriptor implements Parcelable, Config {
 		finiteGame = true;
 		maxTimePerContact = 0;
 		maxTime = 0;
-		selectionMode = SelectionMode.RANDOM;
 		shufflingMode = ShufflingMode.RANDOM;
 		otherAnswersMinimum = 3;
 		otherAnswersMaximum = 3;
@@ -62,7 +100,6 @@ public class GameDescriptor implements Parcelable, Config {
 		finiteGame = parcel.readInt() == 1;
 		maxTimePerContact = parcel.readFloat();
 		maxTime = parcel.readFloat();
-		selectionMode = SelectionMode.valueOf(parcel.readString());
 		shufflingMode = ShufflingMode.valueOf(parcel.readString());
 		otherAnswersMinimum = parcel.readInt();
 		otherAnswersMaximum = parcel.readInt();
@@ -83,7 +120,6 @@ public class GameDescriptor implements Parcelable, Config {
 		dest.writeInt(finiteGame ? 1 : 0);
 		dest.writeFloat(maxTimePerContact);
 		dest.writeFloat(maxTime);
-		dest.writeString(selectionMode.name());
 		dest.writeString(shufflingMode.name());
 		dest.writeInt(otherAnswersMinimum);
 		dest.writeInt(otherAnswersMaximum);
@@ -134,13 +170,6 @@ public class GameDescriptor implements Parcelable, Config {
 		this.maxTimePerContact = maxTimePerContact;
 		if(maxTime != 0 && maxTimePerContact != 0)
 			Log.w(TAG, "maxTime and maxTimePerContact are both nonzero");
-	}
-
-	public SelectionMode getSelectionMode() {
-		return selectionMode;
-	}
-	public void setSelectionMode(SelectionMode selectionMode) {
-		this.selectionMode = selectionMode;
 	}
 
 	public ShufflingMode getShufflingMode() {
@@ -212,16 +241,6 @@ public class GameDescriptor implements Parcelable, Config {
 			return new GameDescriptor[size];
 		}
 	};
-	
-	/**
-	 * How contacts will be selected from the possible contacts
-	 * @author william
-	 *
-	 */
-	@Deprecated
-	public static enum SelectionMode {
-		RANDOM
-	}
 	
 	/**
 	 * How selected contacts will be shuffled

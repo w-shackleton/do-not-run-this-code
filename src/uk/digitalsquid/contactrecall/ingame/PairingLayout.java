@@ -172,7 +172,7 @@ public class PairingLayout extends TableLayout implements Config {
 			PointF correctedFinish = getCorrectedChoicePosition(
 					new PointF(event.getX(index),
 							event.getY(index)));
-			if(correctedFinish == null && finishedData.valid) {
+			if(correctedFinish == null) {
 				Log.d(TAG, "Invalid pointer location end");
 				finishedData.valid = false;
 				break;
