@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res/uk.digitalsquid.contactrecall"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        >
+
+	    <Button
+	        android:id="@+id/data_error"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        style="@style/errorbutton"
+	        android:text="@string/exclamation" />
+
+	    <uk.digitalsquid.contactrecall.ingame.TimerView
+	        android:layout_height="wrap_content"
+	        android:layout_width="wrap_content"
+		    custom:timerBackground="@color/timer_single_bg"
+	        android:id="@+id/timerView"/>
+
+    </LinearLayout>
+
+    <uk.digitalsquid.contactrecall.ingame.PairingLayout
+        android:id="@+id/pairingLayout"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dip" >
+
+        <TableRow
+            style="@style/PairingRow" >
+		    <TextView
+		        android:id="@+id/question1"
+		        style="@style/Pairing.Row.Left.TextView"
+		        android:contentDescription="@string/photo_description" />
+		    <Space style="@style/Pairing.Row.Space" />
+		    <TextView
+		        android:id="@+id/choice1"
+		        style="@style/Pairing.Row.Right.TextView"
+		        android:text="@string/placeholder" />
+
+        </TableRow>
+
+        <TableRow
+            style="@style/PairingRow" >
+		    <TextView
+		        android:id="@+id/question2"
+		        style="@style/Pairing.Row.Left.TextView"
+		        android:contentDescription="@string/photo_description" />
+		    <Space style="@style/Pairing.Row.Space" />
+		    <TextView
+		        android:id="@+id/choice2"
+		        style="@style/Pairing.Row.Right.TextView"
+		        android:text="@string/placeholder" />
+        </TableRow>
+
+        <TableRow
+            style="@style/PairingRow" >
+		    <TextView
+		        android:id="@+id/question3"
+		        style="@style/Pairing.Row.Left.TextView"
+		        android:contentDescription="@string/photo_description" />
+		    <Space style="@style/Pairing.Row.Space" />
+		    <TextView
+		        android:id="@+id/choice3"
+		        style="@style/Pairing.Row.Right.TextView"
+		        android:text="@string/placeholder" />
+        </TableRow>
+
+        <TableRow
+            style="@style/PairingRow" >
+		    <TextView
+		        android:id="@+id/question4"
+		        style="@style/Pairing.Row.Left.TextView"
+		        android:contentDescription="@string/photo_description" />
+		    <Space style="@style/Pairing.Row.Space" />
+		    <TextView
+		        android:id="@+id/choice4"
+		        style="@style/Pairing.Row.Right.TextView"
+		        android:text="@string/placeholder" />
+        </TableRow>
+
+    </uk.digitalsquid.contactrecall.ingame.PairingLayout>
+
+</LinearLayout>

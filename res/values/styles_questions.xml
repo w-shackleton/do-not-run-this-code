@@ -21,6 +21,10 @@
     <style name="Pairing.Row.Left.ImageView">
         <item name="android:adjustViewBounds">true</item>
     </style>
+    <style name="Pairing.Row.Left.TextView">
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:gravity">center</item>
+    </style>
     <style name="Pairing.Row.Space">
     </style>
 
