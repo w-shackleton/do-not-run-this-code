@@ -68,13 +68,15 @@ public class GameAdapter implements Parcelable, Config {
 		ArrayList<Contact> realContacts = new ArrayList<Contact>(app.getContacts().getContacts());
 		ArrayList<Contact> nameLists = null; // TODO: Implement
 
+		// Combine these lists
 		ArrayList<Contact> allContacts = 
 				ListUtils.concat(new ArrayList<Contact>(), badContacts, realContacts, nameLists);
 
-		// The types of contacts we must generate lists of
+		// The types of field used throughout all Question types
 		Set<Integer> usedFieldTypes = descriptor.getUsedFieldTypes();
 
-		// Construct groups of actual contacts.
+		// Construct groups of actual contacts. Contacts are grouped by the fields they have
+		// available
 		HashMap<Integer, ArrayList<Contact>> contactGroups = new HashMap<Integer, ArrayList<Contact>>();
 		// For each field type, accumulate a list of contacts that contain that field type.
 		for(int usedFieldType : usedFieldTypes) {
@@ -86,10 +88,13 @@ public class GameAdapter implements Parcelable, Config {
 					contacts.add(contact);
 			}
 		
-			// Shuffle each group
+			// Shuffle each group. Shuffling is currently only random.
+			// Shuffling is necessary as contacts are selected sequentially later.
 			contactGroups.put(usedFieldType,
 					shuffleContacts(contacts, descriptor.getShufflingMode()));
 		}
+		
+		// Repeat process for allContacts
 
 		// Construct groups of all types of contact to use as answers.
 		// This is the same as contactGroups, but doesn't get removed from later.
