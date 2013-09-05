@@ -22,11 +22,11 @@ public class GameDescriptor implements Parcelable, Config {
 	 */
 	private Question.QuestionAnswerPair[] questionTypes;
 	/**
-	 * Sources of potential 'other' contacts. Can be:
+	 * Sources of potential 'other' contacts. Can be a combination of:
 	 * <ul>
 	 * <li>User's contacts</li>
 	 * <li>Contacts the user struggles with</li>
-	 * <li>Lists of names</li>
+	 * <li>Prefilled lists of names</li>
 	 */
 	private int optionSources;
 	/**

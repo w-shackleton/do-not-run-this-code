@@ -20,7 +20,7 @@ public class ImageTextTFFragment extends TrueFalseFragment<ImageView> {
 
 	@Override
 	protected int getRootLayoutId() {
-		return R.layout.imagetexttfview;
+		return R.layout.imagetexttffragment;
 	}
 
 	@Override

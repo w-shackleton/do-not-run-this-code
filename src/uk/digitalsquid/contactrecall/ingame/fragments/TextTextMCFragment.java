@@ -20,7 +20,7 @@ public class TextTextMCFragment extends MultiChoiceFragment<TextView, Button> {
 
 	@Override
 	protected int getRootLayoutId() {
-		return R.layout.texttextview;
+		return R.layout.texttextmcfragment;
 	}
 
 	@Override

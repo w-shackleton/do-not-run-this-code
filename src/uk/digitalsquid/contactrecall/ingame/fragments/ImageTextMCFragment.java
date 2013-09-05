@@ -22,7 +22,7 @@ public class ImageTextMCFragment extends MultiChoiceFragment<ImageView, Button> 
 
 	@Override
 	protected int getRootLayoutId() {
-		return R.layout.imagetextmcview;
+		return R.layout.imagetextmcfragment;
 	}
 
 	@Override

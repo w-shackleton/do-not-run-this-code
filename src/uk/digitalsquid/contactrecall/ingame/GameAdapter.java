@@ -15,6 +15,7 @@ import uk.digitalsquid.contactrecall.ingame.fragments.ImageTextPFragment;
 import uk.digitalsquid.contactrecall.ingame.fragments.ImageTextTFFragment;
 import uk.digitalsquid.contactrecall.ingame.fragments.MultiChoiceFragment;
 import uk.digitalsquid.contactrecall.ingame.fragments.TextTextMCFragment;
+import uk.digitalsquid.contactrecall.ingame.fragments.TextTextPFragment;
 import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.mgr.Question.QuestionAnswerPair;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
@@ -67,13 +68,15 @@ public class GameAdapter implements Parcelable, Config {
 		ArrayList<Contact> realContacts = new ArrayList<Contact>(app.getContacts().getContacts());
 		ArrayList<Contact> nameLists = null; // TODO: Implement
 
+		// Combine these lists
 		ArrayList<Contact> allContacts = 
 				ListUtils.concat(new ArrayList<Contact>(), badContacts, realContacts, nameLists);
 
-		// The types of contacts we must generate lists of
+		// The types of field used throughout all Question types
 		Set<Integer> usedFieldTypes = descriptor.getUsedFieldTypes();
 
-		// Construct groups of actual contacts.
+		// Construct groups of actual contacts. Contacts are grouped by the fields they have
+		// available
 		HashMap<Integer, ArrayList<Contact>> contactGroups = new HashMap<Integer, ArrayList<Contact>>();
 		// For each field type, accumulate a list of contacts that contain that field type.
 		for(int usedFieldType : usedFieldTypes) {
@@ -85,10 +88,13 @@ public class GameAdapter implements Parcelable, Config {
 					contacts.add(contact);
 			}
 		
-			// Shuffle each group
+			// Shuffle each group. Shuffling is currently only random.
+			// Shuffling is necessary as contacts are selected sequentially later.
 			contactGroups.put(usedFieldType,
 					shuffleContacts(contacts, descriptor.getShufflingMode()));
 		}
+		
+		// Repeat process for allContacts
 
 		// Construct groups of all types of contact to use as answers.
 		// This is the same as contactGroups, but doesn't get removed from later.
@@ -356,70 +362,51 @@ public class GameAdapter implements Parcelable, Config {
         // Find the correct fragment to use
         // TODO: Write implementations for these other cases. (Don't think image->image will be needed)
         Fragment fragment;
-        Log.v(TAG, String.format("Creating fragment of format (%d,%d,%d)",
+        Log.v(TAG, String.format("Creating question fragment of format (%d,%d,%d)",
         		question.getQuestionStyle(),
         		question.getQuestionFormat(),
         		question.getAnswerFormat()));
+        // Using a bitmask to make code more clear (well, hopefully).
+        // 0bABCD - AB is style, C is Question format, D is answer format
+        // AB - 00 -> mc
+        //      01 -> tf
+        //      10 -> p
+        // C, D - 1 -> text
+        //        0 -> image
+        int styleMask = 0;
         switch(question.getQuestionStyle()) {
-        default:
-        case Question.STYLE_MULTI_CHOICE:
-	        switch(question.getQuestionFormat()) {
-	        case Question.FORMAT_TEXT:
-	    	default:
-	    		switch(question.getAnswerFormat()) {
-				default:
-	    		case Question.FORMAT_TEXT: fragment = new TextTextMCFragment(); break;
-				case Question.FORMAT_IMAGE: fragment = null; break;
-	    		}
-	    		break;
-	    	case Question.FORMAT_IMAGE:
-	    		switch(question.getAnswerFormat()) {
-				default:
-	    		case Question.FORMAT_TEXT: fragment = new ImageTextMCFragment(); break;
-				case Question.FORMAT_IMAGE: fragment = null; break;
-	    		}
-	    		break;
-	        }
-        	break;
-        	// TODO: Implement properly
-        case Question.STYLE_TRUE_FALSE:
-	        switch(question.getQuestionFormat()) {
-	        case Question.FORMAT_TEXT:
-	    	default:
-	    		switch(question.getAnswerFormat()) {
-				default:
-	    		case Question.FORMAT_TEXT: fragment = null; break;
-				case Question.FORMAT_IMAGE: fragment = null; break;
-	    		}
-	    		break;
-	    	case Question.FORMAT_IMAGE:
-	    		switch(question.getAnswerFormat()) {
-				default:
-	    		case Question.FORMAT_TEXT: fragment = new ImageTextTFFragment(); break;
-				case Question.FORMAT_IMAGE: fragment = null; break;
-	    		}
-	    		break;
-	        }
-        	break;
-        case Question.STYLE_PAIRING:
-	        switch(question.getQuestionFormat()) {
-	        case Question.FORMAT_TEXT:
-	    	default:
-	    		switch(question.getAnswerFormat()) {
-				default:
-	    		case Question.FORMAT_TEXT: fragment = null; break;
-				case Question.FORMAT_IMAGE: fragment = null; break;
-	    		}
-	    		break;
-	    	case Question.FORMAT_IMAGE:
-	    		switch(question.getAnswerFormat()) {
-				default:
-	    		case Question.FORMAT_TEXT: fragment = new ImageTextPFragment(); break;
-				case Question.FORMAT_IMAGE: fragment = null; break;
-	    		}
-	    		break;
-	        }
-        	break;
+        case Question.STYLE_MULTI_CHOICE: styleMask = 0x0; break;
+        case Question.STYLE_TRUE_FALSE: styleMask = 0x4; break;
+        case Question.STYLE_PAIRING: styleMask = 0x8; break;
+        }
+        final int bits = styleMask | 
+        		(question.getQuestionFormat() == Question.FORMAT_TEXT ? 2 : 0) |
+        		(question.getAnswerFormat() == Question.FORMAT_TEXT ? 1 : 0);
+        switch(bits) {
+        case 0x0: // 0b0000 - I I MC
+        	fragment = null; break;
+    	default: case 0x1: // 0b0001 - I T MC
+        	fragment = new ImageTextMCFragment();
+        case 0x2: // 0b0010 - T I MC
+        	fragment = null; break;
+        case 0x3: // 0b0011 - T T MC
+        	fragment = new TextTextMCFragment(); break;
+        case 0x4: // 0b0100 - I I TF
+        	fragment = null; break;
+        case 0x5: // 0b0101 - I T TF
+        	fragment = new ImageTextTFFragment(); break;
+        case 0x6: // 0b0110 - T I TF
+        	fragment = null; break;
+        case 0x7: // 0b0111 - T T TF
+        	fragment = null; break;
+        case 0x8: // 0b1000 - I I PA
+        	fragment = null; break;
+        case 0x9: // 0b1001 - I T PA
+        	fragment = new ImageTextPFragment(); break;
+        case 0xA: // 0b1010 - T I PA
+        	fragment = null; break;
+        case 0xB: // 0b1011 - T T PA
+        	fragment = new TextTextPFragment(); break;
         }
         fragment.setArguments(args);
         
