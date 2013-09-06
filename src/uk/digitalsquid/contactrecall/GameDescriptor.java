@@ -48,6 +48,13 @@ public class GameDescriptor implements Parcelable, Config {
 	 * A value of zero indicates no timer per contact.
 	 */
 	private float maxTimePerContact;
+	
+	/**
+	 * If <code>true</code>, the game will move on when the contact timer
+	 * expires.
+	 */
+	private boolean hardTimerPerContact;
+	
 	/**
 	 * Maximum time for which a game may run.
 	 */
@@ -84,6 +91,7 @@ public class GameDescriptor implements Parcelable, Config {
 		maxQuestions = 10;
 		finiteGame = true;
 		maxTimePerContact = 0;
+		hardTimerPerContact = false;
 		maxTime = 0;
 		shufflingMode = ShufflingMode.RANDOM;
 		otherAnswersMinimum = 3;
@@ -99,6 +107,7 @@ public class GameDescriptor implements Parcelable, Config {
 		maxQuestions = parcel.readInt();
 		finiteGame = parcel.readInt() == 1;
 		maxTimePerContact = parcel.readFloat();
+		hardTimerPerContact = parcel.readInt() == 1;
 		maxTime = parcel.readFloat();
 		shufflingMode = ShufflingMode.valueOf(parcel.readString());
 		otherAnswersMinimum = parcel.readInt();
@@ -119,6 +128,7 @@ public class GameDescriptor implements Parcelable, Config {
 		dest.writeInt(maxQuestions);
 		dest.writeInt(finiteGame ? 1 : 0);
 		dest.writeFloat(maxTimePerContact);
+		dest.writeInt(hardTimerPerContact ? 1 : 0);
 		dest.writeFloat(maxTime);
 		dest.writeString(shufflingMode.name());
 		dest.writeInt(otherAnswersMinimum);
@@ -286,5 +296,11 @@ public class GameDescriptor implements Parcelable, Config {
 	 */
 	public boolean hasTimer() {
 		return maxTime != 0;
+	}
+	public boolean isHardTimerPerContact() {
+		return hardTimerPerContact;
+	}
+	public void setHardTimerPerContact(boolean hardTimerPerContact) {
+		this.hardTimerPerContact = hardTimerPerContact;
 	}
 }

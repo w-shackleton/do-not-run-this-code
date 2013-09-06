@@ -17,14 +17,6 @@
 	        android:layout_height="fill_parent"
 	        android:contentDescription="@string/contentDescription_photo" />
 
-	    <uk.digitalsquid.contactrecall.ingame.TimerView
-	        android:layout_height="wrap_content"
-	        android:layout_width="wrap_content"
-		    android:layout_alignParentRight="true"
-		    android:layout_alignParentTop="true"
-		    custom:timerBackground="@color/timer_single_bg"
-	        android:id="@+id/timerView"/>
-
 	    <Button
 	        android:id="@+id/data_error"
 	        android:layout_width="wrap_content"
@@ -110,4 +102,11 @@
 	            android:text=""></Button>
 	    </LinearLayout>
     </LinearLayout>
+
+    <uk.digitalsquid.contactrecall.ingame.PointsGainBar
+        android:id="@+id/pointsGainBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0" />
+
 </LinearLayout>

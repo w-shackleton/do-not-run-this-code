@@ -18,6 +18,7 @@ public class ModeSelect extends Activity implements OnClickListener {
 		findViewById(R.id.questionMix).setOnClickListener(this);
 		findViewById(R.id.trueFalse).setOnClickListener(this);
 		findViewById(R.id.pairings).setOnClickListener(this);
+		findViewById(R.id.timerTest).setOnClickListener(this);
 	}
 
 	@Override
@@ -51,6 +52,14 @@ public class ModeSelect extends Activity implements OnClickListener {
 			descriptor.setQuestionTypes(new Question.QuestionAnswerPair[] {
 					new Question.QuestionAnswerPair(Question.STYLE_PAIRING, Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
 			});
+			break;
+		case R.id.timerTest:
+			descriptor.setQuestionTypes(new Question.QuestionAnswerPair[] {
+					new Question.QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
+			});
+			descriptor.setMaxTimePerContact(5);
+			descriptor.setMaxTime(0);
+			descriptor.setHardTimerPerContact(false);
 			break;
 		default:
 			return;

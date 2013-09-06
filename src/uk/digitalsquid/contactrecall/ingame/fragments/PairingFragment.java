@@ -3,19 +3,15 @@ package uk.digitalsquid.contactrecall.ingame.fragments;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.R;
-import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.ingame.PairingLayout;
 import uk.digitalsquid.contactrecall.ingame.PairingLayout.OnPairingsChangeListener;
 import uk.digitalsquid.contactrecall.ingame.TimerView;
-import uk.digitalsquid.contactrecall.ingame.TimerView.OnFinishedListener;
-import uk.digitalsquid.contactrecall.mgr.Question;
+import uk.digitalsquid.contactrecall.ingame.TimingView;
+import uk.digitalsquid.contactrecall.ingame.TimingView.OnFinishedListener;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import uk.digitalsquid.contactrecall.mgr.details.DataItem;
 import uk.digitalsquid.contactrecall.misc.Config;
-import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
@@ -23,19 +19,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 public abstract class PairingFragment<QView extends View, AView extends View>
-		extends Fragment implements OnClickListener, OnFinishedListener,
+		extends QuestionFragment implements OnClickListener, OnFinishedListener,
 		OnPairingsChangeListener, Config {
-	public static final String ARG_QUESTION = "question";
-	public static final String ARG_DESCRIPTOR = "descriptor";
-	
-	private transient GameCallbacks callbacks;
-	
-	protected Question question;
-	private GameDescriptor descriptor;
-	
+
 	protected QView[] questionViews;
 	protected AView[] choiceViews;
 	protected PairingLayout pairingLayout;
@@ -64,21 +52,14 @@ public abstract class PairingFragment<QView extends View, AView extends View>
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
 		super.onCreateView(inflater, root, savedInstanceState);
-		Bundle args = getArguments();
         // The last two arguments ensure LayoutParams are inflated
         // properly.
         View rootView = inflater.inflate(
                 getRootLayoutId(), root, false);
         
-        // Assign data error button if it exists
-        Button dataError = (Button) rootView.findViewById(R.id.data_error);
-        if(dataError != null) dataError.setOnClickListener(this);
-        
         pairingLayout = (PairingLayout) rootView.findViewById(R.id.pairingLayout);
         pairingLayout.setOnPairingsChangeListener(this);
         
-        question = args.getParcelable(ARG_QUESTION);
-        descriptor = args.getParcelable(ARG_DESCRIPTOR);
         int numberOfChoices = question.getNumberOfChoices();
         
         currentPairings = new int[question.getContactCount()];
@@ -94,44 +75,9 @@ public abstract class PairingFragment<QView extends View, AView extends View>
         	choiceViews[i].setVisibility(View.GONE);
         }
         
-        startTime = System.nanoTime();
-        
-        timer = (TimerView) rootView.findViewById(R.id.timerView);
-        if(descriptor.hasTimerPerContact()) {
-	        timer.setOnFinishedListener(this);
-	        timer.setTotalTime(descriptor.getMaxTimePerContact());
-	        timer.setTextAsCountdown();
-        } else {
-        	timer.setVisibility(View.GONE);
-        	timer = null; // Done with timer now
-        }
+        configureGlobalViewItems(rootView);
         
 		return rootView;
-	}
-	
-	@Override
-	public void onStart() {
-		super.onStart();
-        if(timer != null) timer.start();
-	}
-	@Override
-	public void onStop() {
-		super.onStop();
-		if(timer != null) timer.cancel();
-	}
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		if(timer != null) timer.setOnFinishedListener(null);
-	}
-	
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		if(activity instanceof GameCallbacks)
-			callbacks = (GameCallbacks) activity;
-		else
-			Log.e(TAG, "onAttach - activity doesn't implement callbacks");
 	}
 	
 	int completedChoice = -2;
@@ -195,9 +141,10 @@ public abstract class PairingFragment<QView extends View, AView extends View>
 	}
 	
 	@Override
-	public void onTimerFinished(TimerView view) {
+	public void onTimerFinished(TimingView view) {
 		// Complete with the pairings as far as the user got.
-		completeView(currentPairings);
+		if(descriptor.isHardTimerPerContact())
+			completeView(currentPairings);
 	}
 
 	@Override

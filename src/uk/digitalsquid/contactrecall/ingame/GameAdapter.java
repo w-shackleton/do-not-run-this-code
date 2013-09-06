@@ -386,7 +386,7 @@ public class GameAdapter implements Parcelable, Config {
         case 0x0: // 0b0000 - I I MC
         	fragment = null; break;
     	default: case 0x1: // 0b0001 - I T MC
-        	fragment = new ImageTextMCFragment();
+        	fragment = new ImageTextMCFragment(); break;
         case 0x2: // 0b0010 - T I MC
         	fragment = null; break;
         case 0x3: // 0b0011 - T T MC
@@ -408,7 +408,7 @@ public class GameAdapter implements Parcelable, Config {
         case 0xB: // 0b1011 - T T PA
         	fragment = new TextTextPFragment(); break;
         }
-        fragment.setArguments(args);
+        if(fragment != null) fragment.setArguments(args);
         
 		return fragment;
 	}

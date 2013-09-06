@@ -13,14 +13,11 @@ import android.graphics.Paint.Join;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.RectF;
-import android.os.CountDownTimer;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.view.View;
 
-public class TimerView extends View {
+public class TimerView extends TimingView {
 	
-	private float totalTime = 1;
 	private float visualProgress = 0;
 	
 	/**
@@ -34,20 +31,9 @@ public class TimerView extends View {
 	
 	private String text = "";
 	
-	protected CountDownTimer timer;
-	
 	protected final DisplayMetrics displayMetrics;
 	
-	public static interface OnFinishedListener {
-		void onTimerFinished(TimerView view);
-		static final OnFinishedListener DEFAULT = new OnFinishedListener() {
-			@Override public void onTimerFinished(TimerView view) { }
-		};
-	}
-	
 	private final float textSize;
-	
-	private OnFinishedListener onFinishedListener = OnFinishedListener.DEFAULT;
 	
 	public TimerView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -97,94 +83,6 @@ public class TimerView extends View {
 		textSize = Math.max(textWidth, textHeight);
 	}
 
-	public float getTotalTime() {
-		return totalTime;
-	}
-	
-	/**
-	 * Set by timer whilst running. (In seconds)
-	 */
-	float timeRemaining;
-	
-	public void setTotalTime(float totalTime) {
-		this.totalTime = totalTime;
-		timer = new CountDownTimer((int)(totalTime * 1000), 200) {
-			@Override
-			public void onTick(long millisUntilFinished) {
-				timeRemaining = ((float) millisUntilFinished) / 1000f;
-			}
-			
-			@Override
-			public void onFinish() {
-				onFinishedListener.onTimerFinished(TimerView.this);
-				timeRemaining = 0;
-				invalidate();
-			}
-		};
-	}
-
-	public void setOnFinishedListener(OnFinishedListener onFinishedListener) {
-		if(onFinishedListener == null) onFinishedListener = OnFinishedListener.DEFAULT;
-		this.onFinishedListener = onFinishedListener;
-	}
-	
-	private ObjectAnimator anim;
-	
-	private transient long startTimeMillis;
-	
-	/**
-	 * Starts the timer.
-	 * @param startPosition The amount of the animation that has already
-	 * been completed - in the range [0,1]
-	 */
-	protected void start(float startPosition) {
-		startTimeMillis = System.currentTimeMillis();
-		if(timer == null) throw new RuntimeException("A time hasn't been set yet");
-		timer.start();
-		anim = ObjectAnimator.ofFloat(this, "visualProgress", startPosition, 1f);
-		anim.setDuration((int)(totalTime * 1000));
-		anim.start();
-	}
-	
-	/**
-	 * Starts the timer
-	 */
-	public void start() {
-		start(0);
-	}
-	
-	public void cancel() {
-		if(timer != null) timer.cancel();
-		if(anim != null) anim.cancel();
-	}
-	
-	private float pausedRemainingTime;
-	private float pausedStartPosition;
-	
-	/**
-	 * Pauses the timer.
-	 */
-	public void pause() {
-		final long progressSoFar = System.currentTimeMillis() - startTimeMillis;
-		pausedRemainingTime = totalTime - ((float)progressSoFar / 1000f);
-		pausedStartPosition = (float)progressSoFar / 1000f / totalTime;
-		cancel();
-		anim = null;
-		timer = null;
-	}
-	
-	/**
-	 * Resumes the timer.
-	 */
-	public void resume() {
-		setTotalTime(pausedRemainingTime);
-		start(pausedStartPosition);
-	}
-	
-	public void setPaused(boolean pause) {
-		if(pause) pause();
-		else resume();
-	}
 
 	public float getVisualProgress() {
 		return visualProgress;
@@ -209,8 +107,7 @@ public class TimerView extends View {
 	Path shape = new Path();
 	
 	@Override
-	public void onDraw(Canvas c) {
-		super.onDraw(c);
+	protected synchronized void onDraw(Canvas c) {
 		float x = margin, y = margin;
 		float width = c.getWidth() - margin, height = c.getHeight() - margin;
 		if(width > height) {
@@ -260,5 +157,11 @@ public class TimerView extends View {
 	
 	public void setTextAsCountdown() {
 		setText("%r");
+	}
+
+
+	@Override
+	protected ObjectAnimator getPropertyAnimator(float startPosition) {
+		return ObjectAnimator.ofFloat(this, "visualProgress", startPosition, 1f);
 	}
 }

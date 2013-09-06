@@ -7,7 +7,7 @@ import java.util.Set;
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.R;
-import uk.digitalsquid.contactrecall.ingame.TimerView.OnFinishedListener;
+import uk.digitalsquid.contactrecall.ingame.TimingView.OnFinishedListener;
 import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import uk.digitalsquid.contactrecall.mgr.details.DataItem;
@@ -209,9 +209,14 @@ public class Game extends Activity implements GameCallbacks, Config {
 				return;
 			}
 			
+			Fragment f = gameAdapter.getFragment(position);
+			if(f == null) {
+				Log.e(TAG, "Null question fragment!");
+				return;
+			}
 			getFragmentManager().beginTransaction().
-				replace(R.id.pager, gameAdapter.getFragment(position)).commit();
-			timer.start();
+				replace(R.id.pager, f).commit();
+			if(timer != null) timer.start();
 		}
 		
 		@Override
@@ -350,10 +355,15 @@ public class Game extends Activity implements GameCallbacks, Config {
 				handler.postDelayed(new Runnable() {
 					@Override
 					public void run() {
+						Fragment f = gameAdapter.getFragment(position);
+						if(f == null) {
+							Log.e(TAG, "Null question fragment!");
+							return;
+						}
 						if(getFragmentManager() != null)
 							getFragmentManager().beginTransaction().
 								setCustomAnimations(R.animator.next_card_in, R.animator.next_card_out).
-								replace(R.id.pager, gameAdapter.getFragment(position)).
+								replace(R.id.pager, f).
 								commit();
 					}
 				}, getResources().getInteger(
@@ -381,7 +391,7 @@ public class Game extends Activity implements GameCallbacks, Config {
 		}
 
 		@Override
-		public void onTimerFinished(TimerView view) {
+		public void onTimerFinished(TimingView view) {
 			position = gameAdapter.getCount();
 			postAdvanceQuestion(true);
 		}

@@ -41,5 +41,15 @@
                 android:text="Pairings"
                 style="@style/largebutton"></Button>
         </TableRow>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <Button
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:id="@+id/timerTest"
+                android:text="Timer test"
+                style="@style/largebutton"></Button>
+        </TableRow>
     </TableLayout>
 </LinearLayout>

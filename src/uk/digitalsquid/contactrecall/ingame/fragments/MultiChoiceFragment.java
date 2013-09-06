@@ -1,20 +1,12 @@
 package uk.digitalsquid.contactrecall.ingame.fragments;
 
-import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.R;
-import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
-import uk.digitalsquid.contactrecall.ingame.TimerView;
-import uk.digitalsquid.contactrecall.ingame.TimerView.OnFinishedListener;
-import uk.digitalsquid.contactrecall.mgr.Question;
+import uk.digitalsquid.contactrecall.ingame.TimingView;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
-import uk.digitalsquid.contactrecall.misc.Config;
-import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 
@@ -23,20 +15,10 @@ import android.widget.Button;
  * @author william
  *
  */
-public abstract class MultiChoiceFragment<QView extends View, AButton extends Button> extends Fragment implements OnClickListener, OnFinishedListener, Config {
-	public static final String ARG_QUESTION = "question";
-	public static final String ARG_DESCRIPTOR = "descriptor";
-	
-	private transient GameCallbacks callbacks;
-	
-	protected Question question;
-	private GameDescriptor descriptor;
+public abstract class MultiChoiceFragment<QView extends View, AButton extends Button> extends QuestionFragment {
 	
 	protected QView questionView;
 	protected AButton[] choiceButtons;
-	private TimerView timer;
-	
-	long startTime;
 	
 	protected abstract int getRootLayoutId();
 	protected abstract QView getQuestionView(View rootView);
@@ -51,18 +33,11 @@ public abstract class MultiChoiceFragment<QView extends View, AButton extends Bu
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
 		super.onCreateView(inflater, root, savedInstanceState);
-		Bundle args = getArguments();
         // The last two arguments ensure LayoutParams are inflated
         // properly.
         View rootView = inflater.inflate(
                 getRootLayoutId(), root, false);
         
-        // Assign data error button if it exists
-        Button dataError = (Button) rootView.findViewById(R.id.data_error);
-        if(dataError != null) dataError.setOnClickListener(this);
-        
-        question = args.getParcelable(ARG_QUESTION);
-        descriptor = args.getParcelable(ARG_DESCRIPTOR);
         int numberOfChoices = question.getNumberOfChoices();
         
         choiceButtons = getChoiceButtons(rootView);
@@ -77,42 +52,9 @@ public abstract class MultiChoiceFragment<QView extends View, AButton extends Bu
         
         startTime = System.nanoTime();
         
-        timer = (TimerView) rootView.findViewById(R.id.timerView);
-        if(descriptor.hasTimerPerContact()) {
-	        timer.setOnFinishedListener(this);
-	        timer.setTotalTime(descriptor.getMaxTimePerContact());
-	        timer.setTextAsCountdown();
-        } else {
-        	timer.setVisibility(View.GONE);
-        	timer = null; // Done with timer now
-        }
-        
+        configureGlobalViewItems(rootView);
+
 		return rootView;
-	}
-	
-	@Override
-	public void onStart() {
-		super.onStart();
-        if(timer != null) timer.start();
-	}
-	@Override
-	public void onStop() {
-		super.onStop();
-		if(timer != null) timer.cancel();
-	}
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		if(timer != null) timer.setOnFinishedListener(null);
-	}
-	
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		if(activity instanceof GameCallbacks)
-			callbacks = (GameCallbacks) activity;
-		else
-			Log.e(TAG, "onAttach - activity doesn't implement callbacks");
 	}
 	
 	int completedChoice = -2;
@@ -195,9 +137,10 @@ public abstract class MultiChoiceFragment<QView extends View, AButton extends Bu
 	}
 
 	@Override
-	public void onTimerFinished(TimerView view) {
+	public void onTimerFinished(TimingView view) {
 		// -1 indicates no choice was made - advance once user has seen correct
 		// answer.
-		completeView(-1);
+		if(descriptor.isHardTimerPerContact())
+			completeView(-1);
 	}
 }
