@@ -4,7 +4,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.CountDownTimer;
 import android.util.AttributeSet;
-import android.widget.ProgressBar;
+import android.view.View;
 
 /**
  * A view that has functionality to time something and show a progress
@@ -12,7 +12,7 @@ import android.widget.ProgressBar;
  * @author william
  *
  */
-public abstract class TimingView extends ProgressBar {
+public abstract class TimingView extends View {
 
 	private float totalTime = 1;
 
