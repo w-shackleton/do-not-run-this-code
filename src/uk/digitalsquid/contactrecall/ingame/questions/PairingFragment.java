@@ -1,14 +1,14 @@
-package uk.digitalsquid.contactrecall.ingame.fragments;
+package uk.digitalsquid.contactrecall.ingame.questions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import uk.digitalsquid.contactrecall.R;
-import uk.digitalsquid.contactrecall.ingame.PairingLayout;
-import uk.digitalsquid.contactrecall.ingame.PairingLayout.OnPairingsChangeListener;
-import uk.digitalsquid.contactrecall.ingame.TimerView;
-import uk.digitalsquid.contactrecall.ingame.TimingView;
-import uk.digitalsquid.contactrecall.ingame.TimingView.OnFinishedListener;
+import uk.digitalsquid.contactrecall.ingame.views.PairingLayout;
+import uk.digitalsquid.contactrecall.ingame.views.TimerView;
+import uk.digitalsquid.contactrecall.ingame.views.TimingView;
+import uk.digitalsquid.contactrecall.ingame.views.PairingLayout.OnPairingsChangeListener;
+import uk.digitalsquid.contactrecall.ingame.views.TimingView.OnFinishedListener;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import uk.digitalsquid.contactrecall.mgr.details.DataItem;
 import uk.digitalsquid.contactrecall.misc.Config;

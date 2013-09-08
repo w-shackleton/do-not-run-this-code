@@ -18,7 +18,7 @@
 	        android:text="@string/exclamation" />
     </LinearLayout>
 
-    <uk.digitalsquid.contactrecall.ingame.PairingLayout
+    <uk.digitalsquid.contactrecall.ingame.views.PairingLayout
         android:id="@+id/pairingLayout"
         android:layout_width="match_parent"
         android:layout_weight="1"
@@ -77,9 +77,9 @@
 		        android:text="@string/placeholder" />
         </TableRow>
 
-    </uk.digitalsquid.contactrecall.ingame.PairingLayout>
+    </uk.digitalsquid.contactrecall.ingame.views.PairingLayout>
 
-    <uk.digitalsquid.contactrecall.ingame.PointsGainBar
+    <uk.digitalsquid.contactrecall.ingame.views.PointsGainBar
         android:id="@+id/pointsGainBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

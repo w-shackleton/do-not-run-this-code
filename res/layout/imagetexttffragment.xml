@@ -66,7 +66,7 @@
 	        android:text="False"></Button>
 	</LinearLayout>
 
-    <uk.digitalsquid.contactrecall.ingame.PointsGainBar
+    <uk.digitalsquid.contactrecall.ingame.views.PointsGainBar
         android:id="@+id/pointsGainBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -12,7 +12,7 @@
 
 </FrameLayout>
 
-<uk.digitalsquid.contactrecall.ingame.TimerView
+<uk.digitalsquid.contactrecall.ingame.views.TimerView
     android:id="@+id/timer"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"

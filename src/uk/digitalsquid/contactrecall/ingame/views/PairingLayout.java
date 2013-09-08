@@ -1,4 +1,4 @@
-package uk.digitalsquid.contactrecall.ingame;
+package uk.digitalsquid.contactrecall.ingame.views;
 
 import java.util.Arrays;
 import java.util.HashMap;

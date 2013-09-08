@@ -1,4 +1,4 @@
-package uk.digitalsquid.contactrecall.ingame;
+package uk.digitalsquid.contactrecall.ingame.views;
 
 import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.misc.Function;

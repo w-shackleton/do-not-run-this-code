@@ -1,7 +1,7 @@
-package uk.digitalsquid.contactrecall.ingame.fragments;
+package uk.digitalsquid.contactrecall.ingame.questions;
 
 import uk.digitalsquid.contactrecall.R;
-import uk.digitalsquid.contactrecall.ingame.TimingView;
+import uk.digitalsquid.contactrecall.ingame.views.TimingView;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import android.os.Bundle;
 import android.util.Log;

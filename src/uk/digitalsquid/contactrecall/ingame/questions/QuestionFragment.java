@@ -1,10 +1,10 @@
-package uk.digitalsquid.contactrecall.ingame.fragments;
+package uk.digitalsquid.contactrecall.ingame.questions;
 
 import uk.digitalsquid.contactrecall.GameDescriptor;
 import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
-import uk.digitalsquid.contactrecall.ingame.PointsGainBar;
-import uk.digitalsquid.contactrecall.ingame.TimingView.OnFinishedListener;
+import uk.digitalsquid.contactrecall.ingame.views.PointsGainBar;
+import uk.digitalsquid.contactrecall.ingame.views.TimingView.OnFinishedListener;
 import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.misc.Config;
 import android.app.Activity;

@@ -1,4 +1,4 @@
-package uk.digitalsquid.contactrecall.ingame.fragments;
+package uk.digitalsquid.contactrecall.ingame.questions;
 
 import uk.digitalsquid.contactrecall.R;
 import android.view.View;
