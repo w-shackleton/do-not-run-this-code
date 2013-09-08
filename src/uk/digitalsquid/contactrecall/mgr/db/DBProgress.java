@@ -1,6 +1,7 @@
 package uk.digitalsquid.contactrecall.mgr.db;
 
 import uk.digitalsquid.contactrecall.App;
+import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.mgr.db.DB.DBSubclass;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import android.content.ContentValues;
@@ -18,10 +19,6 @@ import android.util.Log;
  *
  */
 public class DBProgress extends DBSubclass {
-	
-	public static final int ATTEMPT_STATUS_SUCCESS = 1;
-	public static final int ATTEMPT_STATUS_FAIL = 2;
-	public static final int ATTEMPT_STATUS_TIMEOUT = 3;
 	
 	private final App app;
 	
@@ -71,13 +68,17 @@ public class DBProgress extends DBSubclass {
 	}
 	
 	public void addSuccess(Contact contact, float delay) {
-		addAttempt(contact.getId(), -1, delay, ATTEMPT_STATUS_SUCCESS);
+		addAttempt(contact.getId(), -1, delay, GameCallbacks.CHOICE_CORRECT);
 	}
 	public void addFail(Contact contact, Contact mistake, float delay) {
-		addAttempt(contact.getId(), mistake != null ? mistake.getId() : -1, delay, ATTEMPT_STATUS_FAIL);
+		addAttempt(contact.getId(), mistake != null ? mistake.getId() : -1,
+				delay, GameCallbacks.CHOICE_INCORRECT);
+	}
+	public void addDiscard(Contact contact, float delay) {
+		addAttempt(contact.getId(), -1, delay, GameCallbacks.CHOICE_DISCARD);
 	}
 	public void addTimeout(Contact contact, float delay) {
-		addAttempt(contact.getId(), -1, delay, ATTEMPT_STATUS_TIMEOUT);
+		addAttempt(contact.getId(), -1, delay, GameCallbacks.CHOICE_TIMEOUT);
 	}
 	
 	/**

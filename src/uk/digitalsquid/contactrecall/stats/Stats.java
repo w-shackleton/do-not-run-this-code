@@ -2,6 +2,7 @@ package uk.digitalsquid.contactrecall.stats;
 
 import java.util.HashMap;
 
+import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.mgr.db.DB;
 import uk.digitalsquid.contactrecall.mgr.db.DBProgress;
 import uk.digitalsquid.contactrecall.mgr.db.DBProgress.GroupedMeanAttempt;
@@ -42,17 +43,19 @@ public final class Stats {
 			}
 			ContactStats stats = contactStats.get(meanAttempt.getContact());
 			switch(meanAttempt.getStatus()) {
-			case DBProgress.ATTEMPT_STATUS_SUCCESS:
+			case GameCallbacks.CHOICE_CORRECT:
 				stats.successes = meanAttempt.getCount();
 				stats.successTime = meanAttempt.getMeanDelay();
 				break;
-			case DBProgress.ATTEMPT_STATUS_FAIL:
+			case GameCallbacks.CHOICE_INCORRECT:
 				stats.fails = meanAttempt.getCount();
 				stats.failTime = meanAttempt.getMeanDelay();
 				break;
-			case DBProgress.ATTEMPT_STATUS_TIMEOUT:
+			case GameCallbacks.CHOICE_TIMEOUT:
 				stats.timeouts = meanAttempt.getCount();
 				break;
+			case GameCallbacks.CHOICE_DISCARD:
+				stats.discards = meanAttempt.getCount();
 			}
 		}
 	}
@@ -67,6 +70,7 @@ public final class Stats {
 		private int successes = 0;
 		private int fails = 0;
 		private int timeouts = 0;
+		private int discards = 0;
 		private float successTime = 0;
 		private float failTime = 0;
 		public Contact getContact() { return contact; }
@@ -81,6 +85,8 @@ public final class Stats {
 		void setSuccessTime(float successTime) { this.successTime = successTime; }
 		public float getFailTime() { return failTime; }
 		void setFailTime(float failTime) { this.failTime = failTime; }
+		public int getDiscards() { return discards; }
+		public void setDiscards(int discards) { this.discards = discards; }
 		
 		@Override
 		public int hashCode() {

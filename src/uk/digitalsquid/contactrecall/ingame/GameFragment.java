@@ -43,7 +43,6 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		if(args == null) return;
 		gameDescriptor = args.getParcelable("gameDescriptor");
 		
-		
 		if(savedInstanceState != null) {
 			position = savedInstanceState.getInt("position");
 			setGamePaused(savedInstanceState.getBoolean("gamePaused"));
@@ -133,35 +132,48 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 	}
 
 	@Override
-	public void choiceMade(Contact choice, boolean correct, boolean timeout, float timeTaken) {
+	public void choiceMade(Contact choice, int choiceType, float timeTaken) {
 		if(isGamePaused()) return;
 		position++;
-		postAdvanceQuestion(correct);
+		postAdvanceQuestion(choiceType);
 		
 		// TODO: Background this?
 		Question question = gameAdapter.getItem(position-1);
 		Contact contact = gameAdapter.getItem(position-1).getContact();
 		// Add to persistent DB
-		if(timeout) app.getDb().progress.addTimeout(
-				contact, timeTaken);
-		else if(correct) app.getDb().progress.addSuccess(
-				contact, timeTaken);
-		else app.getDb().progress.addFail(
-				contact, choice, timeTaken);
+		switch(choiceType) {
+		case CHOICE_TIMEOUT:
+			app.getDb().progress.addTimeout(contact, timeTaken);
+			break;
+		case CHOICE_CORRECT:
+			app.getDb().progress.addSuccess(contact, timeTaken);
+			break;
+		case CHOICE_INCORRECT:
+			app.getDb().progress.addFail(contact, choice, timeTaken);
+			break;
+		case CHOICE_DISCARD:
+			app.getDb().progress.addDiscard(contact, timeTaken);
+			break;
+		}
 		// Add to local data
-		if(timeout) {
-			QuestionFailData data = new QuestionFailData();
+		QuestionFailData data;
+		switch(choiceType) {
+		case CHOICE_DISCARD:
+		case CHOICE_TIMEOUT:
+			data = new QuestionFailData();
 			data.question = question;
 			data.contact = question.getContact();
 			failedContacts.add(data);
-		} else if(correct) {
-			
-		} else {
-			QuestionFailData data = new QuestionFailData();
+			break;
+		case CHOICE_CORRECT:
+			break;
+		case CHOICE_INCORRECT:
+			data = new QuestionFailData();
 			data.question = question;
 			data.contact = question.getContact();
 			data.incorrectChoice = choice;
 			failedContacts.add(data);
+			break;
 		}
 	}
 
@@ -173,7 +185,7 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		position++;
 		// true if all is fully correct
 		boolean allCorrect = incorrect.size() == 0 && timeout.size() == 0;
-		postAdvanceQuestion(allCorrect);
+		postAdvanceQuestion(allCorrect ? CHOICE_CORRECT : CHOICE_INCORRECT);
 		
 		// TODO: Background this?
 		Question question = gameAdapter.getItem(position-1);
@@ -204,7 +216,27 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 	 * Changes the view to the next question. Does not change any game data.
 	 * @param correct
 	 */
-	private void postAdvanceQuestion(boolean correct) {
+	private void postAdvanceQuestion(int choiceType) {
+		int waitTimeId, animInTmp, animOutTmp;
+		switch(choiceType) {
+		case CHOICE_CORRECT: default:
+			waitTimeId = R.integer.page_correct_wait_time;
+			animInTmp = R.animator.next_card_in;
+			animOutTmp = R.animator.next_card_out;
+			break;
+		case CHOICE_INCORRECT:
+		case CHOICE_TIMEOUT:
+			waitTimeId = R.integer.page_incorrect_wait_time;
+			animInTmp = R.animator.next_card_in_incorrect;
+			animOutTmp = R.animator.next_card_out_incorrect;
+			break;
+		case CHOICE_DISCARD:
+			waitTimeId = R.integer.page_discard_wait_time;
+			animInTmp = R.animator.discard_card_in;
+			animOutTmp = R.animator.discard_card_out;
+			break;
+		}
+		final int animIn = animInTmp, animOut = animOutTmp;
 		if(position >= gameAdapter.getCount()) {
 			// Run transition to summary card.
 			handler.postDelayed(new Runnable() {
@@ -216,7 +248,7 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 					fragment.setArguments(args);
 					if(getFragmentManager() != null)
 						getFragmentManager().beginTransaction().
-							setCustomAnimations(R.animator.summary_card_in, R.animator.next_card_out).
+							setCustomAnimations(R.animator.summary_card_in, animOut).
 							replace(R.id.container, fragment).
 							commit();
 					Game activity = (Game) getActivity();
@@ -224,10 +256,7 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 						activity.setGameFinished();
 					}
 				}
-			}, getResources().getInteger(
-					correct ?
-							R.integer.page_correct_wait_time :
-							R.integer.page_incorrect_wait_time));
+			}, getResources().getInteger(waitTimeId));
 		} else {
 			// Run transition to next card after the given delay.
 			// The position has already been updated so we shouldn't have
@@ -243,14 +272,11 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 					}
 					if(getFragmentManager() != null)
 						getFragmentManager().beginTransaction().
-							setCustomAnimations(R.animator.next_card_in, R.animator.next_card_out).
+							setCustomAnimations(animIn, animOut).
 							replace(R.id.pager, f).
 							commit();
 				}
-			}, getResources().getInteger(
-					correct ?
-							R.integer.page_correct_wait_time :
-							R.integer.page_incorrect_wait_time));
+			}, getResources().getInteger(waitTimeId));
 		}
 	}
 
@@ -274,6 +300,6 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 	@Override
 	public void onTimerFinished(TimingView view) {
 		position = gameAdapter.getCount();
-		postAdvanceQuestion(true);
+		postAdvanceQuestion(CHOICE_DISCARD);
 	}
 }

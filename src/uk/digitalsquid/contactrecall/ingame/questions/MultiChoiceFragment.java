@@ -1,6 +1,7 @@
 package uk.digitalsquid.contactrecall.ingame.questions;
 
 import uk.digitalsquid.contactrecall.R;
+import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.ingame.views.TimingView;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import android.os.Bundle;
@@ -71,11 +72,16 @@ public abstract class MultiChoiceFragment<QView extends View, AButton extends Bu
 		for(int i = 0; i < question.getNumberOfChoices(); i++) {
 			choiceButtons[i].setEnabled(false);
 		}
+
+		int choiceType = GameCallbacks.CHOICE_INCORRECT;
+		if(choice == question.getCorrectPosition()) choiceType = GameCallbacks.CHOICE_CORRECT;
+		if(choice == -1) choiceType = GameCallbacks.CHOICE_TIMEOUT;
 		
 		Contact chosenContact = null;
 		
 		// Set button styles accordingly
-		if(choice == question.getCorrectPosition()) {
+		switch(choiceType) {
+		case GameCallbacks.CHOICE_CORRECT:
 			choiceButtons[choice].setBackgroundColor(
 					getActivity().getResources().getColor(R.color.correct_actual_bg));
 			/* TODO: Do we want to change BG col for other buttons
@@ -85,10 +91,12 @@ public abstract class MultiChoiceFragment<QView extends View, AButton extends Bu
 						getActivity().getResources().getColor(R.color.correct_other_bg));
 			} */
 			chosenContact = question.getContact();
-		} else if(choice == -1) {
+			break;
+		case GameCallbacks.CHOICE_TIMEOUT:
 			choiceButtons[question.getCorrectPosition()].setBackgroundColor(
 					getActivity().getResources().getColor(R.color.incorrect_actual_bg));
-		} else {
+			break;
+		case GameCallbacks.CHOICE_INCORRECT:
 			choiceButtons[choice].setBackgroundColor(
 					getActivity().getResources().getColor(R.color.incorrect_choice_bg));
 			choiceButtons[question.getCorrectPosition()].setBackgroundColor(
@@ -105,13 +113,13 @@ public abstract class MultiChoiceFragment<QView extends View, AButton extends Bu
 							choice : choice - 1;
 			if(otherAnswersIndex >= 0 && otherAnswersIndex < question.getOtherAnswers().length)
 				chosenContact = question.getOtherAnswers()[otherAnswersIndex];
+			break;
 		}
 		
 		float delay = (float)(System.nanoTime() - startTime) / (float)1000000000L;
 		
 		Log.d(TAG, "Chosen contact is " + chosenContact);
-		if(callbacks != null) callbacks.choiceMade(chosenContact, choice == question.getCorrectPosition(),
-				choice == -1, delay);
+		if(callbacks != null) callbacks.choiceMade(chosenContact, choiceType, delay);
 		else Log.e(TAG, "Callbacks are currently null!");
 	}
 

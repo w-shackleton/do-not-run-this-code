@@ -5,6 +5,7 @@
     <item type="integer" name="page_flip_time_full">300</item>
     <item type="integer" name="summary_card_in_time">1000</item>
     <item type="integer" name="page_incorrect_wait_time">2000</item>
+    <item type="integer" name="page_discard_wait_time">0</item>
     <item type="integer" name="page_correct_wait_time">0</item>
     
 </resources>

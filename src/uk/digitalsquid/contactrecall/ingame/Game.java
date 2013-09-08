@@ -12,6 +12,8 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -24,13 +26,14 @@ import android.widget.Toast;
  * if the container contains all these things. Might be worth doing.
  */
 public class Game extends Activity implements GameCallbacks, Config {
-	
 	public static final String GAME_DESRIPTOR = "uk.digitalsquid.contactrecall.gameInstance";
 	
 	GameDescriptor gameDescriptor;
 	
 	private boolean gamePaused = false;
 	private boolean gameRunning = true;
+	
+	private GestureDetector gestureDetector;
 	
 	/**
 	 * This class implements {@link GameCallbacks} -
@@ -45,6 +48,8 @@ public class Game extends Activity implements GameCallbacks, Config {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.game);
+		
+		gestureDetector = new GestureDetector(this, new DiscardGestureListener());
 		
 		if(savedInstanceState == null) {
 			GameFragment gameFragment = new GameFragment();
@@ -86,6 +91,12 @@ public class Game extends Activity implements GameCallbacks, Config {
 		outState.putBoolean("gamePaused", gamePaused);
 	}
 	
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		gestureDetector.onTouchEvent(event);
+		return super.onTouchEvent(event);
+	}
+	
 	void resumeGame() {
 		if(isGamePaused()) {
 			// Let handler pop pause screen from stack
@@ -118,8 +129,8 @@ public class Game extends Activity implements GameCallbacks, Config {
 	}
 	
 	@Override
-	public void choiceMade(Contact choice, boolean correct, boolean timeout, float timeTaken) {
-		callbacks.choiceMade(choice, correct, timeout, timeTaken);
+	public void choiceMade(Contact choice, int choiceType, float timeTaken) {
+		callbacks.choiceMade(choice, choiceType, timeTaken);
 	}
 	@Override
 	public void pairingChoiceMade(ArrayList<Contact> correct,
@@ -167,5 +178,40 @@ public class Game extends Activity implements GameCallbacks, Config {
 		transaction.addToBackStack(null);
 		transaction.commit();
 		setGamePaused(true);
+	}
+	
+	private class DiscardGestureListener
+			extends GestureDetector.SimpleOnGestureListener implements Config {
+		
+		@Override
+		public boolean onDown(MotionEvent event) {
+			return true;
+		}
+	
+		private static final int MAX_OFF_PATH = 250;
+		private static final int MIN_DISTANCE = 120;
+		private static final int THRESHOLD_VELOCITY = 200;
+		
+		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+				float velocityY) {
+			if(Math.abs(e1.getX() - e2.getX()) > MAX_OFF_PATH)
+				return false;
+			if(Math.abs(velocityY) < THRESHOLD_VELOCITY)
+				return false;
+			if(e1.getY() - e2.getY() > MIN_DISTANCE) {
+				// Swipe up happened
+				Log.i(TAG, "User swiped up on question");
+				Log.d(TAG, String.format("   - %f off path, %f velocity, dist %f",
+						Math.abs(e1.getX() - e2.getX()),
+						velocityY,
+						e1.getY() - e2.getY()));
+				
+				choiceMade(null, CHOICE_DISCARD, 0);
+						
+				return true;
+			}
+			return super.onFling(e1, e2, velocityX, velocityY);
+		}
 	}
 }

@@ -122,7 +122,9 @@ public final class ContactManager implements Config {
 					
 					contacts.put(contact.getId(), contact);
 				}
-				listener.onBaseDataLoadProgress((float)(i++) / (float)total);
+				i++;
+				if(i % 10 == 0)
+					listener.onBaseDataLoadProgress((float)i / (float)total);
 			}
 		}
 		cur.close();
@@ -167,7 +169,8 @@ public final class ContactManager implements Config {
 			if(contact == null) continue;
 			String mime = cur.getString(mimeTypeIdx);
 			if(mime == null) continue;
-			listener.onAuxiliaryDataLoadProgress((float)(i) / (float)total);
+			if(i % 10 == 0)
+				listener.onAuxiliaryDataLoadProgress((float)(i) / (float)total);
 			if(mime.equals(ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE)) {
 				contact.getDetails().setCompany(cur.getString(companyIdx));
 				contact.getDetails().setDepartment(cur.getString(departmentIdx));
@@ -381,7 +384,7 @@ public final class ContactManager implements Config {
 				loadData(new LoadingStatusListener() {
 					@Override
 					public void onBaseDataLoadProgress(float progress) {
-						if(broadcastCount++ == 10) {
+						if(broadcastCount++ == 4) {
 							Log.v(TAG, "Base data load " + (int)(progress * 100) + "%");
 							broadcastCount = 0;
 							publishProgress(progress / 4);
@@ -390,7 +393,7 @@ public final class ContactManager implements Config {
 					
 					@Override
 					public void onAuxiliaryDataLoadProgress(float progress) {
-						if(broadcastCount++ == 10) {
+						if(broadcastCount++ == 4) {
 							Log.v(TAG, "Aux data load " + (int)(progress * 100) + "%");
 							broadcastCount = 0;
 							publishProgress(0.25f + progress * 0.75f);

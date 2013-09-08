@@ -12,13 +12,20 @@ import android.util.Pair;
  *
  */
 public interface GameCallbacks {
+	
+	public static final int CHOICE_CORRECT = 1;
+	public static final int CHOICE_INCORRECT = 2;
+	public static final int CHOICE_TIMEOUT = 3;
+	public static final int CHOICE_DISCARD = 4;
+
 	/**
 	 * Notifies the activity / fragment that the user has made a choice
 	 * and that it is time to move on.
-	 * @param choice The number of the choice made TODO may not be used
-	 * @param correct If <code>true</code>, the choice was correct
+	 * @param choice The contact that was chosen (if one was)
+	 * @param choiceType The type of choice. See {@link GameCallbacks}.CHOICE_..
+	 * @param timeTaken The time taken, in seconds
 	 */
-	void choiceMade(Contact choice, boolean correct, boolean timeout, float timeTaken);
+	void choiceMade(Contact choice, int choiceType, float timeTaken);
 
 	/**
 	 * Notifies the activity / fragment that the user has made a pairing choice
