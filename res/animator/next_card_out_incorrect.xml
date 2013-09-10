@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <set xmlns:android="http://schemas.android.com/apk/res/android" >
-    <!-- Slide off. -->
-    <objectAnimator
-        android:valueFrom="0"
-        android:valueTo="-100"
-        android:propertyName="X"
-        android:interpolator="@android:interpolator/accelerate_decelerate"
-        android:duration="@integer/page_flip_time_full" />
-    <objectAnimator
-        android:valueFrom="1"
-        android:valueTo="0"
-        android:propertyName="alpha"
-        android:interpolator="@android:interpolator/accelerate_decelerate"
-        android:duration="@integer/page_flip_time_full" />
+    <!-- Slide off to bottom left corner -->
+	    <objectAnimator
+	        android:valueFrom="0"
+	        android:valueTo="-500dp"
+	        android:propertyName="X"
+	        android:interpolator="@android:interpolator/accelerate_quint"
+	        android:duration="@integer/page_flip_time_full" />
+	    <objectAnimator
+	        android:valueFrom="0"
+	        android:valueTo="500dp"
+	        android:propertyName="Y"
+	        android:interpolator="@android:interpolator/accelerate_quint"
+	        android:duration="@integer/page_flip_time_full" />
+	    <objectAnimator
+	        android:valueFrom="0"
+	        android:valueTo="-90"
+	        android:propertyName="rotation"
+	        android:interpolator="@android:interpolator/accelerate_quint"
+	        android:duration="@integer/page_flip_time_full" />
+	    <objectAnimator
+	        android:valueFrom="1"
+	        android:valueTo="0"
+	        android:propertyName="alpha"
+	        android:interpolator="@android:interpolator/accelerate_cubic"
+	        android:duration="@integer/page_flip_time_full" />
 
 </set>
