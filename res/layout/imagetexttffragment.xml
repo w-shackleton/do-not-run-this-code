@@ -10,7 +10,7 @@
         android:layout_weight="1"
         android:layout_margin="5dip"
         android:orientation="horizontal">
-	    <ImageView
+	    <uk.digitalsquid.contactrecall.ingame.views.AsyncImageView
 	        android:id="@+id/photo"
 	        android:layout_width="fill_parent"
 	        android:layout_height="fill_parent"

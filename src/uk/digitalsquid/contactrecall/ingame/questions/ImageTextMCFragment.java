@@ -2,14 +2,16 @@ package uk.digitalsquid.contactrecall.ingame.questions;
 
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.R;
+import uk.digitalsquid.contactrecall.ingame.views.AsyncImageView;
+import uk.digitalsquid.contactrecall.ingame.views.AsyncImageView.ImageLoader;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 
 
 /**
@@ -18,7 +20,13 @@ import android.widget.ImageView;
  * @author william
  *
  */
-public class ImageTextMCFragment extends MultiChoiceFragment<ImageView, Button> {
+public class ImageTextMCFragment extends MultiChoiceFragment<AsyncImageView, Button> {
+	
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		// The timer should start once the image is loaded
+		setStartTimerImmediately(false);
+	}
 
 	@Override
 	protected int getRootLayoutId() {
@@ -26,8 +34,8 @@ public class ImageTextMCFragment extends MultiChoiceFragment<ImageView, Button> 
 	}
 
 	@Override
-	protected ImageView getQuestionView(View rootView) {
-        return (ImageView) rootView.findViewById(R.id.photo);
+	protected AsyncImageView getQuestionView(View rootView) {
+        return (AsyncImageView) rootView.findViewById(R.id.photo);
 	}
 
 	@Override
@@ -70,9 +78,16 @@ public class ImageTextMCFragment extends MultiChoiceFragment<ImageView, Button> 
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
         // Show photo
-		App app = (App) getActivity().getApplication();
-		// TODO: Background this? Probably not - we want photo to appear along with UI
-        Bitmap bmp = question.getContact().getPhoto(app.getPhotos());
-        questionView.setImageBitmap(bmp);
+		final App app = (App) getActivity().getApplication();
+		questionView.setImageBitmapAsync(new ImageLoader() {
+			@Override
+			public void onImageLoaded(AsyncImageView asyncImageView) {
+				if(timer != null) timer.start();
+			}
+			@Override
+			public Bitmap loadImage(Context context) {
+		        return question.getContact().getPhoto(app.getPhotos());
+			}
+		});
 	}
 }

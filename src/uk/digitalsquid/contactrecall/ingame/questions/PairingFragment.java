@@ -5,9 +5,8 @@ import java.util.Arrays;
 
 import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.ingame.views.PairingLayout;
-import uk.digitalsquid.contactrecall.ingame.views.TimerView;
-import uk.digitalsquid.contactrecall.ingame.views.TimingView;
 import uk.digitalsquid.contactrecall.ingame.views.PairingLayout.OnPairingsChangeListener;
+import uk.digitalsquid.contactrecall.ingame.views.TimingView;
 import uk.digitalsquid.contactrecall.ingame.views.TimingView.OnFinishedListener;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import uk.digitalsquid.contactrecall.mgr.details.DataItem;
@@ -27,7 +26,6 @@ public abstract class PairingFragment<QView extends View, AView extends View>
 	protected QView[] questionViews;
 	protected AView[] choiceViews;
 	protected PairingLayout pairingLayout;
-	private TimerView timer;
 	
 	long startTime;
 

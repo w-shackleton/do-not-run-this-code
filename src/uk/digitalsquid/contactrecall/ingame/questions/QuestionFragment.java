@@ -31,6 +31,8 @@ public abstract class QuestionFragment extends Fragment
 	protected GameDescriptor descriptor;
 
 	protected PointsGainBar timer;
+	
+	private boolean startTimerImmediately = true;
 
 	long startTime;
 	
@@ -66,7 +68,7 @@ public abstract class QuestionFragment extends Fragment
 	@Override
 	public void onStart() {
 		super.onStart();
-        if(timer != null) timer.start();
+        if(timer != null && isStartTimerImmediately()) timer.start();
 	}
 	@Override
 	public void onStop() {
@@ -86,5 +88,13 @@ public abstract class QuestionFragment extends Fragment
 			callbacks = (GameCallbacks) activity;
 		else
 			Log.e(TAG, "onAttach - activity doesn't implement callbacks");
+	}
+
+	protected boolean isStartTimerImmediately() {
+		return startTimerImmediately;
+	}
+
+	protected void setStartTimerImmediately(boolean startTimerImmediately) {
+		this.startTimerImmediately = startTimerImmediately;
 	}
 }

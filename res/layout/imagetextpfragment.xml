@@ -24,7 +24,7 @@
 
         <TableRow
             style="@style/PairingRow" >
-		    <ImageView
+		    <uk.digitalsquid.contactrecall.ingame.views.AsyncImageView
 		        android:id="@+id/question1"
 		        style="@style/Pairing.Row.Left.ImageView"
 		        android:contentDescription="@string/photo_description" />
@@ -39,7 +39,7 @@
         <TableRow
             style="@style/PairingRow" >
 
-		    <ImageView
+		    <uk.digitalsquid.contactrecall.ingame.views.AsyncImageView
 		        android:id="@+id/question2"
 		        style="@style/Pairing.Row.Left.ImageView"
 		        android:contentDescription="@string/photo_description" />
@@ -52,7 +52,7 @@
 
         <TableRow
             style="@style/PairingRow" >
-		    <ImageView
+		    <uk.digitalsquid.contactrecall.ingame.views.AsyncImageView
 		        android:id="@+id/question3"
 		        style="@style/Pairing.Row.Left.ImageView"
 		        android:contentDescription="@string/photo_description" />
@@ -65,7 +65,7 @@
 
         <TableRow
             style="@style/PairingRow" >
-		    <ImageView
+		    <uk.digitalsquid.contactrecall.ingame.views.AsyncImageView
 		        android:id="@+id/question4"
 		        style="@style/Pairing.Row.Left.ImageView"
 		        android:contentDescription="@string/photo_description" />
