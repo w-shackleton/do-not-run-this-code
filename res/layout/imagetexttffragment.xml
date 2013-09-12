@@ -4,29 +4,20 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/questionTop_overlap"
+        layout="@layout/question_top" />
+
+    <uk.digitalsquid.contactrecall.ingame.views.AsyncImageView
+        android:id="@+id/photo"
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1"
         android:layout_margin="5dip"
-        android:orientation="horizontal">
-	    <uk.digitalsquid.contactrecall.ingame.views.AsyncImageView
-	        android:id="@+id/photo"
-	        android:layout_width="fill_parent"
-	        android:layout_height="fill_parent"
-	        android:contentDescription="@string/contentDescription_photo" />
+        android:contentDescription="@string/contentDescription_photo" />
 
-	    <Button
-	        android:id="@+id/data_error"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentRight="true"
-	        android:layout_alignParentTop="true"
-	        style="@style/errorbutton"
-	        android:text="!" />
-
-    </RelativeLayout>
-    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -66,9 +57,10 @@
 	        android:text="False"></Button>
 	</LinearLayout>
 
-    <uk.digitalsquid.contactrecall.ingame.views.PointsGainBar
-        android:id="@+id/pointsGainBar"
+    <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0" />
+        android:layout_marginTop="@dimen/questionBottom_overlap"
+        layout="@layout/question_bottom" />
+
 </LinearLayout>

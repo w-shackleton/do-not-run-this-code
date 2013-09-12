@@ -4,17 +4,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <include
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-	    <Button
-	        android:id="@+id/data_error"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        style="@style/errorbutton"
-	        android:text="@string/exclamation" />
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/questionTop_overlap"
+        layout="@layout/question_top" />
 
     <uk.digitalsquid.contactrecall.ingame.views.PairingLayout
         android:id="@+id/pairingLayout"
@@ -78,9 +72,10 @@
 
     </uk.digitalsquid.contactrecall.ingame.views.PairingLayout>
 
-    <uk.digitalsquid.contactrecall.ingame.views.PointsGainBar
-        android:id="@+id/pointsGainBar"
+    <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0" />
+        android:layout_marginTop="@dimen/questionBottom_overlap"
+        layout="@layout/question_bottom" />
+
 </LinearLayout>

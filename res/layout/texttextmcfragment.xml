@@ -4,6 +4,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/questionTop_overlap"
+        layout="@layout/question_top" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dip"
@@ -97,9 +103,10 @@
 	    </LinearLayout>
     </LinearLayout>
 
-    <uk.digitalsquid.contactrecall.ingame.views.PointsGainBar
-        android:id="@+id/pointsGainBar"
+    <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0" />
+        android:layout_marginTop="@dimen/questionBottom_overlap"
+        layout="@layout/question_bottom" />
+
 </LinearLayout>

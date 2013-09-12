@@ -2,7 +2,6 @@
 <resources>
     <!-- TODO: Make sure placeholder is blank for release -->
     <string name="placeholder">Text</string>
-    <string name="exclamation">!</string>
 
     <string name="app_name">Contact Recaller</string>
     <string name="changegroups">Contact Groups</string>
