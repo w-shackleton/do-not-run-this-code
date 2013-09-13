@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="questionBottom_overlap">0dip</dimen>
+    <dimen name="questionTop_overlap">0dip</dimen>
+    <dimen name="pointsGainBar_margin">60dip</dimen>
+    
+</resources>

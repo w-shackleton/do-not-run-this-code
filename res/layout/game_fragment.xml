@@ -5,19 +5,64 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res/uk.digitalsquid.contactrecall">
 
-<FrameLayout
-    android:id="@+id/pager"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+	<LinearLayout
+	    android:id="@+id/gameFrameTop"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:background="@drawable/questiontop_bg"
+	    android:orientation="horizontal" >
+	    
+	    <!--  TODO: Replace with pictures, and put in ActionBar?
+	    Maybe not action bar, as there will be more stuff here. -->
+	    
+	    <Button
+	        android:id="@+id/data_error"
+	        style="?android:attr/buttonBarButtonStyle"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Data Error" />
+	    <Button
+	        android:id="@+id/pause"
+	        style="?android:attr/buttonBarButtonStyle"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Pause" />
 
-</FrameLayout>
+		<uk.digitalsquid.contactrecall.ingame.views.TimerView
+		    android:id="@+id/timer"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    custom:timerBackground="@color/timer_whole_bg" />
+	
+	</LinearLayout>
 
-<uk.digitalsquid.contactrecall.ingame.views.TimerView
-    android:id="@+id/timer"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignParentRight="true"
-    android:layout_alignParentTop="true"
-    custom:timerBackground="@color/timer_whole_bg" />
+	<FrameLayout
+	    android:id="@+id/pager"
+	    android:layout_below="@id/gameFrameTop"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent" >
+	
+	</FrameLayout>
 
+    <TextView
+        android:id="@+id/incorrectCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/left_score_plain"
+        android:text="@string/placeholder"
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/correctCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/right_score_plain"
+        android:text="@string/placeholder"
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+	
 </RelativeLayout>

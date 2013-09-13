@@ -78,6 +78,8 @@ public class Game extends Activity implements GameCallbacks, Config {
 					add(R.id.container, gameFragment).
 					commit();
 		} else {
+			// FIXME: On rotate, the fragment inside container isn't always
+			// a GameFragment - if paused it's different
 			GameFragment gameFragment = (GameFragment) getFragmentManager().findFragmentById(R.id.container);
 			callbacks = gameFragment;
 			
