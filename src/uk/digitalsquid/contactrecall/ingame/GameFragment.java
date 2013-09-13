@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class GameFragment extends Fragment implements GameCallbacks, OnFinishedListener {
@@ -31,6 +32,8 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 	Handler handler = new Handler();
 	
 	private TimerView timer;
+	private TextView correctCountView, incorrectCountView;
+	private int correctCount = 0, incorrectCount = 0, discardCount = 0;
 	
 	private boolean gamePaused;
 	
@@ -45,6 +48,9 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		
 		if(savedInstanceState != null) {
 			position = savedInstanceState.getInt("position");
+			correctCount = savedInstanceState.getInt("correctCount", 0);
+			incorrectCount = savedInstanceState.getInt("incorrectCount", 0);
+			discardCount = savedInstanceState.getInt("discardCount", 0);
 			setGamePaused(savedInstanceState.getBoolean("gamePaused"));
 			failedContacts = savedInstanceState.getParcelableArrayList("failedContacts");
 		} else {
@@ -61,6 +67,12 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		frameLayout = (FrameLayout) rootView.findViewById(R.id.pager);
 		
 		timer = (TimerView)rootView.findViewById(R.id.timer);
+
+		correctCountView = (TextView)rootView.findViewById(R.id.correctCount);
+		incorrectCountView = (TextView)rootView.findViewById(R.id.incorrectCount);
+		correctCountView.setText(String.format("%d", correctCount));
+		incorrectCountView.setText(String.format("%d", incorrectCount));
+
         if(gameDescriptor.hasTimer()) {
 	        timer.setOnFinishedListener(this);
 	        timer.setTotalTime(gameDescriptor.getMaxTime());
@@ -126,6 +138,9 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		if(gameAdapter != null) {
 			outState.putParcelable("gameAdapter", gameAdapter);
 			outState.putInt("position", position);
+			outState.putInt("correctCount", correctCount);
+			outState.putInt("incorrectCount", incorrectCount);
+			outState.putInt("discardCount", discardCount);
 			outState.putBoolean("gamePaused", gamePaused);
 			outState.putParcelableArrayList("failedContacts", failedContacts);
 		}
@@ -147,12 +162,15 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 			break;
 		case CHOICE_CORRECT:
 			app.getDb().progress.addSuccess(contact, timeTaken);
+			correctCount++;
 			break;
 		case CHOICE_INCORRECT:
 			app.getDb().progress.addFail(contact, choice, timeTaken);
+			incorrectCount++;
 			break;
 		case CHOICE_DISCARD:
 			app.getDb().progress.addDiscard(contact, timeTaken);
+			discardCount++;
 			break;
 		}
 		// Add to local data
@@ -186,6 +204,8 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		// true if all is fully correct
 		boolean allCorrect = incorrect.size() == 0 && timeout.size() == 0;
 		postAdvanceQuestion(allCorrect ? CHOICE_CORRECT : CHOICE_INCORRECT);
+		if(allCorrect) correctCount++;
+		else incorrectCount++;
 		
 		// TODO: Background this?
 		Question question = gameAdapter.getItem(position-1);
@@ -227,7 +247,7 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		case CHOICE_INCORRECT:
 		case CHOICE_TIMEOUT:
 			waitTimeId = R.integer.page_incorrect_wait_time;
-			animInTmp = R.animator.next_card_in_incorrect;
+			animInTmp = R.animator.next_card_in;
 			animOutTmp = R.animator.next_card_out_incorrect;
 			break;
 		case CHOICE_DISCARD:
@@ -270,6 +290,11 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 						Log.e(Game.TAG, "Null question fragment!");
 						return;
 					}
+					
+					// Update scores
+					correctCountView.setText(String.format("%d", correctCount));
+					incorrectCountView.setText(String.format("%d", incorrectCount));
+
 					if(getFragmentManager() != null)
 						getFragmentManager().beginTransaction().
 							setCustomAnimations(animIn, animOut).
@@ -302,4 +327,7 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		position = gameAdapter.getCount();
 		postAdvanceQuestion(CHOICE_DISCARD);
 	}
+
+	@Override
+	public void pauseGame() { }
 }

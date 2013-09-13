@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 
@@ -16,7 +17,9 @@ import android.widget.Button;
  * @author william
  *
  */
-public abstract class MultiChoiceFragment<QView extends View, AButton extends Button> extends QuestionFragment {
+public abstract class
+		MultiChoiceFragment<QView extends View, AButton extends Button>
+		extends QuestionFragment implements OnClickListener {
 	
 	protected QView questionView;
 	protected AButton[] choiceButtons;
@@ -136,12 +139,12 @@ public abstract class MultiChoiceFragment<QView extends View, AButton extends Bu
 		case R.id.choice6: choice = 5; break;
 		case R.id.choice7: choice = 6; break;
 		case R.id.choice8: choice = 7; break;
-		
-		case R.id.data_error:
-			// TODO: Show data error screen
-			return;
 		}
 		completeView(choice);
+	}
+	
+	protected void onDataErrorPressed() {
+		// TODO: Show data error screen
 	}
 
 	@Override

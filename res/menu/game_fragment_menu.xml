@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/pause" android:title="@string/pause" android:icon="@drawable/ic_menu_pause" android:showAsAction="always"></item>
+    <item android:id="@+id/data_error" android:title="@string/data_error" android:showAsAction="ifRoom" android:icon="@drawable/ic_menu_data_error"></item>
+    
+
+</menu>

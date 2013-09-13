@@ -31,4 +31,6 @@
 
     <string name="contact_hidden">Contact hidden</string>
     <string name="field_hidden">Field hidden</string>
+    <string name="pause">Pause</string>
+    <string name="data_error">Error in Question</string>
 </resources>

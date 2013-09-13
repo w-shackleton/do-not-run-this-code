@@ -12,22 +12,6 @@
 	    android:background="@drawable/questiontop_bg"
 	    android:orientation="horizontal" >
 	    
-	    <!--  TODO: Replace with pictures, and put in ActionBar?
-	    Maybe not action bar, as there will be more stuff here. -->
-	    
-	    <Button
-	        android:id="@+id/data_error"
-	        style="?android:attr/buttonBarButtonStyle"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="Data Error" />
-	    <Button
-	        android:id="@+id/pause"
-	        style="?android:attr/buttonBarButtonStyle"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="Pause" />
-
 		<uk.digitalsquid.contactrecall.ingame.views.TimerView
 		    android:id="@+id/timer"
 		    android:layout_width="wrap_content"
@@ -50,6 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@drawable/left_score_plain"
+        android:gravity="center"
         android:text="@string/placeholder"
         android:textAlignment="center"
         android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -61,6 +46,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:background="@drawable/right_score_plain"
+        android:gravity="center"
         android:text="@string/placeholder"
         android:textAlignment="center"
         android:textAppearance="?android:attr/textAppearanceLarge" />

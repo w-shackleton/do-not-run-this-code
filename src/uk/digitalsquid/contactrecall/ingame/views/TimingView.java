@@ -53,7 +53,8 @@ public abstract class TimingView extends View {
 			
 			@Override
 			public void onFinish() {
-				onFinishedListener.onTimerFinished(TimingView.this);
+				if(onFinishedListener != null)
+					onFinishedListener.onTimerFinished(TimingView.this);
 				timeRemaining = 0;
 				invalidate();
 			}
@@ -129,5 +130,14 @@ public abstract class TimingView extends View {
 	public void setPaused(boolean pause) {
 		if(pause) pause();
 		else resume();
+	}
+	
+	@Override
+	protected void onDetachedFromWindow() {
+		super.onDetachedFromWindow();
+		cancel();
+		anim = null;
+		timer = null;
+		onFinishedListener = null;
 	}
 }

@@ -6,12 +6,12 @@
         android:valueTo="0"
         android:propertyName="X"
         android:interpolator="@android:interpolator/decelerate_cubic"
-        android:duration="@integer/page_flip_time_full" />
+        android:duration="@integer/page_advance_time" />
     <objectAnimator
         android:valueFrom="0"
         android:valueTo="1"
         android:propertyName="alpha"
         android:interpolator="@android:interpolator/decelerate_cubic"
-        android:duration="@integer/page_flip_time_full" />
+        android:duration="@integer/page_advance_time" />
 
 </set>

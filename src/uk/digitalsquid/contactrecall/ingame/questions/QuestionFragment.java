@@ -11,9 +11,10 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 
 /**
  * The base for a displayed question.
@@ -21,7 +22,7 @@ import android.widget.Button;
  *
  */
 public abstract class QuestionFragment extends Fragment
-		implements OnClickListener, OnFinishedListener, Config {
+		implements OnFinishedListener, Config {
 	public static final String ARG_QUESTION = "question";
 	public static final String ARG_DESCRIPTOR = "descriptor";
 	
@@ -42,6 +43,7 @@ public abstract class QuestionFragment extends Fragment
 		Bundle args = getArguments();
         question = args.getParcelable(ARG_QUESTION);
         descriptor = args.getParcelable(ARG_DESCRIPTOR);
+		setHasOptionsMenu(true);
 	}
 	
 	/**
@@ -49,10 +51,6 @@ public abstract class QuestionFragment extends Fragment
 	 * @param rootView
 	 */
 	protected void configureGlobalViewItems(View rootView) {
-        // Assign data error button if it exists
-        Button dataError = (Button) rootView.findViewById(R.id.data_error);
-        if(dataError != null) dataError.setOnClickListener(this);
-        
         startTime = System.nanoTime();
 
         timer = (PointsGainBar) rootView.findViewById(R.id.pointsGainBar);
@@ -63,6 +61,25 @@ public abstract class QuestionFragment extends Fragment
         	timer.setVisibility(View.GONE);
         	timer = null; // Done with timer now
         }
+	}
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.game_fragment_menu, menu);
+	}
+	
+	public boolean onOptionsItemSelected(MenuItem item) {
+		super.onOptionsItemSelected(item);
+		switch(item.getItemId()) {
+		case R.id.pause:
+			callbacks.pauseGame();
+			return true;
+		case R.id.data_error:
+			onDataErrorPressed();
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -80,6 +97,8 @@ public abstract class QuestionFragment extends Fragment
 		super.onDestroy();
 		if(timer != null) timer.setOnFinishedListener(null);
 	}
+	
+	protected abstract void onDataErrorPressed();
 	
 	@Override
 	public void onAttach(Activity activity) {

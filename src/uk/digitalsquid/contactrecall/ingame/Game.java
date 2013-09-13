@@ -131,6 +131,13 @@ public class Game extends Activity implements GameCallbacks, Config {
 	}
 	
 	@Override
+	public void pauseGame() {
+		if(getFragmentManager().getBackStackEntryCount() == 0 &&
+				isGameRunning())
+			onBackPressed();
+	}
+	
+	@Override
 	public void choiceMade(Contact choice, int choiceType, float timeTaken) {
 		callbacks.choiceMade(choice, choiceType, timeTaken);
 	}

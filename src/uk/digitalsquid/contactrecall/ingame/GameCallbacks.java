@@ -42,7 +42,16 @@ public interface GameCallbacks {
 			ArrayList<Contact> timeout,
 			float timeTaken);
 	
+	/**
+	 * Sets the logical status of the game to paused
+	 * @param paused
+	 */
 	void setGamePaused(boolean paused);
+	
+	/**
+	 * Actually pauses the game, logically and visually
+	 */
+	void pauseGame();
 	
 	void dataErrorFound(ArrayList<DataItem> possibleErrors);
 }

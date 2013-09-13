@@ -16,11 +16,10 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 public abstract class PairingFragment<QView extends View, AView extends View>
-		extends QuestionFragment implements OnClickListener, OnFinishedListener,
+		extends QuestionFragment implements OnFinishedListener,
 		OnPairingsChangeListener, Config {
 
 	protected QView[] questionViews;
@@ -116,26 +115,23 @@ public abstract class PairingFragment<QView extends View, AView extends View>
 	}
 
 	@Override
-	public void onClick(View view) {
-		switch(view.getId()) {
-		case R.id.data_error:
-			// Questions
-			ArrayList<DataItem> dataItems = new ArrayList<DataItem>();
-			for(Contact contact : question.getContacts()) {
-				DataItem item = new DataItem(contact, question.getQuestionType());
+	protected void onDataErrorPressed() {
+		// Questions
+		ArrayList<DataItem> dataItems = new ArrayList<DataItem>();
+		for(Contact contact : question.getContacts()) {
+			DataItem item = new DataItem(contact, question.getQuestionType());
+			dataItems.add(item);
+		}
+		// Answers - in order
+		for(int idx : question.getCorrectPairings()) {
+			if(idx < question.getContactCount()) {
+				Contact contact = question.getContact(idx);
+				DataItem item = new DataItem(contact, question.getAnswerType());
 				dataItems.add(item);
 			}
-			// Answers - in order
-			for(int idx : question.getCorrectPairings()) {
-				if(idx < question.getContactCount()) {
-					Contact contact = question.getContact(idx);
-					DataItem item = new DataItem(contact, question.getAnswerType());
-					dataItems.add(item);
-				}
-			}
-			callbacks.dataErrorFound(dataItems);
-			return;
 		}
+		callbacks.dataErrorFound(dataItems);
+		return;
 	}
 	
 	@Override
