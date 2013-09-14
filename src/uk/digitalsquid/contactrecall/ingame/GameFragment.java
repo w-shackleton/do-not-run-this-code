@@ -108,6 +108,11 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		}
 		getFragmentManager().beginTransaction().
 			replace(R.id.pager, f).commit();
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
 		if(timer != null) timer.start();
 	}
 	
@@ -312,7 +317,6 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 	@Override
 	public void setGamePaused(boolean gamePaused) {
 		this.gamePaused = gamePaused;
-		if(timer != null) timer.setPaused(gamePaused);
 	}
 	
 	private ArrayList<QuestionFailData> failedContacts;

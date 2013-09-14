@@ -1,9 +1,13 @@
 package uk.digitalsquid.contactrecall.ingame.views;
 
+import uk.digitalsquid.contactrecall.misc.Config;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -12,13 +16,15 @@ import android.view.View;
  * @author william
  *
  */
-public abstract class TimingView extends View {
+public abstract class TimingView extends View implements Config {
 
 	private float totalTime = 1;
 
 	protected CountDownTimer timer;
 
 	private OnFinishedListener onFinishedListener = OnFinishedListener.DEFAULT;
+	
+	private boolean running = false;
 	
 	public static interface OnFinishedListener {
 		void onTimerFinished(TimingView view);
@@ -75,13 +81,20 @@ public abstract class TimingView extends View {
 	 * @param startPosition The amount of the animation that has already
 	 * been completed - in the range [0,1]
 	 */
-	protected void start(float startPosition) {
+	protected synchronized void start(float startPosition) {
+		if(running) return;
+		
+		Log.v(TAG, String.format("%s starting at %f",
+				this.getClass().getName(),
+				startPosition));
+
 		startTimeMillis = System.currentTimeMillis();
 		if(timer == null) throw new RuntimeException("A time hasn't been set yet");
 		timer.start();
 		anim = getPropertyAnimator(startPosition);
 		anim.setDuration((int)(totalTime * 1000));
 		anim.start();
+		running = true;
 	}
 	
 	/**
@@ -100,6 +113,7 @@ public abstract class TimingView extends View {
 	}
 	
 	public void cancel() {
+		running = false;
 		if(timer != null) timer.cancel();
 		if(anim != null) anim.cancel();
 	}
@@ -111,6 +125,7 @@ public abstract class TimingView extends View {
 	 * Pauses the timer.
 	 */
 	public void pause() {
+		running = false;
 		final long progressSoFar = System.currentTimeMillis() - startTimeMillis;
 		pausedRemainingTime = totalTime - ((float)progressSoFar / 1000f);
 		pausedStartPosition = (float)progressSoFar / 1000f / totalTime;
@@ -123,6 +138,7 @@ public abstract class TimingView extends View {
 	 * Resumes the timer.
 	 */
 	public void resume() {
+		// running = true; // This is done in start
 		setTotalTime(pausedRemainingTime);
 		start(pausedStartPosition);
 	}
@@ -139,5 +155,50 @@ public abstract class TimingView extends View {
 		anim = null;
 		timer = null;
 		onFinishedListener = null;
+	}
+	
+	@Override
+	protected Parcelable onSaveInstanceState() {
+		Parcelable innerState = super.onSaveInstanceState();
+		Bundle bundle = new Bundle();
+		bundle.putParcelable("innerState", innerState);
+		bundle.putBoolean("running", running);
+		
+
+		final long progressSoFar = System.currentTimeMillis() - startTimeMillis;
+		pausedRemainingTime = totalTime - ((float)progressSoFar / 1000f);
+		pausedStartPosition = (float)progressSoFar / 1000f / totalTime;
+
+		Log.v(TAG, String.format("%s saving: running:%b, remaining:%f, startPos: %f",
+				this.getClass().getName(),
+				running,
+				pausedRemainingTime,
+				pausedStartPosition));
+
+		bundle.putFloat("pausedRemainingTime", pausedRemainingTime);
+		bundle.putFloat("pausedStartPosition", pausedStartPosition);
+		return bundle;
+	}
+	
+	@Override
+	protected void onRestoreInstanceState(Parcelable state) {
+		if(state instanceof Bundle) {
+			Bundle bundle = (Bundle) state;
+			
+			Parcelable innerState = bundle.getParcelable("innerState");
+			super.onRestoreInstanceState(innerState);
+
+			pausedRemainingTime = bundle.getFloat("pausedRemainingTime");
+			pausedStartPosition = bundle.getFloat("pausedStartPosition");
+
+			Log.v(TAG, String.format("%s resuming: autostart:%b, remaining:%f, startPos: %f",
+					this.getClass().getName(),
+					bundle.getBoolean("running", true),
+					pausedRemainingTime,
+					pausedStartPosition));
+
+			if(bundle.getBoolean("running", true))
+				resume();
+		}
 	}
 }
