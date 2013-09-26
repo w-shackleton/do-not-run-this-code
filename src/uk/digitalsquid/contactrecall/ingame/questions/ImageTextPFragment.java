@@ -62,8 +62,8 @@ public final class ImageTextPFragment
         for(int i = 0; i < contacts.length && i < choiceViews.length; i++) {
         	final int idx = correctPairings[i];
         	if(idx >= contacts.length) continue;
-        	Contact choice = contacts[idx];
-    		choiceViews[i].setText(
+        	Contact choice = contacts[i];
+    		choiceViews[idx].setText(
     				choice.getTextField(answerType));
         }
         return ret;

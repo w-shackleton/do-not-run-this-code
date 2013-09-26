@@ -11,6 +11,7 @@ import uk.digitalsquid.contactrecall.ingame.views.TimingView.OnFinishedListener;
 import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import uk.digitalsquid.contactrecall.mgr.details.DataItem;
+import uk.digitalsquid.contactrecall.misc.Config;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,7 +24,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class GameFragment extends Fragment implements GameCallbacks, OnFinishedListener {
+public class GameFragment extends Fragment implements GameCallbacks, OnFinishedListener, Config {
 	App app;
 	
 	GameDescriptor gameDescriptor;
@@ -214,6 +215,8 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		if(isGamePaused()) return;
 		position++;
 		// true if all is fully correct
+		Log.v(TAG, String.format("Pairing answered: (c:%d,i:%d,t:%d)", correct.size(),
+				incorrect.size(), timeout.size()));
 		boolean allCorrect = incorrect.size() == 0 && timeout.size() == 0;
 		postAdvanceQuestion(allCorrect ? CHOICE_CORRECT : CHOICE_INCORRECT);
 		if(allCorrect) correctCount++;
@@ -276,9 +279,10 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 			handler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
-					SummaryFragment fragment = new SummaryFragment();
+					ScoreFragment fragment = new ScoreFragment();
 					Bundle args = new Bundle();
 					args.putParcelableArrayList("failedContacts", failedContacts);
+					args.putInt("score", score);
 					fragment.setArguments(args);
 					if(getFragmentManager() != null)
 						getFragmentManager().beginTransaction().

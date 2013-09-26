@@ -7,6 +7,7 @@ import uk.digitalsquid.contactrecall.ingame.views.PointsGainBar;
 import uk.digitalsquid.contactrecall.ingame.views.TimingView.OnFinishedListener;
 import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.misc.Config;
+import uk.digitalsquid.contactrecall.misc.Const;
 import uk.digitalsquid.contactrecall.misc.Function;
 import android.app.Activity;
 import android.app.Fragment;
@@ -16,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 /**
  * The base for a displayed question.
@@ -69,6 +71,69 @@ public abstract class QuestionFragment extends Fragment
         	timer.setVisibility(View.INVISIBLE);
         	timer = null; // Done with timer now
         }
+        
+        // Whenever we have a badge, move it around in its parent
+        View badge = rootView.findViewById(R.id.badge);
+        if(badge != null) {
+        	float pos = Const.RAND.nextFloat();
+        	badge.setRotation(pos * 20 - 10);
+        	// TODO: Translate badge as well?
+        	// Can't get horizontal size from here atm
+        }
+
+        // The explainer (if it's present) goes between the question and the answer.
+        int answerType = question.getAnswerType();
+        TextView explainer = (TextView) rootView.findViewById(R.id.explainer);
+
+        if(explainer != null) {
+	        switch(answerType) {
+	        case Question.FIELD_PHOTO:
+	        	explainer.setText(R.string.explainer_photo);
+	        	break;
+	        case Question.FIELD_DISPLAY_NAME:
+	        case Question.FIELD_FIRST_NAME:
+	        	explainer.setText(R.string.explainer_name);
+	        	break;
+	        case Question.FIELD_LAST_NAME:
+	        	explainer.setText(R.string.explainer_last_name);
+	        	break;
+	        case Question.FIELD_COMPANY:
+	        case Question.FIELD_DEPARTMENT:
+	        	explainer.setText(R.string.explainer_company);
+	        	break;
+	        case Question.FIELD_COMPANY_TITLE:
+	        	explainer.setText(R.string.explainer_company_title);
+	        	break;
+		
+	        case Question.FIELD_PHONE_HOME:
+	        case Question.FIELD_PHONE_WORK:
+	        case Question.FIELD_PHONE_MOBILE:
+	        case Question.FIELD_PHONE_OTHER:
+	        	explainer.setText(R.string.explainer_phone);
+	        	break;
+		
+	        case Question.FIELD_EMAIL_HOME:
+	        case Question.FIELD_EMAIL_WORK:
+	        case Question.FIELD_EMAIL_MOBILE:
+	        case Question.FIELD_EMAIL_OTHER:
+	        	explainer.setText(R.string.explainer_email);
+	        	break;
+        	default:
+        		explainer.setVisibility(View.GONE);
+        		break;
+	        }
+        }
+        
+        TextView questionDescription =
+        		(TextView) rootView.findViewById(R.id.description_question);
+        TextView answerDescription =
+        		(TextView) rootView.findViewById(R.id.description_answer);
+        if(questionDescription != null)
+        	questionDescription.setText(
+        			Question.getFieldDescriptionId(question.getQuestionType()));
+        if(answerDescription != null)
+        	answerDescription.setText(
+        			Question.getFieldDescriptionId(question.getAnswerType()));
 	}
 	
 	@Override

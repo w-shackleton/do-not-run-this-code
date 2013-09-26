@@ -8,4 +8,7 @@
         <item name="android:padding">5dip</item>
         <item name="android:background">@drawable/error_button</item>
     </style>
+    <style name="ScoreText">
+        <item name="android:textSize">40sp</item>
+    </style>
 </resources>

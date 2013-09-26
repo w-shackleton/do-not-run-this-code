@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import uk.digitalsquid.contactrecall.GameDescriptor;
+import uk.digitalsquid.contactrecall.R;
+import uk.digitalsquid.contactrecall.R.string;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -361,6 +363,48 @@ public final class Question implements Parcelable {
 		}
 		public void setQuestionStyle(int questionStyle) {
 			this.questionStyle = questionStyle;
+		}
+	} 
+	
+	/**
+	 * Given a field, returns the ID of a {@link string} that describes that field
+	 * @param field
+	 * @return
+	 */
+	public static int getFieldDescriptionId(int field) {
+		switch(field) {
+		case FIELD_PHOTO:
+			return R.string.description_photo;
+		case FIELD_FIRST_NAME:
+			return R.string.description_first_name;
+		case FIELD_LAST_NAME:
+			return R.string.description_last_name;
+		case FIELD_DISPLAY_NAME:
+			return R.string.description_display_name;
+		case FIELD_COMPANY:
+			return R.string.description_company;
+		case FIELD_DEPARTMENT:
+			return R.string.description_department;
+		case FIELD_COMPANY_TITLE:
+			return R.string.description_company_title;
+		case FIELD_PHONE_HOME:
+			return R.string.description_phone_home;
+		case FIELD_PHONE_WORK:
+			return R.string.description_phone_work;
+		case FIELD_PHONE_MOBILE:
+			return R.string.description_phone_mobile;
+		case FIELD_PHONE_OTHER:
+			return R.string.description_phone_other;
+		case FIELD_EMAIL_HOME:
+			return R.string.description_email_home;
+		case FIELD_EMAIL_WORK:
+			return R.string.description_email_work;
+		case FIELD_EMAIL_MOBILE:
+			return R.string.description_email_mobile;
+		case FIELD_EMAIL_OTHER:
+			return R.string.description_email_other;
+		default:
+			return R.string.placeholder;
 		}
 	}
 }
