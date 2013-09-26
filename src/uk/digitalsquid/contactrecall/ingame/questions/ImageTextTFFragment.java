@@ -4,6 +4,7 @@ import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.ingame.views.AsyncImageView;
 import uk.digitalsquid.contactrecall.ingame.views.AsyncImageView.ImageLoader;
+import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -21,7 +22,7 @@ public class ImageTextTFFragment extends TrueFalseFragment<AsyncImageView> {
 	}
 
 	@Override
-	protected int getRootLayoutId() {
+	protected int getRootLayoutId(Question question) {
 		return R.layout.imagetexttffragment;
 	}
 

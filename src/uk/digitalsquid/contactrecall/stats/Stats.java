@@ -7,6 +7,7 @@ import uk.digitalsquid.contactrecall.mgr.db.DB;
 import uk.digitalsquid.contactrecall.mgr.db.DBProgress;
 import uk.digitalsquid.contactrecall.mgr.db.DBProgress.GroupedMeanAttempt;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
+import uk.digitalsquid.contactrecall.misc.Utils;
 import android.content.Context;
 
 /**
@@ -88,9 +89,40 @@ public final class Stats {
 		public int getDiscards() { return discards; }
 		public void setDiscards(int discards) { this.discards = discards; }
 		
+		public int getTotalTries() {
+			return successes + fails + timeouts + discards;
+		}
+		
 		@Override
 		public int hashCode() {
 			return contact.hashCode();
 		}
+	}
+	
+	public ContactStats getContactStats(Contact contact) {
+		return contactStats.get(contact);
+	}
+	
+	/**
+	 * Computes the score for correctly answering a question on a given contact
+	 * @param contact
+	 * @return
+	 */
+	public float computeScoreWeight(Contact contact) {
+		final ContactStats stats = getContactStats(contact);
+		if(stats == null) return 1;
+		final float totalTries = stats.getTotalTries();
+
+		// Since we don't want scores flying around at first, we assume a min of
+		// 20 answers at first
+		final float breakinTries = Math.max(totalTries, 20);
+		float scoreWeight = 1;
+		// If the user answered correctly every time, this would go to 0
+		scoreWeight -= (float)stats.getSuccesses() / breakinTries;
+		scoreWeight += (float)stats.getFails() / breakinTries * 3;
+		scoreWeight += (float)stats.getTimeouts() / breakinTries * 0.3f;
+		scoreWeight += (float)stats.getDiscards() / breakinTries * 1;
+		
+		return Utils.minMax(scoreWeight, 0, 5);
 	}
 }

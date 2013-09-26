@@ -88,7 +88,7 @@ public class DBProgress extends DBSubclass {
 	public GroupedMeanAttempt[] getGroupedMeanAttemptData() {
 		Cursor c = db.query(
 				"attempts",
-				new String[] { "contactId", "status", "AVERAGE(delay)", "COUNT(contactId)" },
+				new String[] { "contactId", "status", "AVG(delay)", "COUNT(contactId)" },
 				null,
 				null,
 				"contactId, status",

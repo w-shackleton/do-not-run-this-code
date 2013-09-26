@@ -7,5 +7,8 @@
     
     <color name="timer_whole_bg">#66FF66</color>
     <color name="timer_single_bg">#FF6666</color>
+    <color name="correct">#33DD33</color>
+    <color name="incorrect">#FF9933</color>
+    <color name="discard">#3399FF</color>
     
 </resources>

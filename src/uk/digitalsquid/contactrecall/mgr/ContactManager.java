@@ -214,13 +214,18 @@ public final class ContactManager implements Config {
 		
 		Log.d(TAG, "Loaded photos");
 
+		total = contactsWithPictures.size();
+		i = 0;
 		for(int id : contactsWithPictures) {
 			Contact contact = contacts.get(id);
 			if(contact == null) continue;
 			contact.getDetails().setHasPicture(true);
+			if(i % 10 == 0)
+				listener.onPhotoLoadProgress((float)(i) / (float)total);
+			i++;
 		}
 		
-		// Finally, remove all fields that the user wants to hide.
+		// Now, remove all fields that the user wants to hide.
 		for(Entry<Integer, List<Integer>> pair : app.getDb().hidden.getHiddenFields().entrySet()) {
 			Contact contact = contacts.get(pair.getKey());
 			if(contact == null) continue;
@@ -229,9 +234,33 @@ public final class ContactManager implements Config {
 			}
 		}
 		
+		// Finally, remove any suspiciously incorrect fields.
+		final int[] nameFields = {};
+		for(Contact contact : contacts.values()) {
+			for(int field : nameFields) {
+				if(contact.hasField(field)) {
+					if(!isSaneName(contact.getTextField(field))) {
+						Log.v(TAG, "Removing " + contact.getTextField(field));
+						contact.removeField(field);
+					}
+				}
+			}
+		}
+		
 		// Convert to a Set for ease of use
 		contactCollection = contacts.values();
 		dataLoaded = true;
+	}
+	
+	/**
+	 * Checks for a few obviously wrong names that I noticed in the wild
+	 * @param name
+	 * @return
+	 */
+	final static boolean isSaneName(String name) {
+		// Currently, just delete stuff that is numbers, symbols and whitespace
+		// No names are 1 letter alphanum right?
+		return !name.matches("^[0-9,.;\\s]+$") && !name.matches("^[a-zA-Z].$");
 	}
 	
 	/**
@@ -360,9 +389,13 @@ public final class ContactManager implements Config {
 	private static interface LoadingStatusListener {
 		public void onBaseDataLoadProgress(float progress);
 		public void onAuxiliaryDataLoadProgress(float progress);
+		public void onPhotoLoadProgress(float progress);
+		public void onFilterProgress(float progress);
 		public static final LoadingStatusListener NULL_LISTENER = new LoadingStatusListener() {
 			@Override public void onBaseDataLoadProgress(float progress) { }
 			@Override public void onAuxiliaryDataLoadProgress(float progress) { }
+			@Override public void onPhotoLoadProgress(float progress) { }
+			@Override public void onFilterProgress(float progress) { }
 		};
 	}
 	
@@ -385,8 +418,8 @@ public final class ContactManager implements Config {
 					@Override
 					public void onBaseDataLoadProgress(float progress) {
 						if(broadcastCount++ == 4) {
-							Log.v(TAG, "Base data load " + (int)(progress * 100) + "%");
 							broadcastCount = 0;
+							Log.v(TAG, "Base data load " + (int)(progress * 100) + "%");
 							publishProgress(progress / 4);
 						}
 					}
@@ -394,9 +427,27 @@ public final class ContactManager implements Config {
 					@Override
 					public void onAuxiliaryDataLoadProgress(float progress) {
 						if(broadcastCount++ == 4) {
-							Log.v(TAG, "Aux data load " + (int)(progress * 100) + "%");
 							broadcastCount = 0;
-							publishProgress(0.25f + progress * 0.75f);
+							Log.v(TAG, "Aux data load " + (int)(progress * 100) + "%");
+							publishProgress(0.25f + progress * 0.60f);
+						}
+					}
+
+					@Override
+					public void onPhotoLoadProgress(float progress) {
+						if(broadcastCount++ == 4) {
+							broadcastCount = 0;
+							Log.v(TAG, "Photo data load " + (int)(progress * 100) + "%");
+							publishProgress(0.85f + progress * 0.10f);
+						}
+					}
+
+					@Override
+					public void onFilterProgress(float progress) {
+						if(broadcastCount++ == 4) {
+							broadcastCount = 0;
+							Log.v(TAG, "Filter load " + (int)(progress * 100) + "%");
+							publishProgress(0.95f + progress * 0.05f);
 						}
 					}
 				});

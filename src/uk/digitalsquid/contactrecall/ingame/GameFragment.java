@@ -32,8 +32,9 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 	Handler handler = new Handler();
 	
 	private TimerView timer;
-	private TextView correctCountView, incorrectCountView;
+	private TextView correctCountView, incorrectCountView, scoreView;
 	private int correctCount = 0, incorrectCount = 0, discardCount = 0;
+	private int score = 0;
 	
 	private boolean gamePaused;
 	
@@ -51,6 +52,7 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 			correctCount = savedInstanceState.getInt("correctCount", 0);
 			incorrectCount = savedInstanceState.getInt("incorrectCount", 0);
 			discardCount = savedInstanceState.getInt("discardCount", 0);
+			score = savedInstanceState.getInt("score", 0);
 			setGamePaused(savedInstanceState.getBoolean("gamePaused"));
 			failedContacts = savedInstanceState.getParcelableArrayList("failedContacts");
 		} else {
@@ -70,8 +72,10 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 
 		correctCountView = (TextView)rootView.findViewById(R.id.correctCount);
 		incorrectCountView = (TextView)rootView.findViewById(R.id.incorrectCount);
+		scoreView = (TextView)rootView.findViewById(R.id.score);
 		correctCountView.setText(String.format("%d", correctCount));
 		incorrectCountView.setText(String.format("%d", incorrectCount));
+		scoreView.setText(String.format("%d", score));
 
         if(gameDescriptor.hasTimer()) {
 	        timer.setOnFinishedListener(this);
@@ -146,16 +150,19 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 			outState.putInt("correctCount", correctCount);
 			outState.putInt("incorrectCount", incorrectCount);
 			outState.putInt("discardCount", discardCount);
+			outState.putInt("score", score);
 			outState.putBoolean("gamePaused", gamePaused);
 			outState.putParcelableArrayList("failedContacts", failedContacts);
 		}
 	}
 
 	@Override
-	public void choiceMade(Contact choice, int choiceType, float timeTaken) {
+	public void choiceMade(Contact choice, int choiceType, float timeTaken, int pointsGain) {
 		if(isGamePaused()) return;
 		position++;
 		postAdvanceQuestion(choiceType);
+		
+		score += pointsGain;
 		
 		// TODO: Background this?
 		Question question = gameAdapter.getItem(position-1);
@@ -203,7 +210,7 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 	@Override
 	public void pairingChoiceMade(ArrayList<Contact> correct,
 			ArrayList<Pair<Contact, Contact>> incorrect, ArrayList<Contact> timeout,
-			float timeTaken) {
+			float timeTaken, int pointsGain) {
 		if(isGamePaused()) return;
 		position++;
 		// true if all is fully correct
@@ -211,6 +218,8 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		postAdvanceQuestion(allCorrect ? CHOICE_CORRECT : CHOICE_INCORRECT);
 		if(allCorrect) correctCount++;
 		else incorrectCount++;
+		
+		score += pointsGain;
 		
 		// TODO: Background this?
 		Question question = gameAdapter.getItem(position-1);
@@ -299,6 +308,7 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 					// Update scores
 					correctCountView.setText(String.format("%d", correctCount));
 					incorrectCountView.setText(String.format("%d", incorrectCount));
+					scoreView.setText(String.format("%d", score));
 
 					if(getFragmentManager() != null)
 						getFragmentManager().beginTransaction().

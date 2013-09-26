@@ -138,14 +138,14 @@ public class Game extends Activity implements GameCallbacks, Config {
 	}
 	
 	@Override
-	public void choiceMade(Contact choice, int choiceType, float timeTaken) {
-		callbacks.choiceMade(choice, choiceType, timeTaken);
+	public void choiceMade(Contact choice, int choiceType, float timeTaken, int pointsGain) {
+		callbacks.choiceMade(choice, choiceType, timeTaken, pointsGain);
 	}
 	@Override
 	public void pairingChoiceMade(ArrayList<Contact> correct,
 			ArrayList<Pair<Contact, Contact>> incorrect, ArrayList<Contact> timeout,
-			float timeTaken) {
-		callbacks.pairingChoiceMade(correct, incorrect, timeout, timeTaken);
+			float timeTaken, int pointsGain) {
+		callbacks.pairingChoiceMade(correct, incorrect, timeout, timeTaken, pointsGain);
 	}
 
 	boolean isGamePaused() {
@@ -216,7 +216,8 @@ public class Game extends Activity implements GameCallbacks, Config {
 						velocityY,
 						e1.getY() - e2.getY()));
 				
-				choiceMade(null, CHOICE_DISCARD, 0);
+				// No net points change for discarding
+				choiceMade(null, CHOICE_DISCARD, 0, 0);
 						
 				return true;
 			}

@@ -66,6 +66,8 @@ public class PointsGainBar extends TimingView {
 		
 		barHeight = 20 * displayMetrics.density;
 		minBarWidth = pointerWidth;
+		
+		setProgress(1);
 	}
 	
 	public float time;
@@ -130,5 +132,12 @@ public class PointsGainBar extends TimingView {
 		(progressDrawable != null ? progressDrawable : progressBar)
 				.setLevel((int) (progress * 10000));
 		postInvalidate();
+	}
+	
+	/**
+	 * Gets the current points value being displayed
+	 */
+	public int getVisualPoints() {
+		return pointsGenerator.call(getProgress());
 	}
 }

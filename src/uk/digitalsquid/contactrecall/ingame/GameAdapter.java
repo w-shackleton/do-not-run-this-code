@@ -208,7 +208,7 @@ public class GameAdapter implements Parcelable, Config {
 
 	public Question getItem(int pos) {
 		if(questions == null) return null;
-		if(descriptor.isFiniteGame())
+		if(descriptor.isFiniteGame() && pos < questions.size())
 			return questions.get(pos);
 		throw new RuntimeException("Infinite mode not yet implemented");
 	}
@@ -306,6 +306,13 @@ public class GameAdapter implements Parcelable, Config {
 		
 		question.setOtherAnswers(otherChoices);
 		
+		// Calculate a score for answering this question
+		// TODO: Calculate this using current difficulty and other stuff
+		// Perhaps more points in time trial mode?
+		int initialPoints = 1000;
+		int maxPointsGain = (int) (app.getStats().computeScoreWeight(contact) * initialPoints);
+		question.setMaxPoints(maxPointsGain);
+		
 		return question;
 	}
 
@@ -354,6 +361,7 @@ public class GameAdapter implements Parcelable, Config {
 	
 	protected Fragment createFragment(int position) {
 		Question question = getItem(position);
+		if(question == null) return null;
         Bundle args = new Bundle();
         
         args.putParcelable(MultiChoiceFragment.ARG_QUESTION, question);

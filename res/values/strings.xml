@@ -33,4 +33,8 @@
     <string name="field_hidden">Field hidden</string>
     <string name="pause">Pause</string>
     <string name="data_error">Error in Question</string>
+
+    <string name="guess_correct_count">Correct: %d</string>
+    <string name="guess_incorrect_count">Incorrect: %d</string>
+    <string name="guess_discard_count">Discarded: %d</string>
 </resources>

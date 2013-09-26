@@ -44,6 +44,11 @@ public final class Question implements Parcelable {
 	 */
 	private QuestionAnswerPair questionAnswerPair = new QuestionAnswerPair();
 	
+	/**
+	 * The maximum number of points the user could gain for answering this question
+	 */
+	private int maxPoints;
+	
 	// Types of field that can be represented on-screen
 	public static final int FIELD_PHOTO = 1;
 	public static final int FIELD_FIRST_NAME = 2;
@@ -87,10 +92,12 @@ public final class Question implements Parcelable {
 	
 	public Question(Parcel src) {
 		Parcelable[] contacts = src.readParcelableArray(Contact.class.getClassLoader());
-		contacts = Arrays.copyOf(contacts, contacts.length);
+		this.contacts = (Contact[]) Arrays.copyOf(contacts, contacts.length);
 		otherAnswers = (Contact[]) src.readParcelableArray(Contact.class.getClassLoader());
 		correctPosition = src.readInt();
+		correctPairings = src.createIntArray();
 		questionAnswerPair = src.readParcelable(QuestionAnswerPair.class.getClassLoader());
+		maxPoints = src.readInt();
 	}
 
 	/**
@@ -156,7 +163,9 @@ public final class Question implements Parcelable {
 		dest.writeParcelableArray(getContacts(), 0);
 		dest.writeParcelableArray(otherAnswers, 0);
 		dest.writeInt(correctPosition);
+		dest.writeIntArray(correctPairings);
 		dest.writeParcelable(getQuestionAnswerPair(), 0);
+		dest.writeInt(maxPoints);
 	}
 	
 	/**
@@ -252,6 +261,14 @@ public final class Question implements Parcelable {
 		int i = 0;
 		for(Integer p : correctPairings)
 			this.correctPairings[i++] = p;
+	}
+
+	public int getMaxPoints() {
+		return maxPoints;
+	}
+
+	public void setMaxPoints(int maxPoints) {
+		this.maxPoints = maxPoints;
 	}
 
 	public static final Creator<Question> CREATOR = new Creator<Question>() {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="contentDescription_photo">Someone\'s photo - who is it?</string>
+    <string name="contentDescription_contactphoto">This contact\'s photo</string>
     
 </resources>

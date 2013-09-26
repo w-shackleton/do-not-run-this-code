@@ -72,7 +72,9 @@ public class ContactViewer extends Activity implements ContactChangeListener {
 	public void onResume() {
 		super.onResume();
 		contacts = app.getContacts().getContacts();
-		contactAdapter.setContacts(new ArrayList<Contact>(contacts));
+		List<Contact> newContactList = new ArrayList<Contact>(contacts);
+		Collections.sort(newContactList, Contact.CONTACT_NAME_COMPARATOR);
+		contactAdapter.setContacts(newContactList);
 	}
 	
 	@Override
@@ -235,7 +237,7 @@ public class ContactViewer extends Activity implements ContactChangeListener {
 	@Override
 	public void onContactsChanged(Collection<Contact> newContacts) {
 		List<Contact> newContactList = new ArrayList<Contact>(newContacts);
-		Collections.sort(newContactList);
+		Collections.sort(newContactList, Contact.CONTACT_NAME_COMPARATOR);
 		contactAdapter.setContacts(newContactList);
 		contacts = newContacts;
 	};

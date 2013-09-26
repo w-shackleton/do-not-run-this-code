@@ -1,6 +1,7 @@
 package uk.digitalsquid.contactrecall.ingame.questions;
 
 import uk.digitalsquid.contactrecall.R;
+import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,7 +20,13 @@ import android.widget.TextView;
 public class TextTextMCFragment extends MultiChoiceFragment<TextView, Button> {
 
 	@Override
-	protected int getRootLayoutId() {
+	protected int getRootLayoutId(Question question) {
+		if(question.getQuestionType() == Question.FIELD_FIRST_NAME &&
+				question.getAnswerType() == Question.FIELD_LAST_NAME)
+			return R.layout.texttextmcfragment_vertical_left;
+		if(question.getQuestionType() == Question.FIELD_LAST_NAME &&
+				question.getAnswerType() == Question.FIELD_FIRST_NAME)
+			return R.layout.texttextmcfragment_vertical_right;
 		return R.layout.texttextmcfragment;
 	}
 

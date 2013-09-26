@@ -110,8 +110,12 @@ public abstract class PairingFragment<QView extends View, AView extends View>
 							question.getContact(pairings[i])));
 			}
 		}
+
+		// TODO: Create a points gain when no timer
+		int pointsGain = 0;
+		if(timer != null) pointsGain = timer.getVisualPoints();
 		
-		callbacks.pairingChoiceMade(correct, incorrect, timeout, delay);
+		callbacks.pairingChoiceMade(correct, incorrect, timeout, delay, pointsGain);
 	}
 
 	@Override

@@ -100,12 +100,14 @@ public class SummaryFragment extends Fragment implements OnClickListener {
 	        TextView attr1 = (TextView) convertView.findViewById(R.id.contact_attr1);
 	        TextView attr2 = (TextView) convertView.findViewById(R.id.contact_attr2);
 	        photo.setImageBitmap(contact.getPhoto(app.getPhotos()));
+	        
+	        // Note: we currently print display name in attr1, and something else in attr2
+
+        	attr1.setText(contact.getDisplayName());
 
 	        if(question.getQuestionFormat() == Question.FORMAT_TEXT)
-	        	attr1.setText(contact.getTextField(question.getQuestionType()));
-	        else attr1.setVisibility(View.GONE);
-
-	        if(question.getAnswerFormat() == Question.FORMAT_TEXT)
+	        	attr2.setText(contact.getTextField(question.getQuestionType()));
+	        else if(question.getAnswerFormat() == Question.FORMAT_TEXT)
 	        	attr2.setText(contact.getTextField(question.getAnswerType()));
 	        else attr2.setVisibility(View.GONE);
 	        

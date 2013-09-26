@@ -18,7 +18,7 @@
         <activity android:label="@string/capturephoto" android:name="PhotoCapture" android:theme="@style/dialog"></activity>
         <activity android:label="@string/selectMode" android:name="ModeSelect" android:theme="@style/light"></activity>
         <activity android:name=".ingame.Game" android:theme="@style/game"></activity>
-        <activity android:label="@string/leaderboard" android:name="Leaderboard"></activity>
+        <activity android:label="@string/leaderboard" android:name="Leaderboard" android:theme="@android:style/Theme.Holo.Light.DarkActionBar"></activity>
 
     </application>
 </manifest>

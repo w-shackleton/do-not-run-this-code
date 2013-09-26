@@ -1,9 +1,13 @@
 package uk.digitalsquid.contactrecall.ingame.questions;
 
+import java.util.ArrayList;
+
 import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.ingame.GameCallbacks;
 import uk.digitalsquid.contactrecall.ingame.views.TimingView;
+import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
+import uk.digitalsquid.contactrecall.mgr.details.DataItem;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,7 +28,13 @@ public abstract class
 	protected QView questionView;
 	protected AButton[] choiceButtons;
 	
-	protected abstract int getRootLayoutId();
+	/**
+	 * Returns the ID of the root layout to use.
+	 * @param question The question is given to allow custom layouts to be returned
+	 * in special cases
+	 * @return
+	 */
+	protected abstract int getRootLayoutId(Question question);
 	protected abstract QView getQuestionView(View rootView);
 	/**
 	 * Returns the choice buttons. Note that these buttons must have IDs
@@ -40,7 +50,7 @@ public abstract class
         // The last two arguments ensure LayoutParams are inflated
         // properly.
         View rootView = inflater.inflate(
-                getRootLayoutId(), root, false);
+                getRootLayoutId(question), root, false);
         
         int numberOfChoices = question.getNumberOfChoices();
         
@@ -121,8 +131,26 @@ public abstract class
 		
 		float delay = (float)(System.nanoTime() - startTime) / (float)1000000000L;
 		
+		// TODO: Create a points gain when no timer
+		int pointsGain = 0;
+		if(timer != null) pointsGain = timer.getVisualPoints();
+		// Convert points gain into actual score change
+		int pointsDelta;
+		switch(choiceType) {
+		case GameCallbacks.CHOICE_CORRECT:
+			pointsDelta = pointsGain;
+			break;
+		case GameCallbacks.CHOICE_INCORRECT:
+			pointsDelta = -pointsGain / 5;
+			break;
+		default:
+		case GameCallbacks.CHOICE_TIMEOUT:
+			pointsDelta = 0;
+			break;
+		}
+		
 		Log.d(TAG, "Chosen contact is " + chosenContact);
-		if(callbacks != null) callbacks.choiceMade(chosenContact, choiceType, delay);
+		if(callbacks != null) callbacks.choiceMade(chosenContact, choiceType, delay, pointsDelta);
 		else Log.e(TAG, "Callbacks are currently null!");
 	}
 
@@ -144,7 +172,25 @@ public abstract class
 	}
 	
 	protected void onDataErrorPressed() {
-		// TODO: Show data error screen
+		ArrayList<DataItem> dataItems = new ArrayList<DataItem>();
+		DataItem questionItem = new DataItem(question.getContact(), question.getQuestionType());
+		dataItems.add(questionItem);
+
+		// Answers, in correct order
+        int posThroughOthers = 0;
+        int correctChoice = question.getCorrectPosition();
+        int numberOfChoices = question.getNumberOfChoices();
+        for(int i = 0; i < numberOfChoices; i++) {
+        	if(i == correctChoice)
+        		dataItems.add(new DataItem(
+        				question.getContact(), question.getAnswerType()));
+        	else {
+        		dataItems.add(new DataItem(
+        				question.getOtherAnswers()[posThroughOthers++],
+        				question.getAnswerType()));
+        	}
+        }
+        callbacks.dataErrorFound(dataItems);
 	}
 
 	@Override

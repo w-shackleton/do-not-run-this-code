@@ -13,7 +13,7 @@ import android.os.Parcelable;
  * @author william
  *
  */
-public class Contact implements Parcelable, Comparable<Contact> {
+public final class Contact implements Parcelable, Comparable<Contact> {
 	private int id;
 	
 	private String firstName;
@@ -21,6 +21,8 @@ public class Contact implements Parcelable, Comparable<Contact> {
 	private String displayName;
 	
 	private final Details details;
+	
+	private transient int customSortField;
 	
     private Contact(Parcel in) {
     	id = in.readInt();
@@ -97,6 +99,14 @@ public class Contact implements Parcelable, Comparable<Contact> {
 			return lhs.getDisplayName().compareToIgnoreCase(rhs.getDisplayName());
 		}
 	};
+	public static final Comparator<Contact> CUSTOM_COMPARATOR = new Comparator<Contact>() {
+		@Override
+		public int compare(Contact lhs, Contact rhs) {
+			if(lhs == null) return -1;
+			if(rhs == null) return 1;
+			return lhs.getCustomSortField() - rhs.getCustomSortField();
+		}
+	};
 
 	@Override
 	public int describeContents() {
@@ -151,9 +161,9 @@ public class Contact implements Parcelable, Comparable<Contact> {
 	 * Also, if this {@link Contact} doesn't have the specified field
 	 * then the display name is returned, also as a fail-safe.
 	 */
-	public String getTextField(int part) {
-		if(!hasField(part)) return displayName;
-		switch(part) {
+	public String getTextField(int field) {
+		if(!hasField(field)) return displayName;
+		switch(field) {
 		default:
 		case Question.FIELD_DISPLAY_NAME:	return displayName;
 		case Question.FIELD_FIRST_NAME:		return firstName;
@@ -247,5 +257,13 @@ public class Contact implements Parcelable, Comparable<Contact> {
 		default:
 				return false;
 		}
+	}
+
+	public int getCustomSortField() {
+		return customSortField;
+	}
+
+	public void setCustomSortField(int customSortField) {
+		this.customSortField = customSortField;
 	}
 }

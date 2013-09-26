@@ -24,8 +24,9 @@ public interface GameCallbacks {
 	 * @param choice The contact that was chosen (if one was)
 	 * @param choiceType The type of choice. See {@link GameCallbacks}.CHOICE_..
 	 * @param timeTaken The time taken, in seconds
+	 * @param pointsGain The number of points gained. This may be negative.
 	 */
-	void choiceMade(Contact choice, int choiceType, float timeTaken);
+	void choiceMade(Contact choice, int choiceType, float timeTaken, int pointsGain);
 
 	/**
 	 * Notifies the activity / fragment that the user has made a pairing choice
@@ -34,13 +35,15 @@ public interface GameCallbacks {
 	 * @param incorrect {@link Pair}s of {@link Contact} and the {@link Contact}
 	 * they were mistaken for.
 	 * @param timeout
-	 * @param timeTaken
+	 * @param timeTaken The time taken, in seconds
+	 * @param pointsGain The number of points gained. This may be negative.
 	 */
 	void pairingChoiceMade(
 			ArrayList<Contact> correct,
 			ArrayList<Pair<Contact, Contact>> incorrect,
 			ArrayList<Contact> timeout,
-			float timeTaken);
+			float timeTaken,
+			int pointsGain);
 	
 	/**
 	 * Sets the logical status of the game to paused
