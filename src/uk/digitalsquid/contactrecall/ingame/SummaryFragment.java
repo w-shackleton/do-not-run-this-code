@@ -105,9 +105,11 @@ public class SummaryFragment extends Fragment implements OnClickListener {
 
         	attr1.setText(contact.getDisplayName());
 
-	        if(question.getQuestionFormat() == Question.FORMAT_TEXT)
+	        if(question.getQuestionFormat() == Question.FORMAT_TEXT
+	        		&& question.getQuestionType() != Question.FIELD_DISPLAY_NAME)
 	        	attr2.setText(contact.getTextField(question.getQuestionType()));
-	        else if(question.getAnswerFormat() == Question.FORMAT_TEXT)
+	        else if(question.getAnswerFormat() == Question.FORMAT_TEXT
+	        		&& question.getAnswerType() != Question.FIELD_DISPLAY_NAME)
 	        	attr2.setText(contact.getTextField(question.getAnswerType()));
 	        else attr2.setVisibility(View.GONE);
 	        

@@ -131,8 +131,8 @@ public abstract class
 		
 		float delay = (float)(System.nanoTime() - startTime) / (float)1000000000L;
 		
-		// TODO: Create a points gain when no timer
-		int pointsGain = 0;
+		// When no timer, just give half total points
+		int pointsGain = question.getMaxPoints() / 2;
 		if(timer != null) pointsGain = timer.getVisualPoints();
 		// Convert points gain into actual score change
 		int pointsDelta;

@@ -7,6 +7,7 @@ import uk.digitalsquid.contactrecall.ingame.views.PointsGainBar;
 import uk.digitalsquid.contactrecall.ingame.views.TimingView.OnFinishedListener;
 import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.misc.Config;
+import uk.digitalsquid.contactrecall.misc.Function;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
@@ -57,8 +58,15 @@ public abstract class QuestionFragment extends Fragment
         if(descriptor.hasTimerPerContact()) {
 	        timer.setOnFinishedListener(this);
 	        timer.setTotalTime(descriptor.getMaxTimePerContact());
+	        final int maxPoints = question.getMaxPoints();
+	        timer.setPointsGenerator(new Function<Integer, Float>() {
+				@Override
+				public Integer call(Float arg) {
+					return (int) ((arg + 0.1f) * maxPoints);
+				}
+			});
         } else {
-        	timer.setVisibility(View.GONE);
+        	timer.setVisibility(View.INVISIBLE);
         	timer = null; // Done with timer now
         }
 	}

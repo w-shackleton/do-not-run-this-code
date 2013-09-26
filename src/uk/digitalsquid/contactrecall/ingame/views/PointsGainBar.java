@@ -32,7 +32,7 @@ public class PointsGainBar extends TimingView {
 	private final float pointerWidth, pointerHeight;
 	private final float barHeight, minBarWidth;
 	
-	public Function<Integer, Float> pointsGenerator = new Function<Integer, Float>() {
+	private Function<Integer, Float> pointsGenerator = new Function<Integer, Float>() {
 		@Override
 		public Integer call(Float arg) {
 			return (int)(arg * 1000);
@@ -139,5 +139,9 @@ public class PointsGainBar extends TimingView {
 	 */
 	public int getVisualPoints() {
 		return pointsGenerator.call(getProgress());
+	}
+
+	public void setPointsGenerator(Function<Integer, Float> pointsGenerator) {
+		this.pointsGenerator = pointsGenerator;
 	}
 }

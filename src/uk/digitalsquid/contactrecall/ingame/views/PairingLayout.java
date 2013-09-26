@@ -4,8 +4,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.misc.Config;
 import uk.digitalsquid.contactrecall.misc.ListUtils;
+import uk.digitalsquid.contactrecall.misc.Utils;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -56,6 +58,18 @@ public class PairingLayout extends TableLayout implements Config {
 	
 	Paint linePaint = new Paint();
 	Paint finalisedLinePaint = new Paint();
+	
+	final Paint paint1, paint2, paint3, paint4;
+	
+	final Paint[] linePaints;
+	final int[] viewBackgrounds = {
+			R.drawable.pairing_border_1select,
+			R.drawable.pairing_border_2select,
+			R.drawable.pairing_border_3select,
+			R.drawable.pairing_border_4select,
+	};
+	
+	private final float EDGE_INSET;
 
 	private OnPairingsChangeListener onPairingsChangeListener =
 			OnPairingsChangeListener.NULL;
@@ -78,6 +92,18 @@ public class PairingLayout extends TableLayout implements Config {
 		finalisedLinePaint.setStyle(Style.STROKE);
 		finalisedLinePaint.setStrokeWidth(10 * metrics.density);
 		finalisedLinePaint.setStrokeCap(Cap.ROUND);
+		
+		paint1 = new Paint(linePaint);
+		paint2 = new Paint(linePaint);
+		paint3 = new Paint(linePaint);
+		paint4 = new Paint(linePaint);
+		paint1.setColor(Color.parseColor("#2bb918"));
+		paint2.setColor(Color.parseColor("#006ab9"));
+		paint3.setColor(Color.parseColor("#e5d200"));
+		paint4.setColor(Color.parseColor("#c93400"));
+		linePaints = new Paint[] { paint1, paint2, paint3, paint4 };
+		
+		EDGE_INSET = 10 * metrics.density;
 	}
 	
 	@Override
@@ -243,9 +269,13 @@ public class PairingLayout extends TableLayout implements Config {
 	 */
 	protected PointF getCorrectedChoicePosition(PointF userPosition) {
 		loadRelativePositions();
-		for(RectF bounds : viewsRelativePosition) {
+		for(RectF bounds : leftsRelativePosition) {
 			if(bounds.contains(userPosition.x, userPosition.y))
-				return new PointF(bounds.centerX(), bounds.centerY());
+				return new PointF(bounds.right - EDGE_INSET, bounds.centerY());
+		}
+		for(RectF bounds : rightsRelativePosition) {
+			if(bounds.contains(userPosition.x, userPosition.y))
+				return new PointF(bounds.left + EDGE_INSET, bounds.centerY());
 		}
 		return null;
 	}
@@ -279,6 +309,22 @@ public class PairingLayout extends TableLayout implements Config {
 				pairings[i] = -1;
 		}
 		pairings[leftIdx] = rightIdx;
+		
+		// Set new BG colours
+		for(int i = 0; i < pairings.length; i++) {
+			rights[i].setBackgroundResource(R.drawable.pairing_border_noselect);
+
+		}
+		for(int i = 0; i < pairings.length; i++) {
+			if(pairings[i] != -1) {
+				lefts[i].setBackgroundResource(viewBackgrounds[i]);
+				rights[Utils.minMax(pairings[i], 0, rights.length)]
+						.setBackgroundResource(viewBackgrounds[i]);
+			} else {
+				lefts[i].setBackgroundResource(R.drawable.pairing_border_noselect);
+			}
+		}
+		
 		onPairingsChangeListener.onPairingsChanged(Arrays.copyOf(pairings, pairings.length));
 		// Check for completion
 		boolean complete = true;
@@ -320,14 +366,14 @@ public class PairingLayout extends TableLayout implements Config {
 			if(leftsRelativePosition[left] == null ||
 					rightsRelativePosition[right] == null)
 				loadRelativePositions();
-			float lx = leftsRelativePosition[left].centerX();
+			float lx = leftsRelativePosition[left].right - EDGE_INSET;
 			float ly = leftsRelativePosition[left].centerY();
-			float rx = rightsRelativePosition[right].centerX();
+			float rx = rightsRelativePosition[right].left + EDGE_INSET;
 			float ry = rightsRelativePosition[right].centerY();
-			canvas.drawLine(lx, ly, rx, ry, finalisedLinePaint);
+			canvas.drawLine(lx, ly, rx, ry, linePaints[left]);
 		}
 	}
-
+	
 	/**
 	 * Gets the current pairings. A value of -1 indicates no pairing.
 	 * @return

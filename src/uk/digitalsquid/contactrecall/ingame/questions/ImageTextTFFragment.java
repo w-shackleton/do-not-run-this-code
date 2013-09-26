@@ -23,6 +23,12 @@ public class ImageTextTFFragment extends TrueFalseFragment<AsyncImageView> {
 
 	@Override
 	protected int getRootLayoutId(Question question) {
+		if(question.getAnswerType() == Question.FIELD_DISPLAY_NAME)
+			return R.layout.imagetexttffragment_badge;
+		if(question.getAnswerType() == Question.FIELD_FIRST_NAME)
+			return R.layout.imagetexttffragment_badge;
+		if(question.getAnswerType() == Question.FIELD_LAST_NAME)
+			return R.layout.imagetexttffragment_badge;
 		return R.layout.imagetexttffragment;
 	}
 
@@ -36,7 +42,17 @@ public class ImageTextTFFragment extends TrueFalseFragment<AsyncImageView> {
         int answerType = question.getAnswerType();
         
         // Configure answer text
+        TextView explainer = (TextView) ret.findViewById(R.id.tf_explainer);
         TextView answerView = (TextView) ret.findViewById(R.id.tf_answer);
+        
+        switch(answerType) {
+        case Question.FIELD_DISPLAY_NAME:
+        case Question.FIELD_FIRST_NAME:
+        case Question.FIELD_LAST_NAME:
+        	explainer.setText(R.string.namebadge_name);
+        	break;
+        }
+
         answerView.setText((correctAnswer ? correct : incorrect).getTextField(answerType));
         return ret;
 	}

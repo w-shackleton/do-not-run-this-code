@@ -8,6 +8,7 @@ import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import uk.digitalsquid.contactrecall.mgr.details.DataItem;
 import uk.digitalsquid.contactrecall.misc.Config;
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,7 +45,7 @@ public class Game extends Activity implements GameCallbacks, Config {
 	View pauseLayout;
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.game);
@@ -75,20 +76,25 @@ public class Game extends Activity implements GameCallbacks, Config {
 			
 			getFragmentManager().
 					beginTransaction().
-					add(R.id.container, gameFragment).
+					add(R.id.container, gameFragment, "gameFragment").
 					commit();
 		} else {
-			// FIXME: On rotate, the fragment inside container isn't always
-			// a GameFragment - if paused it's different
-			GameFragment gameFragment = (GameFragment) getFragmentManager().findFragmentById(R.id.container);
-			callbacks = gameFragment;
+			
+			Fragment fragment = getFragmentManager().findFragmentByTag("gameFragment");
+			if(fragment instanceof GameFragment)
+				callbacks = (GameCallbacks) fragment;
 			
 			gamePaused = savedInstanceState.getBoolean("gamePaused");
 		}
 	}
 	
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	protected void onDestroy() {
+		super.onDestroy();
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putBoolean("gamePaused", gamePaused);
 	}
