@@ -38,6 +38,7 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 	private int score = 0;
 	
 	private boolean gamePaused;
+	private boolean gameFinished = false;
 	
 	int position = 0;
 	
@@ -55,6 +56,7 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 			discardCount = savedInstanceState.getInt("discardCount", 0);
 			score = savedInstanceState.getInt("score", 0);
 			setGamePaused(savedInstanceState.getBoolean("gamePaused"));
+			setGameFinished(savedInstanceState.getBoolean("gameFinished"));
 			failedContacts = savedInstanceState.getParcelableArrayList("failedContacts");
 		} else {
 			failedContacts = new ArrayList<QuestionFailData>();
@@ -153,6 +155,7 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 			outState.putInt("discardCount", discardCount);
 			outState.putInt("score", score);
 			outState.putBoolean("gamePaused", gamePaused);
+			outState.putBoolean("gameFinished", isGameFinished());
 			outState.putParcelableArrayList("failedContacts", failedContacts);
 		}
 	}
@@ -167,7 +170,11 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		
 		// TODO: Background this?
 		Question question = gameAdapter.getItem(position-1);
-		Contact contact = gameAdapter.getItem(position-1).getContact();
+		if(question == null) {
+			Log.w(TAG, "choiceMade came across a null question");
+			return;
+		}
+		Contact contact = question.getContact();
 		// Add to persistent DB
 		switch(choiceType) {
 		case CHOICE_TIMEOUT:
@@ -254,6 +261,7 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 	 * @param correct
 	 */
 	private void postAdvanceQuestion(int choiceType) {
+		if(gameFinished) return;
 		int waitTimeId, animInTmp, animOutTmp;
 		switch(choiceType) {
 		case CHOICE_CORRECT: default:
@@ -275,7 +283,8 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		}
 		final int animIn = animInTmp, animOut = animOutTmp;
 		if(position >= gameAdapter.getCount()) {
-			// Run transition to summary card.
+			gameFinished = true;
+			// Run transition to score card.
 			handler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
@@ -283,6 +292,7 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 					Bundle args = new Bundle();
 					args.putParcelableArrayList("failedContacts", failedContacts);
 					args.putInt("score", score);
+					args.putInt("expectedScore", gameAdapter.getExpectedScore());
 					fragment.setArguments(args);
 					if(getFragmentManager() != null)
 						getFragmentManager().beginTransaction().
@@ -348,4 +358,12 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 
 	@Override
 	public void pauseGame() { }
+
+	public boolean isGameFinished() {
+		return gameFinished;
+	}
+
+	public void setGameFinished(boolean gameFinished) {
+		this.gameFinished = gameFinished;
+	}
 }

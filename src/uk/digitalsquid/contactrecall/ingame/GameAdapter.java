@@ -14,6 +14,7 @@ import uk.digitalsquid.contactrecall.ingame.questions.ImageTextMCFragment;
 import uk.digitalsquid.contactrecall.ingame.questions.ImageTextPFragment;
 import uk.digitalsquid.contactrecall.ingame.questions.ImageTextTFFragment;
 import uk.digitalsquid.contactrecall.ingame.questions.MultiChoiceFragment;
+import uk.digitalsquid.contactrecall.ingame.questions.TextImageMCFragment;
 import uk.digitalsquid.contactrecall.ingame.questions.TextTextMCFragment;
 import uk.digitalsquid.contactrecall.ingame.questions.TextTextPFragment;
 import uk.digitalsquid.contactrecall.mgr.Question;
@@ -43,6 +44,8 @@ public class GameAdapter implements Parcelable, Config {
 	 * The questions to use - usually pre-shuffled.
 	 */
 	ArrayList<Question> questions;
+	
+	private HashMap<Integer, ArrayList<Contact>> contactGroups, allContactGroups;
 
 	/**
 	 * Constructor.
@@ -53,14 +56,11 @@ public class GameAdapter implements Parcelable, Config {
 	 * @param descriptor
 	 * @param callbacks
 	 */
-	@SuppressWarnings("unchecked")
 	public GameAdapter(Context context, App app, GameDescriptor descriptor, GameCallbacks callbacks) {
 		this.app = app;
 		this.context = context;
 		this.callbacks = callbacks;
 		this.descriptor = descriptor;
-		
-		questions = new ArrayList<Question>(descriptor.getMaxQuestions());
 
 		// Construct the lists that are used as false answers to questions.
 		// FIXME: Decide what to do here.
@@ -69,6 +69,7 @@ public class GameAdapter implements Parcelable, Config {
 		ArrayList<Contact> nameLists = null; // TODO: Implement
 
 		// Combine these lists
+		@SuppressWarnings("unchecked")
 		ArrayList<Contact> allContacts = 
 				ListUtils.concat(new ArrayList<Contact>(), badContacts, realContacts, nameLists);
 
@@ -77,7 +78,7 @@ public class GameAdapter implements Parcelable, Config {
 
 		// Construct groups of actual contacts. Contacts are grouped by the fields they have
 		// available
-		HashMap<Integer, ArrayList<Contact>> contactGroups = new HashMap<Integer, ArrayList<Contact>>();
+		contactGroups = new HashMap<Integer, ArrayList<Contact>>();
 		// For each field type, accumulate a list of contacts that contain that field type.
 		for(int usedFieldType : usedFieldTypes) {
 			ArrayList<Contact> contacts = new ArrayList<Contact>();
@@ -98,7 +99,7 @@ public class GameAdapter implements Parcelable, Config {
 
 		// Construct groups of all types of contact to use as answers.
 		// This is the same as contactGroups, but doesn't get removed from later.
-		HashMap<Integer, ArrayList<Contact>> allContactGroups = new HashMap<Integer, ArrayList<Contact>>();
+		allContactGroups = new HashMap<Integer, ArrayList<Contact>>();
 		// For each field type, accumulate a list of contacts that contain that field type.
 		for(int usedFieldType : usedFieldTypes) {
 			ArrayList<Contact> contacts = new ArrayList<Contact>();
@@ -113,9 +114,19 @@ public class GameAdapter implements Parcelable, Config {
 					shuffleContacts(contacts, descriptor.getShufflingMode()));
 		}
 		
+		if(descriptor.isFiniteGame()) generateMoreQuestions(descriptor.getMaxQuestions());
+		else generateMoreQuestions(10); // Generate 10 at a time
+	}
+
+	private void generateMoreQuestions(int number) {
+		if(questions == null)
+			questions = new ArrayList<Question>(number);
+
+		Log.i(TAG, "Generating " + number + " more questions");
+		
 		// Every time we hit an empty group this decrements
 		int emptyRetries = 10;
-		for(int i = 0; i < descriptor.getMaxQuestions(); i++) {
+		for(int i = 0; i < number; i++) {
 			// Select a random question type
 			Question.QuestionAnswerPair type =
 					descriptor.getQuestionTypes()[Const.RAND.nextInt(
@@ -161,6 +172,7 @@ public class GameAdapter implements Parcelable, Config {
 				}
 				
 				// Shuffle contacts so that same ones don't get chosen repeatedly.
+				@SuppressWarnings("unchecked")
 				ArrayList<Contact> possibles = (ArrayList<Contact>) orderedPossibles.clone();
 				Collections.shuffle(possibles);
 				
@@ -202,15 +214,24 @@ public class GameAdapter implements Parcelable, Config {
 		if(descriptor.isFiniteGame()) {
 			if(questions == null) return 0;
 			return questions.size();
-		}
-		return 1000; // TODO: Infinite game?!?
+		} else return Integer.MAX_VALUE;
 	}
 
 	public Question getItem(int pos) {
 		if(questions == null) return null;
-		if(descriptor.isFiniteGame() && pos < questions.size())
-			return questions.get(pos);
-		throw new RuntimeException("Infinite mode not yet implemented");
+		if(descriptor.isFiniteGame()) {
+			if(pos < questions.size())
+				return questions.get(pos);
+			else return null;
+		} else {
+			if(pos < questions.size())
+				return questions.get(pos);
+			else {
+				// Generate more questions, then continue
+				generateMoreQuestions(10);
+				return questions.get(pos);
+			}
+		}
 	}
 
 	/**
@@ -329,6 +350,18 @@ public class GameAdapter implements Parcelable, Config {
 		Collections.shuffle(correctPairings);
 		question.setCorrectPairings(correctPairings);
 
+		// Calculate a score for answering this question
+		// TODO: Calculate this using current difficulty and other stuff
+		// Perhaps more points in time trial mode?
+		int initialPoints = 1000;
+		float combinedScoreWeight = 0;
+		for(Contact contact : contacts)
+			combinedScoreWeight += app.getStats().computeScoreWeight(contact);
+		// We'll assume that a pairing is worth 3x a normal question
+		combinedScoreWeight *= 3f / 4f;
+		int maxPointsGain = (int) (combinedScoreWeight * initialPoints);
+		question.setMaxPoints(maxPointsGain);
+
 		return question;
 	}
 
@@ -392,15 +425,15 @@ public class GameAdapter implements Parcelable, Config {
         		(question.getAnswerFormat() == Question.FORMAT_TEXT ? 1 : 0);
         switch(bits) {
         case 0x0: // 0b0000 - I I MC
-        	fragment = null; break;
+        	fragment = null; break; // NOT IMPLEMENTING
     	default: case 0x1: // 0b0001 - I T MC
         	fragment = new ImageTextMCFragment(); break;
         case 0x2: // 0b0010 - T I MC
-        	fragment = null; break;
+        	fragment = new TextImageMCFragment(); break;
         case 0x3: // 0b0011 - T T MC
         	fragment = new TextTextMCFragment(); break;
         case 0x4: // 0b0100 - I I TF
-        	fragment = null; break;
+        	fragment = null; break; // NOT IMPLEMENTING
         case 0x5: // 0b0101 - I T TF
         	fragment = new ImageTextTFFragment(); break;
         case 0x6: // 0b0110 - T I TF
@@ -408,7 +441,7 @@ public class GameAdapter implements Parcelable, Config {
         case 0x7: // 0b0111 - T T TF
         	fragment = null; break;
         case 0x8: // 0b1000 - I I PA
-        	fragment = null; break;
+        	fragment = null; break; // NOT IMPLEMENTING
         case 0x9: // 0b1001 - I T PA
         	fragment = new ImageTextPFragment(); break;
         case 0xA: // 0b1010 - T I PA
@@ -442,4 +475,19 @@ public class GameAdapter implements Parcelable, Config {
 			return new GameAdapter[size];
 		}
 	};
+
+	public int getExpectedScore() {
+		if(questions == null) return 0;
+		// TODO: Adjust for difficulty
+		// Expect user to get 2/3 right, at 1/2 the score
+		int maxScore = 0;
+		for(Question question : questions) {
+			maxScore += question.getMaxPoints();
+		}
+		// Expect half the timer time; half the score is given if no timer anyway
+		maxScore /= 2;
+		// Expect 2/3 to be correct
+		maxScore *= 2f/3f;
+		return maxScore;
+	}
 }

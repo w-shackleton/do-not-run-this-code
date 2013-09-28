@@ -1,5 +1,8 @@
 package uk.digitalsquid.contactrecall.mgr.details;
 
+import java.util.HashMap;
+
+import android.annotation.SuppressLint;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -34,6 +37,11 @@ public class Details implements Parcelable {
 	private String mobileEmail;
 	private String otherEmail;
 	
+	// The number of other details is just getting silly. From here on,
+	// we'll just store the more rare details in a HashMap
+	@SuppressLint("UseSparseArrays")
+	public HashMap<Integer, String> otherDetails = new HashMap<Integer, String>();
+	
 	/**
 	 * If <code>true</code>, indicates that this contact has a picture.
 	 */
@@ -58,6 +66,8 @@ public class Details implements Parcelable {
 		dest.writeString(workEmail);
 		dest.writeString(mobileEmail);
 		dest.writeString(otherEmail);
+
+		dest.writeMap(otherDetails);
 		
 		dest.writeInt(picture ? 1 : 0);
 	}
@@ -75,6 +85,7 @@ public class Details implements Parcelable {
 				}
 	};
 	
+	@SuppressWarnings("unchecked")
 	private Details(Parcel in) {
 		company = in.readString();
 		department = in.readString();
@@ -83,6 +94,8 @@ public class Details implements Parcelable {
 		workPhone = in.readString();
 		mobilePhone = in.readString();
 		otherPhone = in.readString();
+
+		otherDetails = in.readHashMap(String.class.getClassLoader());
 		
 		picture = in.readInt() == 1;
 	}
@@ -181,5 +194,18 @@ public class Details implements Parcelable {
 
 	public void setHasPicture(boolean picture) {
 		this.picture = picture;
+	}
+	
+	public String getOtherDetail(int field) {
+		return otherDetails.get(field);
+	}
+	public boolean hasOtherDetail(int field) {
+		return otherDetails.containsKey(field);
+	}
+	public void setOtherDetail(int field, String value) {
+		otherDetails.put(field, value);
+	}
+	public void removeOtherDetail(int field) {
+		otherDetails.remove(field);
 	}
 }

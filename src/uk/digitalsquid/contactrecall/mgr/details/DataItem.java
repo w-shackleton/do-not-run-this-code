@@ -145,8 +145,6 @@ public class DataItem implements Parcelable {
 		        text.setText(contact.getTextField(item.field));
 		        break;
 	        }
-	        
-	        // TODO FIXME: set up selection somehow
 
 			return convertView;
 		}

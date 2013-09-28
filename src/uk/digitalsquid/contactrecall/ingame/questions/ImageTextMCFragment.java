@@ -3,7 +3,7 @@ package uk.digitalsquid.contactrecall.ingame.questions;
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.ingame.views.AsyncImageView;
-import uk.digitalsquid.contactrecall.ingame.views.AsyncImageView.ImageLoader;
+import uk.digitalsquid.contactrecall.ingame.views.ImageLoader;
 import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import android.content.Context;
@@ -80,7 +80,7 @@ public class ImageTextMCFragment extends MultiChoiceFragment<AsyncImageView, But
 		super.onActivityCreated(savedInstanceState);
         // Show photo
 		final App app = (App) getActivity().getApplication();
-		questionView.setImageBitmapAsync(new ImageLoader() {
+		questionView.setImageBitmapAsync(new ImageLoader<AsyncImageView>() {
 			@Override
 			public void onImageLoaded(AsyncImageView asyncImageView) {
 				if(timer != null) timer.start();

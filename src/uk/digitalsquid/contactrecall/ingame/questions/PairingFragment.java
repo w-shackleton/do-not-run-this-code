@@ -111,11 +111,16 @@ public abstract class PairingFragment<QView extends View, AView extends View>
 			}
 		}
 
-		// TODO: Create a points gain when no timer
-		int pointsGain = 0;
+		// When no timer, just give half total points
+		int pointsGain = question.getMaxPoints() / 2;
 		if(timer != null) pointsGain = timer.getVisualPoints();
+		// Convert points gain into actual score change
+		int pointsDelta = 0;
+		float contactCount = question.getContacts().length;
+		pointsDelta += (float)correct.size() / contactCount * pointsGain;
+		pointsDelta -= (float)incorrect.size() / contactCount * pointsGain / 5f;
 		
-		callbacks.pairingChoiceMade(correct, incorrect, timeout, delay, pointsGain);
+		callbacks.pairingChoiceMade(correct, incorrect, timeout, delay, pointsDelta);
 	}
 
 	@Override

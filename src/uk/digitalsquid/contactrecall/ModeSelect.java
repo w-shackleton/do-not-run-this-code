@@ -19,6 +19,9 @@ public class ModeSelect extends Activity implements OnClickListener {
 		findViewById(R.id.trueFalse).setOnClickListener(this);
 		findViewById(R.id.pairings).setOnClickListener(this);
 		findViewById(R.id.timerTest).setOnClickListener(this);
+		findViewById(R.id.infiniteGame).setOnClickListener(this);
+		findViewById(R.id.otherTest).setOnClickListener(this);
+		findViewById(R.id.strangeTest).setOnClickListener(this);
 	}
 
 	@Override
@@ -30,7 +33,8 @@ public class ModeSelect extends Activity implements OnClickListener {
 			descriptor.setQuestionTypes(new Question.QuestionAnswerPair[] {
 					new Question.QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
 			});
-			descriptor.setMaxQuestions(10);
+			descriptor.setMaxQuestions(2);
+			break;
 		case R.id.questionMix:
 			descriptor.setQuestionTypes(new Question.QuestionAnswerPair[] {
 					new Question.QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
@@ -60,6 +64,27 @@ public class ModeSelect extends Activity implements OnClickListener {
 			descriptor.setMaxTimePerContact(5);
 			descriptor.setMaxTime(0);
 			descriptor.setHardTimerPerContact(false);
+			break;
+		case R.id.infiniteGame:
+			descriptor.setQuestionTypes(new Question.QuestionAnswerPair[] {
+					new Question.QuestionAnswerPair(Question.STYLE_TRUE_FALSE, Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
+					new Question.QuestionAnswerPair(Question.STYLE_TRUE_FALSE, Question.FIELD_PHOTO, Question.FIELD_FIRST_NAME),
+					new Question.QuestionAnswerPair(Question.STYLE_TRUE_FALSE, Question.FIELD_PHOTO, Question.FIELD_LAST_NAME),
+					new Question.QuestionAnswerPair(Question.STYLE_TRUE_FALSE, Question.FIELD_PHOTO, Question.FIELD_EMAIL_HOME),
+			});
+			descriptor.setFiniteGame(false);
+			break;
+		case R.id.otherTest:
+			descriptor.setQuestionTypes(new Question.QuestionAnswerPair[] {
+					new Question.QuestionAnswerPair(Question.STYLE_MULTI_CHOICE, Question.FIELD_WEBSITE, Question.FIELD_DISPLAY_NAME),
+			});
+			break;
+		case R.id.strangeTest:
+			descriptor.setQuestionTypes(new Question.QuestionAnswerPair[] {
+					new Question.QuestionAnswerPair(Question.STYLE_MULTI_CHOICE, Question.FIELD_DISPLAY_NAME, Question.FIELD_PHOTO),
+					new Question.QuestionAnswerPair(Question.STYLE_MULTI_CHOICE, Question.FIELD_ADDRESS_HOME, Question.FIELD_PHOTO),
+					new Question.QuestionAnswerPair(Question.STYLE_MULTI_CHOICE, Question.FIELD_ADDRESS_OTHER, Question.FIELD_PHOTO),
+			});
 			break;
 		default:
 			return;

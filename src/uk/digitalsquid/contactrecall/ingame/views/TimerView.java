@@ -15,6 +15,7 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.view.animation.LinearInterpolator;
 
 public class TimerView extends TimingView {
 	
@@ -162,6 +163,8 @@ public class TimerView extends TimingView {
 
 	@Override
 	protected ObjectAnimator getPropertyAnimator(float startPosition) {
-		return ObjectAnimator.ofFloat(this, "visualProgress", startPosition, 1f);
+		ObjectAnimator anim = ObjectAnimator.ofFloat(this, "visualProgress", startPosition, 1f);
+		anim.setInterpolator(new LinearInterpolator());
+		return anim;
 	}
 }

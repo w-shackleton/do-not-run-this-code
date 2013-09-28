@@ -18,7 +18,7 @@
     <string name="review_contacts">Review contacts</string>
     <string name="finish_game">Finish</string>
     <string name="game_summary">Game Summary</string>
-    <string name="summary_bad_contacts">Some people you need to work on..</string>
+    <string name="summary_bad_contacts">Mistakes</string>
     <string name="photo_description">This contact\'s photo</string>
     <string name="leaderboard">Leaderboard</string>
     <string name="dataErrorDescription">If something\'s not quite right with this question, select the incorrect detail below.</string>

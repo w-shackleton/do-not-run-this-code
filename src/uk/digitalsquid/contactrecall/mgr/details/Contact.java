@@ -4,16 +4,18 @@ import java.util.Comparator;
 
 import uk.digitalsquid.contactrecall.mgr.PhotoManager;
 import uk.digitalsquid.contactrecall.mgr.Question;
+import uk.digitalsquid.contactrecall.misc.Config;
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 /**
  * Represents the basic info about a contact in the phone's database.
  * @author william
  *
  */
-public final class Contact implements Parcelable, Comparable<Contact> {
+public final class Contact implements Parcelable, Comparable<Contact>, Config {
 	private int id;
 	
 	private String firstName;
@@ -24,12 +26,15 @@ public final class Contact implements Parcelable, Comparable<Contact> {
 	
 	private transient int customSortField;
 	
+	private boolean photoRemoved = false;
+	
     private Contact(Parcel in) {
     	id = in.readInt();
     	firstName = in.readString();
     	lastName = in.readString();
     	displayName = in.readString();
     	details = new Details();
+    	photoRemoved = in.readInt() == 1;
     }
 	
 	public Contact() {
@@ -69,6 +74,7 @@ public final class Contact implements Parcelable, Comparable<Contact> {
 	 * A high-resolution photo can be requested
 	 */
 	public Bitmap getPhoto(PhotoManager mgr) {
+		if(photoRemoved) return null;
 		return getPhoto(mgr, true);
 	}
 	
@@ -76,6 +82,7 @@ public final class Contact implements Parcelable, Comparable<Contact> {
 	 * Loads the photo from the given manager. Returns the first one.
 	 */
 	public Bitmap getPhoto(PhotoManager mgr, boolean highRes) {
+		if(photoRemoved) return null;
 		return mgr.getContactPicture(id, highRes);
 	}
 	
@@ -119,6 +126,7 @@ public final class Contact implements Parcelable, Comparable<Contact> {
 		dest.writeString(lastName);
 		dest.writeString(displayName);
 		dest.writeParcelable(details, 0);
+		dest.writeInt(photoRemoved ? 1 : 0);
 	}
 	
 	public static final Parcelable.Creator<Contact> CREATOR =
@@ -164,7 +172,6 @@ public final class Contact implements Parcelable, Comparable<Contact> {
 	public String getTextField(int field) {
 		if(!hasField(field)) return displayName;
 		switch(field) {
-		default:
 		case Question.FIELD_DISPLAY_NAME:	return displayName;
 		case Question.FIELD_FIRST_NAME:		return firstName;
 		case Question.FIELD_LAST_NAME:		return lastName;
@@ -180,6 +187,13 @@ public final class Contact implements Parcelable, Comparable<Contact> {
 		case Question.FIELD_EMAIL_MOBILE:	return details.getMobileEmail();
 		case Question.FIELD_EMAIL_OTHER:	return details.getOtherEmail();
 		}
+		// The start of the 'other' fields
+		if(field >= Question.FIELD_OTHERS_START) {
+			String result = details.getOtherDetail(field);
+			if(result == null) return displayName;
+			return result;
+		}
+		return displayName;
 	}
 
 	/**
@@ -188,8 +202,11 @@ public final class Contact implements Parcelable, Comparable<Contact> {
 	 */
 	public void removeField(int field) {
 		switch(field) {
-		default:
 		// case Question.FIELD_DISPLAY_NAME:	displayName = null; return;
+		case Question.FIELD_PHOTO:
+			photoRemoved = true;
+			details.setHasPicture(false);
+			return;
 		case Question.FIELD_FIRST_NAME:		firstName = null; return;
 		case Question.FIELD_LAST_NAME:		lastName = null; return;
 		case Question.FIELD_COMPANY:		details.setCompany(null); return;
@@ -203,6 +220,9 @@ public final class Contact implements Parcelable, Comparable<Contact> {
 		case Question.FIELD_EMAIL_WORK:		details.setWorkEmail(null); return;
 		case Question.FIELD_EMAIL_MOBILE:	details.setMobileEmail(null); return;
 		case Question.FIELD_EMAIL_OTHER:	details.setOtherEmail(null); return;
+		}
+		if(field >= Question.FIELD_OTHERS_START) {
+			details.removeOtherDetail(field);
 		}
 	}
 	
@@ -254,9 +274,11 @@ public final class Contact implements Parcelable, Comparable<Contact> {
 		case Question.FIELD_EMAIL_WORK:		return details.getWorkEmail() != null;
 		case Question.FIELD_EMAIL_MOBILE:	return details.getMobileEmail() != null;
 		case Question.FIELD_EMAIL_OTHER:	return details.getOtherEmail() != null;
-		default:
-				return false;
 		}
+		if(field >= Question.FIELD_OTHERS_START) {
+			return details.hasOtherDetail(field);
+		}
+		return false;
 	}
 
 	public int getCustomSortField() {
@@ -265,5 +287,13 @@ public final class Contact implements Parcelable, Comparable<Contact> {
 
 	public void setCustomSortField(int customSortField) {
 		this.customSortField = customSortField;
+	}
+	
+	public void setOtherDetail(int field, String value) {
+		if(field >= Question.FIELD_OTHERS_START) {
+			details.setOtherDetail(field, value);
+		} else {
+			Log.w(TAG, "setOtherDetail called with a static detail value");
+		}
 	}
 }

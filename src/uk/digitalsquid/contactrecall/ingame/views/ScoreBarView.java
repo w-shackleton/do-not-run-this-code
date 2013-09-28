@@ -152,6 +152,9 @@ public class ScoreBarView extends View {
 
 		fillPaint.setColor(generateColour((float)getCurrentScore() / (float)expectedScore));
 		c.drawRect(0, barStart, width, barEnd, fillPaint);
+		
+		c.drawLine(0, POS_ZERO * height, width, POS_ZERO * height, linePaint);
+		c.drawLine(0, POS_MAX * height, width, POS_MAX * height, linePaint);
 	}
 	
 	/**

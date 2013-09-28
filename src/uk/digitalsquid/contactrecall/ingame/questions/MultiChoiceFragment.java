@@ -14,7 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.ViewParent;
 
 /**
  * Displays a question in one question, multiple answer form.
@@ -22,7 +22,7 @@ import android.widget.Button;
  *
  */
 public abstract class
-		MultiChoiceFragment<QView extends View, AButton extends Button>
+		MultiChoiceFragment<QView extends View, AButton extends View>
 		extends QuestionFragment implements OnClickListener {
 	
 	protected QView questionView;
@@ -62,6 +62,13 @@ public abstract class
         }
         for(int i = numberOfChoices; i < choiceButtons.length; i++) {
         	choiceButtons[i].setVisibility(View.GONE);
+        	ViewParent parent = choiceButtons[i].getParent();
+        	if(parent instanceof ViewGroup) {
+        		int cadence = ((ViewGroup)parent).getChildCount();
+        		if(i % cadence == 0) { // Remove whole row if at the start of a new row
+        			((ViewGroup)parent).setVisibility(View.GONE);
+        		}
+        	}
         }
         
         startTime = System.nanoTime();

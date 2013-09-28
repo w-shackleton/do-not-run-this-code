@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.ingame.views.AsyncImageView;
-import uk.digitalsquid.contactrecall.ingame.views.AsyncImageView.ImageLoader;
+import uk.digitalsquid.contactrecall.ingame.views.ImageLoader;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -88,7 +88,7 @@ public final class ImageTextPFragment
         for(int i = 0; i < contacts.length; i++) {
         	final Contact contact = contacts[i];
         	pendingImages.add(questionViews[i]);
-        	questionViews[i].setImageBitmapAsync(new ImageLoader() {
+        	questionViews[i].setImageBitmapAsync(new ImageLoader<AsyncImageView>() {
 				@Override
 				public Bitmap loadImage(Context context) {
 			        return contact.getPhoto(app.getPhotos());

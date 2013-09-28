@@ -9,6 +9,7 @@ import uk.digitalsquid.contactrecall.R.string;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.ContactsContract.CommonDataKinds;
 
 /**
  * Encapsulates a single question. The data contained here should be all
@@ -69,6 +70,28 @@ public final class Question implements Parcelable {
 	public static final int FIELD_EMAIL_WORK = 13;
 	public static final int FIELD_EMAIL_MOBILE = 14;
 	public static final int FIELD_EMAIL_OTHER = 15;
+
+	public static final int FIELD_ADDRESS_HOME = 16;
+	public static final int FIELD_OTHERS_START = FIELD_ADDRESS_HOME;
+	public static final int FIELD_ADDRESS_WORK = 17;
+	public static final int FIELD_ADDRESS_OTHER = 18;
+
+	public static final int FIELD_WEBSITE = 19;
+
+	public static final int FIELD_ASSISTANT = 20;
+	public static final int FIELD_BROTHER = 21;
+	public static final int FIELD_CHILD = 22;
+	public static final int FIELD_DOMESTIC_PARTNER = 23;
+	public static final int FIELD_FATHER = 24;
+	public static final int FIELD_FRIEND = 25;
+	public static final int FIELD_MANAGER = 26;
+	public static final int FIELD_MOTHER = 27;
+	public static final int FIELD_PARENT = 28;
+	public static final int FIELD_PARTNER = 29;
+	public static final int FIELD_REFERRED_BY = 30;
+	public static final int FIELD_RELATIVE = 31;
+	public static final int FIELD_SISTER = 32;
+	public static final int FIELD_SPOUSE = 33;
 	
 	// Formats of different types of question, ie. should a picture be shown?
 	public static final int FORMAT_IMAGE = 1;
@@ -403,6 +426,56 @@ public final class Question implements Parcelable {
 			return R.string.description_email_mobile;
 		case FIELD_EMAIL_OTHER:
 			return R.string.description_email_other;
+		case FIELD_ADDRESS_HOME:
+			return R.string.description_address_home;
+		case FIELD_ADDRESS_WORK:
+			return R.string.description_address_work;
+		case FIELD_ADDRESS_OTHER:
+			return R.string.description_address_other;
+		case FIELD_WEBSITE:
+			return R.string.description_website;
+		case FIELD_ASSISTANT:
+			return CommonDataKinds.Relation.getTypeLabelResource(
+					CommonDataKinds.Relation.TYPE_ASSISTANT);
+		case FIELD_BROTHER:
+			return CommonDataKinds.Relation.getTypeLabelResource(
+					CommonDataKinds.Relation.TYPE_BROTHER);
+		case FIELD_CHILD:
+			return CommonDataKinds.Relation.getTypeLabelResource(
+					CommonDataKinds.Relation.TYPE_CHILD);
+		case FIELD_DOMESTIC_PARTNER:
+			return CommonDataKinds.Relation.getTypeLabelResource(
+					CommonDataKinds.Relation.TYPE_DOMESTIC_PARTNER);
+		case FIELD_FATHER:
+			return CommonDataKinds.Relation.getTypeLabelResource(
+					CommonDataKinds.Relation.TYPE_FATHER);
+		case FIELD_FRIEND:
+			return CommonDataKinds.Relation.getTypeLabelResource(
+					CommonDataKinds.Relation.TYPE_FRIEND);
+		case FIELD_MANAGER:
+			return CommonDataKinds.Relation.getTypeLabelResource(
+					CommonDataKinds.Relation.TYPE_MANAGER);
+		case FIELD_MOTHER:
+			return CommonDataKinds.Relation.getTypeLabelResource(
+					CommonDataKinds.Relation.TYPE_MOTHER);
+		case FIELD_PARENT:
+			return CommonDataKinds.Relation.getTypeLabelResource(
+					CommonDataKinds.Relation.TYPE_PARENT);
+		case FIELD_PARTNER:
+			return CommonDataKinds.Relation.getTypeLabelResource(
+					CommonDataKinds.Relation.TYPE_PARTNER);
+		case FIELD_REFERRED_BY:
+			return CommonDataKinds.Relation.getTypeLabelResource(
+					CommonDataKinds.Relation.TYPE_REFERRED_BY);
+		case FIELD_RELATIVE:
+			return CommonDataKinds.Relation.getTypeLabelResource(
+					CommonDataKinds.Relation.TYPE_RELATIVE);
+		case FIELD_SISTER:
+			return CommonDataKinds.Relation.getTypeLabelResource(
+					CommonDataKinds.Relation.TYPE_SISTER);
+		case FIELD_SPOUSE:
+			return CommonDataKinds.Relation.getTypeLabelResource(
+					CommonDataKinds.Relation.TYPE_SPOUSE);
 		default:
 			return R.string.placeholder;
 		}

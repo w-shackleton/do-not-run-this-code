@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.provider.ContactsContract.CommonDataKinds.StructuredPostal;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.SparseArray;
@@ -146,6 +147,10 @@ public final class ContactManager implements Config {
 				ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME,
 				ContactsContract.CommonDataKinds.Email.DISPLAY_NAME,
 				ContactsContract.CommonDataKinds.Email.TYPE,
+				ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS,
+				ContactsContract.CommonDataKinds.Website.URL,
+				ContactsContract.CommonDataKinds.Relation.NAME,
+				ContactsContract.CommonDataKinds.Relation.TYPE,
 		},
 				null, null, null);
 		int idIdx		= cur.getColumnIndexOrThrow(ContactsContract.Data.CONTACT_ID);
@@ -159,6 +164,11 @@ public final class ContactManager implements Config {
 		int familyNameIdx=cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME);
 		int emailNameIdx= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Email.DISPLAY_NAME);
 		int emailtypeIdx= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Email.TYPE);
+		int addressTypeIdx	= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.StructuredPostal.TYPE);
+		int addressIdx	= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS);
+		int websiteIdx	= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Website.URL);
+		int relationNameIdx	= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Relation.NAME);
+		int relationTypeIdx	= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Relation.TYPE);
 
 		total = cur.getCount();
 		i = 0;
@@ -202,6 +212,58 @@ public final class ContactManager implements Config {
 					contact.getDetails().setMobileEmail(cur.getString(emailNameIdx)); break;
 				case Email.TYPE_OTHER:
 					contact.getDetails().setOtherEmail(cur.getString(emailNameIdx)); break;
+				}
+			}
+			else if(mime.equals(ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE)) {
+				switch(cur.getInt(addressTypeIdx)) {
+				case StructuredPostal.TYPE_HOME:
+					contact.getDetails().setOtherDetail(Question.FIELD_ADDRESS_HOME, cur.getString(addressIdx));
+					break;
+				case StructuredPostal.TYPE_WORK:
+					contact.getDetails().setOtherDetail(Question.FIELD_ADDRESS_WORK, cur.getString(addressIdx));
+					break;
+				case StructuredPostal.TYPE_OTHER:
+					contact.getDetails().setOtherDetail(Question.FIELD_ADDRESS_OTHER, cur.getString(addressIdx));
+					break;
+				}
+			}
+			else if(mime.equals(ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE)) {
+				String website = cur.getString(websiteIdx);
+				// No Google+ profiles
+				if(website.contains("google.com/profiles")) break;
+				contact.setOtherDetail(Question.FIELD_WEBSITE, website);
+			}
+			else if(mime.equals(ContactsContract.CommonDataKinds.Relation.CONTENT_ITEM_TYPE)) {
+				String name = cur.getString(relationNameIdx);
+				switch(cur.getInt(relationTypeIdx)) {
+				case ContactsContract.CommonDataKinds.Relation.TYPE_ASSISTANT:
+					contact.setOtherDetail(Question.FIELD_ASSISTANT, name); break;
+				case ContactsContract.CommonDataKinds.Relation.TYPE_BROTHER:
+					contact.setOtherDetail(Question.FIELD_BROTHER, name); break;
+				case ContactsContract.CommonDataKinds.Relation.TYPE_CHILD:
+					contact.setOtherDetail(Question.FIELD_CHILD, name); break;
+				case ContactsContract.CommonDataKinds.Relation.TYPE_DOMESTIC_PARTNER:
+					contact.setOtherDetail(Question.FIELD_DOMESTIC_PARTNER, name); break;
+				case ContactsContract.CommonDataKinds.Relation.TYPE_FATHER:
+					contact.setOtherDetail(Question.FIELD_FATHER, name); break;
+				case ContactsContract.CommonDataKinds.Relation.TYPE_FRIEND:
+					contact.setOtherDetail(Question.FIELD_FRIEND, name); break;
+				case ContactsContract.CommonDataKinds.Relation.TYPE_MANAGER:
+					contact.setOtherDetail(Question.FIELD_MANAGER, name); break;
+				case ContactsContract.CommonDataKinds.Relation.TYPE_MOTHER:
+					contact.setOtherDetail(Question.FIELD_MOTHER, name); break;
+				case ContactsContract.CommonDataKinds.Relation.TYPE_PARENT:
+					contact.setOtherDetail(Question.FIELD_PARENT, name); break;
+				case ContactsContract.CommonDataKinds.Relation.TYPE_PARTNER:
+					contact.setOtherDetail(Question.FIELD_PARTNER, name); break;
+				case ContactsContract.CommonDataKinds.Relation.TYPE_REFERRED_BY:
+					contact.setOtherDetail(Question.FIELD_REFERRED_BY, name); break;
+				case ContactsContract.CommonDataKinds.Relation.TYPE_RELATIVE:
+					contact.setOtherDetail(Question.FIELD_RELATIVE, name); break;
+				case ContactsContract.CommonDataKinds.Relation.TYPE_SISTER:
+					contact.setOtherDetail(Question.FIELD_SISTER, name); break;
+				case ContactsContract.CommonDataKinds.Relation.TYPE_SPOUSE:
+					contact.setOtherDetail(Question.FIELD_SPOUSE, name); break;
 				}
 			}
 		}
@@ -504,7 +566,6 @@ public final class ContactManager implements Config {
 	/**
 	 * Deletes the given field from the given {@link Contact}. If this
 	 * field doesn't exist for this {@link Contact}, nothing happens.
-	 * TODO: Implement
 	 * @param contact
 	 * @param field
 	 */

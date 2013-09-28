@@ -25,4 +25,9 @@
     <string name="description_email_work">Work Email</string>
     <string name="description_email_mobile">Mobile Email</string>
     <string name="description_email_other">Other Email</string>
+
+	<string name="description_address_home">Home Address</string>
+	<string name="description_address_work">Work Address</string>
+	<string name="description_address_other">Other Address</string>
+	<string name="description_website">Website</string>
 </resources>

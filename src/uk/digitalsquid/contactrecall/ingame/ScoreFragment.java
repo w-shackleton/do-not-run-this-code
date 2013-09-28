@@ -8,17 +8,21 @@ import java.util.Set;
 import uk.digitalsquid.contactrecall.App;
 import uk.digitalsquid.contactrecall.R;
 import uk.digitalsquid.contactrecall.ingame.views.ScoreBarView;
+import uk.digitalsquid.contactrecall.misc.Config;
+import uk.digitalsquid.contactrecall.misc.Utils;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 /**
@@ -26,24 +30,32 @@ import android.widget.TextView;
  * @author william
  *
  */
-public class ScoreFragment extends Fragment implements OnClickListener {
+public class ScoreFragment extends Fragment implements OnClickListener, Config {
 	
 	App app; Context context;
 	ArrayList<QuestionFailData> failedContacts;
 	
 	private int score;
+	/**
+	 * The score that we would consider 'average'.
+	 */
+	private int expectedScore;
 	
 	private boolean firstRun = true;
 	private boolean started = false;
 	
 	private ScoreBarView[] scoreBars;
 	private TextView scoreView;
+	private TextView qualitativeScoreView;
+	private FrameLayout summaryFragmentFrame;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Bundle args = getArguments();
+		expectedScore = args.getInt("expectedScore");
 		score = args.getInt("score");
+		Log.i(TAG, String.format("Expected score: %d, actual score: %d", expectedScore, score));
 		ArrayList<QuestionFailData> data = args.getParcelableArrayList("failedContacts");
 		Set<QuestionFailData> dataSet = new LinkedHashSet<QuestionFailData>(data);
 		failedContacts = new ArrayList<QuestionFailData>(dataSet);
@@ -52,6 +64,14 @@ public class ScoreFragment extends Fragment implements OnClickListener {
 			if(savedInstanceState.getBoolean("started", false))
 				firstRun = false;
 		}
+
+		SummaryFragment summaryFragment = new SummaryFragment();
+		summaryFragment.setArguments(args);
+		
+		getFragmentManager().beginTransaction()
+				.add(R.id.summaryFragmentFrame, summaryFragment)
+				.commit();
+		
 	}
 
 	@Override
@@ -68,6 +88,11 @@ public class ScoreFragment extends Fragment implements OnClickListener {
 		
 		scoreView = (TextView) rootView.findViewById(R.id.score);
 		scoreView.setText("");
+		qualitativeScoreView = (TextView) rootView.findViewById(R.id.qualitativeScore);
+		qualitativeScoreView.setText("");
+		qualitativeScoreView.setVisibility(View.INVISIBLE);
+		summaryFragmentFrame = (FrameLayout) rootView.findViewById(R.id.summaryFragmentFrame);
+		summaryFragmentFrame.setVisibility(View.INVISIBLE);
 		
 		scoreBars = new ScoreBarView[] {
 				(ScoreBarView) rootView.findViewById(R.id.scoreBarLeft),
@@ -75,8 +100,7 @@ public class ScoreFragment extends Fragment implements OnClickListener {
 		};
 		
 		for(ScoreBarView scoreBar : scoreBars) {
-			// TODO: Calculate expected score
-			scoreBar.setExpectedScore(4000);
+			scoreBar.setExpectedScore(expectedScore);
 			scoreBar.setScore(score);
 		}
 		
@@ -93,6 +117,22 @@ public class ScoreFragment extends Fragment implements OnClickListener {
 		return currentScore;
 	}
 	
+	void setQualitativeScore(int score) {
+		// Normalise score
+		String[] texts = getResources().getStringArray(R.array.qualitativeScore);
+		float scoreFactor = (float)score / (float)expectedScore;
+		String text;
+		if(scoreFactor < -0.5f)
+			text = getResources().getString(R.string.qualitativeScoreLow);
+		else if(scoreFactor > 1.5f)
+			text = getResources().getString(R.string.qualitativeScoreHigh);
+		else {
+			int idx = Utils.minMax((int)((scoreFactor + 0.5f) / 2f * texts.length), 0, texts.length - 1);
+			text = texts[idx];
+		}
+		qualitativeScoreView.setText(text);
+	}
+	
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -104,6 +144,10 @@ public class ScoreFragment extends Fragment implements OnClickListener {
 				for(ScoreBarView scoreBar : scoreBars) {
 					scoreBar.showImmediateScore();
 				}
+				setCurrentScore(score);
+				setQualitativeScore(score);
+				qualitativeScoreView.setVisibility(View.VISIBLE);
+				summaryFragmentFrame.setVisibility(View.VISIBLE);
 			}
 		}
 	}
@@ -127,6 +171,8 @@ public class ScoreFragment extends Fragment implements OnClickListener {
 	private AsyncTask<Void, Integer, Void> animatorTask = new AsyncTask<Void, Integer, Void>() {
 		
 		private static final int START_SCORE = 1;
+		private static final int SHOW_MESSAGE = 2;
+		private static final int SHOW_FAILURES = 3;
 		
 		private void safeSleep(long millis) {
 			try {
@@ -139,7 +185,10 @@ public class ScoreFragment extends Fragment implements OnClickListener {
 			safeSleep(1000);
 			publishProgress(START_SCORE);
 			safeSleep(2000);
-			safeSleep(1000);
+			safeSleep(500);
+			publishProgress(SHOW_MESSAGE);
+			safeSleep(500);
+			publishProgress(SHOW_FAILURES);
 			return null;
 		}
 		
@@ -156,6 +205,13 @@ public class ScoreFragment extends Fragment implements OnClickListener {
 						scoreAnim.setDuration(2000);
 						scoreAnim.start();
 					}
+					break;
+				case SHOW_MESSAGE:
+					qualitativeScoreView.setVisibility(View.VISIBLE);
+					setQualitativeScore(score);
+					break;
+				case SHOW_FAILURES:
+					summaryFragmentFrame.setVisibility(View.VISIBLE);
 					break;
 				}
 			}

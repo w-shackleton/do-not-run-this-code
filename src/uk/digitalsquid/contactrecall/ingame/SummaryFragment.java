@@ -16,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -26,7 +28,7 @@ import android.widget.TextView;
  * @author william
  *
  */
-public class SummaryFragment extends Fragment implements OnClickListener {
+public class SummaryFragment extends Fragment implements OnClickListener, OnItemClickListener {
 	
 	GridView grid;
 	ArrayList<QuestionFailData> failedContacts;
@@ -57,6 +59,8 @@ public class SummaryFragment extends Fragment implements OnClickListener {
 		grid = (GridView) rootView.findViewById(R.id.contactGrid);
 		
 		grid.setAdapter(new ContactAdapter(app, context, failedContacts));
+		
+		grid.setOnItemClickListener(this);
 		
 		return rootView;
 	}
@@ -126,5 +130,9 @@ public class SummaryFragment extends Fragment implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> adapter, View view, int idx, long id) {
 	}
 }
