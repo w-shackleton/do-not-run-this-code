@@ -158,10 +158,8 @@ public class PairingLayout extends TableLayout implements Config {
 		switch(action) {
 		case MotionEvent.ACTION_DOWN:
 			// Reset all motion data
-			Log.d(TAG, "PairingLayout: Down");
 			currentLineData.clear();
 		case MotionEvent.ACTION_POINTER_DOWN:
-			Log.d(TAG, "PairingLayout: Pointer Down");
 			CurrentLineData data = new CurrentLineData();
 			currentLineData.put(event.getPointerId(index), data);
 			PointF correctedStart = getCorrectedChoicePosition(
@@ -189,9 +187,7 @@ public class PairingLayout extends TableLayout implements Config {
 			invalidate();
 			break;
 		case MotionEvent.ACTION_UP:
-			Log.d(TAG, "PairingLayout: Up");
 		case MotionEvent.ACTION_POINTER_UP:
-			Log.d(TAG, "PairingLayout: Pointer Up");
 			int id = event.getPointerId(index);
 			CurrentLineData finishedData = currentLineData.remove(id);
 			if(finishedData == null) break;
@@ -350,7 +346,6 @@ public class PairingLayout extends TableLayout implements Config {
 	@Override
 	public void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		Log.d(TAG, "PairingLayout: Drawing " + currentLineData.size() + " lines");
 		for(CurrentLineData line : currentLineData.values()) {
 			if(!line.valid) continue; 
 			canvas.drawLine(

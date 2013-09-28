@@ -110,7 +110,9 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		
 		Fragment f = gameAdapter.getFragment(position);
 		if(f == null) {
-			Log.e(Game.TAG, "Null question fragment!");
+			Log.e(Game.TAG, "Null question fragment! Moving on to second question");
+			position++;
+			postAdvanceQuestion(CHOICE_CORRECT);
 			return;
 		}
 		getFragmentManager().beginTransaction().
@@ -260,7 +262,7 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 	 * Changes the view to the next question. Does not change any game data.
 	 * @param correct
 	 */
-	private void postAdvanceQuestion(int choiceType) {
+	private void postAdvanceQuestion(final int choiceType) {
 		if(gameFinished) return;
 		int waitTimeId, animInTmp, animOutTmp;
 		switch(choiceType) {
@@ -315,7 +317,9 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 				public void run() {
 					Fragment f = gameAdapter.getFragment(position);
 					if(f == null) {
-						Log.e(Game.TAG, "Null question fragment!");
+						Log.e(Game.TAG, "Null question fragment! Moving on to next");
+						position++;
+						postAdvanceQuestion(choiceType);
 						return;
 					}
 					

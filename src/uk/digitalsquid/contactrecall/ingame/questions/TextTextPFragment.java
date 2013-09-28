@@ -13,7 +13,7 @@ public final class TextTextPFragment
 
 	@Override
 	protected int getRootLayoutId() {
-		return R.layout.imagetextpfragment;
+		return R.layout.texttextpfragment;
 	}
 
 	@Override

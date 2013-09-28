@@ -26,6 +26,9 @@
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
         <item name="android:gravity">center</item>
     </style>
+    <style name="Pairing.Row.Right.ImageView">
+        <item name="android:adjustViewBounds">true</item>
+    </style>
     <style name="Pairing.Row.Space">
     </style>
 

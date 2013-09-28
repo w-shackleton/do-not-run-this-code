@@ -15,8 +15,10 @@ import uk.digitalsquid.contactrecall.ingame.questions.ImageTextPFragment;
 import uk.digitalsquid.contactrecall.ingame.questions.ImageTextTFFragment;
 import uk.digitalsquid.contactrecall.ingame.questions.MultiChoiceFragment;
 import uk.digitalsquid.contactrecall.ingame.questions.TextImageMCFragment;
+import uk.digitalsquid.contactrecall.ingame.questions.TextImagePFragment;
 import uk.digitalsquid.contactrecall.ingame.questions.TextTextMCFragment;
 import uk.digitalsquid.contactrecall.ingame.questions.TextTextPFragment;
+import uk.digitalsquid.contactrecall.ingame.questions.TextTextTFFragment;
 import uk.digitalsquid.contactrecall.mgr.Question;
 import uk.digitalsquid.contactrecall.mgr.Question.QuestionAnswerPair;
 import uk.digitalsquid.contactrecall.mgr.details.Contact;
@@ -401,7 +403,6 @@ public class GameAdapter implements Parcelable, Config {
         args.putParcelable(MultiChoiceFragment.ARG_DESCRIPTOR, descriptor);
         
         // Find the correct fragment to use
-        // TODO: Write implementations for these other cases. (Don't think image->image will be needed)
         Fragment fragment;
         Log.v(TAG, String.format("Creating question fragment of format (%d,%d,%d)",
         		question.getQuestionStyle(),
@@ -437,15 +438,15 @@ public class GameAdapter implements Parcelable, Config {
         case 0x5: // 0b0101 - I T TF
         	fragment = new ImageTextTFFragment(); break;
         case 0x6: // 0b0110 - T I TF
-        	fragment = null; break;
+        	fragment = new ImageTextTFFragment(); break; // Note that IT and TI are the same for TF
         case 0x7: // 0b0111 - T T TF
-        	fragment = null; break;
+        	fragment = new TextTextTFFragment(); break;
         case 0x8: // 0b1000 - I I PA
         	fragment = null; break; // NOT IMPLEMENTING
         case 0x9: // 0b1001 - I T PA
         	fragment = new ImageTextPFragment(); break;
         case 0xA: // 0b1010 - T I PA
-        	fragment = null; break;
+        	fragment = new TextImagePFragment(); break;
         case 0xB: // 0b1011 - T T PA
         	fragment = new TextTextPFragment(); break;
         }
