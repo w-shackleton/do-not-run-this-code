@@ -14,7 +14,7 @@
         android:id="@+id/photo"
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:layout_margin="5dip"
         android:contentDescription="@string/contentDescription_photo" />
 
@@ -49,13 +49,13 @@
 	        android:layout_width="0dip"
 	        android:layout_height="match_parent"
 	        android:layout_weight="1"
-	        android:text="True"></Button>
+	        style="@style/AnswerButton.TF.True" />
 	    <Button
 	        android:id="@+id/choice2"
 	        android:layout_width="0dip"
 	        android:layout_height="match_parent"
 	        android:layout_weight="1"
-	        android:text="False"></Button>
+	        style="@style/AnswerButton.TF.False" />
 	</LinearLayout>
 
     <include

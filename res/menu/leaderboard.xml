@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/sortByScore" android:title="@string/sortByScore" android:visible="false"></item>
+    <item android:id="@+id/sortByName" android:title="@string/sortByName"></item>
+    <item android:id="@+id/changeSortDirection" android:title="@string/changeSortDirection" android:icon="@drawable/ic_menu_change_order" android:showAsAction="always"></item>
+    
+
+</menu>

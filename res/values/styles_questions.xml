@@ -41,5 +41,15 @@
     <style name="AnswerImage">
         <item name="android:scaleType">fitCenter</item>
     </style>
+    <style name="AnswerButton"></style>
+    <style name="AnswerButton.TF">
+        <item name="android:textSize">30sp</item>
+    </style>
+    <style name="AnswerButton.TF.True">
+        <item name="android:text">@string/trueText</item>
+    </style>
+    <style name="AnswerButton.TF.False">
+        <item name="android:text">@string/falseText</item>
+    </style>
     
 </resources>

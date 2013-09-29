@@ -38,4 +38,11 @@
     <string name="guess_incorrect_count">Incorrect: %d</string>
     <string name="guess_discard_count">Discarded: %d</string>
     <string name="you_scored">You scored:</string>
+
+    <string name="trueText">True</string>
+    <string name="falseText">False</string>
+
+    <string name="sortByScore">Sort by Score</string>
+    <string name="sortByName">Sort by Name</string>
+    <string name="changeSortDirection">Change direction</string>
 </resources>

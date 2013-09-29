@@ -69,6 +69,7 @@ public abstract class QuestionFragment extends Fragment
 			});
         } else {
         	timer.setVisibility(View.INVISIBLE);
+        	Log.d(TAG, "Timer invisible");
         	timer = null; // Done with timer now
         }
         

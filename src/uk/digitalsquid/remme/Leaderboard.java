@@ -11,8 +11,13 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -41,17 +46,37 @@ public class Leaderboard extends Activity {
 	}
 	
 	public static final class LeaderboardFragment extends Fragment {
-		@Override
-		public void onCreate(Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-		}
-		
 		private ListView leaderboard;
 		
 		private App app;
 		private Stats stats;
 		
 		private LeaderboardAdapter adapter;
+		private boolean sortAscending;
+		private int sortType;
+		
+		static final int SORT_SCORE = 1;
+		static final int SORT_NAME = 2;
+		
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			setHasOptionsMenu(true);
+			if(savedInstanceState != null) {
+				sortType = savedInstanceState.getInt("sortType");
+				sortAscending = savedInstanceState.getBoolean("sortAscending");
+			} else {
+				sortType = SORT_SCORE;
+				sortAscending = true;
+			}
+		}
+		
+		@Override
+		public void onSaveInstanceState(Bundle out) {
+			super.onSaveInstanceState(out);
+			out.putInt("sortType", sortType);
+			out.putBoolean("sortAscending", sortAscending);
+		}
 		
 		@Override
 		public void onAttach(Activity activity) {
@@ -59,6 +84,40 @@ public class Leaderboard extends Activity {
 			app = (App) activity.getApplication();
 			adapter = new LeaderboardAdapter(app, getActivity());
 			stats = app.getStats();
+		}
+		
+		MenuItem sortByScore, sortByName;
+		
+		@Override
+		public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) { 
+			super.onCreateOptionsMenu(menu, inflater);
+			inflater.inflate(R.menu.leaderboard, menu);
+			sortByScore = menu.findItem(R.id.sortByScore);
+			sortByName = menu.findItem(R.id.sortByName);
+		}
+		
+		@Override
+		public boolean onOptionsItemSelected(MenuItem item) {
+			super.onOptionsItemSelected(item);
+			switch(item.getItemId()) {
+			case R.id.sortByScore:
+				sortType = SORT_SCORE;
+				sortByScore.setVisible(false);
+				sortByName.setVisible(true);
+				if(adapter != null) adapter.setOrder(sortType, sortAscending);
+				return true;
+			case R.id.sortByName:
+				sortType = SORT_NAME;
+				sortByScore.setVisible(true);
+				sortByName.setVisible(false);
+				if(adapter != null) adapter.setOrder(sortType, sortAscending);
+				return true;
+			case R.id.changeSortDirection:
+				sortAscending = !sortAscending;
+				if(adapter != null) adapter.setOrder(sortType, sortAscending);
+				return true;
+			}
+			return false;
 		}
 
 		@Override
@@ -70,7 +129,6 @@ public class Leaderboard extends Activity {
 			
 			leaderboard = (ListView) rootView.findViewById(R.id.leaderboard);
 			leaderboard.setAdapter(adapter);
-			
 			
 			ArrayList<Contact> contacts = new ArrayList<Contact>(app.getContacts().getContacts());
 			for(Contact contact : contacts) {
@@ -90,12 +148,14 @@ public class Leaderboard extends Activity {
 		private App app;
 		private Stats stats;
 		private Resources res;
+		private Drawable noPhoto;
 		
 		public LeaderboardAdapter(App app, Context context) {
 			this.app = app;
 			inflater = LayoutInflater.from(context);
 			stats = app.getStats();
 			res = app.getResources();
+			noPhoto = res.getDrawable(R.drawable.no_photo);
 		}
 
 		@Override
@@ -127,7 +187,12 @@ public class Leaderboard extends Activity {
 	        TextView incorrectText = (TextView) convertView.findViewById(R.id.guess_incorrect_count);
 	        TextView discardText = (TextView) convertView.findViewById(R.id.guess_discard_count);
 
-	        photo.setImageBitmap(contact.getPhoto(app.getPhotos()));
+	        Bitmap contactPhoto = contact.getPhoto(app.getPhotos());
+	        if(contactPhoto != null)
+		        photo.setImageBitmap(contactPhoto);
+	        else
+		        photo.setImageDrawable(noPhoto);
+
 	        name.setText(contact.getDisplayName());
 	        
 	        StatsBarView statsBars = (StatsBarView) convertView.findViewById(R.id.statsBarView);
@@ -162,6 +227,19 @@ public class Leaderboard extends Activity {
 
 		public void setContacts(ArrayList<Contact> contacts) {
 			this.contacts = contacts;
+			notifyDataSetChanged();
+		}
+		
+		public void setOrder(int sortType, boolean ascending) {
+			switch(sortType) {
+			case LeaderboardFragment.SORT_NAME:
+				Collections.sort(contacts, Contact.CONTACT_NAME_COMPARATOR);
+				break;
+			case LeaderboardFragment.SORT_SCORE:
+				Collections.sort(contacts, Contact.CUSTOM_COMPARATOR);
+				break;
+			}
+			if(!ascending) Collections.reverse(contacts);
 			notifyDataSetChanged();
 		}
 		
