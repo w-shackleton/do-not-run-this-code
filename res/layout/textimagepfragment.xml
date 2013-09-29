@@ -10,7 +10,7 @@
         android:layout_marginBottom="@dimen/questionTop_overlap"
         layout="@layout/question_top" />
 
-    <uk.digitalsquid.contactrecall.ingame.views.PairingLayout
+    <uk.digitalsquid.remme.ingame.views.PairingLayout
         android:id="@+id/pairingLayout"
         android:layout_width="match_parent"
         android:layout_weight="1"
@@ -23,7 +23,7 @@
 		        style="@style/Pairing.Row.Left.TextView"
 		        android:text="@string/placeholder" />
 		    <Space style="@style/Pairing.Row.Space" />
-		    <uk.digitalsquid.contactrecall.ingame.views.AsyncImageView
+		    <uk.digitalsquid.remme.ingame.views.AsyncImageView
 		        android:id="@+id/choice1"
 		        style="@style/Pairing.Row.Right.ImageView"
 		        android:contentDescription="@string/photo_description" />
@@ -36,7 +36,7 @@
 		        style="@style/Pairing.Row.Left.TextView"
 		        android:text="@string/placeholder" />
 		    <Space style="@style/Pairing.Row.Space" />
-		    <uk.digitalsquid.contactrecall.ingame.views.AsyncImageView
+		    <uk.digitalsquid.remme.ingame.views.AsyncImageView
 		        android:id="@+id/choice2"
 		        style="@style/Pairing.Row.Right.ImageView"
 		        android:contentDescription="@string/photo_description" />
@@ -49,7 +49,7 @@
 		        style="@style/Pairing.Row.Left.TextView"
 		        android:text="@string/placeholder" />
 		    <Space style="@style/Pairing.Row.Space" />
-		    <uk.digitalsquid.contactrecall.ingame.views.AsyncImageView
+		    <uk.digitalsquid.remme.ingame.views.AsyncImageView
 		        android:id="@+id/choice3"
 		        style="@style/Pairing.Row.Right.ImageView"
 		        android:contentDescription="@string/photo_description" />
@@ -62,13 +62,13 @@
 		        style="@style/Pairing.Row.Left.TextView"
 		        android:text="@string/placeholder" />
 		    <Space style="@style/Pairing.Row.Space" />
-		    <uk.digitalsquid.contactrecall.ingame.views.AsyncImageView
+		    <uk.digitalsquid.remme.ingame.views.AsyncImageView
 		        android:id="@+id/choice4"
 		        style="@style/Pairing.Row.Right.ImageView"
 		        android:contentDescription="@string/photo_description" />
         </TableRow>
 
-    </uk.digitalsquid.contactrecall.ingame.views.PairingLayout>
+    </uk.digitalsquid.remme.ingame.views.PairingLayout>
 
     <include
         android:layout_width="match_parent"

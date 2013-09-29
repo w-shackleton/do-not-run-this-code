@@ -10,7 +10,7 @@
         android:layout_marginBottom="@dimen/questionTop_overlap"
         layout="@layout/question_top" />
 
-    <uk.digitalsquid.contactrecall.ingame.views.AsyncImageView
+    <uk.digitalsquid.remme.ingame.views.AsyncImageView
         android:id="@+id/photo"
         android:layout_width="match_parent"
         android:layout_height="0dip"

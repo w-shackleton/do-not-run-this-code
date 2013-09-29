@@ -10,7 +10,7 @@
         android:layout_marginBottom="@dimen/questionTop_overlap"
         layout="@layout/question_top" />
 
-    <uk.digitalsquid.contactrecall.ingame.views.PairingLayout
+    <uk.digitalsquid.remme.ingame.views.PairingLayout
         android:id="@+id/pairingLayout"
         android:layout_width="match_parent"
         android:layout_weight="1"
@@ -69,7 +69,7 @@
 		        android:text="@string/placeholder" />
         </TableRow>
 
-    </uk.digitalsquid.contactrecall.ingame.views.PairingLayout>
+    </uk.digitalsquid.remme.ingame.views.PairingLayout>
 
     <include
         android:layout_width="match_parent"

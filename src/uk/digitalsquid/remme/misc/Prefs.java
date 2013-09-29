@@ -1,0 +1,15 @@
+package uk.digitalsquid.remme.misc;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
+public final class Prefs {
+	
+	@SuppressWarnings("unused")
+	private final SharedPreferences pref;
+	
+	public Prefs(Context context) {
+		pref = PreferenceManager.getDefaultSharedPreferences(context);
+	}
+}

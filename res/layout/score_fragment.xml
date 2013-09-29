@@ -8,7 +8,7 @@
 	    android:layout_height="match_parent"
 	    android:orientation="horizontal" >
 	
-	    <uk.digitalsquid.contactrecall.ingame.views.ScoreBarView
+	    <uk.digitalsquid.remme.ingame.views.ScoreBarView
 	        android:id="@+id/scoreBarLeft"
 	        android:layout_width="wrap_content"
 	        android:layout_height="match_parent" />
@@ -43,7 +43,7 @@
 	
 	    </LinearLayout>
 	
-	    <uk.digitalsquid.contactrecall.ingame.views.ScoreBarView
+	    <uk.digitalsquid.remme.ingame.views.ScoreBarView
 	        android:id="@+id/scoreBarRight"
 	        android:layout_width="wrap_content"
 	        android:layout_height="match_parent" />

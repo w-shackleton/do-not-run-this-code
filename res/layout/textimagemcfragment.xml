@@ -45,13 +45,13 @@
 	        android:layout_height="0dip"
 	        android:layout_weight="1">
 
-	        <uk.digitalsquid.contactrecall.ingame.views.AsyncImageButton
+	        <uk.digitalsquid.remme.ingame.views.AsyncImageButton
 	            android:id="@+id/choice1"
 	            android:layout_width="0dip"
 	            android:layout_height="match_parent"
 	            android:layout_weight="1"
 	            style="@style/AnswerImage" />
-	        <uk.digitalsquid.contactrecall.ingame.views.AsyncImageButton
+	        <uk.digitalsquid.remme.ingame.views.AsyncImageButton
 	            android:id="@+id/choice2"
 	            android:layout_width="0dip"
 	            android:layout_height="match_parent"
@@ -62,13 +62,13 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="0dip"
 	        android:layout_weight="1">
-	        <uk.digitalsquid.contactrecall.ingame.views.AsyncImageButton
+	        <uk.digitalsquid.remme.ingame.views.AsyncImageButton
 	            android:id="@+id/choice3"
 	            android:layout_width="0dip"
 	            android:layout_height="match_parent"
 	            android:layout_weight="1"
 	            style="@style/AnswerImage" />
-	        <uk.digitalsquid.contactrecall.ingame.views.AsyncImageButton
+	        <uk.digitalsquid.remme.ingame.views.AsyncImageButton
 	            android:id="@+id/choice4"
 	            android:layout_width="0dip"
 	            android:layout_height="match_parent"
@@ -79,13 +79,13 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="0dip"
 	        android:layout_weight="1">
-	        <uk.digitalsquid.contactrecall.ingame.views.AsyncImageButton
+	        <uk.digitalsquid.remme.ingame.views.AsyncImageButton
 	            android:id="@+id/choice5"
 	            android:layout_width="0dip"
 	            android:layout_height="match_parent"
 	            android:layout_weight="1"
 	            style="@style/AnswerImage" />
-	        <uk.digitalsquid.contactrecall.ingame.views.AsyncImageButton
+	        <uk.digitalsquid.remme.ingame.views.AsyncImageButton
 	            android:id="@+id/choice6"
 	            android:layout_width="0dip"
 	            android:layout_height="match_parent"
@@ -96,13 +96,13 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="0dip"
 	        android:layout_weight="1">
-	        <uk.digitalsquid.contactrecall.ingame.views.AsyncImageButton
+	        <uk.digitalsquid.remme.ingame.views.AsyncImageButton
 	            android:id="@+id/choice7"
 	            android:layout_width="0dip"
 	            android:layout_height="match_parent"
 	            android:layout_weight="1"
 	            style="@style/AnswerImage" />
-	        <uk.digitalsquid.contactrecall.ingame.views.AsyncImageButton
+	        <uk.digitalsquid.remme.ingame.views.AsyncImageButton
 	            android:id="@+id/choice8"
 	            android:layout_width="0dip"
 	            android:layout_height="match_parent"

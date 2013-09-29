@@ -3,7 +3,7 @@
     <!-- TODO: Make sure placeholder is blank for release -->
     <string name="placeholder">Text</string>
 
-    <string name="app_name">Contact Recaller</string>
+    <string name="app_name">RemMe</string>
     <string name="changegroups">Contact Groups</string>
     <string name="groups">Groups</string>
     <string name="viewcontacts">View Contacts</string>
@@ -25,7 +25,7 @@
     <string name="data_error_confirm">What would you like to do with this contact detail?</string>
     <string name="hide_contact">Hide this contact</string>
     <string name="delete_detail">Delete detail</string>
-    <string name="hide_detail">Hide detail (only within APPNAME)</string>
+    <string name="hide_detail">Hide detail (only within RemMe)</string>
     <string name="edit_contact">Edit / Delete Contact</string>
     <string name="cancel">Cancel</string>
 

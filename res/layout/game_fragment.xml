@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res/uk.digitalsquid.contactrecall">
+    xmlns:custom="http://schemas.android.com/apk/res/uk.digitalsquid.remme">
 
 	<FrameLayout
 	    android:id="@+id/pager"
@@ -44,7 +44,7 @@
         android:textAlignment="center"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <uk.digitalsquid.contactrecall.ingame.views.TimerView
+    <uk.digitalsquid.remme.ingame.views.TimerView
         android:id="@+id/timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -10,7 +10,7 @@
         android:layout_marginBottom="@dimen/questionTop_overlap"
         layout="@layout/question_top" />
 
-    <uk.digitalsquid.contactrecall.ingame.views.PairingLayout
+    <uk.digitalsquid.remme.ingame.views.PairingLayout
         android:id="@+id/pairingLayout"
         android:layout_width="match_parent"
         android:layout_weight="1"
@@ -18,7 +18,7 @@
 
         <TableRow
             style="@style/PairingRow" >
-		    <uk.digitalsquid.contactrecall.ingame.views.AsyncImageView
+		    <uk.digitalsquid.remme.ingame.views.AsyncImageView
 		        android:id="@+id/question1"
 		        style="@style/Pairing.Row.Left.ImageView"
 		        android:contentDescription="@string/photo_description" />
@@ -33,7 +33,7 @@
         <TableRow
             style="@style/PairingRow" >
 
-		    <uk.digitalsquid.contactrecall.ingame.views.AsyncImageView
+		    <uk.digitalsquid.remme.ingame.views.AsyncImageView
 		        android:id="@+id/question2"
 		        style="@style/Pairing.Row.Left.ImageView"
 		        android:contentDescription="@string/photo_description" />
@@ -46,7 +46,7 @@
 
         <TableRow
             style="@style/PairingRow" >
-		    <uk.digitalsquid.contactrecall.ingame.views.AsyncImageView
+		    <uk.digitalsquid.remme.ingame.views.AsyncImageView
 		        android:id="@+id/question3"
 		        style="@style/Pairing.Row.Left.ImageView"
 		        android:contentDescription="@string/photo_description" />
@@ -59,7 +59,7 @@
 
         <TableRow
             style="@style/PairingRow" >
-		    <uk.digitalsquid.contactrecall.ingame.views.AsyncImageView
+		    <uk.digitalsquid.remme.ingame.views.AsyncImageView
 		        android:id="@+id/question4"
 		        style="@style/Pairing.Row.Left.ImageView"
 		        android:contentDescription="@string/photo_description" />
@@ -70,7 +70,7 @@
 		        android:text="@string/placeholder" />
         </TableRow>
 
-    </uk.digitalsquid.contactrecall.ingame.views.PairingLayout>
+    </uk.digitalsquid.remme.ingame.views.PairingLayout>
 
     <include
         android:layout_width="match_parent"

@@ -63,7 +63,7 @@
 	            android:layout_weight="1"
 	            android:layout_height="match_parent" />
 
-	        <uk.digitalsquid.contactrecall.ingame.views.StatsBarView
+	        <uk.digitalsquid.remme.ingame.views.StatsBarView
 	            android:id="@+id/statsBarView"
 	            android:layout_width="60dp"
 	            android:layout_height="match_parent"
