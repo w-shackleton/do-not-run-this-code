@@ -6,8 +6,10 @@ import uk.digitalsquid.remme.mgr.PhotoManager;
 import uk.digitalsquid.remme.mgr.Question;
 import uk.digitalsquid.remme.misc.Config;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 /**
@@ -17,6 +19,8 @@ import android.util.Log;
  */
 public final class Contact implements Parcelable, Comparable<Contact>, Config {
 	private int id;
+	
+	private String lookupKey;
 	
 	private String firstName;
 	private String lastName;
@@ -30,6 +34,7 @@ public final class Contact implements Parcelable, Comparable<Contact>, Config {
 	
     private Contact(Parcel in) {
     	id = in.readInt();
+    	setLookupKey(in.readString());
     	firstName = in.readString();
     	lastName = in.readString();
     	displayName = in.readString();
@@ -122,6 +127,7 @@ public final class Contact implements Parcelable, Comparable<Contact>, Config {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeInt(id);
+		dest.writeString(getLookupKey());
 		dest.writeString(firstName);
 		dest.writeString(lastName);
 		dest.writeString(displayName);
@@ -295,5 +301,17 @@ public final class Contact implements Parcelable, Comparable<Contact>, Config {
 		} else {
 			Log.w(TAG, "setOtherDetail called with a static detail value");
 		}
+	}
+	
+	public Uri getUri() {
+		return Uri.parse(ContactsContract.Contacts.CONTENT_LOOKUP_URI + "/" + getLookupKey());
+	}
+
+	public String getLookupKey() {
+		return lookupKey;
+	}
+
+	public void setLookupKey(String lookupKey) {
+		this.lookupKey = lookupKey;
 	}
 }

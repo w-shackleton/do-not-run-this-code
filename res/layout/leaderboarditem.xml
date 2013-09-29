@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal" >
 
-    <ImageView
+    <uk.digitalsquid.remme.ingame.views.AsyncImageView
         android:id="@+id/photo"
         android:background="#FF9933"
         android:contentDescription="@string/contentDescription_contactphoto"

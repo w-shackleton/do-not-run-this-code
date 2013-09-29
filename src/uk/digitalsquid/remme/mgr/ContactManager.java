@@ -92,7 +92,8 @@ public final class ContactManager implements Config {
 	private synchronized void loadData(LoadingStatusListener listener) {
 		
 		Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
-				new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME },
+				new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME,
+				ContactsContract.Contacts.LOOKUP_KEY},
 				null, null, ContactsContract.Contacts._ID + " ASC");
 		
 		Log.d(TAG, "Starting load");
@@ -114,12 +115,15 @@ public final class ContactManager implements Config {
 			while(cur.moveToNext()) {
 				int id = cur.getInt(cur.getColumnIndex(ContactsContract.Contacts._ID));
 				if(hiddenContacts.contains(id)) continue;
+				// TODO: Deprecate Id
+				String key = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY));
 				String displayName = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 				
 				if(contactInVisibleGroup(groupContactRelationsValues, id)) {
 					Contact contact = new Contact();
 					contact.setId(id);
 					contact.setDisplayName(displayName);
+					contact.setLookupKey(key);
 					
 					contacts.put(contact.getId(), contact);
 				}

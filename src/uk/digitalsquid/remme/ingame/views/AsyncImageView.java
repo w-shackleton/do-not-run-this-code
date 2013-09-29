@@ -18,6 +18,8 @@ public class AsyncImageView extends ImageView {
 		super(context, attrs, defStyle);
 		this.context = context;
 	}
+	
+	private LoadTask task;
 
 	/**
 	 * Sets the bitmap to display in this {@link AsyncImageView},
@@ -26,21 +28,42 @@ public class AsyncImageView extends ImageView {
 	 */
 	@SuppressWarnings("unchecked")
 	public void setImageBitmapAsync(final ImageLoader<AsyncImageView> imageLoader) {
-		AsyncTask<ImageLoader<AsyncImageView>, Void, Bitmap> task = new AsyncTask<ImageLoader<AsyncImageView>, Void, Bitmap>() {
-
-			@Override
-			protected Bitmap doInBackground(ImageLoader<AsyncImageView>... params) {
-				ImageLoader<AsyncImageView> loader = params[0];
-				return loader.loadImage(context);
-			}
-			
-			@Override
-			protected void onPostExecute(Bitmap result) {
-				super.onPostExecute(result);
-				setImageBitmap(result);
-				imageLoader.onImageLoaded(AsyncImageView.this);
-			}
-		};
+		if(task != null) {
+			task.backRef = null;
+			task.cancel(true);
+			task = null;
+		}
+		task = new LoadTask(context, this);
 		task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageLoader);
+	}
+	
+	private static class LoadTask extends AsyncTask<ImageLoader<AsyncImageView>, Void, Bitmap> {
+		public AsyncImageView backRef;
+		private Context context;
+		
+		public LoadTask(Context context, AsyncImageView backRef) {
+			this.backRef = backRef;
+			this.context = context;
+		}
+		
+		ImageLoader<AsyncImageView> imageLoader;
+	
+		@Override
+		protected Bitmap doInBackground(ImageLoader<AsyncImageView>... params) {
+			imageLoader = params[0];
+			return imageLoader.loadImage(context);
+		}
+		
+		@Override
+		protected void onPostExecute(Bitmap result) {
+			super.onPostExecute(result);
+			if(backRef == null) return;
+			backRef.setImageBitmap(result);
+			imageLoader.onImageLoaded(backRef);
+			
+			// Reset all
+			backRef.task = null;
+			backRef = null;
+		}
 	}
 }

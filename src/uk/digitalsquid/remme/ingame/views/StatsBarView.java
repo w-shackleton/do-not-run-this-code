@@ -30,7 +30,7 @@ public class StatsBarView extends View {
 
 		basePaint = new Paint();
 		basePaint.setStyle(Style.STROKE);
-		basePaint.setColor(context.getResources().getColor(android.R.color.black));
+		basePaint.setColor(context.getResources().getColor(android.R.color.white));
 		basePaint.setStrokeWidth(2 * density);
 	}
 

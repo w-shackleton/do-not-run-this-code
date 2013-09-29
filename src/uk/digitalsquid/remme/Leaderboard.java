@@ -3,6 +3,8 @@ package uk.digitalsquid.remme;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import uk.digitalsquid.remme.ingame.views.AsyncImageView;
+import uk.digitalsquid.remme.ingame.views.ImageLoader;
 import uk.digitalsquid.remme.ingame.views.StatsBarView;
 import uk.digitalsquid.remme.mgr.details.Contact;
 import uk.digitalsquid.remme.stats.Stats;
@@ -12,16 +14,18 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.provider.ContactsContract.QuickContact;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -45,7 +49,7 @@ public class Leaderboard extends Activity {
 				commit();
 	}
 	
-	public static final class LeaderboardFragment extends Fragment {
+	public static final class LeaderboardFragment extends Fragment implements OnItemClickListener {
 		private ListView leaderboard;
 		
 		private App app;
@@ -129,6 +133,7 @@ public class Leaderboard extends Activity {
 			
 			leaderboard = (ListView) rootView.findViewById(R.id.leaderboard);
 			leaderboard.setAdapter(adapter);
+			leaderboard.setOnItemClickListener(this);
 			
 			ArrayList<Contact> contacts = new ArrayList<Contact>(app.getContacts().getContacts());
 			for(Contact contact : contacts) {
@@ -139,6 +144,19 @@ public class Leaderboard extends Activity {
 			
 			return rootView;
 		}
+
+		@Override
+		public void onItemClick(AdapterView<?> adapterView, View view, int position,
+				long id) {
+			Contact contact = adapter.getItem(position);
+			View target = view.findViewById(R.id.photo);
+			QuickContact.showQuickContact(
+					getActivity(),
+					target,
+					contact.getUri(),
+					QuickContact.MODE_LARGE,
+					null);
+		}
 	}
 	
 	static final class LeaderboardAdapter extends BaseAdapter {
@@ -148,14 +166,14 @@ public class Leaderboard extends Activity {
 		private App app;
 		private Stats stats;
 		private Resources res;
-		private Drawable noPhoto;
+		private Bitmap noPhoto;
 		
 		public LeaderboardAdapter(App app, Context context) {
 			this.app = app;
 			inflater = LayoutInflater.from(context);
 			stats = app.getStats();
 			res = app.getResources();
-			noPhoto = res.getDrawable(R.drawable.no_photo);
+			noPhoto = BitmapFactory.decodeResource(res, R.drawable.no_photo);
 		}
 
 		@Override
@@ -179,19 +197,24 @@ public class Leaderboard extends Activity {
 	            convertView = inflater.inflate(R.layout.leaderboarditem, null);
 	        }
 	        
-	        Contact contact = getItem(position);
+	        final Contact contact = getItem(position);
 
-	        ImageView photo = (ImageView) convertView.findViewById(R.id.photo);
+	        AsyncImageView photo = (AsyncImageView) convertView.findViewById(R.id.photo);
 	        TextView name = (TextView) convertView.findViewById(R.id.name);
 	        TextView correctText = (TextView) convertView.findViewById(R.id.guess_correct_count);
 	        TextView incorrectText = (TextView) convertView.findViewById(R.id.guess_incorrect_count);
 	        TextView discardText = (TextView) convertView.findViewById(R.id.guess_discard_count);
 
-	        Bitmap contactPhoto = contact.getPhoto(app.getPhotos());
-	        if(contactPhoto != null)
-		        photo.setImageBitmap(contactPhoto);
-	        else
-		        photo.setImageDrawable(noPhoto);
+	        photo.setImageBitmap(noPhoto);
+	        photo.setImageBitmapAsync(new ImageLoader<AsyncImageView>() {
+				@Override
+				public Bitmap loadImage(Context context) {
+			        Bitmap contactPhoto = contact.getPhoto(app.getPhotos());
+			        if(contactPhoto == null) return noPhoto;
+			        return contactPhoto;
+				}
+				@Override public void onImageLoaded(AsyncImageView asyncImageView) { }
+			});
 
 	        name.setText(contact.getDisplayName());
 	        
