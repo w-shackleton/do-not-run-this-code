@@ -49,6 +49,11 @@ public final class Contact implements Parcelable, Comparable<Contact>, Config {
 	public void setId(int id) {
 		this.id = id;
 	}
+	/**
+	 * Gets the id of this contact. Note that it is <b>much</b> better to use
+	 * getLookupKey for referencing a contact
+	 * @return
+	 */
 	public int getId() {
 		return id;
 	}
@@ -88,7 +93,7 @@ public final class Contact implements Parcelable, Comparable<Contact>, Config {
 	 */
 	public Bitmap getPhoto(PhotoManager mgr, boolean highRes) {
 		if(photoRemoved) return null;
-		return mgr.getContactPicture(id, highRes);
+		return mgr.getContactPicture(this, highRes);
 	}
 	
 	@Override
@@ -99,7 +104,7 @@ public final class Contact implements Parcelable, Comparable<Contact>, Config {
 	@Override
 	public boolean equals(Object c2) {
 		if(c2 instanceof Contact)
-			return ((Contact) c2).getId() == getId();
+			return ((Contact) c2).getLookupKey().equals(getLookupKey());
 		return false;
 	}
 	
@@ -164,7 +169,7 @@ public final class Contact implements Parcelable, Comparable<Contact>, Config {
 			return lastName;
 		case Question.FIELD_PHOTO: // Just use ID to differentiate photos.
 		default:
-			return "" + id;
+			return lookupKey;
 		}
 	}
 	
@@ -245,13 +250,13 @@ public final class Contact implements Parcelable, Comparable<Contact>, Config {
 	
 	@Override
 	public int hashCode() {
-		return id;
+		return lookupKey.hashCode();
 	}
 
 	@Override
 	public int compareTo(Contact another) {
 		if(another == null) return 1;
-		return getId() - another.getId();
+		return lookupKey.compareTo(another.lookupKey);
 	}
 
 	public Details getDetails() {
@@ -303,7 +308,7 @@ public final class Contact implements Parcelable, Comparable<Contact>, Config {
 		}
 	}
 	
-	public Uri getUri() {
+	public Uri getLookupUri() {
 		return Uri.parse(ContactsContract.Contacts.CONTENT_LOOKUP_URI + "/" + getLookupKey());
 	}
 

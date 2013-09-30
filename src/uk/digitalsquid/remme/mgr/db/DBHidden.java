@@ -11,7 +11,6 @@ import uk.digitalsquid.remme.mgr.ContactManager;
 import uk.digitalsquid.remme.mgr.db.DB.DBSubclass;
 import uk.digitalsquid.remme.mgr.details.Contact;
 import uk.digitalsquid.remme.mgr.details.DataItem;
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -30,14 +29,14 @@ public class DBHidden extends DBSubclass {
 	void onCreate(SQLiteDatabase db) {
 		try {
 			db.execSQL("CREATE TABLE hidden_fields (" +
-					"contact_id INTEGER NOT NULL," +
+					"contactKey TEXT NOT NULL," +
 					"field INTEGER NOT NULL);");
 		} catch(SQLiteException e) {
 			Log.w(TAG, "Failed to create hidden_fields table", e);
 		}
 		try {
 			db.execSQL("CREATE TABLE hidden_contacts (" +
-					"contact_id INTEGER NOT NULL);");
+					"contactKey TEXT NOT NULL);");
 		} catch(SQLiteException e) {
 			Log.w(TAG, "Failed to create hidden_contacts table", e);
 		}
@@ -45,7 +44,7 @@ public class DBHidden extends DBSubclass {
 
 	public void addHiddenField(Contact contact, int field) {
 		ContentValues values = new ContentValues(2);
-		values.put("contact_id", contact.getId());
+		values.put("contactKey", contact.getLookupKey());
 		values.put("field", field);
 		db.insert("hidden_fields", null, values);
 
@@ -58,7 +57,7 @@ public class DBHidden extends DBSubclass {
 	
 	public void addHiddenContact(Contact contact) {
 		ContentValues values = new ContentValues(1);
-		values.put("contact_id", contact.getId());
+		values.put("contactKey", contact.getLookupKey());
 		db.insert("hidden_contacts", null, values);
 
 		contactMgr.hideContact(contact);
@@ -73,25 +72,24 @@ public class DBHidden extends DBSubclass {
 	 * to lists hidden fields.
 	 * @return
 	 */
-	@SuppressLint("UseSparseArrays")
-	public HashMap<Integer, List<Integer>> getHiddenFields() {
+	public HashMap<String, List<Integer>> getHiddenFields() {
 		Cursor cur = null;
-		HashMap<Integer, List<Integer>> result =
-				new HashMap<Integer, List<Integer>>();
+		HashMap<String, List<Integer>> result =
+				new HashMap<String, List<Integer>>();
 		try {
 			cur = db.query("hidden_fields", new String[] {
-					"contact_id", "field"
+					"contactKey", "field"
 			}, null, null, null, null, null);
 			
-			final int idIdx = cur.getColumnIndex("contact_id");
+			final int keyIdx = cur.getColumnIndex("contactKey");
 			final int fieldIdx = cur.getColumnIndex("field");
 			
 			while(cur.moveToNext()) {
-				final int id = cur.getInt(idIdx);
+				final String key = cur.getString(keyIdx);
 				final int field = cur.getInt(fieldIdx);
-				if(!result.containsKey(id))
-					result.put(id, new ArrayList<Integer>());
-				result.get(id).add(field);
+				if(!result.containsKey(key))
+					result.put(key, new ArrayList<Integer>());
+				result.get(key).add(field);
 			}
 		} catch(SQLiteException e) {
 			Log.w(TAG, "Failed to query database", e);
@@ -103,20 +101,20 @@ public class DBHidden extends DBSubclass {
 		return result;
 	}
 	
-	public Set<Integer> getHiddenContacts() {
+	public Set<String> getHiddenContacts() {
 		Cursor cur = null;
 		try {
 			cur = db.query("hidden_contacts", new String[] {
-					"contact_id"
+					"contactKey"
 			}, null, null, null, null, null);
 			
-			HashSet<Integer> result = new HashSet<Integer>(cur.getCount());
+			HashSet<String> result = new HashSet<String>(cur.getCount());
 			
-			final int idIdx = cur.getColumnIndex("contact_id");
+			final int keyIdx = cur.getColumnIndex("contactKey");
 			
 			while(cur.moveToNext()) {
-				final int id = cur.getInt(idIdx);
-				result.add(id);
+				final String key = cur.getString(keyIdx);
+				result.add(key);
 			}
 			return result;
 		} catch(SQLiteException e) {
@@ -126,6 +124,6 @@ public class DBHidden extends DBSubclass {
 		} finally {
 			if(cur != null) cur.close();
 		}
-		return new HashSet<Integer>();
+		return new HashSet<String>();
 	}
 }

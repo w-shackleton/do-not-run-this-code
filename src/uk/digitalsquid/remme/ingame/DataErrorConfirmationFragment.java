@@ -6,9 +6,9 @@ import uk.digitalsquid.remme.mgr.Question;
 import uk.digitalsquid.remme.mgr.details.DataItem;
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.LayoutInflater;
@@ -89,8 +89,8 @@ public class DataErrorConfirmationFragment extends Fragment implements OnClickLi
 			break;
 		case R.id.edit_contact:
 			Intent intent = new Intent(Intent.ACTION_EDIT);
-			int id = error.getContact().getId();
-			intent.setData(ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id));
+			String key = error.getContact().getLookupKey();
+			intent.setData(Uri.parse(ContactsContract.Contacts.CONTENT_LOOKUP_URI + "/" + key));
 			startActivity(intent);
 			break;
 		case R.id.cancel:

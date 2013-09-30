@@ -1,7 +1,6 @@
 package uk.digitalsquid.remme;
 
 import uk.digitalsquid.remme.mgr.ContactManager;
-import uk.digitalsquid.remme.mgr.GameDataManager;
 import uk.digitalsquid.remme.mgr.GroupManager;
 import uk.digitalsquid.remme.mgr.PhotoManager;
 import uk.digitalsquid.remme.mgr.db.DB;
@@ -19,7 +18,6 @@ public class App extends Application {
 	private GroupManager groups;
 	private ContactManager contacts;
 	private PhotoManager photos;
-	private GameDataManager game;
 	private Stats stats;
 	
 	public DB getDb() {
@@ -40,11 +38,6 @@ public class App extends Application {
 	public PhotoManager getPhotos() {
 		if(photos == null) photos = new PhotoManager(getApplicationContext(), getDb());
 		return photos;
-	}
-
-	public GameDataManager getGame() {
-		if(game == null) game = new GameDataManager(getApplicationContext(), this);
-		return game;
 	}
 	
 	public Stats getStats() {

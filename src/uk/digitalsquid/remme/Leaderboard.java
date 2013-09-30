@@ -157,7 +157,7 @@ public class Leaderboard extends Activity {
 			QuickContact.showQuickContact(
 					getActivity(),
 					target,
-					contact.getUri(),
+					contact.getLookupUri(),
 					QuickContact.MODE_LARGE,
 					null);
 		}

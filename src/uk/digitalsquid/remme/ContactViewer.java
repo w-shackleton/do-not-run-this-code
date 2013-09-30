@@ -43,6 +43,7 @@ import android.widget.TextView;
  * @author william
  *
  */
+@Deprecated
 public class ContactViewer extends Activity implements ContactChangeListener {
 	private App app;
 	
@@ -211,7 +212,7 @@ public class ContactViewer extends Activity implements ContactChangeListener {
 		
 		@Override
 		public long getItemId(int position) {
-			return contacts.get(position).getId();
+			return position;
 		}
 		
 		@Override

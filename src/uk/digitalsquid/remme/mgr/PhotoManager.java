@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.digitalsquid.remme.mgr.db.DB;
+import uk.digitalsquid.remme.mgr.details.Contact;
 import uk.digitalsquid.remme.misc.Config;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -22,7 +22,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.provider.ContactsContract;
-import android.provider.ContactsContract.Contacts;
 import android.util.Log;
 
 /**
@@ -47,17 +46,16 @@ public class PhotoManager implements Config {
 	 * @param highRes If possible, return a high-resolution photo.
 	 */
 	@SuppressLint("NewApi")
-	InputStream openPhotoInputStream(int contactId, boolean highRes) {
-		Uri uri = ContentUris.withAppendedId(Contacts.CONTENT_URI, contactId);	
+	InputStream openPhotoInputStream(Uri lookupUri, boolean highRes) {
 		if(VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			return ContactsContract.Contacts.openContactPhotoInputStream(cr, uri, highRes);
+			return ContactsContract.Contacts.openContactPhotoInputStream(cr, lookupUri, highRes);
 		} else {
-			return ContactsContract.Contacts.openContactPhotoInputStream(cr, uri);
+			return ContactsContract.Contacts.openContactPhotoInputStream(cr, lookupUri);
 		}
 	}
 	
-	public Bitmap getContactPicture(int contactId, boolean highRes) {
-		InputStream in = openPhotoInputStream(contactId, highRes);
+	public Bitmap getContactPicture(Contact contact, boolean highRes) {
+		InputStream in = openPhotoInputStream(contact.getLookupUri(), highRes);
 		
 		try {
 			// This method handles null cases and errors

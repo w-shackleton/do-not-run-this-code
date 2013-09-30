@@ -37,25 +37,25 @@ public class DBProgress extends DBSubclass {
 		try {
 			db.execSQL("CREATE TABLE attempts (" +
 							"id INTEGER PRIMARY KEY AUTOINCREMENT," +
-							"contactId INTEGER," + // The ID of the contact
-							"mistakeId INTEGER," + // The ID of the mistaken contact
+							"contactKey TEXT," + // The ID of the contact
+							"mistakeKey TEXT," + // The ID of the mistaken contact
 							"delay REAL," + // How long it took to guess
 							"time INTEGER," + // The time when this result was generated
 							"status INTEGER" + // status
 							");");
-			db.execSQL("CREATE INDEX contact_idx ON attempts(contactId);");
+			db.execSQL("CREATE INDEX contact_idx ON attempts(contactKey);");
 		} catch(SQLException e) {
 			// TODO: This is critical - alert user / submit a crash/wtf report.
 			Log.e(TAG, "Failed to create attempts table!", e);
 		}
 	}
 	
-	void addAttempt(int contactId, int mistakeId, float delay, int status) {
+	void addAttempt(String contactKey, String mistakeKey, float delay, int status) {
 		db.beginTransaction();
 		try {
 			ContentValues values = new ContentValues(4);
-			values.put("contactId", contactId);
-			values.put("mistakeId", mistakeId);
+			values.put("contactKey", contactKey);
+			values.put("mistakeKey", mistakeKey);
 			values.put("delay", delay);
 			values.put("time", System.currentTimeMillis() / 1000L);
 			values.put("status", status);
@@ -68,17 +68,17 @@ public class DBProgress extends DBSubclass {
 	}
 	
 	public void addSuccess(Contact contact, float delay) {
-		addAttempt(contact.getId(), -1, delay, GameCallbacks.CHOICE_CORRECT);
+		addAttempt(contact.getLookupKey(), null, delay, GameCallbacks.CHOICE_CORRECT);
 	}
 	public void addFail(Contact contact, Contact mistake, float delay) {
-		addAttempt(contact.getId(), mistake != null ? mistake.getId() : -1,
+		addAttempt(contact.getLookupKey(), mistake != null ? mistake.getLookupKey() : null,
 				delay, GameCallbacks.CHOICE_INCORRECT);
 	}
 	public void addDiscard(Contact contact, float delay) {
-		addAttempt(contact.getId(), -1, delay, GameCallbacks.CHOICE_DISCARD);
+		addAttempt(contact.getLookupKey(), null, delay, GameCallbacks.CHOICE_DISCARD);
 	}
 	public void addTimeout(Contact contact, float delay) {
-		addAttempt(contact.getId(), -1, delay, GameCallbacks.CHOICE_TIMEOUT);
+		addAttempt(contact.getLookupKey(), null, delay, GameCallbacks.CHOICE_TIMEOUT);
 	}
 	
 	/**
@@ -88,18 +88,18 @@ public class DBProgress extends DBSubclass {
 	public GroupedMeanAttempt[] getGroupedMeanAttemptData() {
 		Cursor c = db.query(
 				"attempts",
-				new String[] { "contactId", "status", "AVG(delay)", "COUNT(contactId)" },
+				new String[] { "contactKey", "status", "AVG(delay)", "COUNT(contactKey)" },
 				null,
 				null,
-				"contactId, status",
+				"contactKey, status",
 				null,
-				"contactId, status");
+				"contactKey, status");
 		GroupedMeanAttempt[] result = new GroupedMeanAttempt[c.getCount()];
 		int i = 0;
 		while(c.moveToNext()) {
 			GroupedMeanAttempt val = new GroupedMeanAttempt();
 			
-			Contact contact = app.getContacts().getContact(c.getInt(0));
+			Contact contact = app.getContacts().getContact(c.getString(0));
 			val.setContact(contact);
 			val.setStatus(c.getInt(1));
 			val.setMeanDelay(c.getFloat(2));

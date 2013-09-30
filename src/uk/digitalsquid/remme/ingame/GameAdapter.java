@@ -246,7 +246,7 @@ public class GameAdapter implements Parcelable, Config {
 			public int compare(Contact lhs, Contact rhs) {
 				if(lhs == null) return -1;
 				if(rhs == null) return 1;
-				return lhs.getId() - rhs.getId();
+				return lhs.compareTo(rhs);
 			}
 		};
 	}

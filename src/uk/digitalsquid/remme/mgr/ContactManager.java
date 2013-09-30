@@ -46,7 +46,12 @@ public final class ContactManager implements Config {
 	
 	private final Handler eventHandler;
 	
-	private HashMap<Integer, Contact> contacts;
+	private HashMap<String, Contact> contacts;
+	/**
+	 * A map of {@link Contact}, indexed by ID. This is only to be used for
+	 * non-persistent data.
+	 */
+	private HashMap<Integer, Contact> contactIdMap;
 	private Collection<Contact> contactCollection;
 	
 	private final App app;
@@ -103,20 +108,21 @@ public final class ContactManager implements Config {
 		
 		Log.d(TAG, "Loaded groups");
 
-		contacts = new HashMap<Integer, Contact>();
+		contacts = new HashMap<String, Contact>();
+		contactIdMap = new HashMap<Integer, Contact>();
 		
 		// Get hidden contacts
-		Set<Integer> hiddenContacts = app.getDb().hidden.getHiddenContacts();
+		Set<String> hiddenContacts = app.getDb().hidden.getHiddenContacts();
 		
 		// Load base data and populate HashMap
 		int total = cur.getCount();
 		int i = 0;
 		if(total > 0) {
 			while(cur.moveToNext()) {
-				int id = cur.getInt(cur.getColumnIndex(ContactsContract.Contacts._ID));
-				if(hiddenContacts.contains(id)) continue;
-				// TODO: Deprecate Id
 				String key = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY));
+				if(hiddenContacts.contains(key)) continue;
+
+				int id = cur.getInt(cur.getColumnIndex(ContactsContract.Contacts._ID));
 				String displayName = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 				
 				if(contactInVisibleGroup(groupContactRelationsValues, id)) {
@@ -125,7 +131,8 @@ public final class ContactManager implements Config {
 					contact.setDisplayName(displayName);
 					contact.setLookupKey(key);
 					
-					contacts.put(contact.getId(), contact);
+					contacts.put(contact.getLookupKey(), contact);
+					contactIdMap.put(contact.getId(), contact);
 				}
 				i++;
 				if(i % 10 == 0)
@@ -178,7 +185,7 @@ public final class ContactManager implements Config {
 		i = 0;
 		while(cur.moveToNext()) {
 			i++;
-			Contact contact = contacts.get(cur.getInt(idIdx));
+			Contact contact = contactIdMap.get(cur.getInt(idIdx));
 			// Send status
 			if(contact == null) continue;
 			String mime = cur.getString(mimeTypeIdx);
@@ -283,7 +290,7 @@ public final class ContactManager implements Config {
 		total = contactsWithPictures.size();
 		i = 0;
 		for(int id : contactsWithPictures) {
-			Contact contact = contacts.get(id);
+			Contact contact = contactIdMap.get(id);
 			if(contact == null) continue;
 			contact.getDetails().setHasPicture(true);
 			if(i % 10 == 0)
@@ -292,7 +299,7 @@ public final class ContactManager implements Config {
 		}
 		
 		// Now, remove all fields that the user wants to hide.
-		for(Entry<Integer, List<Integer>> pair : app.getDb().hidden.getHiddenFields().entrySet()) {
+		for(Entry<String, List<Integer>> pair : app.getDb().hidden.getHiddenFields().entrySet()) {
 			Contact contact = contacts.get(pair.getKey());
 			if(contact == null) continue;
 			for(Integer field : pair.getValue()) {
@@ -380,19 +387,19 @@ public final class ContactManager implements Config {
 		}
 		return contactCollection;
 	}
-	// TODO: Use this more?
-	public Map<Integer, Contact> getContactMap() {
+
+	public Map<String, Contact> getContactMap() {
 		synchronized(loadingSync) {
 			if(!dataLoaded) loadBaseData();
 		}
 		return contacts;
 	}
 	
-	public Contact getContact(int id) {
+	public Contact getContact(String lookupKey) {
 		synchronized(loadingSync) {
 			if(!dataLoaded) loadBaseData();
 		}
-		return contacts.get(id);
+		return contacts.get(lookupKey);
 	}
 
 	private final ContentObserver observer = new ContentObserver(new Handler()) {
@@ -573,8 +580,10 @@ public final class ContactManager implements Config {
 	 * @param contact
 	 * @param field
 	 */
+	@Deprecated
 	public void deleteContactField(Contact contact, int field) {
 		hideContactField(contact, field);
+		// TODO: This method currently doesn't work. At all. FIXME!
 		// TODO: Handle display name and photo
 		final int id = contact.getId();
 		final String mimetype = getMimetype(field);
@@ -598,7 +607,7 @@ public final class ContactManager implements Config {
 	 */
 	public void hideContactField(Contact contact, int field) {
 		// Get original contact reference
-		Contact ref = getContact(contact.getId());
+		Contact ref = getContact(contact.getLookupKey());
 		ref.removeField(field);
 	}
 	
@@ -610,7 +619,7 @@ public final class ContactManager implements Config {
 	 * @param contact
 	 */
 	public void hideContact(Contact contact) {
-		contacts.remove(contact.getId());
+		contacts.remove(contact.getLookupKey());
 		contactCollection.remove(contact);
 	}
 }
