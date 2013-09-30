@@ -82,7 +82,7 @@ public class PairingLayout extends TableLayout implements Config {
 		
 		DisplayMetrics metrics = context.getResources().getDisplayMetrics();
 		
-		linePaint.setColor(Color.argb(180, 50, 50, 220));
+		linePaint.setColor(Color.parseColor("#000000"));
 		linePaint.setAntiAlias(true);
 		linePaint.setStyle(Style.STROKE);
 		linePaint.setStrokeWidth(10 * metrics.density);
@@ -97,10 +97,10 @@ public class PairingLayout extends TableLayout implements Config {
 		paint2 = new Paint(linePaint);
 		paint3 = new Paint(linePaint);
 		paint4 = new Paint(linePaint);
-		paint1.setColor(Color.parseColor("#2bb918"));
-		paint2.setColor(Color.parseColor("#006ab9"));
-		paint3.setColor(Color.parseColor("#e5d200"));
-		paint4.setColor(Color.parseColor("#c93400"));
+		paint1.setColor(Color.parseColor("#669900"));
+		paint2.setColor(Color.parseColor("#0099cc"));
+		paint3.setColor(Color.parseColor("#ff8800"));
+		paint4.setColor(Color.parseColor("#cc0000"));
 		linePaints = new Paint[] { paint1, paint2, paint3, paint4 };
 		
 		EDGE_INSET = 10 * metrics.density;

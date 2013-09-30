@@ -28,6 +28,7 @@
     <string name="hide_detail">Hide detail (only within RemMe)</string>
     <string name="edit_contact">Edit / Delete Contact</string>
     <string name="cancel">Cancel</string>
+    <string name="more">More</string>
 
     <string name="contact_hidden">Contact hidden</string>
     <string name="field_hidden">Field hidden</string>

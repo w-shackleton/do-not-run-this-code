@@ -22,11 +22,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.PopupMenu;
+import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.TextView;
 
 /**
@@ -159,17 +163,19 @@ public class Leaderboard extends Activity {
 		}
 	}
 	
-	static final class LeaderboardAdapter extends BaseAdapter {
+	static final class LeaderboardAdapter extends BaseAdapter implements OnClickListener, OnMenuItemClickListener {
 		
 		private ArrayList<Contact> contacts = new ArrayList<Contact>();
-		private LayoutInflater inflater;
-		private App app;
-		private Stats stats;
-		private Resources res;
-		private Bitmap noPhoto;
+		private final LayoutInflater inflater;
+		private final App app;
+		private final Context context;
+		private final Stats stats;
+		private final Resources res;
+		private final Bitmap noPhoto;
 		
 		public LeaderboardAdapter(App app, Context context) {
 			this.app = app;
+			this.context = context;
 			inflater = LayoutInflater.from(context);
 			stats = app.getStats();
 			res = app.getResources();
@@ -198,6 +204,10 @@ public class Leaderboard extends Activity {
 	        }
 	        
 	        final Contact contact = getItem(position);
+	        
+	        ImageButton more = (ImageButton) convertView.findViewById(R.id.more);
+	        more.setTag(contact);
+	        more.setOnClickListener(this);
 
 	        AsyncImageView photo = (AsyncImageView) convertView.findViewById(R.id.photo);
 	        TextView name = (TextView) convertView.findViewById(R.id.name);
@@ -266,5 +276,35 @@ public class Leaderboard extends Activity {
 			notifyDataSetChanged();
 		}
 		
+		/**
+		 * The {@link Contact} whose menu is currently open
+		 */
+		private Contact currentContact;
+
+		@Override
+		public void onClick(View v) {
+			switch(v.getId()) {
+			case R.id.more:
+				Object tag = v.getTag();
+				if(tag instanceof Contact) {
+					Contact contact = (Contact) tag;
+					currentContact = contact;
+					PopupMenu popup = new PopupMenu(context, v);
+					popup.setOnMenuItemClickListener(this);
+					popup.inflate(R.menu.contact_more);
+					popup.show();
+				}
+				break;
+			}
+		}
+
+		@Override
+		public boolean onMenuItemClick(MenuItem item) {
+			switch(item.getItemId()) {
+			case R.id.setPhoto:
+				break;
+			}
+			return false;
+		}
 	}
 }
