@@ -38,9 +38,19 @@ public final class Contact implements Parcelable, Comparable<Contact>, Config {
     	firstName = in.readString();
     	lastName = in.readString();
     	displayName = in.readString();
-    	details = new Details();
+    	details = in.readParcelable(Details.class.getClassLoader());
     	photoRemoved = in.readInt() == 1;
     }
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(id);
+		dest.writeString(getLookupKey());
+		dest.writeString(firstName);
+		dest.writeString(lastName);
+		dest.writeString(displayName);
+		dest.writeParcelable(details, 0);
+		dest.writeInt(photoRemoved ? 1 : 0);
+	}
 	
 	public Contact() {
 		details = new Details();
@@ -128,16 +138,6 @@ public final class Contact implements Parcelable, Comparable<Contact>, Config {
 	@Override
 	public int describeContents() {
 		return 0;
-	}
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeInt(id);
-		dest.writeString(getLookupKey());
-		dest.writeString(firstName);
-		dest.writeString(lastName);
-		dest.writeString(displayName);
-		dest.writeParcelable(details, 0);
-		dest.writeInt(photoRemoved ? 1 : 0);
 	}
 	
 	public static final Parcelable.Creator<Contact> CREATOR =

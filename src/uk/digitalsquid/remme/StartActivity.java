@@ -27,7 +27,6 @@ public class StartActivity extends Activity implements OnClickListener {
         app = (App) getApplication();
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         
-        findViewById(R.id.viewContacts).setOnClickListener(this);
         findViewById(R.id.start).setOnClickListener(this);
         findViewById(R.id.leaderboard).setOnClickListener(this);
         loadStatus = (ProgressBar) findViewById(R.id.loadStatus);
@@ -37,9 +36,6 @@ public class StartActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()) {
-		case R.id.viewContacts:
-			startActivity(new Intent(this, ContactViewer.class));
-			break;
 		case R.id.start:
 			startActivity(new Intent(this, ModeSelect.class));
 			break;

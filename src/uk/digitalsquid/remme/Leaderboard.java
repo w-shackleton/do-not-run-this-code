@@ -1,5 +1,6 @@
 package uk.digitalsquid.remme;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -11,12 +12,20 @@ import uk.digitalsquid.remme.stats.Stats;
 import uk.digitalsquid.remme.stats.Stats.ContactStats;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.provider.ContactsContract.Contacts;
+import android.provider.ContactsContract.Data;
+import android.provider.ContactsContract.Intents.Insert;
 import android.provider.ContactsContract.QuickContact;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,17 +49,28 @@ import android.widget.TextView;
  *
  */
 public class Leaderboard extends Activity {
-	
+
+	private static final int ACTIVITY_PICTURE_RESULT = 1;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.leaderboard);
+		
+		if(savedInstanceState != null)
+			currentContact = savedInstanceState.getParcelable("currentContact");
 		
 		LeaderboardFragment leaderboard = new LeaderboardFragment();
 		getFragmentManager().
 				beginTransaction().
 				add(R.id.container, leaderboard).
 				commit();
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putParcelable("currentContact", currentContact);
 	}
 	
 	public static final class LeaderboardFragment extends Fragment implements OnItemClickListener {
@@ -90,7 +110,8 @@ public class Leaderboard extends Activity {
 		public void onAttach(Activity activity) {
 			super.onAttach(activity);
 			app = (App) activity.getApplication();
-			adapter = new LeaderboardAdapter(app, getActivity());
+			Leaderboard act = (Leaderboard) activity;
+			adapter = act.new LeaderboardAdapter(app, getActivity());
 			stats = app.getStats();
 		}
 		
@@ -163,7 +184,7 @@ public class Leaderboard extends Activity {
 		}
 	}
 	
-	static final class LeaderboardAdapter extends BaseAdapter implements OnClickListener, OnMenuItemClickListener {
+	final class LeaderboardAdapter extends BaseAdapter implements OnClickListener, OnMenuItemClickListener {
 		
 		private ArrayList<Contact> contacts = new ArrayList<Contact>();
 		private final LayoutInflater inflater;
@@ -202,6 +223,8 @@ public class Leaderboard extends Activity {
 	        if (convertView == null) {
 	            convertView = inflater.inflate(R.layout.leaderboarditem, null);
 	        }
+	        if(convertView instanceof ViewGroup)
+		        ((ViewGroup)convertView).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
 	        
 	        final Contact contact = getItem(position);
 	        
@@ -231,8 +254,8 @@ public class Leaderboard extends Activity {
 	        StatsBarView statsBars = (StatsBarView) convertView.findViewById(R.id.statsBarView);
 	        
 	        ContactStats contactStats = stats.getContactStats(contact);
-	        // Reduce the total a bit to make the bars a bit bigger
 	        if(contactStats != null) {
+		        // Reduce the total a bit to make the bars a bit bigger
 		        float total = (float)contactStats.getTotalTries() * 0.8f;
 		        statsBars.setCorrect((float)contactStats.getSuccesses() / total);
 		        statsBars.setIncorrect((float)contactStats.getFails() / total);
@@ -276,11 +299,6 @@ public class Leaderboard extends Activity {
 			notifyDataSetChanged();
 		}
 		
-		/**
-		 * The {@link Contact} whose menu is currently open
-		 */
-		private Contact currentContact;
-
 		@Override
 		public void onClick(View v) {
 			switch(v.getId()) {
@@ -302,9 +320,62 @@ public class Leaderboard extends Activity {
 		public boolean onMenuItemClick(MenuItem item) {
 			switch(item.getItemId()) {
 			case R.id.setPhoto:
+				// Start camera activity
+				Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+				startActivityForResult(camera, Leaderboard.ACTIVITY_PICTURE_RESULT);
+				
 				break;
 			}
 			return false;
+		}
+	}
+	
+	/**
+	 * The {@link Contact} whose menu is currently open
+	 */
+	private Contact currentContact;
+
+	// Picture capture finished
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+	
+		switch(requestCode) {
+		case ACTIVITY_PICTURE_RESULT:
+			switch(resultCode) {
+			case RESULT_OK:
+				if(data == null) break;
+				if(data.getExtras() == null) break;
+				Bitmap image = (Bitmap) data.getExtras().get("data");
+				
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+				byte[] byteArray = stream.toByteArray();
+
+				Contact contact = currentContact;
+			    Uri selectedContactUri = contact.getLookupUri();
+			    // Creates a new Intent to edit a contact
+			    Intent editIntent = new Intent(Intent.ACTION_EDIT);
+				editIntent.putExtra("finishActivityOnSaveCompleted", true);
+				
+				// Insert new data
+				ArrayList<ContentValues> contentValues = new ArrayList<ContentValues>();
+				// Photo
+				ContentValues row1 = new ContentValues();
+				row1.put(Data.MIMETYPE, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE);
+				row1.put(ContactsContract.CommonDataKinds.Photo.PHOTO, byteArray);
+				contentValues.add(row1);
+
+			    editIntent.setDataAndType(selectedContactUri, Contacts.CONTENT_ITEM_TYPE);
+				editIntent.putParcelableArrayListExtra(Insert.DATA, contentValues);
+			    Leaderboard.this.startActivity(editIntent);
+				break;
+			default:
+				setResult(RESULT_CANCELED);
+				finish();
+				break;
+			}
+			break;
 		}
 	}
 }

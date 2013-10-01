@@ -8,9 +8,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -89,8 +87,8 @@ public class DataErrorConfirmationFragment extends Fragment implements OnClickLi
 			break;
 		case R.id.edit_contact:
 			Intent intent = new Intent(Intent.ACTION_EDIT);
-			String key = error.getContact().getLookupKey();
-			intent.setData(Uri.parse(ContactsContract.Contacts.CONTENT_LOOKUP_URI + "/" + key));
+			intent.setData(error.getContact().getLookupUri());
+			intent.putExtra("finishActivityOnSaveCompleted", true);
 			startActivity(intent);
 			break;
 		case R.id.cancel:
