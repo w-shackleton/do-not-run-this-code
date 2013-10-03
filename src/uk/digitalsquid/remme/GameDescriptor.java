@@ -228,12 +228,22 @@ public class GameDescriptor implements Parcelable, Config {
 	public void setOtherAnswersMaximum(int otherAnswersMaximum) {
 		this.otherAnswersMaximum = trim(otherAnswersMaximum, 1, 8);
 	}
+	
+	public void setOtherAnswers(int min, int max) {
+		setOtherAnswersMinimum(min);
+		setOtherAnswersMaximum(max);
+	}
 
 	public int getPairingChoicesMinimum() {
 		return pairingChoicesMinimum;
 	}
 	public void setPairingChoicesMinimum(int pairingChoicesMinimum) {
 		this.pairingChoicesMinimum = trim(pairingChoicesMinimum, 2, 4);
+	}
+	
+	public void setPairingChoices(int min, int max) {
+		setPairingChoicesMinimum(min);
+		setPairingChoicesMaximum(max);
 	}
 
 	public int getPairingChoicesMaximum() {

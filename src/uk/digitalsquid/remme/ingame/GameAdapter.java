@@ -230,6 +230,7 @@ public class GameAdapter implements Parcelable, Config {
 				return questions.get(pos);
 			else {
 				// Generate more questions, then continue
+
 				generateMoreQuestions(10);
 				return questions.get(pos);
 			}

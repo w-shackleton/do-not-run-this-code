@@ -125,7 +125,7 @@ public final class ContactManager implements Config {
 				int id = cur.getInt(cur.getColumnIndex(ContactsContract.Contacts._ID));
 				String displayName = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 				
-				if(contactInVisibleGroup(groupContactRelationsValues, id)) {
+				if(contactInVisibleGroup(groupContactRelationsValues, id) || true) {
 					Contact contact = new Contact();
 					contact.setId(id);
 					contact.setDisplayName(displayName);
@@ -148,6 +148,7 @@ public final class ContactManager implements Config {
 		cur = cr.query(ContactsContract.Data.CONTENT_URI,
 				new String[] {
 				ContactsContract.Data.CONTACT_ID,
+				ContactsContract.Data.LOOKUP_KEY,
 				ContactsContract.Data.MIMETYPE,
 				ContactsContract.CommonDataKinds.Organization.COMPANY,
 				ContactsContract.CommonDataKinds.Organization.DEPARTMENT,
@@ -165,6 +166,7 @@ public final class ContactManager implements Config {
 		},
 				null, null, null);
 		int idIdx		= cur.getColumnIndexOrThrow(ContactsContract.Data.CONTACT_ID);
+		int lookupKeyIdx= cur.getColumnIndexOrThrow(ContactsContract.Data.LOOKUP_KEY);
 		int mimeTypeIdx	= cur.getColumnIndexOrThrow(ContactsContract.Data.MIMETYPE);
 		int companyIdx	= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Organization.COMPANY);
 		int departmentIdx=cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Organization.DEPARTMENT);
@@ -340,7 +342,7 @@ public final class ContactManager implements Config {
 	 * Checks if a contact is in any of the given group lists.
 	 * @param groups The groups to check against
 	 * @param contactId The ID of the contact to check
-	 * @return <code>true</code> if contactId is in a visible group.
+	 * @return <code>true</code> if contactId is in a visibleInContacts group.
 	 */
 	// Doesn't need loading synchronisation
 	final static boolean contactInVisibleGroup(Collection<List<Integer>> groups, int contactId) {

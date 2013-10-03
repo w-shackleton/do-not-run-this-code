@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="difficulty_descriptors">
+        <item >Casual</item>
+        <item >Easy</item>
+        <item >Medium</item>
+        <item >Difficult</item>
+        <item >Mega</item>
+        <item >Custom</item>
+    </string-array>
+    
+    <string-array name="difficulty_titles">
+        <item >Casual</item>
+        <item >Easy</item>
+        <item >Medium</item>
+        <item >Difficult</item>
+        <item >Mega</item>
+        <item >Custom</item>
+    </string-array>
+
+    <string-array name="difficulty_descriptions">
+        <item >A simple game with no time limits and easy questions - great for
+            learning your contacts.</item>
+        <item >Things start to get interesting - there\'s a timer, but the questions are still easy.</item>
+        <item >Medium</item>
+        <item >Difficult</item>
+        <item >Who knows what could pop up? Be prepared to know everything about your contacts in this mode!</item>
+        <item >Design your own game.</item>
+    </string-array>
+</resources>

@@ -1,6 +1,10 @@
 package uk.digitalsquid.remme;
 
+import java.util.Map;
+
 import uk.digitalsquid.remme.mgr.ContactManager;
+import uk.digitalsquid.remme.mgr.GroupManager.Group;
+import uk.digitalsquid.remme.misc.Config;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,11 +12,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ProgressBar;
 
-public class StartActivity extends Activity implements OnClickListener {
+public class StartActivity extends Activity implements OnClickListener, Config {
 	
 	private LocalBroadcastManager localBroadcastManager;
 	private App app;
@@ -31,6 +36,12 @@ public class StartActivity extends Activity implements OnClickListener {
         findViewById(R.id.leaderboard).setOnClickListener(this);
         loadStatus = (ProgressBar) findViewById(R.id.loadStatus);
         loadStatus.setMax(1000);
+        
+        Map<Integer, Group> groups = app.getGroups().getContactGroups();
+        for(Group group : groups.values()) {
+        	Log.d(TAG, "Group: " + group);
+        }
+        app.getGroups().getDirectory();
     }
 
 	@Override
@@ -38,6 +49,7 @@ public class StartActivity extends Activity implements OnClickListener {
 		switch(v.getId()) {
 		case R.id.start:
 			startActivity(new Intent(this, ModeSelect.class));
+			// startActivity(new Intent(this, DifficultyListActivity.class));
 			break;
 		case R.id.leaderboard:
 			startActivity(new Intent(this, Leaderboard.class));

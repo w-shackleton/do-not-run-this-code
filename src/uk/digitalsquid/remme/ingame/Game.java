@@ -109,7 +109,7 @@ public class Game extends Activity implements GameCallbacks, Config {
 		if(isGamePaused()) {
 			// Let handler pop pause screen from stack
 			setGamePaused(false); // TODO: Move this to a point where the game is
-			// fully visible
+			// fully visibleInContacts
 			super.onBackPressed();
 		}
 	}
@@ -120,7 +120,7 @@ public class Game extends Activity implements GameCallbacks, Config {
 			// Let handler pop pause screen from stack
 			if(getFragmentManager().getBackStackEntryCount() == 1)
 				setGamePaused(false); // TODO: Move this to a point where the game is
-			// fully visible
+			// fully visibleInContacts
 			super.onBackPressed();
 		} else if(isGameRunning()) {
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
