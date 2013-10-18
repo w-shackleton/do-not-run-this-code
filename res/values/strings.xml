@@ -49,4 +49,6 @@
     <string name="askCorporate">Corporate topics</string>
     <string name="askGroups">Group-based topics</string>
 
+    <string name="dialog_choose_groups">Choose groups</string>
+
 </resources>

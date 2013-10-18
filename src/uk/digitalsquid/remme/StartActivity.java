@@ -1,11 +1,13 @@
 package uk.digitalsquid.remme;
 
-import java.util.Map;
+import java.util.ArrayList;
 
 import uk.digitalsquid.remme.mgr.ContactManager;
+import uk.digitalsquid.remme.mgr.GroupManager.AccountDetails;
 import uk.digitalsquid.remme.mgr.GroupManager.Group;
 import uk.digitalsquid.remme.misc.Config;
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -33,15 +35,23 @@ public class StartActivity extends Activity implements OnClickListener, Config {
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         
         findViewById(R.id.start).setOnClickListener(this);
+        findViewById(R.id.start2).setOnClickListener(this);
         findViewById(R.id.leaderboard).setOnClickListener(this);
         loadStatus = (ProgressBar) findViewById(R.id.loadStatus);
         loadStatus.setMax(1000);
         
-        Map<Integer, Group> groups = app.getGroups().getContactGroups();
-        for(Group group : groups.values()) {
-        	Log.d(TAG, "Group: " + group);
+        ArrayList<AccountDetails> accounts = app.getGroups().getAccountDetails();
+        for(AccountDetails details : accounts) {
+        	Log.d(TAG, details.toString(this));
+        	for(Group group : details.getGroups()) {
+        		Log.d(TAG, "    --  " + group.toString());
+        	}
         }
-        app.getGroups().getDirectory();
+        
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.addToBackStack(null);
+        GroupSelectDialog dialog = new GroupSelectDialog();
+        dialog.show(ft, "groupSelectDialog");
     }
 
 	@Override
@@ -49,7 +59,9 @@ public class StartActivity extends Activity implements OnClickListener, Config {
 		switch(v.getId()) {
 		case R.id.start:
 			startActivity(new Intent(this, ModeSelect.class));
-			// startActivity(new Intent(this, DifficultyListActivity.class));
+			break;
+		case R.id.start2:
+			startActivity(new Intent(this, DifficultyListActivity.class));
 			break;
 		case R.id.leaderboard:
 			startActivity(new Intent(this, Leaderboard.class));

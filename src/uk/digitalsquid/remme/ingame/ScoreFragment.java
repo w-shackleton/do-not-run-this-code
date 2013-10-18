@@ -119,6 +119,7 @@ public class ScoreFragment extends Fragment implements OnClickListener, Config {
 	
 	void setQualitativeScore(int score) {
 		// Normalise score
+		if(getActivity() == null) return;
 		String[] texts = getResources().getStringArray(R.array.qualitativeScore);
 		float scoreFactor = (float)score / (float)expectedScore;
 		String text;

@@ -21,7 +21,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
-import android.util.Log;
 import android.util.SparseArray;
 
 /**
@@ -173,17 +172,6 @@ public class GroupManager implements Config {
 		};
 	}
 	
-	public void getDirectory() {
-		AccountManager accountManager = AccountManager.get(context);
-		AuthenticatorDescription[] accountTypes = accountManager.getAuthenticatorTypes();
-		for(AuthenticatorDescription desc : accountTypes) {
-			Log.v(TAG, String.format(Locale.ENGLISH, "Account: %s - %s",
-					desc.packageName,
-					context.getResources().getString(desc.labelId)
-					));
-		}
-	}
-	
 	public static final class AccountDetails implements Parcelable {
 		
 		private String accountName;
@@ -299,8 +287,15 @@ public class GroupManager implements Config {
 			this.groups = groups;
 		}
 		
-		public void addGroup(Group group) {
+		void addGroup(Group group) {
 			groups.add(group);
+		}
+		
+		public String toString(Context context) {
+			return String.format("Account %s (%s:%s)",
+					getLabel(context),
+					getAccountName(),
+					getAccountType());
 		}
 	}
 	
