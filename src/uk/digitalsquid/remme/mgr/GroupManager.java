@@ -2,10 +2,11 @@ package uk.digitalsquid.remme.mgr;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import uk.digitalsquid.remme.mgr.db.DB;
 import uk.digitalsquid.remme.misc.Config;
@@ -21,6 +22,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
+import android.util.Pair;
 import android.util.SparseArray;
 
 /**
@@ -42,6 +44,8 @@ public class GroupManager implements Config {
 	@SuppressLint("UseSparseArrays")
 	public Map<Integer, Group> getContactGroups() {
 		final Map<Integer, Group> data = new HashMap<Integer, Group>();
+		
+		final List<Integer> visibleGroups = db.groups.getVisibleGroupIds();
 		
 		Cursor cur = cr.query(ContactsContract.Groups.CONTENT_URI, new String[] {
 				ContactsContract.Groups._ID,
@@ -72,15 +76,22 @@ public class GroupManager implements Config {
 		}
 		cur.close();
 		
+		// Update group visibility
+		for(Integer id : visibleGroups) {
+			Group group = data.get(id);
+			if(group == null) continue;
+			
+			group.userVisible = true;
+		}
+		
 		return data;
 	}
 	
 	/**
 	 * 
-	 * @param visibleGroupsOnly If true, will only return mappings for visibleInContacts groups
 	 * @return A map from group IDs to the contacts in that group.
 	 */
-	public SparseArray<List<Integer>> getGroupContactRelations(boolean visibleGroupsOnly) {
+	public SparseArray<List<Integer>> getGroupContactRelations() {
 		final SparseArray<List<Integer>> data = new SparseArray<List<Integer>>();
 		final String groupWhere = ContactsContract.Data.MIMETYPE + " = ?";
 		
@@ -89,11 +100,6 @@ public class GroupManager implements Config {
 				ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID },
 				groupWhere, new String[] {ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE}, null);
 		
-		Map<Integer, Group> visibleGroups = null;
-		if(visibleGroupsOnly) {
-			visibleGroups = getContactGroups();
-		}
-		
 		if(cur.getCount() > 0) {
 			final int contactIdIndex = cur.getColumnIndex(ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID);
 			final int groupIdIndex = cur.getColumnIndex(ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID);
@@ -101,19 +107,61 @@ public class GroupManager implements Config {
 				int contactId = cur.getInt(contactIdIndex);
 				int groupId = cur.getInt(groupIdIndex);
 				
-				// Check if group is visibleInContacts
-				if(visibleGroups != null) {
-					Group g = visibleGroups.get(groupId);
-					if(g != null) if(!g.visibleInContacts) continue; // Don't add if invisible
-				}
-				
 				if(data.get(groupId) == null)
-					data.put(groupId, new LinkedList<Integer>());
+					data.put(groupId, new ArrayList<Integer>());
 				data.get(groupId).add(contactId);
 			}
 		}
 		cur.close();
 		return data;
+	}
+	
+	public SparseArray<List<Integer>> getVisibleGroupContactRelations() {
+		final SparseArray<List<Integer>> result = new SparseArray<List<Integer>>();
+		final SparseArray<List<Integer>> relations = getGroupContactRelations();
+		
+		final Map<Integer, Group> groups = getContactGroups();
+		
+		for(int i = 0; i < relations.size(); i++) {
+			final int key = relations.keyAt(i);
+			final Group group = groups.get(key);
+			if(group == null) continue;
+			if(group.userVisible)
+				result.append(key, relations.get(key));
+		}
+		
+		return result;
+	}
+	
+	public Set<Integer> getVisibleRawContacts() {
+		final Set<Integer> result = new HashSet<Integer>();
+		
+		ArrayList<AccountDetails> details = getAccountDetails();
+
+		Cursor cur = cr.query(ContactsContract.RawContacts.CONTENT_URI, new String[] {
+				ContactsContract.RawContacts._ID,
+				ContactsContract.RawContacts.ACCOUNT_NAME,
+				ContactsContract.RawContacts.ACCOUNT_TYPE,},
+				null, null, null);
+
+		if(cur.getCount() > 0) {
+			final int idIdx = cur.getColumnIndex(ContactsContract.RawContacts._ID);
+			final int nameIdx = cur.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME);
+			final int typeIdx = cur.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE);
+			while(cur.moveToNext()) {
+				final int idx = cur.getInt(idIdx);
+				final String name = cur.getString(nameIdx);
+				final String type = cur.getString(typeIdx);
+
+				for(AccountDetails detail : details) {
+					if(detail.getAccountName().equals(name) &&
+							detail.getAccountType().equals(type))
+						result.add(idx);
+				}
+			}
+		}
+
+		return result;
 	}
 	
 	public static class Group implements Parcelable {
@@ -122,6 +170,7 @@ public class GroupManager implements Config {
 		public final int id;
 		
 		public final boolean visibleInContacts;
+		private boolean userVisible;
 		
 		public String accountName, accountType;
 		
@@ -129,6 +178,7 @@ public class GroupManager implements Config {
 			this.id = id;
 			this.name = name;
 			this.visibleInContacts = visible;
+			this.userVisible = visible;
 		}
 		
 		private Group(Parcel in) {
@@ -137,6 +187,7 @@ public class GroupManager implements Config {
 			visibleInContacts = in.readInt() == 1;
 			accountName = in.readString();
 			accountType = in.readString();
+			userVisible = in.readInt() == 1;
 		}
 
 		@Override
@@ -146,6 +197,7 @@ public class GroupManager implements Config {
 			dest.writeInt(visibleInContacts ? 1 : 0);
 			dest.writeString(accountName);
 			dest.writeString(accountType);
+			dest.writeInt(userVisible ? 1 : 0);
 		}
 		
 		@Override
@@ -159,6 +211,17 @@ public class GroupManager implements Config {
 			return 0;
 		}
 		
+		/**
+		 * @return <code>true</code> if this group is visible
+		 */
+		public boolean isUserVisible() {
+			return userVisible;
+		}
+
+		public void setUserVisible(boolean userVisible) {
+			this.userVisible = userVisible;
+		}
+
 		public static final Parcelable.Creator<Group> CREATOR = new Creator<GroupManager.Group>() {
 			@Override
 			public Group[] newArray(int size) {
@@ -181,6 +244,7 @@ public class GroupManager implements Config {
 		private int labelId, iconId;
 		
 		private ArrayList<Group> groups;
+		private boolean userVisible;
 		
 		public AccountDetails() {
 			setGroups(new ArrayList<GroupManager.Group>());
@@ -193,6 +257,7 @@ public class GroupManager implements Config {
 			packageName = in.readString();
 			labelId = in.readInt();
 			iconId = in.readInt();
+			userVisible = in.readInt() == 1;
 			setGroups(in.readArrayList(Group.class.getClassLoader()));
 		}
 
@@ -204,6 +269,7 @@ public class GroupManager implements Config {
 			dest.writeInt(labelId);
 			dest.writeInt(iconId);
 			dest.writeList(getGroups());
+			dest.writeInt(userVisible ? 1 : 0);
 		}
 		
 		public static final Parcelable.Creator<AccountDetails> CREATOR = new Creator<GroupManager.AccountDetails>() {
@@ -297,6 +363,17 @@ public class GroupManager implements Config {
 					getAccountName(),
 					getAccountType());
 		}
+
+		/**
+		 * @return <code>true</code> if this account is visible to the user
+		 */
+		public boolean isUserVisible() {
+			return userVisible;
+		}
+
+		public void setUserVisible(boolean userVisible) {
+			this.userVisible = userVisible;
+		}
 	}
 	
 	/**
@@ -307,6 +384,8 @@ public class GroupManager implements Config {
 		AccountManager accountManager = AccountManager.get(context);
 		AuthenticatorDescription[] accountTypes = accountManager.getAuthenticatorTypes();
 		Account[] accounts = accountManager.getAccounts();
+		
+		List<Pair<String, String>> visibleAccounts = db.groups.getVisibleAccounts();
 		
 		ArrayList<AccountDetails> accountDetails = new ArrayList<AccountDetails>();
 
@@ -323,6 +402,13 @@ public class GroupManager implements Config {
 				details.setIconId(accountType.iconId);
 				details.setPackageName(accountType.packageName);
 			}
+			
+			// O(n^2) - eurgh
+			for(Pair<String, String> visibleAccount : visibleAccounts) {
+				if(details.getAccountName().equals(visibleAccount.first) ||
+						details.getAccountType().equals(visibleAccount.second))
+					details.setUserVisible(true);
+			}
 
 			accountDetails.add(details);
 		}
@@ -338,6 +424,7 @@ public class GroupManager implements Config {
 				}
 			}
 		}
+		
 		return accountDetails;
 	}
 	

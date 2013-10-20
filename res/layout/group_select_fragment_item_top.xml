@@ -7,6 +7,7 @@
 
     <ImageView
         android:id="@+id/icon"
+        android:contentDescription="@string/icon"
         android:layout_width="48dip"
         android:layout_height="48dip" />
 
@@ -27,8 +28,7 @@
             android:id="@+id/description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/placeholder"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:text="@string/placeholder" />
 
     </LinearLayout>
 
@@ -36,6 +36,7 @@
         android:id="@+id/checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:focusable="false"
         android:text="" />
 
 </LinearLayout>

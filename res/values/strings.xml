@@ -50,5 +50,6 @@
     <string name="askGroups">Group-based topics</string>
 
     <string name="dialog_choose_groups">Choose groups</string>
+    <string name="icon">Icon</string>
 
 </resources>

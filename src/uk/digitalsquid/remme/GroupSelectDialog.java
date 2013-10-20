@@ -12,8 +12,10 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -30,6 +32,8 @@ public final class GroupSelectDialog extends DialogFragment {
         super.onCreate(savedInstanceState);
     }
     
+    GroupAdapter adapter;
+    
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
     	final App app = (App) getActivity().getApplication();
@@ -40,6 +44,10 @@ public final class GroupSelectDialog extends DialogFragment {
         builder.setMessage(R.string.dialog_choose_groups)
                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {
+                	   if(adapter == null) return;
+                	   ArrayList<AccountDetails> accounts = adapter.getGroups();
+                	   app.getDb().groups.setVisibleAccountsAndGroups(accounts);
+                	   app.getContacts().beginBackgroundReload();
                    }
                })
                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -50,7 +58,7 @@ public final class GroupSelectDialog extends DialogFragment {
         // Construct rootView innards
         
         ListView list = (ListView) rootView.findViewById(R.id.listView);
-        GroupAdapter adapter = new GroupAdapter(getActivity());
+        adapter = new GroupAdapter(getActivity());
         adapter.setGroups(app.getGroups().getAccountDetails());
         list.setAdapter(adapter);
         
@@ -101,23 +109,46 @@ public final class GroupSelectDialog extends DialogFragment {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			Object item = getItem(position);
 			if(item instanceof AccountDetails) {
-				AccountDetails details = (AccountDetails) item;
+				final AccountDetails details = (AccountDetails) item;
 				View rootView = inflater.inflate(R.layout.group_select_fragment_item_top, null);
 				TextView title = (TextView) rootView.findViewById(R.id.title);
 				TextView desc = (TextView) rootView.findViewById(R.id.description);
 				ImageView icon = (ImageView) rootView.findViewById(R.id.icon);
+				final CheckBox check = (CheckBox) rootView.findViewById(R.id.checkBox);
+				
+				if(details.isUserVisible())
+					check.setChecked(true);
 				
 				title.setText(details.getLabel(context));
 				desc.setText(details.getAccountName());
 				icon.setImageDrawable(details.getIcon(context));
+				
+				rootView.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						check.toggle();
+						details.setUserVisible(check.isChecked());
+					}
+				});
 
 				return rootView;
 			} else if(item instanceof Group) {
-				Group group = (Group) item;
+				final Group group = (Group) item;
 				View rootView = inflater.inflate(R.layout.group_select_fragment_item_bottom, null);
 				TextView title = (TextView) rootView.findViewById(R.id.title);
+				final CheckBox check = (CheckBox) rootView.findViewById(R.id.checkBox);
 				
 				title.setText(group.name);
+				if(group.isUserVisible())
+					check.setChecked(true);
+				
+				rootView.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						check.toggle();
+						group.setUserVisible(check.isChecked());
+					}
+				});
 
 				return rootView;
 			}
@@ -127,6 +158,10 @@ public final class GroupSelectDialog extends DialogFragment {
 		public void setGroups(ArrayList<AccountDetails> list) {
 			this.list = list;
 			notifyDataSetChanged();
+		}
+		
+		public ArrayList<AccountDetails> getGroups() {
+			return list;
 		}
     };
 }

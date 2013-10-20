@@ -32,6 +32,8 @@ public final class Contact implements Parcelable, Comparable<Contact>, Config {
 	
 	private boolean photoRemoved = false;
 	
+	private boolean inVisibleGroup = false;
+	
     private Contact(Parcel in) {
     	id = in.readInt();
     	setLookupKey(in.readString());
@@ -40,6 +42,7 @@ public final class Contact implements Parcelable, Comparable<Contact>, Config {
     	displayName = in.readString();
     	details = in.readParcelable(Details.class.getClassLoader());
     	photoRemoved = in.readInt() == 1;
+    	inVisibleGroup = in.readInt() == 1;
     }
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
@@ -50,6 +53,7 @@ public final class Contact implements Parcelable, Comparable<Contact>, Config {
 		dest.writeString(displayName);
 		dest.writeParcelable(details, 0);
 		dest.writeInt(photoRemoved ? 1 : 0);
+		dest.writeInt(inVisibleGroup ? 1 : 0);
 	}
 	
 	public Contact() {
@@ -318,5 +322,11 @@ public final class Contact implements Parcelable, Comparable<Contact>, Config {
 
 	public void setLookupKey(String lookupKey) {
 		this.lookupKey = lookupKey;
+	}
+	public boolean isInVisibleGroup() {
+		return inVisibleGroup;
+	}
+	public void setInVisibleGroup(boolean inVisibleGroup) {
+		this.inVisibleGroup = inVisibleGroup;
 	}
 }

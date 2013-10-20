@@ -1,5 +1,9 @@
 package uk.digitalsquid.remme;
 
+import java.util.ArrayList;
+
+import uk.digitalsquid.remme.mgr.Question;
+import uk.digitalsquid.remme.mgr.Question.QuestionAnswerPair;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -138,6 +142,65 @@ public class SetupDescriptor implements Parcelable {
 			desc.setOtherAnswers(5, 7);
 			break;
 		}
+		
+		final ArrayList<QuestionAnswerPair> pairs = new ArrayList<Question.QuestionAnswerPair>();
+		
+		if(isAskPersonal()) {
+			switch(difficulty) {
+			case DIFFICULTY_MEGA:
+			case DIFFICULTY_HARD:
+				addQAllTBothDirs(pairs, Question.FIELD_FIRST_NAME, Question.FIELD_LAST_NAME);
+				addQ(pairs, Question.STYLE_TRUE_FALSE, Question.FIELD_DISPLAY_NAME, Question.FIELD_EMAIL_MOBILE);
+				addQ(pairs, Question.STYLE_TRUE_FALSE, Question.FIELD_DISPLAY_NAME, Question.FIELD_EMAIL_OTHER);
+				addQBothDirs(pairs, Question.FIELD_DISPLAY_NAME, Question.FIELD_EMAIL_HOME);
+				addQBothDirs(pairs, Question.FIELD_DISPLAY_NAME, Question.FIELD_EMAIL_WORK);
+			case DIFFICULTY_MEDIUM:
+				addQSimpleT(pairs, Question.FIELD_FIRST_NAME, Question.FIELD_LAST_NAME);
+				addQSimpleT(pairs, Question.FIELD_LAST_NAME, Question.FIELD_FIRST_NAME);
+				addQ(pairs, Question.STYLE_TRUE_FALSE, Question.FIELD_DISPLAY_NAME, Question.FIELD_EMAIL_HOME);
+				addQ(pairs, Question.STYLE_TRUE_FALSE, Question.FIELD_DISPLAY_NAME, Question.FIELD_EMAIL_WORK);
+			case DIFFICULTY_EASY:
+				addQAllT(pairs, Question.FIELD_PHOTO, Question.FIELD_FIRST_NAME);
+				addQAllT(pairs, Question.FIELD_PHOTO, Question.FIELD_LAST_NAME);
+				addQAllT(pairs, Question.FIELD_DISPLAY_NAME, Question.FIELD_PHOTO);
+			case DIFFICULTY_CASUAL:
+				addQAllT(pairs, Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME);
+				addQ(pairs, Question.FIELD_PHOTO, Question.FIELD_FIRST_NAME);
+				addQ(pairs, Question.FIELD_PHOTO, Question.FIELD_LAST_NAME);
+				break;
+			}
+		}
+		
+		desc.setQuestionTypes(pairs.toArray(new QuestionAnswerPair[pairs.size()]));
+
 		return desc;
+	}
+	
+	private static final void addQ(ArrayList<QuestionAnswerPair> pairs, int questionField, int answerField) {
+		pairs.add(new QuestionAnswerPair(questionField, answerField));
+	}
+	private static final void addQBothDirs(ArrayList<QuestionAnswerPair> pairs, int questionField, int answerField) {
+		pairs.add(new QuestionAnswerPair(questionField, answerField));
+		pairs.add(new QuestionAnswerPair(answerField, questionField));
+	}
+	private static final void addQAllT(ArrayList<QuestionAnswerPair> pairs, int questionField, int answerField) {
+		pairs.add(new QuestionAnswerPair(Question.STYLE_MULTI_CHOICE, questionField, answerField));
+		pairs.add(new QuestionAnswerPair(Question.STYLE_PAIRING, questionField, answerField));
+		pairs.add(new QuestionAnswerPair(Question.STYLE_TRUE_FALSE, questionField, answerField));
+	}
+	private static final void addQAllTBothDirs(ArrayList<QuestionAnswerPair> pairs, int questionField, int answerField) {
+		pairs.add(new QuestionAnswerPair(Question.STYLE_MULTI_CHOICE, questionField, answerField));
+		pairs.add(new QuestionAnswerPair(Question.STYLE_PAIRING, questionField, answerField));
+		pairs.add(new QuestionAnswerPair(Question.STYLE_TRUE_FALSE, questionField, answerField));
+		pairs.add(new QuestionAnswerPair(Question.STYLE_MULTI_CHOICE, answerField, questionField));
+		pairs.add(new QuestionAnswerPair(Question.STYLE_PAIRING, answerField, questionField));
+		pairs.add(new QuestionAnswerPair(Question.STYLE_TRUE_FALSE, answerField, questionField));
+	}
+	private static final void addQSimpleT(ArrayList<QuestionAnswerPair> pairs, int questionField, int answerField) {
+		pairs.add(new QuestionAnswerPair(Question.STYLE_MULTI_CHOICE, questionField, answerField));
+		pairs.add(new QuestionAnswerPair(Question.STYLE_TRUE_FALSE, questionField, answerField));
+	}
+	private static final void addQ(ArrayList<QuestionAnswerPair> pairs, int style, int questionField, int answerField) {
+		pairs.add(new QuestionAnswerPair(style, questionField, answerField));
 	}
 }

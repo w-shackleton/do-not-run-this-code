@@ -1,9 +1,7 @@
 package uk.digitalsquid.remme.mgr;
 
-import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -12,16 +10,12 @@ import java.util.Set;
 import uk.digitalsquid.remme.App;
 import uk.digitalsquid.remme.mgr.details.Contact;
 import uk.digitalsquid.remme.misc.Config;
-import uk.digitalsquid.remme.misc.ListUtils;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.os.AsyncTask.Status;
-import android.os.Handler;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
@@ -43,8 +37,6 @@ public final class ContactManager implements Config {
 			"uk.digitalsquid.remme.mgr.ContactManager.LoadStatus.Value";
 
 	private final ContentResolver cr;
-	
-	private final Handler eventHandler;
 	
 	private HashMap<String, Contact> contacts;
 	/**
@@ -72,10 +64,6 @@ public final class ContactManager implements Config {
 		cr = context.getContentResolver();
 		
 		localBroadcastManager = LocalBroadcastManager.getInstance(context);
-		
-		eventHandler = new Handler();
-		
-		cr.registerContentObserver(ContactsContract.Contacts.CONTENT_URI, false, observer);
 	}
 	
 	private void loadBaseData() {
@@ -97,14 +85,16 @@ public final class ContactManager implements Config {
 	private synchronized void loadData(LoadingStatusListener listener) {
 		
 		Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
-				new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME,
-				ContactsContract.Contacts.LOOKUP_KEY},
+				new String[] {
+				ContactsContract.Contacts._ID,
+				ContactsContract.Contacts.DISPLAY_NAME,
+				ContactsContract.Contacts.LOOKUP_KEY,
+				},
 				null, null, ContactsContract.Contacts._ID + " ASC");
 		
 		Log.d(TAG, "Starting load");
 		
-		SparseArray<List<Integer>> groupContactRelations = app.getGroups().getGroupContactRelations(true);
-		Set<List<Integer>> groupContactRelationsValues = ListUtils.values(groupContactRelations);
+		SparseArray<List<Integer>> groupContactRelations = app.getGroups().getVisibleGroupContactRelations();
 		
 		Log.d(TAG, "Loaded groups");
 
@@ -125,15 +115,13 @@ public final class ContactManager implements Config {
 				int id = cur.getInt(cur.getColumnIndex(ContactsContract.Contacts._ID));
 				String displayName = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 				
-				if(contactInVisibleGroup(groupContactRelationsValues, id) || true) {
-					Contact contact = new Contact();
-					contact.setId(id);
-					contact.setDisplayName(displayName);
-					contact.setLookupKey(key);
-					
-					contacts.put(contact.getLookupKey(), contact);
-					contactIdMap.put(contact.getId(), contact);
-				}
+				Contact contact = new Contact();
+				contact.setId(id);
+				contact.setDisplayName(displayName);
+				contact.setLookupKey(key);
+				
+				contacts.put(contact.getLookupKey(), contact);
+				contactIdMap.put(contact.getId(), contact);
 				i++;
 				if(i % 10 == 0)
 					listener.onBaseDataLoadProgress((float)i / (float)total);
@@ -142,14 +130,32 @@ public final class ContactManager implements Config {
 		cur.close();
 		
 		Log.d(TAG, "Loaded base");
+		
+		Log.d(TAG, "Filtering based on group data");
+		// Mark all contacts that belong to a selected group.
+		for(int pos = 0; pos < groupContactRelations.size(); pos++) {
+			List<Integer> relations = groupContactRelations.valueAt(pos);
+			if(relations == null) continue;
+			for(Integer contactId : relations) {
+				Contact contact = contactIdMap.get((int)contactId);
+				if(contact == null) continue;
+				contact.setInVisibleGroup(true);
+			}
+		}
+		
+		Log.d(TAG, "Loading visible contact data");
+		
+		Set<Integer> visibleRawContacts = app.getGroups().getVisibleRawContacts();
+		
+		Log.d(TAG, "Querying aux data");
 
 		// Get data from Data table and populate contacts further
 		// This query could take a LONG time.
 		cur = cr.query(ContactsContract.Data.CONTENT_URI,
 				new String[] {
 				ContactsContract.Data.CONTACT_ID,
-				ContactsContract.Data.LOOKUP_KEY,
 				ContactsContract.Data.MIMETYPE,
+				ContactsContract.Data.RAW_CONTACT_ID,
 				ContactsContract.CommonDataKinds.Organization.COMPANY,
 				ContactsContract.CommonDataKinds.Organization.DEPARTMENT,
 				ContactsContract.CommonDataKinds.Organization.TITLE,
@@ -166,8 +172,8 @@ public final class ContactManager implements Config {
 		},
 				null, null, null);
 		int idIdx		= cur.getColumnIndexOrThrow(ContactsContract.Data.CONTACT_ID);
-		int lookupKeyIdx= cur.getColumnIndexOrThrow(ContactsContract.Data.LOOKUP_KEY);
 		int mimeTypeIdx	= cur.getColumnIndexOrThrow(ContactsContract.Data.MIMETYPE);
+		int rawIdIdx	= cur.getColumnIndexOrThrow(ContactsContract.Data.RAW_CONTACT_ID);
 		int companyIdx	= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Organization.COMPANY);
 		int departmentIdx=cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Organization.DEPARTMENT);
 		int titleIdx	= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Organization.TITLE);
@@ -194,6 +200,12 @@ public final class ContactManager implements Config {
 			if(mime == null) continue;
 			if(i % 10 == 0)
 				listener.onAuxiliaryDataLoadProgress((float)(i) / (float)total);
+			
+			// Check if contact is in a visible group OR if raw contact account is visible
+			final int rawContactId = cur.getInt(rawIdIdx);
+			if(!(contact.isInVisibleGroup() || visibleRawContacts.contains(rawContactId)))
+				continue;
+
 			if(mime.equals(ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE)) {
 				contact.getDetails().setCompany(cur.getString(companyIdx));
 				contact.getDetails().setDepartment(cur.getString(departmentIdx));
@@ -352,37 +364,6 @@ public final class ContactManager implements Config {
 		return false;
 	}
 	
-	// Doesn't need loading synchronisation
-	public LinkedList<RawContact> getRawContacts(int contactId) {
-		Cursor cur = cr.query(ContactsContract.RawContacts.CONTENT_URI,
-				new String[] {
-					ContactsContract.RawContacts.ACCOUNT_NAME,
-					ContactsContract.RawContacts.CONTACT_ID,
-					ContactsContract.RawContacts._ID,
-				}, "contact_id=?", new String[] {
-					String.valueOf(contactId),
-				}, null);
-		
-		if(cur.getCount() > 0) {
-			int colAccountName = cur.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME);
-			int colContactId = cur.getColumnIndex(ContactsContract.RawContacts.CONTACT_ID);
-			int colRawId = cur.getColumnIndex(ContactsContract.RawContacts._ID);
-			
-			LinkedList<RawContact> contacts = new LinkedList<RawContact>();
-			
-			while(cur.moveToNext()) {
-				RawContact contact = new RawContact();
-				contact.setAccountName(cur.getString(colAccountName));
-				contact.setContactId(cur.getInt(colContactId));
-				contact.setId(cur.getInt(colRawId));
-				
-				contacts.add(contact);
-			}
-			return contacts;
-		}
-		return new LinkedList<RawContact>();
-	}
-	
 	public Collection<Contact> getContacts() {
 		synchronized(loadingSync) {
 			if(!dataLoaded) loadBaseData();
@@ -403,63 +384,6 @@ public final class ContactManager implements Config {
 		}
 		return contacts.get(lookupKey);
 	}
-
-	private final ContentObserver observer = new ContentObserver(new Handler()) {
-		@Override
-		public void onChange(boolean selfChange) {
-			// TODO: Deal with changes more efficiently.
-			// loadBaseData();
-			eventHandler.post(new Runnable() {
-				@Override
-				public void run() {
-					// Send notification to each listener
-					for(WeakReference<ContactChangeListener> l : changeListeners) {
-						ContactChangeListener ll = l.get();
-						if(ll != null)
-							ll.onContactsChanged(getContacts());
-						else changeListeners.remove(l);
-					}
-				}
-			});
-		}
-	};
-	
-	public void refresh() {
-		synchronized (loadingSync) {
-			loadBaseData();
-		}
-		observer.onChange(true); // Update UI
-	}
-	
-	private final List<WeakReference<ContactChangeListener>> changeListeners = new LinkedList<WeakReference<ContactChangeListener>>();
-	
-	/**
-	 * Registers a listener to receive new contact lists. Keeps a weak reference to stop objects being held on to.
-	 * @param l
-	 */
-	public void registerChangeListener(ContactChangeListener l) {
-		changeListeners.add(new WeakReference<ContactChangeListener>(l));
-	}
-	
-	public void unregisterChangeListener(ContactChangeListener l) {
-		for(WeakReference<ContactChangeListener> listener : changeListeners) {
-			if(listener.get() == l)
-				changeListeners.remove(listener);
-		}
-	}
-	
-	/**
-	 * Notification interface for contacts changing
-	 * @author william
-	 *
-	 */
-	public static interface ContactChangeListener {
-		/**
-		 * Called when the contacts list has changed.
-		 * @param newContacts
-		 */
-		public void onContactsChanged(Collection<Contact> newContacts);
-	}
 	
 	private static interface LoadingStatusListener {
 		public void onBaseDataLoadProgress(float progress);
@@ -476,17 +400,31 @@ public final class ContactManager implements Config {
 	
 	public synchronized void beginBackgroundLoad() {
 		if(dataLoaded) return;
-		if(backgroundLoader.getStatus() == Status.RUNNING) return;
-		backgroundLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		if(backgroundLoader != null) return;
+		new BackgroundLoader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 	}
 	
-	private final AsyncTask<Void, Float, Void> backgroundLoader = new AsyncTask<Void, Float, Void>() {
+	/**
+	 * Reloads the data into the game; reinitialises this class.
+	 */
+	public synchronized void beginBackgroundReload() {
+		new BackgroundLoader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+	}
+	
+	private BackgroundLoader backgroundLoader;
+	
+	private final class BackgroundLoader extends AsyncTask<Void, Float, Void> {
 		
 		private int broadcastCount = 0;
 
 		@Override
 		protected Void doInBackground(Void... params) {
+			backgroundLoader = this;
 			synchronized (loadingSync) {
+				dataLoaded = false;
+				contacts = null;
+				contactIdMap = null;
+				contactCollection = null;
 				// In this system we are assuming that base data is 1/4 of the job,
 				// aux is 3/4.
 				loadData(new LoadingStatusListener() {
@@ -542,6 +480,8 @@ public final class ContactManager implements Config {
 		
 		@Override
 		protected void onPostExecute(Void result) {
+			// Remove own reference
+			backgroundLoader = null;
 			// Send completion broadcast. A value of 1 indicates completion
 			Intent broadcast = new Intent();
 			broadcast.setAction(BROADCAST_LOADSTATUS);
