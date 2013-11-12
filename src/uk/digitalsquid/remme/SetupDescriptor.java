@@ -148,6 +148,7 @@ public class SetupDescriptor implements Parcelable {
 		if(isAskPersonal()) {
 			switch(difficulty) {
 			case DIFFICULTY_MEGA:
+				// TODO: Add some!
 			case DIFFICULTY_HARD:
 				addQAllTBothDirs(pairs, Question.FIELD_FIRST_NAME, Question.FIELD_LAST_NAME);
 				addQ(pairs, Question.STYLE_TRUE_FALSE, Question.FIELD_DISPLAY_NAME, Question.FIELD_EMAIL_MOBILE);

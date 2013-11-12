@@ -133,30 +133,30 @@ public class GroupManager implements Config {
 		return result;
 	}
 	
-	public Set<Integer> getVisibleRawContacts() {
+	public Set<Integer> getContactsVisibleByAccount() {
 		final Set<Integer> result = new HashSet<Integer>();
 		
 		ArrayList<AccountDetails> details = getAccountDetails();
 
 		Cursor cur = cr.query(ContactsContract.RawContacts.CONTENT_URI, new String[] {
-				ContactsContract.RawContacts._ID,
+				ContactsContract.RawContacts.CONTACT_ID,
 				ContactsContract.RawContacts.ACCOUNT_NAME,
 				ContactsContract.RawContacts.ACCOUNT_TYPE,},
 				null, null, null);
 
 		if(cur.getCount() > 0) {
-			final int idIdx = cur.getColumnIndex(ContactsContract.RawContacts._ID);
+			final int contactIdIdx = cur.getColumnIndex(ContactsContract.RawContacts.CONTACT_ID);
 			final int nameIdx = cur.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME);
 			final int typeIdx = cur.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE);
 			while(cur.moveToNext()) {
-				final int idx = cur.getInt(idIdx);
+				final int contactId = cur.getInt(contactIdIdx);
 				final String name = cur.getString(nameIdx);
 				final String type = cur.getString(typeIdx);
 
 				for(AccountDetails detail : details) {
 					if(detail.getAccountName().equals(name) &&
 							detail.getAccountType().equals(type))
-						result.add(idx);
+						result.add(contactId);
 				}
 			}
 		}

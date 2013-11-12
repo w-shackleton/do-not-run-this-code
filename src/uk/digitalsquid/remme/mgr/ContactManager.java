@@ -83,7 +83,7 @@ public final class ContactManager implements Config {
 	 * Loads all contact data.
 	 */
 	private synchronized void loadData(LoadingStatusListener listener) {
-		
+		Log.d(TAG, "Starting load");
 		Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
 				new String[] {
 				ContactsContract.Contacts._ID,
@@ -92,17 +92,18 @@ public final class ContactManager implements Config {
 				},
 				null, null, ContactsContract.Contacts._ID + " ASC");
 		
-		Log.d(TAG, "Starting load");
-		
-		SparseArray<List<Integer>> groupContactRelations = app.getGroups().getVisibleGroupContactRelations();
-		
-		Log.d(TAG, "Loaded groups");
-
 		contacts = new HashMap<String, Contact>();
 		contactIdMap = new HashMap<Integer, Contact>();
 		
 		// Get hidden contacts
+		Log.d(TAG, "Loading hidden contacts");
 		Set<String> hiddenContacts = app.getDb().hidden.getHiddenContacts();
+		Log.d(TAG, "Loading visible contact data");
+		Set<Integer> visibleContactsByAccount = app.getGroups().getContactsVisibleByAccount();
+		Log.d(TAG, "Loading group relations");
+		SparseArray<List<Integer>> groupContactRelations = app.getGroups().getVisibleGroupContactRelations();
+		
+		
 		
 		// Load base data and populate HashMap
 		int total = cur.getCount();
@@ -142,10 +143,15 @@ public final class ContactManager implements Config {
 				contact.setInVisibleGroup(true);
 			}
 		}
-		
-		Log.d(TAG, "Loading visible contact data");
-		
-		Set<Integer> visibleRawContacts = app.getGroups().getVisibleRawContacts();
+		Log.d(TAG, "Filtering based on account data");
+		for(Contact contact : contacts.values()) {
+			boolean accountSelected = visibleContactsByAccount.contains(contact.getId());
+			boolean groupSelected = contact.isInVisibleGroup();
+			if(!(accountSelected || groupSelected)) {
+				contacts.remove(contact.getLookupKey());
+				contactIdMap.remove(contact.getId());
+			}
+		}
 		
 		Log.d(TAG, "Querying aux data");
 
@@ -155,7 +161,6 @@ public final class ContactManager implements Config {
 				new String[] {
 				ContactsContract.Data.CONTACT_ID,
 				ContactsContract.Data.MIMETYPE,
-				ContactsContract.Data.RAW_CONTACT_ID,
 				ContactsContract.CommonDataKinds.Organization.COMPANY,
 				ContactsContract.CommonDataKinds.Organization.DEPARTMENT,
 				ContactsContract.CommonDataKinds.Organization.TITLE,
@@ -173,7 +178,6 @@ public final class ContactManager implements Config {
 				null, null, null);
 		int idIdx		= cur.getColumnIndexOrThrow(ContactsContract.Data.CONTACT_ID);
 		int mimeTypeIdx	= cur.getColumnIndexOrThrow(ContactsContract.Data.MIMETYPE);
-		int rawIdIdx	= cur.getColumnIndexOrThrow(ContactsContract.Data.RAW_CONTACT_ID);
 		int companyIdx	= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Organization.COMPANY);
 		int departmentIdx=cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Organization.DEPARTMENT);
 		int titleIdx	= cur.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Organization.TITLE);
@@ -200,11 +204,6 @@ public final class ContactManager implements Config {
 			if(mime == null) continue;
 			if(i % 10 == 0)
 				listener.onAuxiliaryDataLoadProgress((float)(i) / (float)total);
-			
-			// Check if contact is in a visible group OR if raw contact account is visible
-			final int rawContactId = cur.getInt(rawIdIdx);
-			if(!(contact.isInVisibleGroup() || visibleRawContacts.contains(rawContactId)))
-				continue;
 
 			if(mime.equals(ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE)) {
 				contact.getDetails().setCompany(cur.getString(companyIdx));
@@ -398,10 +397,16 @@ public final class ContactManager implements Config {
 		};
 	}
 	
-	public synchronized void beginBackgroundLoad() {
-		if(dataLoaded) return;
-		if(backgroundLoader != null) return;
+	/**
+	 * Begins an async load.
+	 * @return <code>true</code> if loading was started, <code>false</code> if
+	 * already loaded.
+	 */
+	public synchronized boolean beginBackgroundLoad() {
+		if(dataLoaded) return false;
+		if(backgroundLoader != null) return false;
 		new BackgroundLoader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		return true;
 	}
 	
 	/**

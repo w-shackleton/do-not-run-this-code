@@ -2,12 +2,12 @@ package uk.digitalsquid.remme;
 
 import java.util.ArrayList;
 
+import uk.digitalsquid.remme.ingame.views.CurtainImageView;
 import uk.digitalsquid.remme.mgr.ContactManager;
 import uk.digitalsquid.remme.mgr.GroupManager.AccountDetails;
 import uk.digitalsquid.remme.mgr.GroupManager.Group;
 import uk.digitalsquid.remme.misc.Config;
 import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,14 +17,13 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ProgressBar;
 
 public class StartActivity extends Activity implements OnClickListener, Config {
 	
 	private LocalBroadcastManager localBroadcastManager;
 	private App app;
 	
-	ProgressBar loadStatus;
+	CurtainImageView curtains;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,8 +36,8 @@ public class StartActivity extends Activity implements OnClickListener, Config {
         findViewById(R.id.start).setOnClickListener(this);
         findViewById(R.id.start2).setOnClickListener(this);
         findViewById(R.id.leaderboard).setOnClickListener(this);
-        loadStatus = (ProgressBar) findViewById(R.id.loadStatus);
-        loadStatus.setMax(1000);
+        curtains = (CurtainImageView) findViewById(R.id.loadingImage);
+        curtains.setClickable(false);
         
         ArrayList<AccountDetails> accounts = app.getGroups().getAccountDetails();
         for(AccountDetails details : accounts) {
@@ -47,11 +46,6 @@ public class StartActivity extends Activity implements OnClickListener, Config {
         		Log.d(TAG, "    --  " + group.toString());
         	}
         }
-        
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.addToBackStack(null);
-        GroupSelectDialog dialog = new GroupSelectDialog();
-        dialog.show(ft, "groupSelectDialog");
     }
 
 	@Override
@@ -74,8 +68,7 @@ public class StartActivity extends Activity implements OnClickListener, Config {
 		public void onReceive(Context context, Intent intent) {
 			if(intent.getAction().equals(ContactManager.BROADCAST_LOADSTATUS)) {
 				float status = intent.getFloatExtra(ContactManager.LOADSTATUS_STATUS, 1f);
-				loadStatus.setVisibility(status == 1 ? View.INVISIBLE : View.VISIBLE);
-				loadStatus.setProgress((int) (status * 1000));
+				curtains.setProgress(status);
 			}
 		}
 	};
@@ -86,7 +79,8 @@ public class StartActivity extends Activity implements OnClickListener, Config {
 		IntentFilter filter = new IntentFilter(ContactManager.BROADCAST_LOADSTATUS);
 		localBroadcastManager.registerReceiver(loadReceiver, filter);
 		// This does nothing if called multiple times so should be OK
-		app.getContacts().beginBackgroundLoad();
+		if(!app.getContacts().beginBackgroundLoad())
+			curtains.setVisibility(View.GONE);
 	}
 	
 	@Override

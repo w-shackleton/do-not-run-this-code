@@ -3,4 +3,7 @@
     <declare-styleable name="TimerView">
         <attr name="timerBackground" format="color" />
    </declare-styleable> 
+    <declare-styleable name="CurtainImageView">
+        <attr name="src" format="integer" />
+   </declare-styleable> 
 </resources>

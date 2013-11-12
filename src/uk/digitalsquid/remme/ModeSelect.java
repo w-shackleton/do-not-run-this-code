@@ -3,6 +3,7 @@ package uk.digitalsquid.remme;
 import uk.digitalsquid.remme.ingame.Game;
 import uk.digitalsquid.remme.mgr.Question;
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -22,6 +23,11 @@ public class ModeSelect extends Activity implements OnClickListener {
 		findViewById(R.id.infiniteGame).setOnClickListener(this);
 		findViewById(R.id.otherTest).setOnClickListener(this);
 		findViewById(R.id.strangeTest).setOnClickListener(this);
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.addToBackStack(null);
+        GroupSelectDialog dialog = new GroupSelectDialog();
+        dialog.show(ft, "groupSelectDialog");
 	}
 
 	@Override
