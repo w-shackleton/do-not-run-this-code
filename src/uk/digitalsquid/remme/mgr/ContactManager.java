@@ -336,8 +336,11 @@ public final class ContactManager implements Config {
 		}
 		
 		// Finally, remove any suspiciously incorrect fields.
-		// TODO: Put anything here?
-		final int[] nameFields = {};
+		final int[] nameFields = {
+				Question.FIELD_DISPLAY_NAME,
+				Question.FIELD_FIRST_NAME,
+				Question.FIELD_LAST_NAME
+				};
 		for(Contact contact : contacts.values()) {
 			for(int field : nameFields) {
 				if(contact.hasField(field)) {
@@ -362,8 +365,9 @@ public final class ContactManager implements Config {
 	 */
 	final static boolean isSaneName(String name) {
 		// Currently, just delete stuff that is numbers, symbols and whitespace
-		// No names are 1 letter alpha right?
-		return !name.matches("^[0-9,+.;\\s]+$") && !name.matches("^[a-zA-Z].$");
+		// No names are 1 letter alphanum right?
+		if(name.contains("@") && !name.contains(" ")) return false;
+		return !name.matches("^[ 0-9+-,.;\\s]+$") && !name.matches("^[a-zA-Z].$");
 	}
 	
 	public Collection<Contact> getContacts() {

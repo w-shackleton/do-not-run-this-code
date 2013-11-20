@@ -4,23 +4,27 @@ import java.util.ArrayList;
 
 import uk.digitalsquid.remme.mgr.GroupManager.AccountDetails;
 import uk.digitalsquid.remme.mgr.GroupManager.Group;
+import uk.digitalsquid.remme.misc.Config;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public final class GroupSelectDialog extends DialogFragment {
+public final class GroupSelectDialog extends DialogFragment implements Config {
 
     static GroupSelectDialog newInstance() {
         GroupSelectDialog f = new GroupSelectDialog();
@@ -118,6 +122,8 @@ public final class GroupSelectDialog extends DialogFragment {
 				
 				if(details.isUserVisible())
 					check.setChecked(true);
+				check.setFocusable(false);
+				check.setClickable(false);
 				
 				title.setText(details.getLabel(context));
 				desc.setText(details.getAccountName());
@@ -127,10 +133,12 @@ public final class GroupSelectDialog extends DialogFragment {
 					@Override
 					public void onClick(View v) {
 						check.toggle();
+						Log.d(TAG, "Setting " +
+						details.getAccountName() + " " +
+								details.getPackageName() + " to " + check.isChecked());
 						details.setUserVisible(check.isChecked());
 					}
 				});
-
 				return rootView;
 			} else if(item instanceof Group) {
 				final Group group = (Group) item;
@@ -141,6 +149,8 @@ public final class GroupSelectDialog extends DialogFragment {
 				title.setText(group.name);
 				if(group.isUserVisible())
 					check.setChecked(true);
+				check.setFocusable(false);
+				check.setClickable(false);
 				
 				rootView.setOnClickListener(new OnClickListener() {
 					@Override

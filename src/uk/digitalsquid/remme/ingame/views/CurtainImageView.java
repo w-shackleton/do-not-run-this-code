@@ -42,7 +42,7 @@ public class CurtainImageView extends SurfaceView implements SurfaceHolder.Callb
 		holder = getHolder();
 		holder.addCallback(this);
 		holder.setFormat(PixelFormat.TRANSPARENT);
-		setZOrderOnTop(true);
+		if(!isInEditMode()) setZOrderOnTop(true);
 	}
 
 	public float getProgress() {

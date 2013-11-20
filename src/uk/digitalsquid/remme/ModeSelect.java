@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 
+@Deprecated
 public class ModeSelect extends Activity implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,7 @@ public class ModeSelect extends Activity implements OnClickListener {
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.addToBackStack(null);
+        // TODO: Make one-time dialog
         GroupSelectDialog dialog = new GroupSelectDialog();
         dialog.show(ft, "groupSelectDialog");
 	}
