@@ -1,11 +1,7 @@
 package uk.digitalsquid.remme;
 
-import java.util.ArrayList;
-
 import uk.digitalsquid.remme.ingame.views.CurtainImageView;
 import uk.digitalsquid.remme.mgr.ContactManager;
-import uk.digitalsquid.remme.mgr.GroupManager.AccountDetails;
-import uk.digitalsquid.remme.mgr.GroupManager.Group;
 import uk.digitalsquid.remme.misc.Config;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -14,7 +10,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -38,14 +33,6 @@ public class StartActivity extends Activity implements OnClickListener, Config {
         findViewById(R.id.leaderboard).setOnClickListener(this);
         curtains = (CurtainImageView) findViewById(R.id.loadingImage);
         curtains.setClickable(false);
-        
-        ArrayList<AccountDetails> accounts = app.getGroups().getAccountDetails();
-        for(AccountDetails details : accounts) {
-        	Log.d(TAG, details.toString(this));
-        	for(Group group : details.getGroups()) {
-        		Log.d(TAG, "    --  " + group.toString());
-        	}
-        }
     }
 
 	@Override

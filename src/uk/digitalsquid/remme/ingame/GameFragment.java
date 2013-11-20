@@ -170,7 +170,7 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		
 		score += pointsGain;
 		
-		// TODO: Background this?
+		// Already generated, just getting question
 		Question question = gameAdapter.getItem(position-1);
 		if(question == null) {
 			Log.w(TAG, "choiceMade came across a null question");
@@ -233,7 +233,7 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		
 		score += pointsGain;
 		
-		// TODO: Background this?
+		// Already generated, just getting question
 		Question question = gameAdapter.getItem(position-1);
 		// Add each type of result to persistent DB
 		for(Contact contact : correct) {

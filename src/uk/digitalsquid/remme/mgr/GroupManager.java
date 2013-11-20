@@ -22,6 +22,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.util.Pair;
 import android.util.SparseArray;
 
@@ -154,9 +155,12 @@ public class GroupManager implements Config {
 				final String type = cur.getString(typeIdx);
 
 				for(AccountDetails detail : details) {
-					if(detail.getAccountName().equals(name) &&
-							detail.getAccountType().equals(type))
+					if(detail.isUserVisible() &&
+							detail.getAccountName().equals(name) &&
+							detail.getAccountType().equals(type)) {
+						Log.v(TAG, "Adding contact from " + name + ":" + type);
 						result.add(contactId);
+					}
 				}
 			}
 		}

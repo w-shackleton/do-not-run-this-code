@@ -2,6 +2,7 @@ package uk.digitalsquid.remme.mgr;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -116,13 +117,15 @@ public final class ContactManager implements Config {
 				int id = cur.getInt(cur.getColumnIndex(ContactsContract.Contacts._ID));
 				String displayName = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 				
-				Contact contact = new Contact();
-				contact.setId(id);
-				contact.setDisplayName(displayName);
-				contact.setLookupKey(key);
-				
-				contacts.put(contact.getLookupKey(), contact);
-				contactIdMap.put(contact.getId(), contact);
+				if(isSaneName(displayName)) {
+					Contact contact = new Contact();
+					contact.setId(id);
+					contact.setDisplayName(displayName);
+					contact.setLookupKey(key);
+					
+					contacts.put(contact.getLookupKey(), contact);
+					contactIdMap.put(contact.getId(), contact);
+				}
 				i++;
 				if(i % 10 == 0)
 					listener.onBaseDataLoadProgress((float)i / (float)total);
@@ -144,14 +147,26 @@ public final class ContactManager implements Config {
 			}
 		}
 		Log.d(TAG, "Filtering based on account data");
-		for(Contact contact : contacts.values()) {
+		for(Iterator<Entry<String, Contact>> it = contacts.entrySet().iterator();
+				it.hasNext(); ) {
+			Contact contact = it.next().getValue();
 			boolean accountSelected = visibleContactsByAccount.contains(contact.getId());
 			boolean groupSelected = contact.isInVisibleGroup();
+			Log.v(TAG, String.format("A:%b G:%b %s", accountSelected, groupSelected, contact.getDisplayName()));
 			if(!(accountSelected || groupSelected)) {
-				contacts.remove(contact.getLookupKey());
+				it.remove();
 				contactIdMap.remove(contact.getId());
+				Log.v(TAG,     "    Removing   : " + contact.getDisplayName());
+			} else {
+				if(accountSelected && groupSelected)
+					Log.v(TAG, "Account & group: " + contact.getDisplayName());
+				else if(groupSelected)
+					Log.v(TAG, "          group: " + contact.getDisplayName());
+				else
+					Log.v(TAG, "Account        : " + contact.getDisplayName());
 			}
 		}
+		Log.v(TAG, String.format("%d in accounts", visibleContactsByAccount.size()));
 		
 		Log.d(TAG, "Querying aux data");
 
@@ -321,6 +336,7 @@ public final class ContactManager implements Config {
 		}
 		
 		// Finally, remove any suspiciously incorrect fields.
+		// TODO: Put anything here?
 		final int[] nameFields = {};
 		for(Contact contact : contacts.values()) {
 			for(int field : nameFields) {
@@ -336,6 +352,7 @@ public final class ContactManager implements Config {
 		// Convert to a Set for ease of use
 		contactCollection = contacts.values();
 		dataLoaded = true;
+		Log.i(TAG, "Loading contacts completed");
 	}
 	
 	/**
@@ -345,22 +362,8 @@ public final class ContactManager implements Config {
 	 */
 	final static boolean isSaneName(String name) {
 		// Currently, just delete stuff that is numbers, symbols and whitespace
-		// No names are 1 letter alphanum right?
-		return !name.matches("^[0-9,.;\\s]+$") && !name.matches("^[a-zA-Z].$");
-	}
-	
-	/**
-	 * Checks if a contact is in any of the given group lists.
-	 * @param groups The groups to check against
-	 * @param contactId The ID of the contact to check
-	 * @return <code>true</code> if contactId is in a visibleInContacts group.
-	 */
-	// Doesn't need loading synchronisation
-	final static boolean contactInVisibleGroup(Collection<List<Integer>> groups, int contactId) {
-		for(List<Integer> list : groups) {
-			if(list.contains(contactId)) return true;
-		}
-		return false;
+		// No names are 1 letter alpha right?
+		return !name.matches("^[0-9,+.;\\s]+$") && !name.matches("^[a-zA-Z].$");
 	}
 	
 	public Collection<Contact> getContacts() {
@@ -519,29 +522,6 @@ public final class ContactManager implements Config {
 		default:
 			return null;
 		}
-	}
-	
-	/**
-	 * Deletes the given field from the given {@link Contact}. If this
-	 * field doesn't exist for this {@link Contact}, nothing happens.
-	 * @param contact
-	 * @param field
-	 */
-	@Deprecated
-	public void deleteContactField(Contact contact, int field) {
-		hideContactField(contact, field);
-		// TODO: This method currently doesn't work. At all. FIXME!
-		// TODO: Handle display name and photo
-		final int id = contact.getId();
-		final String mimetype = getMimetype(field);
-		if(mimetype == null) return;
-		cr.delete(ContactsContract.Data.CONTENT_URI,
-				ContactsContract.Data.CONTACT_ID + " == ? AND " +
-						ContactsContract.Data.MIMETYPE + " == ?",
-				new String[] {
-				String.valueOf(id),
-				mimetype
-		});
 	}
 	
 	/**

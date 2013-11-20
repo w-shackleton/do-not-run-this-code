@@ -10,3 +10,5 @@ Game Paused - implement.
 Leaderboard - dark background
 
 Touching a pairing after it's done crashes
+
+Remove all log calls that contain user data
