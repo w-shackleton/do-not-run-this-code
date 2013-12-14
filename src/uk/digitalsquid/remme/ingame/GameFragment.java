@@ -69,6 +69,8 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		super.onCreateView(inflater, container, savedInstanceState);
 		View rootView = inflater.inflate(R.layout.game_fragment, container, false);
 		
+		rootView.setBackgroundResource(R.drawable.game_bg);
+		
 		frameLayout = (FrameLayout) rootView.findViewById(R.id.pager);
 		
 		timer = (TimerView)rootView.findViewById(R.id.timer);
@@ -111,8 +113,8 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		Fragment f = gameAdapter.getFragment(position);
 		if(f == null) {
 			Log.e(Game.TAG, "Null question fragment! Moving on to second question");
-			position++;
-			postAdvanceQuestion(CHOICE_CORRECT);
+			Toast.makeText(getActivity(), "No questions to ask! Please select / add more contacts", Toast.LENGTH_LONG).show();
+			getActivity().finish();
 			return;
 		}
 		getFragmentManager().beginTransaction().

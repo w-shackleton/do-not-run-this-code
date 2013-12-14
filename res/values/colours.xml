@@ -5,7 +5,7 @@
     <color name="incorrect_choice_bg">#DD2200</color>
     <color name="incorrect_actual_bg">#22DD22</color>
     
-    <color name="timer_whole_bg">#A8DFF4</color>
+    <color name="timer_whole_bg">#4f8fe9</color>
     <color name="correct">#33DD33</color>
     <color name="incorrect">#FF9933</color>
     <color name="discard">#3399FF</color>
