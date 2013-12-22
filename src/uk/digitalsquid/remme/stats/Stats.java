@@ -75,17 +75,17 @@ public final class Stats {
 		private float successTime = 0;
 		private float failTime = 0;
 		public Contact getContact() { return contact; }
-		void setContact(Contact contact) { this.contact = contact; }
+		// void setContact(Contact contact) { this.contact = contact; }
 		public int getSuccesses() { return successes; }
-		void setSuccesses(int successes) { this.successes = successes; }
+		// void setSuccesses(int successes) { this.successes = successes; }
 		public int getFails() { return fails; }
-		void setFails(int fails) { this.fails = fails; }
+		// void setFails(int fails) { this.fails = fails; }
 		public int getTimeouts() { return timeouts; }
-		void setTimeouts(int timeouts) { this.timeouts = timeouts; }
+		// void setTimeouts(int timeouts) { this.timeouts = timeouts; }
 		public float getSuccessTime() { return successTime; }
-		void setSuccessTime(float successTime) { this.successTime = successTime; }
+		// void setSuccessTime(float successTime) { this.successTime = successTime; }
 		public float getFailTime() { return failTime; }
-		void setFailTime(float failTime) { this.failTime = failTime; }
+		// void setFailTime(float failTime) { this.failTime = failTime; }
 		public int getDiscards() { return discards; }
 		public void setDiscards(int discards) { this.discards = discards; }
 		

@@ -67,12 +67,11 @@ public class DataErrorFragment extends Fragment implements OnItemSelectedListene
 		Bundle args = new Bundle();
 		args.putParcelable("error", error);
 		fragment.setArguments(args);
-		// TODO: Different animations
 		transaction.setCustomAnimations(
-				R.animator.pause_flip_in,
-				R.animator.pause_flip_out,
-				R.animator.pause_pop_flip_in,
-				R.animator.pause_pop_flip_out);
+				R.animator.float_card_in,
+				R.animator.float_card_out,
+				R.animator.float_pop_card_in,
+				R.animator.float_pop_card_out);
 		transaction.replace(R.id.container, fragment);
 		// User can press back to get back
 		transaction.addToBackStack(null);

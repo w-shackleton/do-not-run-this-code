@@ -29,7 +29,6 @@ public class GamePauseFragment extends Fragment implements OnClickListener {
 			if(activity != null) activity.resumeGame();
 			break;
 		case R.id.leave:
-			// TODO: perform game status save and cleanup here!
 			if(activity != null) activity.finish();
 			break;
 		}

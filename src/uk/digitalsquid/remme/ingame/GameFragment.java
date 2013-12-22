@@ -20,7 +20,6 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +28,6 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 	
 	GameDescriptor gameDescriptor;
 	GameAdapter gameAdapter;
-	FrameLayout frameLayout;
 	Handler handler = new Handler();
 	
 	private TimerView timer;
@@ -71,8 +69,6 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		
 		rootView.setBackgroundResource(R.drawable.game_bg);
 		
-		frameLayout = (FrameLayout) rootView.findViewById(R.id.pager);
-		
 		timer = (TimerView)rootView.findViewById(R.id.timer);
 
 		correctCountView = (TextView)rootView.findViewById(R.id.correctCount);
@@ -102,7 +98,7 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 		if(gameAdapter == null)
 			gameAdapter = getGameAdapter(gameDescriptor, savedInstanceState);
 		else // Otherwise, replace context and app, to reduce dead objects
-			gameAdapter.init(app, getActivity(), this);
+			gameAdapter.init(app);
 		
 		if(gameAdapter.getCount() == 0) {
 			Toast.makeText(getActivity(), "No questions to ask!", Toast.LENGTH_LONG).show();
@@ -139,11 +135,11 @@ public class GameFragment extends Fragment implements GameCallbacks, OnFinishedL
 	 */
 	GameAdapter getGameAdapter(GameDescriptor descriptor, Bundle savedInstanceState) {
 		if(savedInstanceState == null) {
-			return new GameAdapter(getActivity(), app, descriptor, this);
+			return new GameAdapter(app, descriptor);
 		} else {
 			GameAdapter gameAdapter = savedInstanceState.getParcelable("gameAdapter");
 			if(gameAdapter == null) return getGameAdapter(descriptor, null);
-			gameAdapter.init(app, getActivity(), this);
+			gameAdapter.init(app);
 			return gameAdapter;
 		}
 	}

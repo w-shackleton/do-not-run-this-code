@@ -26,7 +26,7 @@ public abstract class PairingFragment<QView extends View, AView extends View>
 	protected AView[] choiceViews;
 	protected PairingLayout pairingLayout;
 	
-	long startTime;
+	private long startTime;
 
 	private transient int[] currentPairings;
 	
@@ -76,8 +76,6 @@ public abstract class PairingFragment<QView extends View, AView extends View>
         
 		return rootView;
 	}
-	
-	int completedChoice = -2;
 	
 	/**
 	 * Completes this question. If any values in pairings are still -1 then

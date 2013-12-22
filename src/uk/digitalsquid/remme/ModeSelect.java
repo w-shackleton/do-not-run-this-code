@@ -16,7 +16,6 @@ public class ModeSelect extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.modeselect);
 		
-		findViewById(R.id.guessName).setOnClickListener(this);
 		findViewById(R.id.questionMix).setOnClickListener(this);
 		findViewById(R.id.trueFalse).setOnClickListener(this);
 		findViewById(R.id.pairings).setOnClickListener(this);
@@ -37,12 +36,6 @@ public class ModeSelect extends Activity implements OnClickListener {
 		GameDescriptor descriptor = new GameDescriptor();
 		descriptor.setMaxTime(60);
 		switch(view.getId()) {
-		case R.id.guessName:
-			descriptor.setQuestionTypes(new Question.QuestionAnswerPair[] {
-					new Question.QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
-			});
-			descriptor.setMaxQuestions(2);
-			break;
 		case R.id.questionMix:
 			descriptor.setQuestionTypes(new Question.QuestionAnswerPair[] {
 					new Question.QuestionAnswerPair(Question.FIELD_PHOTO, Question.FIELD_DISPLAY_NAME),
@@ -88,6 +81,9 @@ public class ModeSelect extends Activity implements OnClickListener {
 			});
 			break;
 		case R.id.strangeTest:
+			descriptor.setMaxTimePerContact(10);
+			descriptor.setMaxTime(0);
+			descriptor.setHardTimerPerContact(false);
 			descriptor.setQuestionTypes(new Question.QuestionAnswerPair[] {
 					//new Question.QuestionAnswerPair(Question.STYLE_MULTI_CHOICE, Question.FIELD_DISPLAY_NAME, Question.FIELD_PHOTO),
 					//new Question.QuestionAnswerPair(Question.STYLE_MULTI_CHOICE, Question.FIELD_ADDRESS_HOME, Question.FIELD_PHOTO),

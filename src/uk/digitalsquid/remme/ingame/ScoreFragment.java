@@ -1,19 +1,13 @@
 package uk.digitalsquid.remme.ingame;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.Locale;
-import java.util.Set;
 
-import uk.digitalsquid.remme.App;
 import uk.digitalsquid.remme.R;
 import uk.digitalsquid.remme.ingame.views.ScoreBarView;
 import uk.digitalsquid.remme.misc.Config;
 import uk.digitalsquid.remme.misc.Utils;
 import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,9 +25,6 @@ import android.widget.TextView;
  *
  */
 public class ScoreFragment extends Fragment implements OnClickListener, Config {
-	
-	App app; Context context;
-	ArrayList<QuestionFailData> failedContacts;
 	
 	private int score;
 	/**
@@ -56,9 +47,6 @@ public class ScoreFragment extends Fragment implements OnClickListener, Config {
 		expectedScore = args.getInt("expectedScore");
 		score = args.getInt("score");
 		Log.i(TAG, String.format("Expected score: %d, actual score: %d", expectedScore, score));
-		ArrayList<QuestionFailData> data = args.getParcelableArrayList("failedContacts");
-		Set<QuestionFailData> dataSet = new LinkedHashSet<QuestionFailData>(data);
-		failedContacts = new ArrayList<QuestionFailData>(dataSet);
 		
 		if(savedInstanceState != null) {
 			if(savedInstanceState.getBoolean("started", false))
@@ -72,13 +60,6 @@ public class ScoreFragment extends Fragment implements OnClickListener, Config {
 				.add(R.id.summaryFragmentFrame, summaryFragment)
 				.commit();
 		
-	}
-
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		app = (App) activity.getApplication();
-		context = activity.getBaseContext();
 	}
 	
 	@Override

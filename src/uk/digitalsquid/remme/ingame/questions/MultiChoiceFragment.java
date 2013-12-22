@@ -78,7 +78,7 @@ public abstract class
 		return rootView;
 	}
 	
-	int completedChoice = -2;
+	private int completedChoice = -2;
 	
 	private void completeView(final int choice) {
 		if(completedChoice != -2) return;
@@ -104,12 +104,6 @@ public abstract class
 		case GameCallbacks.CHOICE_CORRECT:
 			choiceButtons[choice].setBackgroundColor(
 					getActivity().getResources().getColor(R.color.correct_actual_bg));
-			/* TODO: Do we want to change BG col for other buttons
-			for(int i = 0; i < numberOfChoices; i++) {
-				if(i == choice) continue;
-				choiceButtons[i].setBackgroundColor(context
-						getActivity().getResources().getColor(R.color.correct_other_bg));
-			} */
 			chosenContact = question.getContact();
 			break;
 		case GameCallbacks.CHOICE_TIMEOUT:
@@ -121,12 +115,6 @@ public abstract class
 					getActivity().getResources().getColor(R.color.incorrect_choice_bg));
 			choiceButtons[question.getCorrectPosition()].setBackgroundColor(
 					getActivity().getResources().getColor(R.color.incorrect_actual_bg));
-			/* TODO: Do we want to change BG col for other buttons
-			for(int i = 0; i < numberOfChoices; i++) {
-				if(i == choice) continue;
-				choiceButtons[i].setBackgroundColor(
-						getActivity().getResources().getColor(R.color.correct_other_bg));
-			} */
 
 			final int otherAnswersIndex =
 					choice <= question.getCorrectPosition() ?

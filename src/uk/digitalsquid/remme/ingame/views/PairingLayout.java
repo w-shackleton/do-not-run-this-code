@@ -34,8 +34,6 @@ import android.widget.TableLayout;
  */
 public class PairingLayout extends TableLayout implements Config {
 	
-	Context context;
-	
 	View[] lefts = new View[0];
 	View[] rights = new View[0];
 	/**
@@ -76,7 +74,6 @@ public class PairingLayout extends TableLayout implements Config {
 	
 	public PairingLayout(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		this.context = context;
 		
 		setWillNotDraw(false);
 		

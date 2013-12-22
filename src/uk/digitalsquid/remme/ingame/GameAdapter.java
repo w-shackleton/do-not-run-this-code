@@ -2,8 +2,8 @@ package uk.digitalsquid.remme.ingame;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -25,9 +25,9 @@ import uk.digitalsquid.remme.mgr.details.Contact;
 import uk.digitalsquid.remme.misc.Config;
 import uk.digitalsquid.remme.misc.Const;
 import uk.digitalsquid.remme.misc.ListUtils;
+import uk.digitalsquid.remme.stats.Stats;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -37,8 +37,7 @@ import android.util.Log;
 public class GameAdapter implements Parcelable, Config {
 	
 	protected transient App app;
-	protected transient Context context;
-	protected transient GameCallbacks callbacks;
+	
 	
 	protected GameDescriptor descriptor;
 	
@@ -53,27 +52,30 @@ public class GameAdapter implements Parcelable, Config {
 	 * Constructor.
 	 * This takes a LONG time (seconds), as there is a lot of data to crunch.
 	 * This needs to be backgrounded at a loading screen at some point.
-	 * @param context
 	 * @param app
 	 * @param descriptor
-	 * @param callbacks
 	 */
-	public GameAdapter(Context context, App app, GameDescriptor descriptor, GameCallbacks callbacks) {
+	public GameAdapter(App app, GameDescriptor descriptor) {
 		this.app = app;
-		this.context = context;
-		this.callbacks = callbacks;
 		this.descriptor = descriptor;
-
-		// Construct the lists that are used as false answers to questions.
-		// FIXME: Decide what to do here.
-		ArrayList<Contact> badContacts = null; // TODO: Implement
-		ArrayList<Contact> realContacts = new ArrayList<Contact>(app.getContacts().getContacts());
-		ArrayList<Contact> nameLists = null; // TODO: Implement
+		
+		ArrayList<Contact> badContacts = null, realContacts = null, nameLists = null;
+		
+		if((descriptor.getOptionSources() | GameDescriptor.OPTION_SOURCE_BAD_CONTACTS) != 0)
+			badContacts = getBadContacts();
+		if((descriptor.getOptionSources() | GameDescriptor.OPTION_SOURCE_ALL_CONTACTS) != 0)
+			realContacts = getRealContacts();
+		if((descriptor.getOptionSources() | GameDescriptor.OPTION_SOURCE_NAME_LISTS) != 0)
+			nameLists = getNameListContacts();
 
 		// Combine these lists
 		@SuppressWarnings("unchecked")
 		ArrayList<Contact> allContacts = 
 				ListUtils.concat(new ArrayList<Contact>(), badContacts, realContacts, nameLists);
+		
+		// Now that we have the allContacts list, create realContacts
+		// anyway since it is needed later on
+		if(realContacts == null) realContacts = getRealContacts();
 
 		// The types of field used throughout all Question types
 		Set<Integer> usedFieldTypes = descriptor.getUsedFieldTypes();
@@ -238,21 +240,6 @@ public class GameAdapter implements Parcelable, Config {
 			}
 		}
 	}
-
-	/**
-	 * Compares two contacts. Default instance just compares by contact ID
-	 * @return
-	 */
-	protected Comparator<Contact> getContactComparator() {
-		return new Comparator<Contact>() {
-			@Override
-			public int compare(Contact lhs, Contact rhs) {
-				if(lhs == null) return -1;
-				if(rhs == null) return 1;
-				return lhs.compareTo(rhs);
-			}
-		};
-	}
 	
 	private ArrayList<Contact> shuffleContacts(ArrayList<Contact> selection, ShufflingMode mode) {
 		switch(mode) {
@@ -389,12 +376,10 @@ public class GameAdapter implements Parcelable, Config {
 	 * @param app
 	 * @param context
 	 */
-	public void init(App app, Context context, GameCallbacks callbacks) {
-		if(app == null || context == null || callbacks == null)
+	public void init(App app) {
+		if(app == null)
 			throw new IllegalArgumentException("Arguments must be non-null");
 		this.app = app;
-		this.context = context;
-		this.callbacks = callbacks;
 	}
 	
 	protected Fragment createFragment(int position) {
@@ -493,5 +478,33 @@ public class GameAdapter implements Parcelable, Config {
 		// Expect 2/3 to be correct
 		maxScore *= 2f/3f;
 		return maxScore;
+	}
+	
+	private ArrayList<Contact> getBadContacts() {
+		final Stats stats = app.getStats(); // TODO: BG load stats?
+		ArrayList<Contact> badContacts = new ArrayList<Contact>(app.getContacts().getContacts());
+		for(Contact badContact : badContacts) {
+			badContact.setCustomSortField((int) (stats.computeScoreWeight(badContact) * 10000));
+		}
+		Collections.sort(badContacts, Contact.CUSTOM_COMPARATOR);
+
+		// Remove the second half of the elements
+		int contactsToRemoveCount = badContacts.size() / 2;
+		Iterator<Contact> badContactIterator = badContacts.iterator();
+		while(badContactIterator.hasNext()) {
+			badContactIterator.next();
+			if(contactsToRemoveCount-- <= 0)
+				badContactIterator.remove();
+		}
+
+		return badContacts;
+	}
+
+	private ArrayList<Contact> getRealContacts() {
+		return new ArrayList<Contact>(app.getContacts().getContacts());
+	}
+	
+	private ArrayList<Contact> getNameListContacts() {
+		return null;
 	}
 }

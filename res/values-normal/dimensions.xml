@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="contactgriditem_height">100dip</dimen>
-    <dimen name="contactleaderitem_imgwidth">100dip</dimen>
-
-    <dimen name="pairing_partwidth">150dip</dimen>
     <dimen name="data_item_height">100dip</dimen>
     
 </resources>

@@ -48,6 +48,12 @@ public class CurtainImageView extends SurfaceView implements SurfaceHolder.Callb
 	public float getProgress() {
 		return progress;
 	}
+	
+	@Override
+	protected void onDraw(Canvas c) {
+		// To make this transparent in the editor
+		if(!isInEditMode()) super.onDraw(c);
+	}
 
 	/**
 	 * Set the animation progress, from 0 to 1

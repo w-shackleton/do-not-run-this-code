@@ -502,32 +502,6 @@ public final class ContactManager implements Config {
 		}
 	};
 	
-	static final String getMimetype(int field) {
-		switch(field) {
-		case Question.FIELD_DISPLAY_NAME:
-			Log.w(TAG, "Display name can't be deleted");
-			return null;
-		case Question.FIELD_PHOTO:
-			Log.w(TAG, "Photo can't be deleted with a mimetype");
-			return null;
-		case Question.FIELD_FIRST_NAME:
-		case Question.FIELD_LAST_NAME:
-		case Question.FIELD_COMPANY:
-		case Question.FIELD_DEPARTMENT:
-		case Question.FIELD_COMPANY_TITLE:
-		case Question.FIELD_PHONE_HOME:
-		case Question.FIELD_PHONE_WORK:
-		case Question.FIELD_PHONE_MOBILE:
-		case Question.FIELD_PHONE_OTHER:
-		case Question.FIELD_EMAIL_HOME:
-		case Question.FIELD_EMAIL_WORK:
-		case Question.FIELD_EMAIL_MOBILE:
-		case Question.FIELD_EMAIL_OTHER:
-		default:
-			return null;
-		}
-	}
-	
 	/**
 	 * Removes the given field from the given {@link Contact},
 	 * but only in the temporary storage. This is used to

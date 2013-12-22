@@ -12,7 +12,6 @@ import android.graphics.Paint.Align;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.NinePatchDrawable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 
@@ -23,7 +22,7 @@ import android.util.DisplayMetrics;
  */
 public class PointsGainBar extends TimingView {
 	
-	private NinePatchDrawable pointerBg;
+	private Drawable pointerBg;
 	private Drawable progressBar;
 	
 	private Paint textPaint;
@@ -45,7 +44,7 @@ public class PointsGainBar extends TimingView {
 		super(context, attrs, android.R.attr.progressBarStyleHorizontal);
 		progressBar = context.getResources().getDrawable(R.drawable.pointsgainbar);
 		
-		pointerBg = (NinePatchDrawable) context.getResources().getDrawable(R.drawable.points_slider);
+		pointerBg = context.getResources().getDrawable(R.drawable.slider);
 
 		DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
 		
@@ -70,8 +69,6 @@ public class PointsGainBar extends TimingView {
 		setProgress(1);
 	}
 	
-	public float time;
-
 	@Override
 	protected ObjectAnimator getPropertyAnimator(float startPosition) {
 		return ObjectAnimator.ofFloat(this, "progress", 1f - startPosition, 0);

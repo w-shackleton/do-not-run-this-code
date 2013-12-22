@@ -76,6 +76,7 @@ public class DifficultyListActivity extends Activity implements
 	 */
 	@Override
 	public void onItemSelected(int difficulty) {
+		if(difficulty == SetupDescriptor.DIFFICULTY_CUSTOM) return;
 		if (mTwoPane) {
 			// In two-pane mode, show the detail view in this activity by
 			// adding or replacing the detail fragment using a

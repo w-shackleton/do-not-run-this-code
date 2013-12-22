@@ -6,7 +6,7 @@
         <item >Medium</item>
         <item >Difficult</item>
         <item >Mega</item>
-        <item >Custom</item>
+        <item >Custom (Coming soon!)</item>
     </string-array>
     
     <string-array name="difficulty_titles">

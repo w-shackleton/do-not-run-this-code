@@ -2,7 +2,6 @@
 <resources>
 
     <dimen name="questionBottom_overlap">0dip</dimen>
-    <dimen name="questionTop_overlap">0dip</dimen>
     <dimen name="pointsGainBar_margin">60dip</dimen>
     <dimen name="summaryDrawHeight">68dip</dimen>
     <dimen name="activity_horizontal_margin">16dp</dimen>

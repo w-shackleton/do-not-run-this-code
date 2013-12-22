@@ -64,7 +64,6 @@ public class DataErrorConfirmationFragment extends Fragment implements OnClickLi
 			break;
 		}
 		rootView.findViewById(R.id.hide_contact).setOnClickListener(this);
-		rootView.findViewById(R.id.delete_detail).setOnClickListener(this);
 		rootView.findViewById(R.id.hide_detail).setOnClickListener(this);
 		rootView.findViewById(R.id.edit_contact).setOnClickListener(this);
 		rootView.findViewById(R.id.cancel).setOnClickListener(this);
@@ -77,9 +76,6 @@ public class DataErrorConfirmationFragment extends Fragment implements OnClickLi
 		case R.id.hide_contact:
 			app.getDb().hidden.addHiddenContact(error);
 			Toast.makeText(context, R.string.contact_hidden, Toast.LENGTH_SHORT).show();
-			break;
-		case R.id.delete_detail:
-			Toast.makeText(context, "Not implemented!", Toast.LENGTH_LONG).show();
 			break;
 		case R.id.hide_detail:
 			Toast.makeText(context, R.string.contact_hidden, Toast.LENGTH_SHORT).show();

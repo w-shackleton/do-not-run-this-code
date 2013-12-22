@@ -66,4 +66,42 @@ public class AsyncImageView extends ImageView {
 			backRef = null;
 		}
 	}
+	
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+		int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+		int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+		int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+		int width;
+		int height;
+
+		//Measure Width
+		if (widthMode == MeasureSpec.EXACTLY) {
+			//Must be this size
+			width = widthSize;
+		} else if (widthMode == MeasureSpec.AT_MOST) {
+			//Can't be bigger than...
+			width = widthSize;
+		} else {
+			//Be whatever you want
+			width = 0;
+		}
+
+		//Measure Height
+		if (heightMode == MeasureSpec.EXACTLY) {
+			//Must be this size
+			height = heightSize;
+		} else if (heightMode == MeasureSpec.AT_MOST) {
+			//Can't be bigger than...
+			height = heightSize;
+		} else {
+			//Be whatever you want
+			height = 0;
+		}
+
+		//MUST CALL THIS
+		setMeasuredDimension(width, height);
+	}
 }

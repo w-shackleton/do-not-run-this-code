@@ -11,11 +11,11 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.util.Pair;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Toast;
 
 /**
@@ -41,8 +41,6 @@ public class Game extends Activity implements GameCallbacks, Config {
 	 * this implementation proxies to the given callbacks.
 	 */
 	GameCallbacks callbacks;
-	
-	View pauseLayout;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -176,23 +174,34 @@ public class Game extends Activity implements GameCallbacks, Config {
 	 * Show data error screen
 	 */
 	@Override
-	public void dataErrorFound(ArrayList<DataItem> possibleErrors) {
+	public void dataErrorFound(final ArrayList<DataItem> possibleErrors) {
+		// Effectively discard current question
+		choiceMade(null, CHOICE_DISCARD, 0, 0);
+		
+		// Delay showing of dataError screen once question has been discarded
+		new Handler().post(new Runnable() {
+
+			@Override
+			public void run() {
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 		DataErrorFragment fragment = new DataErrorFragment();
 		Bundle args = new Bundle();
 		args.putParcelableArrayList("possibleErrors", possibleErrors);
 		fragment.setArguments(args);
-		// TODO: Different animations
 		transaction.setCustomAnimations(
-				R.animator.pause_flip_in,
-				R.animator.pause_flip_out,
-				R.animator.pause_pop_flip_in,
-				R.animator.pause_pop_flip_out);
+				R.animator.float_card_in,
+				R.animator.float_card_out,
+				R.animator.float_pop_card_in,
+				R.animator.float_pop_card_out);
 		transaction.replace(R.id.container, fragment);
 		// User can press back to get back
 		transaction.addToBackStack(null);
 		transaction.commit();
 		setGamePaused(true);
+			}
+		
+		});
+
 	}
 	
 	private class DiscardGestureListener

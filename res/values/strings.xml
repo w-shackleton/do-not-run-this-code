@@ -6,10 +6,7 @@
     <string name="app_name">RemMe</string>
     <string name="changegroups">Contact Groups</string>
     <string name="groups">Groups</string>
-    <string name="viewcontacts">View Contacts</string>
-    <string name="loading">Loading</string>
     <string name="addphoto">Add Photo</string>
-    <string name="capturephoto">Take image</string>
     <string name="processing">Processing&#8230;</string>
     <string name="selectMode">Select a mode</string>
     <string name="start">Start</string>
@@ -22,7 +19,6 @@
     <string name="dataErrorDescription">If something\'s not quite right with this question, select the incorrect detail below.</string>
     <string name="data_error_confirm">What would you like to do with this contact detail?</string>
     <string name="hide_contact">Hide this contact</string>
-    <string name="delete_detail">Delete detail</string>
     <string name="hide_detail">Hide detail (only within RemMe)</string>
     <string name="edit_contact">Edit / Delete Contact</string>
     <string name="cancel">Cancel</string>
@@ -39,8 +35,6 @@
     <string name="sortByScore">Sort by Score</string>
     <string name="sortByName">Sort by Name</string>
     <string name="changeSortDirection">Change direction</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
     <string name="title_difficulty_list">Modes</string>
     <string name="title_difficulty_detail">Difficulty Detail</string>
     <string name="chooseDifficulty">Choose a Difficulty:</string>
