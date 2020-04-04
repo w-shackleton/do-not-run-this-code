@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Internet restore</string>
+    <string name="editWifiNetworks">Edit Wifi Networks</string>
+    <string name="addNetwork">Add Network</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="password">Password</string>
+    <string name="start">Start restoring</string>
+    <string name="stop">Stop restoring</string>
+
+</resources>

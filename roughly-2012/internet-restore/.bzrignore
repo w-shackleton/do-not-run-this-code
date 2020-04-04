@@ -1,0 +1,11 @@
+obj/local
+libs/armeabi/libwpa.so
+bin/*
+libs/armeabi/gdbserver
+libs/armeabi/gdb.setup
+jni/obj
+libs/armeabi/runner
+lex.yy.c
+jni/runner/runner
+y.tab.c
+y.tab.h

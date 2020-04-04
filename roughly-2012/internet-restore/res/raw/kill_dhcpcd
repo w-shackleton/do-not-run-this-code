@@ -1,0 +1,27 @@
+#!/system/bin/sh
+
+BB=$1
+IFACE=$2
+
+termThenKill() {
+	kill $1
+	sleep 2
+	kill -9 $1
+	exit
+}
+
+# Search best places first, then just try to kill something (in this folder it
+# only can be a dhcp daemon of some sort; how bad can it be? :)
+for pidfile in /data/misc/dhcp/dhcpcd-$IFACE.pid /data/misc/dhcp/*.pid
+do
+	if test -f "$pidfile"
+	then
+		pid=`cat $pidfile`
+		termThenKill $pid
+		break
+	fi
+done
+
+# If we get this far, look for a process called 'dhcpcd'
+pid=`$BB pgrep -x dhcpcd` || ( exit )
+termThenKill $pid

@@ -1,0 +1,21 @@
+create test;
+set args test ls -l;
+
+create test2;
+set args test2 ping -c20 google.com;
+
+create sh;
+set args sh ./test.sh;
+
+start test;
+start test2;
+start sh;
+sleep 5;
+stop test;
+stop test2;
+
+send sh "Text here";
+
+sleep 1;
+
+stop sh;
