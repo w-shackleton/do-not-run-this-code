@@ -1,0 +1,14 @@
+Name: DroidPad
+DroidPad lets you use an Android phone as a joystick or mouse via USB or Wifi
+
+Developed & Maintained by:	William Shackleton <w.shackleton@gmail.com>
+							Contact for all questions about DroidPad
+
+This project is built and managed with Microsoft Visual Studio 2010 Express,
+and is written in C#.
+
+There are various parts of code that are not maintained in DroidPad, and are not
+registered under the GPL license. See COPYING for information about these files.
+
+The files/NSIS folder is where the installer files live; however, DroidPad no longer
+uses NSIS, but uses Inno Setup.
