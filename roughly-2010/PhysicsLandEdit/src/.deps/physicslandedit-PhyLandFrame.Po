@@ -1,0 +1,1186 @@
+physicslandedit-PhyLandFrame.o physicslandedit-PhyLandFrame.o:  \
+ PhyLandFrame.cpp PhyLandFrame.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/wx.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/defs.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/platform.h \
+  /usr/i586-mingw32msvc/lib/wx/include/i586-mingw32msvc-msw-ansi-release-2.8/wx/setup.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/chkconf.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/chkconf.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/libraries.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/gccpriv.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/_mingw.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/w32api.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/features.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/version.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/cpp.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/dlimpexp.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/debug.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/assert.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/limits.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/syslimits.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/limits.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/wxchar.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/stdio.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/stddef.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/stdarg.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/sys/types.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/wchar.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/wctype.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/stdint.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/string.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/ctype.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/tchar.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/winundef.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/object.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/memory.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/string.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/stdlib.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/buffer.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/strconv.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/fontenc.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/beforestd.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/string \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/c++config.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/os_defines.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/cpu_defines.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stringfwd.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/char_traits.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/cstring \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/cstddef \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_algobase.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/climits \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/cstdlib \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/iosfwd \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/c++locale.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/clocale \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/locale.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/cstdio \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/cstdarg \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/c++io.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/gthr.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/gthr-default.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/errno.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/cctype \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/postypes.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/cwchar \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/ctime \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/time.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/functexcept.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/exception_defines.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_pair.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/cpp_type_traits.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/ext/type_traits.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/utility \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_relops.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_iterator_base_types.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_iterator_base_funcs.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/concept_check.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_iterator.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/debug/debug.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/memory \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/allocator.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/c++allocator.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/ext/new_allocator.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/new \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/exception \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_construct.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_uninitialized.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_raw_storage_iter.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/limits \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/ostream_insert.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_function.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/basic_string.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/ext/atomicity.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/atomic_word.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/algorithm \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_algo.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_heap.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_tempbuf.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/basic_string.tcc \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/afterstd.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/iosfwrap.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msgout.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/dynarray.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/list.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/hash.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/hashmap.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/arrstr.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/intl.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/log.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/generic/logg.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/event.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/clntdata.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/vector.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/gdicmn.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/math.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/math.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/cursor.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/cursor.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/gdiimage.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/gdiobj.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/gdicmn.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/list.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/utils.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/filefn.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/sys/stat.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/fcntl.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/io.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/longlong.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/platinfo.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/thread.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/app.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/build.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/init.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/app.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/event.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/icon.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/iconloc.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/icon.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/variant.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/datetime.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/wrapwin.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/platform.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/windows.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/windef.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winnt.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winerror.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/basetsd.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/pshpack4.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/poppack.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/wincon.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winbase.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/wingdi.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winuser.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winnls.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winver.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winnetwk.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winreg.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winsvc.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/cderr.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/dde.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/ddeml.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/dlgs.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/imm.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/lzexpand.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/mmsystem.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/nb30.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/rpc.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/rpcdce.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/basetyps.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/rpcdcep.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/rpcnsi.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/rpcnterr.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/shellapi.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/pshpack2.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winperf.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/commdlg.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/unknwn.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/objfwd.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/wtypes.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/rpcndr.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/rpcnsip.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/prsht.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winspool.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winsock2.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/ole2.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/objbase.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/objidl.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/cguid.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/olectlid.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/oleauto.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/oaidl.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/oleidl.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/winundef.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/stream.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/stopwatch.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/module.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/window.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/font.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/gdiobj.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/font.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/colour.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/colour.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/object.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/region.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/region.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/validate.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/palette.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/palette.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/accel.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/accel.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/window.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/hash.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/containr.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/panel.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/generic/panelg.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/window.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/containr.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/toplevel.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/iconbndl.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/toplevel.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/frame.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/frame.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/bitmap.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/bitmap.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/palette.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/image.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/imagbmp.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/imagpng.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/imaggif.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/imagpcx.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/imagjpeg.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/imagtga.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/imagtiff.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/imagpnm.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/imagxpm.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/imagiff.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/dc.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/brush.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/brush.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/bitmap.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/pen.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/pen.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/colour.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/dc.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/defs.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/dcclient.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/dcclient.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/dc.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/dynarray.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/dcmemory.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/dcmemory.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/dcclient.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/dcprint.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/dcprint.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/cmndata.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/encinfo.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/dcscreen.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/dcscreen.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/button.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/control.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/control.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/button.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/menuitem.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/menuitem.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/ownerdrw.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/menu.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/menu.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/accel.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/arrstr.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/icon.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/dialog.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/dialog.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/panel.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/timer.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/timer.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/settings.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msgdlg.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/msgdlg.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/dialog.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/cmndata.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/dataobj.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/ole/dataform.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/ole/dataobj.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/ole/dataobj2.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/ctrlsub.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/bmpbuttn.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/bmpbuttn.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/button.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/brush.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/checkbox.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/checkbox.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/checklst.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/listbox.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/listbox.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/checklst.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/choice.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/choice.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/scrolbar.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/scrolbar.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/stattext.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/stattext.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/statbmp.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/statbmp.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/control.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/statbox.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/statbox.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/radiobox.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/radiobox.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/statbox.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/radiobut.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/radiobut.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/textctrl.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/textctrl.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/slider.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/slider95.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/gauge.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/gauge95.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/scrolwin.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/dirdlg.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/dirdlg.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/toolbar.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/tbarbase.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/tbar95.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/imaglist.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/imaglist.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/combobox.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/combobox.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/choice.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/layout.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/sizer.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/mdi.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/mdi.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/frame.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/statusbr.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/statbr95.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/choicdlg.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/generic/choicdgg.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/dynarray.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/dialog.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/textdlg.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/generic/textdlgg.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/defs.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/valtext.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/filedlg.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/filedlg.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/valtext.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/spinctrl.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/spinbutt.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/spinbutt.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/spinctrl.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/spinbutt.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/colordlg.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/colordlg.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/filefn.h header.h statfuncs.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/colour.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/gdicmn.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/stdpaths.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/msw/stdpaths.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/string.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/dir.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/dc.h PhyLandArea.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/dcbuffer.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/sizer.h PhyLandDList.h \
+  PhyLandImgRes.h /usr/i586-mingw32msvc/include/wx-2.8/wx/list.h \
+  /usr/i586-mingw32msvc/include/wx-2.8/wx/image.h PhyLandJointList.h \
+  MsgSend.h PhyLandPolyEdit.h PhyLandPEArea.h ../config.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/iostream \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/ostream \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/ios \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/localefwd.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/ios_base.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/locale_classes.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/streambuf \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/streambuf.tcc \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/basic_ios.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/streambuf_iterator.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/locale_facets.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/cwctype \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/ctype_base.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/ctype_inline.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/codecvt.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/time_members.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/messages_members.h \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/basic_ios.tcc \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/ostream.tcc \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/locale \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/locale_facets.tcc \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/typeinfo \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/istream \
+  /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/istream.tcc
+
+PhyLandFrame.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/wx.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/defs.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/platform.h:
+
+/usr/i586-mingw32msvc/lib/wx/include/i586-mingw32msvc-msw-ansi-release-2.8/wx/setup.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/chkconf.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/chkconf.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/libraries.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/gccpriv.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/_mingw.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/w32api.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/features.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/version.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/cpp.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/dlimpexp.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/debug.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/assert.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/limits.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/syslimits.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/limits.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/wxchar.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/stdio.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/stddef.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/stdarg.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/sys/types.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/wchar.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/wctype.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/stdint.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/string.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/ctype.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/tchar.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/winundef.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/object.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/memory.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/string.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/stdlib.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/buffer.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/strconv.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/fontenc.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/beforestd.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/string:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/c++config.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/os_defines.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/cpu_defines.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stringfwd.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/char_traits.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/cstring:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/cstddef:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_algobase.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/climits:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/cstdlib:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/iosfwd:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/c++locale.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/clocale:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/locale.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/cstdio:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/cstdarg:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/c++io.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/gthr.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/gthr-default.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/errno.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/cctype:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/postypes.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/cwchar:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/ctime:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/time.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/functexcept.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/exception_defines.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_pair.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/cpp_type_traits.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/ext/type_traits.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/utility:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_relops.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_iterator_base_types.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_iterator_base_funcs.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/concept_check.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_iterator.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/debug/debug.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/memory:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/allocator.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/c++allocator.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/ext/new_allocator.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/new:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/exception:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_construct.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_uninitialized.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_raw_storage_iter.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/limits:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/ostream_insert.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_function.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/basic_string.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/ext/atomicity.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/atomic_word.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/algorithm:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_algo.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_heap.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/stl_tempbuf.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/basic_string.tcc:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/afterstd.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/iosfwrap.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msgout.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/dynarray.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/list.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/hash.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/hashmap.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/arrstr.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/intl.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/log.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/generic/logg.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/event.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/clntdata.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/vector.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/gdicmn.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/math.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/math.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/cursor.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/cursor.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/gdiimage.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/gdiobj.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/gdicmn.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/list.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/utils.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/filefn.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/sys/stat.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/fcntl.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/io.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/longlong.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/platinfo.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/thread.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/app.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/build.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/init.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/app.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/event.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/icon.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/iconloc.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/icon.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/variant.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/datetime.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/wrapwin.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/platform.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/windows.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/windef.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winnt.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winerror.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/basetsd.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/pshpack4.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/poppack.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/wincon.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winbase.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/wingdi.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winuser.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winnls.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winver.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winnetwk.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winreg.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winsvc.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/cderr.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/dde.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/ddeml.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/dlgs.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/imm.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/lzexpand.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/mmsystem.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/nb30.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/rpc.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/rpcdce.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/basetyps.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/rpcdcep.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/rpcnsi.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/rpcnterr.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/shellapi.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/pshpack2.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winperf.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/commdlg.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/unknwn.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/objfwd.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/wtypes.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/rpcndr.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/rpcnsip.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/prsht.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winspool.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/winsock2.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/ole2.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/objbase.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/objidl.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/cguid.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/olectlid.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/oleauto.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/oaidl.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/../../../../i586-mingw32msvc/include/oleidl.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/winundef.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/stream.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/stopwatch.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/module.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/window.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/font.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/gdiobj.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/font.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/colour.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/colour.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/object.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/region.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/region.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/validate.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/palette.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/palette.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/accel.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/accel.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/window.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/hash.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/containr.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/panel.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/generic/panelg.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/window.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/containr.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/toplevel.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/iconbndl.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/toplevel.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/frame.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/frame.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/bitmap.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/bitmap.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/palette.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/image.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/imagbmp.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/imagpng.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/imaggif.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/imagpcx.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/imagjpeg.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/imagtga.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/imagtiff.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/imagpnm.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/imagxpm.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/imagiff.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/dc.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/brush.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/brush.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/bitmap.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/pen.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/pen.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/colour.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/dc.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/defs.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/dcclient.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/dcclient.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/dc.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/dynarray.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/dcmemory.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/dcmemory.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/dcclient.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/dcprint.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/dcprint.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/cmndata.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/encinfo.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/dcscreen.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/dcscreen.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/button.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/control.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/control.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/button.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/menuitem.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/menuitem.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/ownerdrw.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/menu.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/menu.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/accel.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/arrstr.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/icon.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/dialog.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/dialog.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/panel.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/timer.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/timer.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/settings.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msgdlg.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/msgdlg.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/dialog.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/cmndata.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/dataobj.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/ole/dataform.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/ole/dataobj.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/ole/dataobj2.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/ctrlsub.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/bmpbuttn.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/bmpbuttn.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/button.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/brush.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/checkbox.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/checkbox.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/checklst.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/listbox.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/listbox.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/checklst.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/choice.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/choice.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/scrolbar.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/scrolbar.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/stattext.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/stattext.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/statbmp.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/statbmp.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/control.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/statbox.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/statbox.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/radiobox.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/radiobox.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/statbox.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/radiobut.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/radiobut.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/textctrl.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/textctrl.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/slider.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/slider95.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/gauge.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/gauge95.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/scrolwin.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/dirdlg.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/dirdlg.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/toolbar.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/tbarbase.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/tbar95.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/imaglist.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/imaglist.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/combobox.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/combobox.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/choice.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/layout.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/sizer.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/mdi.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/mdi.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/frame.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/statusbr.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/statbr95.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/choicdlg.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/generic/choicdgg.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/dynarray.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/dialog.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/textdlg.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/generic/textdlgg.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/defs.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/valtext.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/filedlg.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/filedlg.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/valtext.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/spinctrl.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/spinbutt.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/spinbutt.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/spinctrl.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/spinbutt.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/colordlg.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/colordlg.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/filefn.h:
+
+header.h:
+
+statfuncs.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/colour.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/gdicmn.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/stdpaths.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/msw/stdpaths.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/string.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/dir.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/dc.h:
+
+PhyLandArea.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/dcbuffer.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/sizer.h:
+
+PhyLandDList.h:
+
+PhyLandImgRes.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/list.h:
+
+/usr/i586-mingw32msvc/include/wx-2.8/wx/image.h:
+
+PhyLandJointList.h:
+
+MsgSend.h:
+
+PhyLandPolyEdit.h:
+
+PhyLandPEArea.h:
+
+../config.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/iostream:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/ostream:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/ios:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/localefwd.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/ios_base.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/locale_classes.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/streambuf:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/streambuf.tcc:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/basic_ios.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/streambuf_iterator.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/locale_facets.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/cwctype:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/ctype_base.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/ctype_inline.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/codecvt.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/time_members.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/i586-mingw32msvc/bits/messages_members.h:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/basic_ios.tcc:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/ostream.tcc:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/locale:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/locale_facets.tcc:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/typeinfo:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/istream:
+
+/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/include/c++/bits/istream.tcc:

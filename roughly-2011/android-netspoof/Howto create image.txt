@@ -1,0 +1,22 @@
+Firstly, create a disk image with these commands:
+The count is how large the file should be in kb. At least 650MB is needed.
+
+dd if=/dev/zero of=debian.img bs=1024 count=900000
+mke2fs -F debian.img
+
+Next, mount the newly created image to a folder:
+
+mkdir deb-mnt
+sudo mount -o loop debian.img deb-mnt/
+
+This command actually downloads the base debian system to this image:
+
+sudo debootstrap --arch armel --foreign squeeze deb-mnt/ http://ftp.uk.debian.org/debian
+
+Finally, unmount it.
+
+sudo umount deb-mnt
+
+Next, copy the specified files AND this new image to your SD card (keeping the file names)
+and run the setup script in a terminal emulator on the phone OR use adb to do it from the
+computer.

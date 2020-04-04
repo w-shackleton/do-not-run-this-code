@@ -1,0 +1,9 @@
+#!/system/bin/sh
+
+# Remount FS to copy script
+mount -o remount,rw -t yaffs2 /system
+
+cp /sdcard/android-netspoof/start /system/bin/startspoof
+chmod a+x /system/bin/startspoof
+
+echo "Installed."

@@ -1,0 +1,27 @@
+#ifndef STATFUNCS_H
+#define STATFUNCS_H
+
+#include <wx/colour.h>
+#include <wx/gdicmn.h>
+#include <wx/stdpaths.h>
+#include <wx/string.h>
+#include <wx/dir.h>
+#include <wx/filefn.h>
+#include <wx/dc.h>
+
+wxColour getNextCol(int id);
+int nextColId(wxColour col);
+int signum(double num);
+int trimMinMax(int i, int min, int max);
+wxPoint rotatePoint(wxPoint point, float rad);
+
+wxString getPathData();
+
+#define CHECKPOINTERPOS(COLOUR_NAME,EVENT) \
+		wxColour COLOUR_NAME = wxColour; \
+		wxBitmap bm = wxBitmap(currSizeX, currSizeY); \
+		wxMemoryDC dc(bm); \
+		render(dc, true).GetPixel((int)EVENT.m_x, (int)EVENT.m_y, &COLOUR_NAME);
+
+
+#endif

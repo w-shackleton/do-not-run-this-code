@@ -1,0 +1,12 @@
+Name:           powermon
+Version:        0.1
+Description:    Power monitor graphing utilities
+License:        GPL
+License-file:   LICENSE
+Author:         Will Shackleton
+Build-Type:     Simple
+Cabal-Version:  >=1.2
+
+Executable powergraph
+        Main-is:        Powermon.hs
+        Build-Depends:  base >= 3, plot, HDBC, HDBC-odbc, time, cairo, hmatrix

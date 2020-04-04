@@ -1,0 +1,3 @@
+pledir = $(datadir)/physicslandedit
+
+EXTRA_DIST = Pattern1.png

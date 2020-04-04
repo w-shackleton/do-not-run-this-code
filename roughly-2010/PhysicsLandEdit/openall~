@@ -1,0 +1,5 @@
+#!/bin/bash
+gedit src/PhyLandArea.cpp &
+gedit src/PhyLandArea.h &
+gedit src/PhyLandFrame.cpp &
+gedit src/PhyLandFrame.h &

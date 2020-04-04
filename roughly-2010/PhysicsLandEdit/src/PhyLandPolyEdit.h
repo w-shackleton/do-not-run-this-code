@@ -1,0 +1,38 @@
+#ifndef PHYLANDPOLYEDIT_H
+#define PHYLANDPOLYEDIT_H
+
+#include <wx/wx.h>
+#include "PhyLandPEArea.h"
+#include "MsgSend.h"
+
+class PhyLandPolyEdit: public wxDialog, public MsgSend
+{
+private:
+	wxBoxSizer* vcontainer;
+	wxBoxSizer* hcontainer;
+	PhyLandPEArea* area;
+	void Validate(wxCommandEvent& event);
+	void SaveClose(wxCommandEvent& event);
+	
+	wxButton* save;
+	wxButton* b;
+	
+	void PolyEditSetup();
+public:
+	PhyLandPolyEdit(const wxString& title);
+	PhyLandPolyEdit(const wxString& title, wxPoint existing[], int count);
+	
+	void sendMsg(int what);
+	wxPoint resultPoints[POLY_MAX_POINTS];
+	int resultCount;
+	
+	DECLARE_EVENT_TABLE()
+};
+
+enum
+{
+	ID_Validate,
+	ID_Save,
+};
+#endif
+

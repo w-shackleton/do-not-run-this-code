@@ -1,0 +1,22 @@
+#!/bin/sh
+
+apt-get update
+# Fix dependency - remove in future?
+aptitude -y install perl-base=5.10.0-19lenny3
+# Scanning and spoofing
+aptitude -y install nmap dsniff
+# Servers for upside down ternet
+aptitude -y install squid lighttpd
+# Image processing for udt
+aptitude -y install imagemagick
+
+# Network permissions for squid user
+groupadd -g 3003 aid_inet
+usermod -aG aid_inet proxy
+
+mkdir -p /var/www/images
+chown proxy:proxy /var/www/images
+
+# Add users to each other's groups to make permissions work
+usermod -aG proxy www-data
+usermod -aG www-data proxy

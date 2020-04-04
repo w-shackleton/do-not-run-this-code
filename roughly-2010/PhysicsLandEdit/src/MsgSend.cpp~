@@ -1,0 +1,29 @@
+#include "PhyLandDList.h"
+
+PhyLandDListE::PhyLandDListE(double x, double y, double width, double height, double rot, wxColour *col, double den, double res, double fric)
+{
+	pointX = x;
+	pointY = y;
+	rectSizeX = width;
+	rectSizeY = height;
+	rotation = rot;
+	colour = col;
+	itemType = PLDLE_Rect;
+	
+	density = den;
+	rest = res;
+	friction = fric;
+}
+PhyLandDListE::PhyLandDListE(double x, double y, double radius, wxColour* col, double den, double res)
+{
+	pointX = x;
+	pointY = y;
+	colour = col;
+	circleRad = radius;
+	itemType = PLDLE_Circle;
+	
+	density = den;
+	rest = res;
+}
+#include <wx/listimpl.cpp>
+WX_DEFINE_LIST(PhyLandDList);

@@ -1,0 +1,19 @@
+#ifndef HEADER_H_
+#define HEADER_H_
+
+#define APP_NAME "Physics Land Editor"
+#define MAX_SIZE 1000
+#define MIN_SIZE 5
+
+#define SCALING_FACTOR 1.2
+
+#define FIXED_X_SIZE 4
+
+#define NEW_OBJ_SIZE 40
+
+// CAN NOT be more than 254.
+#define POLY_MAX_POINTS 8
+
+#define POLYEDIT_WINSIZE 400
+
+#endif

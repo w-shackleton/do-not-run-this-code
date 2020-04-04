@@ -1,0 +1,16 @@
+#!/bin/sh
+
+cd /rewriters
+
+if [ "$1" = "" ]
+then
+	echo "Please specify a URL"
+	exit 1
+fi
+
+if [ "$2" = "" ]
+then
+	wget $1
+else
+	wget $1 -O $2
+fi

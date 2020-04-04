@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/box2d/!svn/ver/219/trunk/Source/Dynamics/Contacts
+END
+b2PolyAndEdgeContact.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/box2d/!svn/ver/213/trunk/Source/Dynamics/Contacts/b2PolyAndEdgeContact.h
+END
+b2CircleContact.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/box2d/!svn/ver/213/trunk/Source/Dynamics/Contacts/b2CircleContact.cpp
+END
+b2CircleContact.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/box2d/!svn/ver/213/trunk/Source/Dynamics/Contacts/b2CircleContact.h
+END
+b2EdgeAndCircleContact.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/box2d/!svn/ver/213/trunk/Source/Dynamics/Contacts/b2EdgeAndCircleContact.cpp
+END
+b2ContactSolver.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/box2d/!svn/ver/213/trunk/Source/Dynamics/Contacts/b2ContactSolver.cpp
+END
+b2EdgeAndCircleContact.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/box2d/!svn/ver/213/trunk/Source/Dynamics/Contacts/b2EdgeAndCircleContact.h
+END
+b2NullContact.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/box2d/!svn/ver/213/trunk/Source/Dynamics/Contacts/b2NullContact.h
+END
+b2ContactSolver.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/box2d/!svn/ver/213/trunk/Source/Dynamics/Contacts/b2ContactSolver.h
+END
+b2Contact.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/box2d/!svn/ver/219/trunk/Source/Dynamics/Contacts/b2Contact.cpp
+END
+b2PolyContact.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/box2d/!svn/ver/213/trunk/Source/Dynamics/Contacts/b2PolyContact.cpp
+END
+b2Contact.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svnroot/box2d/!svn/ver/219/trunk/Source/Dynamics/Contacts/b2Contact.h
+END
+b2PolyContact.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/box2d/!svn/ver/213/trunk/Source/Dynamics/Contacts/b2PolyContact.h
+END
+b2PolyAndCircleContact.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/box2d/!svn/ver/217/trunk/Source/Dynamics/Contacts/b2PolyAndCircleContact.cpp
+END
+b2PolyAndEdgeContact.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/box2d/!svn/ver/217/trunk/Source/Dynamics/Contacts/b2PolyAndEdgeContact.cpp
+END
+b2PolyAndCircleContact.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/box2d/!svn/ver/213/trunk/Source/Dynamics/Contacts/b2PolyAndCircleContact.h
+END

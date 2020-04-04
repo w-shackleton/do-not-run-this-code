@@ -1,0 +1,71 @@
+9
+
+dir
+220
+https://box2d.svn.sourceforge.net/svnroot/box2d/trunk/Source
+https://box2d.svn.sourceforge.net/svnroot/box2d
+
+
+
+2009-06-27T13:55:17.025650Z
+220
+BorisTheBrave
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+f71193c7-d439-0410-8131-bb32c6e3d2ad
+
+Dynamics
+dir
+
+Common
+dir
+
+Collision
+dir
+
+Makefile
+file
+
+
+
+
+2009-06-27T15:31:00.638163Z
+dd6fa2102d3adacf15ff7f0a49635bac
+2009-02-13T23:44:19.026602Z
+197
+udoprog
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3875
+

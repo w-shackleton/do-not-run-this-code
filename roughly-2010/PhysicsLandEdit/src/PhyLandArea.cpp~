@@ -1,0 +1,812 @@
+#include "PhyLandArea.h"
+#include "config.h"
+#include "statfuncs.h"
+#include <iostream>
+using namespace std;
+
+BEGIN_EVENT_TABLE(PhyLandArea, wxPanel)
+
+	EVT_MOTION(PhyLandArea::mouseMoved)
+	EVT_LEFT_DOWN(PhyLandArea::mouseDown)
+	EVT_LEFT_UP(PhyLandArea::mouseReleased)
+	EVT_MIDDLE_DOWN(PhyLandArea::mouseMDown)
+	EVT_MIDDLE_UP(PhyLandArea::mouseMReleased)
+	EVT_RIGHT_DOWN(PhyLandArea::rightClick)
+	EVT_LEAVE_WINDOW(PhyLandArea::mouseLeftWindow)
+	EVT_KEY_DOWN(PhyLandArea::keyPressed)
+	EVT_KEY_UP(PhyLandArea::keyReleased)
+	EVT_MOUSEWHEEL(PhyLandArea::mouseWheelMoved)
+ 
+	EVT_PAINT(PhyLandArea::paintEvent)
+	EVT_ERASE_BACKGROUND(PhyLandArea::OnEraseBackGround)
+
+END_EVENT_TABLE()
+
+ 
+PhyLandArea::PhyLandArea(wxFrame* parent) :
+wxPanel(parent, -1, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN)
+{
+	itemList.Append((PhyLandDListE*) new PhyLandDListE(100, 100, 100, 50, (float)2, wxColour(255, 255, 0), 10, 5, 20, false));
+	itemList.Append((PhyLandDListE*) new PhyLandDListE(200, 200, 40, wxColour(0, 255, 0), 5, 0, true));
+	currSizeX = 1;
+	currSizeY = 1;
+	shift_x = 0;
+	shift_y = 0;
+	currSelected = 0;
+	drawState = DRAW_None;
+	currCreating = 0;
+	currRotating = 0;
+	jointTot = 0;
+	
+	fillImgResc(&resc);
+}
+
+void PhyLandArea::paintEvent(wxPaintEvent & evt)
+{
+	//wxMemoryDC mapDC;
+	wxAutoBufferedPaintDC dc(this);
+	render(dc, false);
+}
+
+void PhyLandArea::paintNow()
+{
+	//wxMemoryDC mapDC;
+	wxClientDC dc(this);
+	render(dc, false);
+}
+ 
+/*
+ * Rendering. Reason for 2 DCs is because the second
+ * one is used to handle click events. Each object is
+ * coloured individually, and colour value is then
+ * detected. (mapDC)
+ */
+wxDC& PhyLandArea::render(wxDC& dc, bool clickRender)
+{
+	wxCoord x, y;
+	dc.GetSize(&x, &y);
+	
+	dc.SetPen(wxPen(wxColor(255,255,255), 1));
+	dc.DrawRectangle(0, 0, x, y);
+	
+	if(!clickRender)
+	{
+		dc.SetPen(wxPen(wxColor(128, 128, 255), 1));
+		for(
+		    int i = shift_x % 50;
+		    i < x;
+		    i += 50
+		   )
+			dc.DrawLine(i, 0, i, y);
+		for(
+		    int i = shift_y % 50;
+		    i < y;
+		    i += 50
+		   )
+			dc.DrawLine(0, i, x, i);
+	}
+	PhyLandDList::iterator elem;
+	PhyLandDListE *item;
+	int colVal = 0;
+	for(elem = itemList.begin(); elem != itemList.end(); ++elem)
+	{
+		colVal++;
+		item = *elem;
+		if(!clickRender)
+		{
+			dc.SetBrush(wxBrush(item->colour, wxSOLID));
+			if(colVal == currSelected)
+			{
+				dc.SetPen(wxPen(wxColor(255, 0, 0), 1));
+				//cout << "Selected: " << currSelected << endl;
+			}
+			else
+				dc.SetPen(wxPen(wxColor(0, 0, 0), 1));
+		}
+		else
+		{
+			dc.SetBrush(wxBrush(getNextCol(colVal), wxSOLID));
+			dc.SetPen(wxPen(getNextCol(colVal), 1));
+		}
+		
+		
+		if(item->itemType == PLDLE_Circle)
+		{
+			dc.DrawCircle(
+				item->pointX + shift_x,
+				item->pointY + shift_y,
+				item->circleRad);
+			
+			if(!clickRender & item->fix)
+			{
+				dc.SetPen(wxPen(wxColor(0, 0, 0), 3));
+				dc.DrawLine(
+					item->pointX - FIXED_X_SIZE + shift_x,
+					item->pointY - FIXED_X_SIZE + shift_y,
+					item->pointX + FIXED_X_SIZE + shift_x,
+					item->pointY + FIXED_X_SIZE + shift_y
+					);
+				dc.DrawLine(
+					item->pointX - FIXED_X_SIZE + shift_x,
+					item->pointY + FIXED_X_SIZE + shift_y,
+					item->pointX + FIXED_X_SIZE + shift_x,
+					item->pointY - FIXED_X_SIZE + shift_y
+					);
+			}
+		}
+		else if(item->itemType == PLDLE_Rect)
+		{
+			int topleftx = (int)item->pointX;
+			int toplefty = (int)item->pointY;
+			
+			int toprightx = (int)(item->rectSizeX * cos(item->rotation));
+			int toprighty = (int)(item->rectSizeX * sin(item->rotation));
+			
+			int bottomleftx = (int)(item->rectSizeY * cos(item->rotation + M_PI_2));
+			int bottomlefty = (int)(item->rectSizeY * sin(item->rotation + M_PI_2));
+			
+			int bottomrightx = toprightx + bottomleftx;
+			int bottomrighty = toprighty + bottomlefty;
+			
+			toprightx += topleftx;
+			toprighty += toplefty;
+			
+			bottomleftx += topleftx;
+			bottomlefty += toplefty;
+			
+			bottomrightx += topleftx;
+			bottomrighty += toplefty;
+			
+			/*topleftx *= worldScale;
+			toplefty *= worldScale;
+			toprightx *= worldScale;
+			toprighty *= worldScale;
+			bottomleftx *= worldScale;
+			bottomlefty *= worldScale;
+			bottomrightx *= worldScale;
+			bottomrighty *= worldScale;*/
+			
+			wxPoint points[4];
+			points[0] = wxPoint(topleftx    , toplefty    );
+			points[1] = wxPoint(toprightx   , toprighty   );
+			points[2] = wxPoint(bottomrightx, bottomrighty);
+			points[3] = wxPoint(bottomleftx , bottomlefty );
+			
+			dc.DrawPolygon(4, points, shift_x, shift_y);
+			
+			if(!clickRender & item->fix)
+			{
+				int fixPosX = (topleftx + bottomrightx) / 2;
+				int fixPosY = (toplefty + bottomrighty) / 2;
+				
+				dc.SetPen(wxPen(wxColor(0, 0, 0), 3));
+				dc.DrawLine(
+					fixPosX - FIXED_X_SIZE + shift_x,
+					fixPosY - FIXED_X_SIZE + shift_y,
+					fixPosX + FIXED_X_SIZE + shift_x,
+					fixPosY + FIXED_X_SIZE + shift_y
+					);
+				dc.DrawLine(
+					fixPosX - FIXED_X_SIZE + shift_x,
+					fixPosY + FIXED_X_SIZE + shift_y,
+					fixPosX + FIXED_X_SIZE + shift_x,
+					fixPosY - FIXED_X_SIZE + shift_y
+					);
+			}
+		}
+		else if(item->itemType == PLDLE_Poly)
+		{
+			wxPoint newPoints[item->polyCount];
+			for(int i = 0; i < item->polyCount; i++)
+			{
+				newPoints[i] = rotatePoint(item->polyPoints[i], item->rotation);
+			}
+			dc.DrawPolygon(
+				item->polyCount,
+				newPoints,
+				item->pointX + shift_x,
+				item->pointY + shift_y);
+			
+			if(!clickRender & item->fix)
+			{
+				dc.SetPen(wxPen(wxColor(0, 0, 0), 3));
+				dc.DrawLine(
+					item->pointX - FIXED_X_SIZE + shift_x,
+					item->pointY - FIXED_X_SIZE + shift_y,
+					item->pointX + FIXED_X_SIZE + shift_x,
+					item->pointY + FIXED_X_SIZE + shift_y
+					);
+				dc.DrawLine(
+					item->pointX - FIXED_X_SIZE + shift_x,
+					item->pointY + FIXED_X_SIZE + shift_y,
+					item->pointX + FIXED_X_SIZE + shift_x,
+					item->pointY - FIXED_X_SIZE + shift_y
+					);
+			}
+		}
+		
+		if(colVal == currSelected)
+			dc.SetPen(wxPen(wxColor(0, 0, 0), 1));
+	}
+	
+	//cout << "!!" << endl;
+	dc.SetPen(wxPen(wxColour(50, 50, 50), 2));
+	//cout << "!" << endl;
+	PhyLandJointList::iterator elemm;
+	PhyLandJointListI *itemm;
+	colVal = 0;
+	int i = 0;
+	for(elemm = jointList.begin(); elemm != jointList.end(); ++elemm)
+	{
+		dc.SetPen(
+			wxPen(
+				getNextCol(
+					++i + nextColId( // ++i not i++ because value here needs to be +1;
+						wxColour(
+							0,
+							0,
+							128
+							)
+						)
+					)
+				)
+			);
+		itemm = *elemm;
+		//cout << "Item found!" << endl;
+		if(!itemm->jointComplete)
+		{
+			if(!clickRender)
+			{
+				wxPoint p1 = rotatePoint(itemm->point1, itemm->refJ1->rotation);
+				dc.DrawLine(
+					itemm->refJ1->pointX + shift_x + p1.x,
+					itemm->refJ1->pointY + shift_y + p1.y,
+					mouse_x,
+					mouse_y
+					);
+			}
+		}
+		else
+		{
+			wxPoint p1 = rotatePoint(itemm->point1, itemm->refJ1->rotation);
+			wxPoint p2 = rotatePoint(itemm->point2, itemm->refJ2->rotation);
+			dc.DrawLine(
+				itemm->refJ1->pointX + shift_x + p1.x,
+				itemm->refJ1->pointY + shift_y + p1.y,
+				itemm->refJ2->pointX + shift_x + p2.x,
+				itemm->refJ2->pointY + shift_y + p2.y
+				);
+		}
+	}
+	
+	currSizeX = x;
+	currSizeY = y;
+	
+	return dc;
+}
+
+void PhyLandArea::mouseDown(wxMouseEvent& event)
+{
+	SetFocus();
+	if(drawState == DRAW_None)
+	{
+		CHECKPOINTERPOS(col,event);
+		if(col->Red() == 255 &&
+		   col->Green() == 255 &&
+		   col->Blue() == 255)
+		{
+			currSelected = 0;
+		}
+		else
+		{
+			currSelected = nextColId(col);
+			currItem = getDListItem(itemList, currSelected - 1);
+		}
+		shift_dx = event.m_x;
+		shift_dy = event.m_y;
+	}
+	else if(drawState == DRAW_Rect)
+	{
+		PhyLandDListE* item = new PhyLandDListE(event.m_x - shift_x, event.m_y - shift_y, 0, 0, 0, wxColour(128, 128, 128), 10, 5, 10, false);
+		itemList.Append(item);
+		currCreating = itemList.IndexOf(item);
+		currSelected = 0;
+		
+		//cout << currCreating << endl;
+		currItem = item;
+	}
+	else if(drawState == DRAW_Circ)
+	{
+		PhyLandDListE* item = new PhyLandDListE(event.m_x - shift_x, event.m_y - shift_y, 0, wxColour(128, 128, 128), 10, 5, false);
+		itemList.Append(item);
+		currCreating = itemList.IndexOf(item);
+		currSelected = 0;
+		
+		currItem = getDListItem(itemList, currCreating);
+	}
+	else if(drawState == DRAW_Joint_Dist)
+	{
+		CHECKPOINTERPOS(col,event);
+		if(col->Red() == 255 &&
+		   col->Green() == 255 &&
+		   col->Blue() == 255)
+		{
+		}
+		else
+		{
+			PhyLandDListE* pldle = getDListItem(itemList, nextColId(col) - 1);
+			PhyLandJointListI* itemm = new PhyLandJointListI(
+				rotatePoint(
+					wxPoint(event.m_x - shift_x - pldle->pointX,
+						event.m_y - shift_y - pldle->pointY),
+					- pldle->rotation),
+				pldle);
+			jointList.Append(itemm);
+			
+			currCreating = jointList.IndexOf(itemm);
+			currSelected = 0;
+			
+			currJoint = getJointListItem(jointList, currCreating);
+			
+			drawState = DRAW_Joint_Dist2;
+			mouse_x = event.m_x;
+			mouse_y = event.m_y;
+		}
+	}
+	else if(drawState == DRAW_Joint_Dist2)
+	{
+		CHECKPOINTERPOS(col,event);
+		if(col->Red() == 255 &&
+		   col->Green() == 255 &&
+		   col->Blue() == 255)
+		{
+		}
+		else
+		{
+			cout << "q" << nextColId(col) << endl;
+			PhyLandDListE* pldle = getDListItem(itemList, nextColId(col) - 1);
+			cout << "w" << endl;
+			currJoint->refJ2 = pldle;
+			currJoint->point2 = rotatePoint(
+				wxPoint(
+					event.m_x - shift_x - pldle->pointX,
+					event.m_y - shift_y - pldle->pointY
+					),
+				- pldle->rotation);
+			currJoint->jointComplete = true;
+			cout << "X: " << event.m_x - pldle->pointX << ", Y: " << event.m_y - pldle->pointY << ", rot: " << pldle->rotation << endl;
+			
+			SetCursor(wxCursor());
+			drawState = DRAW_None;
+			Msg->sendMsg(Msg->MSG_Enable);
+		}
+	}
+	Refresh();
+	SendEvent();
+}
+
+void PhyLandArea::mouseReleased(wxMouseEvent& event)
+{
+	SetFocus();
+	if(drawState == DRAW_Rect)
+	{
+		SetCursor(wxCursor());
+		drawState = DRAW_None;
+		Msg->sendMsg(Msg->MSG_Enable);
+		if(signum(currItem->rectSizeX) == -1 && signum(currItem->rectSizeY) == -1)
+		{
+			currItem->rotation += M_PI;
+			currItem->rectSizeX = -currItem->rectSizeX;
+			currItem->rectSizeY = -currItem->rectSizeY;
+		}
+		else if(signum(currItem->rectSizeX) == -1)
+		{
+			currItem->rotation += M_PI_2;
+			currItem->rectSizeX = -currItem->rectSizeX;
+			double temp = currItem->rectSizeY;
+			currItem->rectSizeY = currItem->rectSizeX;
+			currItem->rectSizeX = temp;
+		}
+		else if(signum(currItem->rectSizeY) == -1)
+		{
+			currItem->rotation += M_PI_2 * 3;
+			currItem->rectSizeY = -currItem->rectSizeY;
+			double temp = currItem->rectSizeY;
+			currItem->rectSizeY = currItem->rectSizeX;
+			currItem->rectSizeX = temp;
+		}
+		currItem->rectSizeX = trimMinMax(currItem->rectSizeX, MIN_SIZE * 2, MAX_SIZE * 2);
+		currItem->rectSizeY = trimMinMax(currItem->rectSizeY, MIN_SIZE * 2, MAX_SIZE * 2);
+		Refresh();
+		SendEvent();
+	}
+	else if(drawState == DRAW_Circ)
+	{
+		SetCursor(wxCursor());
+		drawState = DRAW_None;
+		Msg->sendMsg(Msg->MSG_Enable);
+		
+		currItem->circleRad = trimMinMax(currItem->circleRad, MIN_SIZE, MAX_SIZE);
+		
+		Refresh();
+		SendEvent();
+	}
+}
+
+void PhyLandArea::mouseMDown(wxMouseEvent& event)
+{
+	SetFocus();
+	if(drawState == DRAW_None)
+	{
+		CHECKPOINTERPOS(col,event);
+		if(col->Red() == 255 &&
+		   col->Green() == 255 &&
+		   col->Blue() == 255)
+		{
+			currRotating = 0;
+		}
+		else
+		{
+			currRotating = nextColId(col);
+			
+			currRItem = getDListItem(itemList, currRotating - 1);
+		}
+		shift_dy = event.m_y - currRItem->rotation * 25;
+		
+		drawState = DRAW_Rotat;
+		
+		SetCursor(wxCursor(wxCURSOR_SIZENS));
+		Refresh();
+	}
+}
+
+void PhyLandArea::mouseMReleased(wxMouseEvent& event)
+{
+	SetFocus();
+	drawState = DRAW_None;
+	SetCursor(wxCursor());
+}
+
+void PhyLandArea::mouseLeftWindow(wxMouseEvent& event)
+{
+	
+}
+
+void PhyLandArea::mouseMoved(wxMouseEvent& event)
+{
+	if(drawState == DRAW_None)
+	{
+		if(event.LeftIsDown())
+		{
+			if(currSelected == 0)
+			{
+				shift_x += (event.m_x - shift_dx);
+				shift_y += (event.m_y - shift_dy);
+				shift_dx = event.m_x;
+				shift_dy = event.m_y;
+			}
+			else
+			{
+				currItem->pointX += event.m_x - shift_dx;
+				currItem->pointY += event.m_y - shift_dy;
+				
+				shift_dx = event.m_x;
+				shift_dy = event.m_y;
+			}
+			Refresh();
+			SendEvent();
+		}
+	}
+	else if(drawState == DRAW_Rect)
+	{
+		if(event.LeftIsDown())
+		{
+			currItem->rectSizeX = event.m_x - shift_x - currItem->pointX;
+			currItem->rectSizeY = event.m_y - shift_y - currItem->pointY;
+			Refresh();
+			SendEvent();
+		}
+	}
+	else if(drawState == DRAW_Circ)
+	{
+		if(event.LeftIsDown())
+		{
+			currItem->circleRad = sqrt(
+				pow(event.m_x - shift_x - currItem->pointX, 2) + 
+				pow(event.m_y - shift_y - currItem->pointY, 2)
+				);
+			Refresh();
+			SendEvent();
+		}
+	}
+	else if(drawState == DRAW_Rotat)
+	{
+		if(event.MiddleIsDown())
+		{
+			currRItem->rotation = ((int)((float)(event.m_y - shift_dy) / 25 / M_PI * 180) % 360) * M_PI / 180;
+			while(currRItem->rotation < 0)
+			{
+				currRItem->rotation += 2 * M_PI;
+			}
+			Refresh();
+			SendEvent();
+		}
+	}
+	else if(drawState == DRAW_Joint_Dist2)
+	{
+		mouse_x = event.m_x;
+		mouse_y = event.m_y;
+		Refresh();
+	}
+}
+
+void PhyLandArea::mouseWheelMoved(wxMouseEvent& event)
+{
+	if(currSelected != 0)
+	{
+		CHECKPOINTERPOS(col,event);
+		if(nextColId(col) == currSelected)
+		{
+			if(currItem->itemType == PLDLE_Rect)
+			{
+				double toprightx = currItem->rectSizeX / 2 * cos(currItem->rotation);
+				double toprighty = currItem->rectSizeX / 2 * sin(currItem->rotation);
+				
+				double bottomleftx = currItem->rectSizeY / 2 * cos(currItem->rotation + M_PI_2);
+				double bottomlefty = currItem->rectSizeY / 2 * sin(currItem->rotation + M_PI_2);
+				if(event.m_wheelRotation == event.m_wheelDelta)
+				{
+					currItem->rectSizeX = currItem->rectSizeX * SCALING_FACTOR;
+					if(currItem->rectSizeX > MAX_SIZE * 2)
+						currItem->rectSizeX = MAX_SIZE * 2;
+					currItem->rectSizeY = currItem->rectSizeY * SCALING_FACTOR;
+					if(currItem->rectSizeX > MAX_SIZE * 2)
+						currItem->rectSizeX = MAX_SIZE * 2;
+				}
+				else
+				{
+					currItem->rectSizeX = currItem->rectSizeX / SCALING_FACTOR;
+					if(currItem->rectSizeX < MIN_SIZE * 2)
+						currItem->rectSizeX = MIN_SIZE * 2;
+					currItem->rectSizeY = currItem->rectSizeY / SCALING_FACTOR;
+					if(currItem->rectSizeY < MIN_SIZE * 2)
+						currItem->rectSizeY = MIN_SIZE * 2;
+				}
+				toprightx -= currItem->rectSizeX / 2 * cos(currItem->rotation);
+				toprighty -= currItem->rectSizeX / 2 * sin(currItem->rotation);
+				
+				bottomleftx -= currItem->rectSizeY / 2 * cos(currItem->rotation + M_PI_2);
+				bottomlefty -= currItem->rectSizeY / 2 * sin(currItem->rotation + M_PI_2);
+				
+				currItem->pointX += toprightx + bottomleftx;
+				currItem->pointY += toprighty + bottomlefty;
+			}
+			else if(currItem->itemType == PLDLE_Circle)
+			{
+				//double temploc = currItem->circleRad;
+				if(event.m_wheelRotation == event.m_wheelDelta)
+				{
+					currItem->circleRad *= SCALING_FACTOR;
+					if(currItem->circleRad > MAX_SIZE)
+						currItem->circleRad = MAX_SIZE;
+				}
+				else
+				{
+					currItem->circleRad /= SCALING_FACTOR;
+					if(currItem->circleRad  < MIN_SIZE)
+						currItem->circleRad = MIN_SIZE;
+				}
+				//temploc -= currItem->circleRad; // }
+				//cout << temploc << endl;        // } X and Y now are centre of circle
+				//currItem->pointX += temploc;    // }
+				//currItem->pointY += temploc;    // }
+			}
+			else if(currItem->itemType == PLDLE_Poly)
+			{
+				if(event.m_wheelRotation == event.m_wheelDelta)
+				{
+					bool noneSmall = true;
+					for(int i = 0; i < currItem->polyCount; i++)
+					{
+						if(sqrt(
+							currItem->polyPoints[i].x *
+							currItem->polyPoints[i].x +
+							currItem->polyPoints[i].y *
+							currItem->polyPoints[i].y) > MAX_SIZE)
+							noneSmall = false;
+					}
+					if(noneSmall)
+					{
+						for(int i = 0; i < currItem->polyCount; i++)
+						{
+							currItem->polyPoints[i].x *= SCALING_FACTOR;
+							currItem->polyPoints[i].y *= SCALING_FACTOR;
+						}
+					}
+				}
+				else
+				{
+					bool noneSmall = true;
+					for(int i = 0; i < currItem->polyCount; i++)
+					{
+						if(sqrt(
+							currItem->polyPoints[i].x *
+							currItem->polyPoints[i].x +
+							currItem->polyPoints[i].y *
+							currItem->polyPoints[i].y) < MIN_SIZE * 5)
+							noneSmall = false;
+					}
+					if(noneSmall)
+					{
+						for(int i = 0; i < currItem->polyCount; i++)
+						{
+							currItem->polyPoints[i].x /= SCALING_FACTOR;
+							currItem->polyPoints[i].y /= SCALING_FACTOR;
+						}
+					}
+				}
+			}
+		}
+		Refresh();
+	}
+	SendEvent();
+}
+
+void PhyLandArea::rightClick(wxMouseEvent& event)
+{
+	CHECKPOINTERPOS(col,event);
+	if(col->Red() == 255 &&
+	   col->Green() == 255 &&
+	   col->Blue() == 255)
+	{
+		
+	}
+	else if(col->Blue() >= 128)
+	{
+		int jointID = nextColId(col) - nextColId(wxColour(0, 0, 128)) - 1;
+		cout << jointID << endl;
+	}
+	else
+	{
+		currSelected = nextColId(col);
+		
+		PhyLandDListE* item = getDListItem(itemList, currSelected - 1);
+		
+		PhyLandJointList::iterator elemm;
+		PhyLandJointListI *itemm;
+		for(elemm = jointList.begin(); elemm != jointList.end(); ++elemm)
+		{
+			itemm = *elemm;
+			if(itemm->refJ1 == item || itemm->refJ2 == item)
+			{
+				jointList.DeleteObject(itemm);
+				delete itemm;
+			}
+		}
+		itemList.DeleteObject(item);
+		delete item;
+		currSelected = 0;
+	}
+	shift_dx = event.m_x;
+	shift_dy = event.m_y;
+	Refresh();
+	SendEvent();
+}
+
+void PhyLandArea::keyPressed(wxKeyEvent& event)
+{
+	if((event.GetKeyCode() == WXK_PAGEDOWN | event.GetKeyCode() == WXK_PAGEUP) & currSelected != 0)
+	{
+		PhyLandDList::iterator elem;
+		PhyLandDListE *item;
+		int currVal = 0;
+		for(elem = itemList.begin(); elem != itemList.end(); ++elem)
+		{
+			currVal++;
+			item = *elem;
+			item->sortPos = currVal;
+			//cout << "T: " << item->sortPos << endl;
+			if(event.GetKeyCode() == WXK_PAGEDOWN)
+			{
+				if(currVal == currSelected - 1)
+				{
+					item->sortPos++;
+				}
+				else if(currVal == currSelected)
+				{
+					item->sortPos--;
+					//cout << "!" << endl;
+				}
+			}
+			if(event.GetKeyCode() == WXK_PAGEUP)
+			{
+				if(currVal == currSelected + 1)
+				{
+					item->sortPos--;
+				}
+				else if(currVal == currSelected)
+				{
+					item->sortPos++;
+				}
+			}
+			//cout << "T: " << item->sortPos << endl;
+		}
+		itemList.Sort(sortComp);
+		
+		if(event.GetKeyCode() == WXK_PAGEUP & currSelected != itemList.size())
+			currSelected++;
+		else if(event.GetKeyCode() == WXK_PAGEDOWN & currSelected != 1)
+			currSelected--;
+	}
+	else if(event.GetKeyCode() == WXK_UP)
+		shift_y += 10;
+	else if(event.GetKeyCode() == WXK_DOWN)
+		shift_y -= 10;
+	else if(event.GetKeyCode() == WXK_LEFT)
+		shift_x += 10;
+	else if(event.GetKeyCode() == WXK_RIGHT)
+		shift_x -= 10;
+	
+	else if(event.GetKeyCode() == WXK_DELETE)
+	{
+		if(currSelected != 0)
+		{
+			PhyLandDListE* item = getDListItem(itemList, currSelected - 1);
+			itemList.DeleteObject(item);
+			delete item;
+			currSelected = 0;
+			SendEvent();
+		}
+	}
+	Refresh();
+}
+
+static int sortComp(const PhyLandDListE** e1, const PhyLandDListE** e2)
+{
+	//cout << "elem1: " << (*e1)->sortPos << ", elem2: " << (*e2)->sortPos << endl;
+	
+	if((*e1)->sortPos < (*e2)->sortPos) return -1;
+	if((*e1)->sortPos == (*e2)->sortPos) return 0;
+	return 1;
+}
+
+void PhyLandArea::keyReleased(wxKeyEvent& event) {}
+void PhyLandArea::OnEraseBackGround(wxEraseEvent& event) {}
+
+void PhyLandArea::SendEvent()
+{
+	Msg->sendMsg(Msg->MSG_Sidebar);
+}
+
+void PhyLandArea::receiveMsgHandle(MsgSend* msg)
+{
+	Msg = msg;
+}
+
+void PhyLandArea::addCircle()
+{
+	SetCursor(wxCursor(wxCURSOR_CROSS));
+	drawState = DRAW_Circ;
+	Msg->sendMsg(Msg->MSG_Disable);
+}
+
+void PhyLandArea::addRect()
+{
+	SetCursor(wxCursor(wxCURSOR_CROSS));
+	drawState = DRAW_Rect;
+	Msg->sendMsg(Msg->MSG_Disable);
+}
+
+void PhyLandArea::addPoly(wxPoint points[], int count)
+{
+	itemList.Append((PhyLandDListE*) new PhyLandDListE(currSizeX / 2, currSizeY / 2, points, count, wxColour(128, 128, 128), 5, 10, 10, false));
+	Refresh();
+}
+
+void PhyLandArea::addjDist()
+{
+	SetCursor(wxCursor(wxCURSOR_CROSS));
+	drawState = DRAW_Joint_Dist;
+	Msg->sendMsg(Msg->MSG_Disable);
+}
+

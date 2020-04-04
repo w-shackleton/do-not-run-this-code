@@ -1,0 +1,10 @@
+#!/bin/sh
+
+cd /rewriters
+
+if [ $1 = "" ]
+then
+	echo "Please specify a script name to download from Digitalsquid."
+fi
+wget http://digitalsquid.co.uk/download/android-netspoof/scripts/$1 ||
+	echo "Couldn't download file!" && exit 1

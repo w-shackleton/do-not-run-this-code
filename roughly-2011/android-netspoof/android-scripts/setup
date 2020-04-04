@@ -1,0 +1,47 @@
+#!/system/bin/sh
+
+. /sdcard/android-netspoof/config || (echo "Couldn't find config file! Please check installation."; exit 1)
+
+deb-mount
+
+echo "Configuring files"
+
+chroot $DEB /debootstrap/debootstrap --second-stage
+echo 'deb http://ftp.us.debian.org/debian lenny main contrib non-free' > $DEB/etc/apt/sources.list
+
+echo 'nameserver 8.8.8.8' > $DEB/etc/resolv.conf
+
+echo "cd" >> $DEB/root/.bashrc
+echo 'export PATH=/usr/local/bin:$PATH' >> $DEB/root/.bashrc
+
+cp img-files/* $DEB/usr/local/bin/
+chown root:root $DEB/usr/local/bin/*
+chmod 0755 $DEB/usr/local/bin/*
+
+mkdir $DEB/rewriters
+cp rewriters/ $DEB/rewriters
+chown root:root $DEB/rewriters/*
+chmod 0755 $DEB/rewriters/*
+
+mv $DEB/etc/squid/squid.conf $DEB/etc/squid/squid.conf.old
+cp other/squid.conf $DEB/etc/squid/squid.conf
+chown root:root $DEB/etc/squid/squid.conf
+chmod 0644 $DEB/etc/squid/squid.conf
+
+mount -t devpts devpts $DEB/dev/pts
+mount -t proc proc $DEB/proc
+mount -t sysfs sysfs $DEB/sys
+
+echo "Second part of setup starting - installing software. This could take a while."
+
+chroot $DEB /usr/local/bin/chroot-setup
+
+echo "Finished. Closing down..."
+
+umount $DEB/dev/pts
+umount $DEB/proc   
+umount $DEB/sys 
+
+deb-umount
+
+echo "Done. I would recommend restarting the phone now."

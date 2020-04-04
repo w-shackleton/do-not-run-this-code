@@ -1,0 +1,17 @@
+bin_PROGRAMS = physicslandedit
+
+physicslandedit_SOURCES = \
+		PhyLandWin.cpp PhyLandWin.h \
+		PhyLandFrame.cpp PhyLandFrame.h \
+		PhyLandArea.cpp PhyLandArea.h \
+		PhyLandDList.cpp PhyLandDList.h \
+		PhyLandPolyEdit.cpp PhyLandPolyEdit.h \
+		PhyLandPEArea.cpp PhyLandPEArea.h \
+		PhyLandImgRes.cpp PhyLandImgRes.h \
+		PhyLandJointList.cpp PhyLandJointList.h \
+		statfuncs.cpp statfuncs.h \
+		MsgSend.h \
+		header.h
+physicslandedit_LDADD = @LIBS@
+physicslandedit_CXXFLAGS = @CXXFLAGS@
+AM_CPPFLAGS = -DPREFIX='"$(prefix)"'

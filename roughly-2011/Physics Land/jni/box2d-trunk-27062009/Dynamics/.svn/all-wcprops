@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svnroot/box2d/!svn/ver/220/trunk/Source/Dynamics
+END
+b2Island.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/box2d/!svn/ver/213/trunk/Source/Dynamics/b2Island.cpp
+END
+b2ContactManager.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/box2d/!svn/ver/219/trunk/Source/Dynamics/b2ContactManager.h
+END
+b2Fixture.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/box2d/!svn/ver/211/trunk/Source/Dynamics/b2Fixture.h
+END
+b2EdgeChain.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/box2d/!svn/ver/211/trunk/Source/Dynamics/b2EdgeChain.h
+END
+b2WorldCallbacks.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/box2d/!svn/ver/218/trunk/Source/Dynamics/b2WorldCallbacks.h
+END
+b2World.h
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svnroot/box2d/!svn/ver/217/trunk/Source/Dynamics/b2World.h
+END
+b2Body.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/box2d/!svn/ver/219/trunk/Source/Dynamics/b2Body.cpp
+END
+b2Island.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/box2d/!svn/ver/213/trunk/Source/Dynamics/b2Island.h
+END
+b2Body.h
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/box2d/!svn/ver/220/trunk/Source/Dynamics/b2Body.h
+END
+b2ContactManager.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svnroot/box2d/!svn/ver/219/trunk/Source/Dynamics/b2ContactManager.cpp
+END
+b2Fixture.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/box2d/!svn/ver/211/trunk/Source/Dynamics/b2Fixture.cpp
+END
+b2World.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/box2d/!svn/ver/220/trunk/Source/Dynamics/b2World.cpp
+END
+b2WorldCallbacks.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svnroot/box2d/!svn/ver/218/trunk/Source/Dynamics/b2WorldCallbacks.cpp
+END
+b2EdgeChain.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/box2d/!svn/ver/211/trunk/Source/Dynamics/b2EdgeChain.cpp
+END
