@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_height="fill_parent" android:layout_width="fill_parent" android:orientation="horizontal">
+    <uk.digitalsquid.spacegame.views.GameView
+        android:id="@+id/gameview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+	<ScrollView android:layout_height="wrap_content" android:id="@+id/gameviewinfobox" android:layout_centerInParent="true" android:layout_width="250dip" android:visibility="invisible">
+	    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="10dip" android:background="@drawable/infoboxbg" android:orientation="vertical" android:layout_gravity="center_horizontal" android:clickable="true" android:id="@+id/gameviewinfoboxpic">
+		    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/gameviewinfoboxtext" android:layout_gravity="center_horizontal" android:textColor="#FFFFFF" android:text="Info"></TextView>
+		</LinearLayout>
+	</ScrollView>
+	<ScrollView android:layout_height="fill_parent" android:layout_width="wrap_content" android:layout_margin="14dip" android:layout_centerHorizontal="true" android:id="@+id/gameviewbuttons" android:visibility="visible">
+	    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/mainmenupanel" android:orientation="vertical" android:visibility="visible">
+	        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/mainmenuitem" android:text="Resume" android:id="@+id/gameviewbuttonresume"></Button>
+	        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/gameviewbuttonquit" android:text="End level" style="@style/mainmenuitem"></Button>
+		</LinearLayout>
+	</ScrollView>
+</RelativeLayout>

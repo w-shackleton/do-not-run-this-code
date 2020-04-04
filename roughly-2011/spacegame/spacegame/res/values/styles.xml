@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<style name="mainmenuitem"><item name="android:background">@drawable/menuitem</item>
+<item name="android:padding">12dip</item>
+<item name="android:textColor">#FFFFFF</item>
+<item name="android:layout_margin">5dip</item>
+<item name="android:layout_gravity">center_horizontal</item>
+<item name="android:textSize">18dip</item>
+</style>
+<style name="mainmenupanel"><item name="android:background">@drawable/menuborder</item>
+<item name="android:orientation">vertical</item>
+<item name="android:padding">5dip</item>
+</style>
+<style name="dialogbox" parent="@android:style/Theme.Translucent.NoTitleBar.Fullscreen">
+</style>
+</resources>

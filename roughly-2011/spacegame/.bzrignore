@@ -1,0 +1,14 @@
+./old
+bin/Space game.apk
+bin/classes.dex
+bin/resources.ap_
+bin/uk
+svg/large
+bin/spacegame.apk
+bin/spacegame.gl.apk
+bin/codehead
+spacegame/bin/*
+spacegamelib/bin/*
+.svn
+.metadata
+target

@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<level>
+    <name>Bounce off planet</name>
+    <creator>Me</creator>
+    <start x="0.000000" y="0.000000" />
+    <startspeed x="0.000000" y="0.000000" />
+    <bounds x="1000.000000" y="1000.000000" />
+    <items>
+        <planet x="-130.620122" y="-269.657176" radius="66.793341" type="5" />
+        <wall x="107.256249" y="16.647906" sx="193.951596" sy="16.000000" rotation="117.456348" />
+        <planet x="-140.762291" y="131.799371" radius="112.052919" type="1" />
+        <planet x="293.270154" y="-259.715610" radius="62.811792" type="2" />
+        <blackhole x="130.286542" y="-142.792584" radius="70.000000" />
+    </items>
+</level>

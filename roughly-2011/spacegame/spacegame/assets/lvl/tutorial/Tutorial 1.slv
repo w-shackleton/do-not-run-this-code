@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<level>
+    <name>Easy start</name>
+    <creator>Will</creator>
+    <start x="201.608" y="-77.0765" />
+    <bounds x="1000" y="1000" />
+    <portal x="-85.4785" y="131.411" />
+    <stars value="1" />
+    <items>
+        <star x="-15" y="-43" radius="15" />
+        <planet x="222" y="-33" radius="37.5657" type="0" />
+        <planet x="112" y="210" radius="129.687" type="2" />
+    </items>
+</level>

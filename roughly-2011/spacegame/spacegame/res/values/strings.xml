@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, spacegame!</string>
+    <string name="app_name">Space Game</string>
+<string name="gamewin">Level</string>
+<string name="levelcompleted">Level Completed</string>
+<string name="selectLevelset">Select Levelset</string>
+<string name="selectLevel">Select Level</string>
+</resources>

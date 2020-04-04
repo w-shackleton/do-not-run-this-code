@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<level>
+    <name>Slightly harder</name>
+    <creator>Will</creator>
+    <start x="241.577" y="-143.335" />
+    <bounds x="1000" y="1000" />
+    <portal x="-275.546" y="125.62" />
+    <stars value="1" />
+    <items>
+        <planet x="263.541" y="-98.5966" radius="40" type="3" />
+        <wall x="-124.962" y="-217.975" sx="400" sy="16" rotation="-115.165" />
+        <star x="165" y="257" radius="15" />
+        <planet x="11" y="70" radius="117.898" type="2" />
+    </items>
+</level>

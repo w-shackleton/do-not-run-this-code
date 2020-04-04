@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<level>
+    <name>Simplicity</name>
+    <creator>Will</creator>
+    <start x="-234.000000" y="-245.000000" />
+    <bounds x="1000.000000" y="1000.000000" />
+    <portal x="-112.000000" y="-29.000000" />
+    <stars value="1" />
+    <items>
+        <star x="-187.000000" y="-165.000000" radius="15.000000" />
+        <planet x="-12.000000" y="139.000000" radius="50.000000" type="6" />
+    </items>
+</level>

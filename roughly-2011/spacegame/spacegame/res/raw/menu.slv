@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<level>
+	<name>Menu</name>
+	<creator>Will</creator>
+	<start x="0" y="0" />
+	<startspeed x="25" y="25" />
+	<bounds x="480" y="320" />
+	<portal x="-1000" y="-1000" />
+	<items>
+		<planet x="-100" y="0" radius="30" type="5" />
+		<planet x="70" y="0" radius="30" type="0" />
+	</items>
+</level>

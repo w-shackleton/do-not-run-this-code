@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<level>
+    <name>Grid</name>
+    <creator>Will</creator>
+    <start x="154" y="71" />
+    <bounds x="1000" y="1000" />
+    <portal x="-385" y="59" />
+    <stars value="10" />
+    <items>
+        <wall x="64" y="16" sx="224" sy="32" rotation="-0" hasEnds="1" />
+        <wall x="192" y="80" sx="96" sy="32" rotation="-90" hasEnds="1" />
+        <block x="192" y="16" sx="32" sy="32" rotation="-90" type="7" hasVortex="1" />
+        <wall x="128" y="144" sx="96" sy="32" rotation="-0" hasEnds="1" />
+        <wall x="256" y="144" sx="96" sy="32" rotation="-0" hasEnds="1" />
+        <block x="192" y="144" sx="32" sy="32" rotation="-0" type="8" hasVortex="1" />
+    </items>
+</level>

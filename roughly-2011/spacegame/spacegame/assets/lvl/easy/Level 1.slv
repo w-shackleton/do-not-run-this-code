@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<level>
+    <name>Level 1</name>
+    <creator>Will</creator>
+    <start x="-388.225" y="460.325" />
+    <bounds x="1000" y="1000" />
+    <portal x="-263" y="89" />
+    <stars value="12" />
+    <items>
+        <gravity x="96" y="272" sx="352" sy="288" rotation="45" power="0" />
+        <wall x="-144" y="-32" sx="224" sy="32" rotation="-180" hasEnds="1" />
+        <planet x="213" y="-159" radius="80.1901" type="1" />
+        <planet x="-96" y="112" radius="50" type="2" />
+        <star x="-192" y="112" radius="15" />
+        <star x="-96" y="16" radius="15" />
+        <star x="32" y="128" radius="15" />
+        <star x="0" y="128" radius="15" />
+        <star x="96" y="64" radius="15" />
+        <star x="48" y="16" radius="15" />
+        <star x="-16" y="64" radius="15" />
+        <planet x="-400" y="176" radius="72.5672" type="6" />
+        <star x="-160" y="176" radius="15" />
+        <star x="-80" y="240" radius="15" />
+        <star x="128" y="208" radius="15" />
+        <star x="400" y="64" radius="15" />
+        <star x="352" y="48" radius="15" />
+        <star x="304" y="48" radius="15" />
+        <star x="256" y="48" radius="15" />
+        <star x="240" y="16" radius="15" />
+        <star x="-189" y="-177" radius="15" />
+        <star x="-113" y="-159" radius="15" />
+        <star x="128" y="-224" radius="15" />
+        <star x="352" y="-192" radius="15" />
+        <star x="368" y="-80" radius="15" />
+        <star x="352" y="-48" radius="15" />
+        <star x="304" y="-16" radius="15" />
+        <star x="106" y="-35" radius="15" />
+        <star x="0" y="-288" radius="15" />
+        <star x="-32" y="-272" radius="15" />
+        <star x="-16" y="176" radius="15" />
+        <star x="256" y="208" radius="15" />
+        <star x="288" y="128" radius="15" />
+        <infobox x="16" y="320" sx="96" sy="64" rotation="-0" initialshow="false">Welcome to &lt;game name&gt;.</infobox>
+        <planet x="336" y="160" radius="31.0461" type="0" />
+        <wall x="-272" y="-128" sx="160" sy="32" rotation="-90" hasEnds="1" />
+        <wall x="16" y="-160" sx="96" sy="32" rotation="-90" hasEnds="1" />
+        <wall x="-128" y="-224" sx="256" sy="32" rotation="-0" hasEnds="1" />
+        <infobox x="-208" y="-80" sx="96" sy="64" rotation="-0" initialshow="false"></infobox>
+        <block x="16" y="-224" sx="32" sy="32" rotation="-90" type="6" hasVortex="1" />
+        <block x="-272" y="-224" sx="32" sy="32" rotation="-180" type="6" hasVortex="1" />
+        <block x="-272" y="-32" sx="32" sy="32" rotation="90" type="6" hasVortex="1" />
+    </items>
+</level>
