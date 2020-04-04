@@ -1,0 +1,13 @@
+#!/bin/sh
+
+cp ../pennyadmin/jar/pennyadmin.jar web/
+cp ../pennyadmin/jar/pennyadmin.jnlp web/
+
+cp ../pennyclient/jar/pennyclient.jar web/
+cp ../pennyclient/jar/pennyclient.jnlp web/
+
+cp ../pennyserver/jar/pennyserver.jar .
+chmod a+x pennyserver.jar
+
+cp ../pennyprojector/jar/pennyprojector.jar web/
+cp ../pennyprojector/jar/pennyprojector.jnlp web/
