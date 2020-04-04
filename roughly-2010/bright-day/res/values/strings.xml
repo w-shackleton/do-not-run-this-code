@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+/*
+ * This file is part of Bright Day.
+ * 
+ * Bright Day is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Bright Day is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Bright Day.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ -->
+<resources>
+    
+    
+<string name="min_brightness">Min Screen Brightness</string>
+<string name="max_brightness">Max Screen Brightness</string>
+<string name="shift">Shift</string>
+<string name="gamma">Gamma (Curve \'steepness\')</string>
+<string name="stretch">Stretch (Pointiness of curve top)</string><string name="start">Start</string>
+<string name="stop">Stop</string>
+<string name="about">About Bright Day</string><string name="app_name">Bright Day</string>
+
+
+<string name="bdnotrunning">Bright Day is not running</string><string name="aboutbd">About Bright Day</string>
+<string name="AboutText1">Bright Day periodically changes the brightness of your phone\'s screen throughout the day, making it more visible in the middle of the day, and less bright at night.</string>
+<string name="AboutText2">It runs in the background, and will automatically run when your phone starts.\n\nKnown bugs:\n* Brightness is not immediately updated upon bootup (nothing can be done about this, just turn the screen off and on after the phone has booted, and the correct brightness will appear.)</string>
+<string name="tutorial">Tutorial</string>
+<string name="website">Website</string>
+
+<string name="welcome">Would you like to view a tutorial on how to use Bright Day?</string>
+<string name="welcomeTitle">Welcome to Bright Day!</string>
+<string name="ok">OK</string>
+<string name="no">No thanks</string>
+<string name="percent">&#8230;</string>
+</resources>

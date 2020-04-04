@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+/*
+ * This file is part of Bright Day.
+ * 
+ * Bright Day is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Bright Day is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Bright Day.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="uk.digitalsquid.BrightDay"
+      android:versionName="1.4.1" android:versionCode="141">
+    <supports-screens android:normalScreens="true" android:anyDensity="true" android:largeScreens="true" android:smallScreens="true"></supports-screens>
+    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="4"/>
+
+<uses-permission android:name="android.permission.WRITE_SETTINGS"></uses-permission>
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
+    <application android:icon="@drawable/icon" android:label="@string/app_name">
+        <activity android:name=".BrightDay"
+                  android:label="@string/app_name" android:icon="@drawable/icon">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    
+<receiver android:label="BrightDayStarter" android:name="BrightDayStarter" android:enabled="true"><intent-filter><action android:name="android.intent.action.BOOT_COMPLETED"></action>
+</intent-filter>
+</receiver>
+<receiver android:name="BrightDayTick">
+</receiver>
+<activity android:icon="@drawable/icon" android:name="uk.digitalsquid.BrightDay.BrightDayHelp"></activity>
+<receiver android:name="uk.digitalsquid.BrightDay.StatusWidgetProvider">
+    <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+    </intent-filter>
+    <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget"></meta-data>
+</receiver>
+</application>
+
+
+
+
+</manifest> 
