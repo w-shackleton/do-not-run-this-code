@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="explainer_name">My name is&#8230;</string>
+    <string name="explainer_last_name">My last name is&#8230;</string>
+    <string name="explainer_company">I work for&#8230;</string>
+    <string name="explainer_photo">I am&#8230;</string>
+    <string name="explainer_company_title">I am&#8230;</string>
+    <string name="explainer_phone">My phone is&#8230;</string>
+    <string name="explainer_email">My email is&#8230;</string>
+
+    <string name="description_photo">Photo</string>
+    <string name="description_first_name">First Name</string>
+    <string name="description_last_name">Last Name</string>
+    <string name="description_display_name">Display Name</string>
+    <string name="description_company">Company</string>
+    <string name="description_department">Department</string>
+    <string name="description_company_title">Position</string>
+
+    <string name="description_phone_home">Home Phone</string>
+    <string name="description_phone_work">Work Phone</string>
+    <string name="description_phone_mobile">Mobile Phone</string>
+    <string name="description_phone_other">Other Phone</string>
+
+    <string name="description_email_home">Home Email</string>
+    <string name="description_email_work">Work Email</string>
+    <string name="description_email_mobile">Mobile Email</string>
+    <string name="description_email_other">Other Email</string>
+
+	<string name="description_address_home">Home Address</string>
+	<string name="description_address_work">Work Address</string>
+	<string name="description_address_other">Other Address</string>
+	<string name="description_website">Website</string>
+</resources>

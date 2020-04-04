@@ -1,0 +1,76 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="?android:attr/textAppearanceLarge"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:textIsSelectable="true"
+    tools:context=".DifficultyDetailFragment" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+	    android:padding="16dp"
+        android:orientation="vertical" >
+	    <TextView
+	        android:id="@+id/title"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/placeholder"
+	        android:textAppearance="?android:attr/textAppearanceLarge" />
+	
+	    <TextView
+	        android:id="@+id/description"
+	        android:paddingTop="16dip"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/placeholder"
+	        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+	    android:padding="16dp"
+        android:layout_height="0dip"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <CheckBox
+                android:id="@+id/askPersonal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/askPersonal" />
+
+            <CheckBox
+                android:id="@+id/askCorporate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/askCorporate" />
+            <CheckBox
+                android:id="@+id/askGroups"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/askGroups" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        style="@android:style/Holo.Light.ButtonBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+	    <Button
+	        android:id="@+id/start"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/start" />
+    </LinearLayout>
+
+</LinearLayout>

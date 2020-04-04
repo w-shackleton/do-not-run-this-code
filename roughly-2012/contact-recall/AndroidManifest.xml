@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="uk.digitalsquid.remme"
+    android:versionCode="1"
+    android:versionName="0.1" >
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.READ_CONTACTS" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+
+    <application
+        android:name="uk.digitalsquid.remme.App"
+        android:allowBackup="true"
+        android:icon="@drawable/icon"
+        android:label="@string/app_name" >
+        <activity
+            android:name="uk.digitalsquid.remme.StartActivity"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" android:icon="@drawable/icon">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="uk.digitalsquid.remme.ModeSelect"
+            android:label="@string/selectMode"
+            android:theme="@style/light" >
+        </activity>
+        <activity
+            android:name="uk.digitalsquid.remme.ingame.Game"
+            android:theme="@style/game" >
+        </activity>
+        <activity
+            android:name="uk.digitalsquid.remme.Leaderboard"
+            android:label="@string/leaderboard"
+            android:theme="@android:style/Theme.Holo" >
+        </activity>
+        <activity
+            android:name="uk.digitalsquid.remme.DifficultyListActivity"
+            android:label="@string/title_difficulty_list"
+            android:parentActivityName="uk.digitalsquid.remme.StartActivity" android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="uk.digitalsquid.remme.StartActivity" />
+        </activity>
+        <activity
+            android:name="uk.digitalsquid.remme.DifficultyDetailActivity"
+            android:label="@string/title_difficulty_detail"
+            android:parentActivityName=".DifficultyListActivity" android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DifficultyListActivity" />
+        </activity>
+    </application>
+
+</manifest>

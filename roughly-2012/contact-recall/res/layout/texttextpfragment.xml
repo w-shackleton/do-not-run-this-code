@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <uk.digitalsquid.remme.ingame.views.PairingLayout
+        android:id="@+id/pairingLayout"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dip" >
+
+        <TableRow
+            style="@style/PairingRow" >
+		    <TextView
+		        android:id="@+id/question1"
+		        style="@style/Pairing.Row.Left.TextView"
+		        android:text="@string/placeholder" />
+		    <Space style="@style/Pairing.Row.Space" />
+		    <TextView
+		        android:id="@+id/choice1"
+		        style="@style/Pairing.Row.Right.TextView"
+		        android:text="@string/placeholder" />
+
+        </TableRow>
+
+        <TableRow
+            style="@style/PairingRow" >
+		    <TextView
+		        android:id="@+id/question2"
+		        style="@style/Pairing.Row.Left.TextView"
+		        android:text="@string/placeholder" />
+		    <Space style="@style/Pairing.Row.Space" />
+		    <TextView
+		        android:id="@+id/choice2"
+		        style="@style/Pairing.Row.Right.TextView"
+		        android:text="@string/placeholder" />
+        </TableRow>
+
+        <TableRow
+            style="@style/PairingRow" >
+		    <TextView
+		        android:id="@+id/question3"
+		        style="@style/Pairing.Row.Left.TextView"
+		        android:text="@string/placeholder" />
+		    <Space style="@style/Pairing.Row.Space" />
+		    <TextView
+		        android:id="@+id/choice3"
+		        style="@style/Pairing.Row.Right.TextView"
+		        android:text="@string/placeholder" />
+        </TableRow>
+
+        <TableRow
+            style="@style/PairingRow" >
+		    <TextView
+		        android:id="@+id/question4"
+		        style="@style/Pairing.Row.Left.TextView"
+		        android:text="@string/placeholder" />
+		    <Space style="@style/Pairing.Row.Space" />
+		    <TextView
+		        android:id="@+id/choice4"
+		        style="@style/Pairing.Row.Right.TextView"
+		        android:text="@string/placeholder" />
+        </TableRow>
+
+    </uk.digitalsquid.remme.ingame.views.PairingLayout>
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/questionBottom_overlap"
+        layout="@layout/question_bottom" />
+
+</LinearLayout>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="NameBadge">
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="NameBadge.Top">
+        <item name="android:background">@drawable/namebadge_top</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="NameBadge.Bottom">
+        <item name="android:background">@drawable/namebadge_bottom</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+    
+</resources>

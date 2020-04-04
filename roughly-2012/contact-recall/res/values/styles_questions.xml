@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="Pairing">
+        
+    </style>
+    <!-- A row item -->
+    <style name="Pairing.Row">
+        <item name="android:layout_width">0dip</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/pairing_border_noselect</item>
+    </style>
+    <style name="Pairing.Row.Left">
+    </style>
+
+    <style name="Pairing.Row.Right">
+    </style>
+    <style name="Pairing.Row.Right.TextView">
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="Pairing.Row.Left.ImageView">
+        <item name="android:adjustViewBounds">true</item>
+    </style>
+    <style name="Pairing.Row.Left.TextView">
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="Pairing.Row.Right.ImageView">
+        <item name="android:adjustViewBounds">true</item>
+    </style>
+    <style name="Pairing.Row.Space">
+    </style>
+
+    <style name="PairingRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dip</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginBottom">15dip</item>
+    </style>
+    <style name="AnswerImage">
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+    <style name="AnswerButton"></style>
+    <style name="AnswerButton.TF">
+        <item name="android:textSize">30sp</item>
+    </style>
+    <style name="AnswerButton.TF.True">
+        <item name="android:text">@string/trueText</item>
+    </style>
+    <style name="AnswerButton.TF.False">
+        <item name="android:text">@string/falseText</item>
+    </style>
+    
+</resources>

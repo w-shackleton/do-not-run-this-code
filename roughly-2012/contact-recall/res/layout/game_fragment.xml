@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res/uk.digitalsquid.remme">
+
+	<FrameLayout
+	    android:id="@+id/pager"
+	    android:layout_marginTop="50dip"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent" >
+	
+	</FrameLayout>
+
+	<TextView
+	    android:id="@+id/score"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="@string/placeholder"
+	    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+
+    <TextView
+        android:id="@+id/incorrectCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/left_score_plain"
+        android:gravity="center"
+        android:text="@string/placeholder"
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/correctCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/right_score_plain"
+        android:gravity="center"
+        android:text="@string/placeholder"
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <uk.digitalsquid.remme.ingame.views.TimerView
+        android:id="@+id/timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        custom:timerBackground="@color/timer_whole_bg" />
+	
+</RelativeLayout>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="questionBottom_overlap">0dip</dimen>
+    <dimen name="pointsGainBar_margin">60dip</dimen>
+    <dimen name="summaryDrawHeight">68dip</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_horizontal_margin_panel">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+</resources>

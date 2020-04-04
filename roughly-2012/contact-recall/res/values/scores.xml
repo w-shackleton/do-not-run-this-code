@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="qualitativeScore">
+        <item >Is this <i>your</i> contact list?</item>
+        <item >We didn\'t know this was possible!</item>
+        <item >This isn\'t good&#8230;</item>
+        <item >Oh no!</item>
+        <item >What happened?</item>
+        <item >Didn\'t get very far?</item>
+        <item >Not a social butterfly, are you?</item>
+        <item >Better luck next time!</item>
+        <item >Try again, if you dare</item>
+        <item >Try a bit harder!</item>
+        <item >Worse than random numbers</item>
+        <item >Sub-par</item>
+        <item >Average</item>
+        <item >Could be better</item>
+        <item >Close!</item>
+        <item >Good effort.</item>
+        <item >Congratulations!</item>
+        <item >Well Done!</item>
+        <item >Fantastic!</item>
+        <item >Amazing!</item>
+        <item >Astounding!</item>
+    </string-array>
+    <string name="qualitativeScoreLow">Is this <i>your</i> contact list?</string>
+    <string name="qualitativeScoreHigh">Impossible!</string>
+    
+</resources>

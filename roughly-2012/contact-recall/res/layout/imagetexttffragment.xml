@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <uk.digitalsquid.remme.ingame.views.AsyncImageView
+        android:id="@+id/photo"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="2"
+        android:layout_margin="5dip"
+        android:contentDescription="@string/contentDescription_photo" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:id="@+id/explainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?android:attr/textAppearanceMedium"
+            android:text="@string/placeholder" />
+        <TextView
+            android:id="@+id/tf_answer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?android:attr/textAppearanceLarge"
+            android:text="@string/placeholder" />
+
+    </LinearLayout>
+
+	<LinearLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="0dip"
+	    android:layout_weight="1">
+	    <Button
+	        android:id="@+id/choice1"
+	        android:layout_width="0dip"
+	        android:layout_height="match_parent"
+	        android:layout_weight="1"
+	        style="@style/AnswerButton.TF.True" />
+	    <Button
+	        android:id="@+id/choice2"
+	        android:layout_width="0dip"
+	        android:layout_height="match_parent"
+	        android:layout_weight="1"
+	        style="@style/AnswerButton.TF.False" />
+	</LinearLayout>
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/questionBottom_overlap"
+        layout="@layout/question_bottom" />
+
+</LinearLayout>

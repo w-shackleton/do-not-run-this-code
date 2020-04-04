@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="largebutton">
+        <item name="android:padding">10dip</item>
+        <item name="android:background">@drawable/largebutton</item>
+    </style>
+    <style name="errorbutton">
+        <item name="android:padding">5dip</item>
+        <item name="android:background">@drawable/error_button</item>
+    </style>
+    <style name="ScoreText">
+        <item name="android:textSize">40sp</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+    <style name="ScoreText.Qualitative">
+        <item name="android:textSize">30sp</item>
+    </style>
+</resources>

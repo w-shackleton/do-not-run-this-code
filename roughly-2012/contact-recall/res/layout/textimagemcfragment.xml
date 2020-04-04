@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:layout_margin="5dip"
+        android:orientation="horizontal">
+
+	    <TextView
+	        android:id="@+id/question"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_centerHorizontal="true"
+	        android:layout_centerVertical="true"
+	        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/explainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/placeholder"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="3"
+        android:orientation="vertical" >
+	    <LinearLayout 
+	        android:layout_width="match_parent"
+	        android:layout_height="0dip"
+	        android:layout_weight="1">
+
+	        <uk.digitalsquid.remme.ingame.views.AsyncImageButton
+	            android:id="@+id/choice1"
+	            android:layout_width="0dip"
+	            android:layout_height="match_parent"
+	            android:layout_weight="1"
+	            style="@style/AnswerImage" />
+	        <uk.digitalsquid.remme.ingame.views.AsyncImageButton
+	            android:id="@+id/choice2"
+	            android:layout_width="0dip"
+	            android:layout_height="match_parent"
+	            android:layout_weight="1"
+	            style="@style/AnswerImage" />
+	    </LinearLayout>
+	    <LinearLayout 
+	        android:layout_width="match_parent"
+	        android:layout_height="0dip"
+	        android:layout_weight="1">
+	        <uk.digitalsquid.remme.ingame.views.AsyncImageButton
+	            android:id="@+id/choice3"
+	            android:layout_width="0dip"
+	            android:layout_height="match_parent"
+	            android:layout_weight="1"
+	            style="@style/AnswerImage" />
+	        <uk.digitalsquid.remme.ingame.views.AsyncImageButton
+	            android:id="@+id/choice4"
+	            android:layout_width="0dip"
+	            android:layout_height="match_parent"
+	            android:layout_weight="1"
+	            style="@style/AnswerImage" />
+	    </LinearLayout>
+	    <LinearLayout 
+	        android:layout_width="match_parent"
+	        android:layout_height="0dip"
+	        android:layout_weight="1">
+	        <uk.digitalsquid.remme.ingame.views.AsyncImageButton
+	            android:id="@+id/choice5"
+	            android:layout_width="0dip"
+	            android:layout_height="match_parent"
+	            android:layout_weight="1"
+	            style="@style/AnswerImage" />
+	        <uk.digitalsquid.remme.ingame.views.AsyncImageButton
+	            android:id="@+id/choice6"
+	            android:layout_width="0dip"
+	            android:layout_height="match_parent"
+	            android:layout_weight="1"
+	            style="@style/AnswerImage" />
+	    </LinearLayout>
+	    <LinearLayout 
+	        android:layout_width="match_parent"
+	        android:layout_height="0dip"
+	        android:layout_weight="1">
+	        <uk.digitalsquid.remme.ingame.views.AsyncImageButton
+	            android:id="@+id/choice7"
+	            android:layout_width="0dip"
+	            android:layout_height="match_parent"
+	            android:layout_weight="1"
+	            style="@style/AnswerImage" />
+	        <uk.digitalsquid.remme.ingame.views.AsyncImageButton
+	            android:id="@+id/choice8"
+	            android:layout_width="0dip"
+	            android:layout_height="match_parent"
+	            android:layout_weight="1"
+	            style="@style/AnswerImage" />
+	    </LinearLayout>
+    </LinearLayout>
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/questionBottom_overlap"
+        layout="@layout/question_bottom" />
+
+</LinearLayout>

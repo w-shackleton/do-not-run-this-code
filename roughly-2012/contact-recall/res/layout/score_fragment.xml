@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.sothree.slidinguppanel.SlidingUpPanelLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:orientation="horizontal" >
+	
+	    <uk.digitalsquid.remme.ingame.views.ScoreBarView
+	        android:id="@+id/scoreBarLeft"
+	        android:layout_width="wrap_content"
+	        android:layout_height="match_parent" />
+	
+	    <LinearLayout
+		    android:paddingTop="20dip"
+		    android:paddingBottom="20dip"
+	        android:layout_width="0dip"
+	        android:layout_weight="1"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical" >
+	
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/you_scored"
+	        android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+	    <TextView
+	        android:id="@+id/score"
+	        style="@style/ScoreText"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/placeholder" />
+	
+	    <TextView
+	        android:id="@+id/qualitativeScore"
+	        style="@style/ScoreText.Qualitative"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/placeholder" />
+	
+	    </LinearLayout>
+	
+	    <uk.digitalsquid.remme.ingame.views.ScoreBarView
+	        android:id="@+id/scoreBarRight"
+	        android:layout_width="wrap_content"
+	        android:layout_height="match_parent" />
+	
+	</LinearLayout>
+	
+	<FrameLayout 
+		android:id="@+id/summaryFragmentFrame"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+	    />
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>

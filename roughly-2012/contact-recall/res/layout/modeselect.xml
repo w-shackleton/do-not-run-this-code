@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+    <TableLayout
+        android:layout_height="match_parent"
+        android:id="@+id/tableLayout1"
+        android:layout_width="match_parent">
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/questionMix"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Question Mix"
+                style="@style/largebutton"></Button>
+        </TableRow>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <Button
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:id="@+id/trueFalse"
+                android:text="True / False"
+                style="@style/largebutton"></Button>
+            <Button
+                android:id="@+id/pairings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Pairings"
+                style="@style/largebutton"></Button>
+        </TableRow>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/timerTest"
+                style="@style/largebutton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Timer test" />
+
+            <Button
+                android:layout_height="wrap_content"
+                android:layout_width="0dip"
+                android:layout_weight="1"
+                android:id="@+id/infiniteGame"
+                android:text="Infinite test"
+                style="@style/largebutton"></Button>
+        </TableRow>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/otherTest"
+                style="@style/largebutton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Test extended fields" />
+
+            <Button
+                android:id="@+id/strangeTest"
+                style="@style/largebutton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Test strange modes" />
+
+        </TableRow>
+    </TableLayout>
+</LinearLayout>

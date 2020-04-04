@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TimerView">
+        <attr name="timerBackground" format="color" />
+   </declare-styleable> 
+    <declare-styleable name="CurtainImageView">
+        <attr name="src" format="integer" />
+   </declare-styleable> 
+</resources>
