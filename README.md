@@ -1,7 +1,16 @@
 # Do not run this code
 
 This repo is a collection of all the code I wrote during secondary school. The
-oldest code in this repo is from when I was 12.
+oldest code in this repo is from when I was 13.
+
+## roughly-2008/rsa-crypto
+
+An ill-fated program to encrypt and decrypt messages using RSA. This software
+directly encrypts the message using raw RSA, which is woefully insecure and
+easy to crack :)
+
+This in itself would be fine, however I published this software on the
+internet. If I recall correctly it got several thousand downloads..
 
 ## roughly-2009/balman
 
@@ -36,6 +45,14 @@ An older version of [Patchworker](https://www.digitalsquid.co.uk/patchworker/).
 
 Check out bright.c. I used to have this file setuid root on my laptop. Little
 did I know about input sanitisation ;)
+
+## roughly-2009/image-stitch
+
+A program that takes a set of images and stitches them together.
+
+## roughly-2009/image-splitter
+
+A program that takes an image and splits it into small pieces.
 
 ## roughly-2010/bright-day
 
