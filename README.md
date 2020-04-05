@@ -151,9 +151,9 @@ A game that shows you a picture of a llama or duck and you have to guess which
 one it is. Built in freshers week of university with
 [Alex Bate](https://github.com/alexbate).
 
-The fun part about this app is that someone tried to sue me over it; they also
-had an app that showed you a picture of a llama or a duck, and mine was (a)
-better (as measured by Google Play ratings) and (b) didn't have ads.
+The fun part about this app is that someone threatened to sue me over it; they
+also had an app that showed you a picture of a llama or a duck, and mine was
+(a) better (as measured by Google Play ratings) and (b) didn't have ads.
 Fortunately they never got lawyers involved ;)
 
 ## roughly-2013/mandelfly
