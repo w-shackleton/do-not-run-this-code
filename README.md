@@ -124,6 +124,10 @@ A very-nearly completed game in which the player bounces around planets with
 simulated gravity. I never published this game as my plan was to sell it:
 perfect was clearly not better than done :(
 
+This game went through many iterations: at first I hand-rolled the physics code
+as well as the rendering code; I then rewrote the rendering to use raw OpenGL.
+I eventually replaced my buggy physics engine with Box2D.
+
 ## roughly-2012/contact-recall
 
 A game to help you put names to faces. Never finished.
