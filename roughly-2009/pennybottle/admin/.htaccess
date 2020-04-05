@@ -1,0 +1,5 @@
+Options +FollowSymlinks
+RewriteEngine on
+RewriteRule ^userdata.csv$ userdata.php [NC]
+RewriteRule ^borrowdata.csv$ borrowdata.php [NC]
+RewriteRule ^tradedata.csv$ tradedata.php [NC,L]

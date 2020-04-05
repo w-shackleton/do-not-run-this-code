@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName "Admin Page"
+AuthUserFile "/home/xzpyjvtr/.htpasswds/maze/admin/passwd"
+require valid-user

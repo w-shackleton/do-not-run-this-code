@@ -1,0 +1,26 @@
+[17-Apr-2009 14:10:34] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:11) in /home/xzpyjvtr/maze/img/maze.php on line 52
+[17-Apr-2009 14:12:41] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 14:13:52] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 14:14:22] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 14:14:41] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 14:14:59] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 14:16:05] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 14:18:26] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 14:18:53] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 14:19:17] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 14:19:32] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 14:19:57] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 14:20:28] PHP Parse error:  syntax error, unexpected T_VARIABLE in /home/xzpyjvtr/maze/img/maze.php on line 9
+[17-Apr-2009 14:20:43] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 14:21:27] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 14:21:43] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 14:21:57] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 14:23:04] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 14:23:18] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 14:24:47] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 14:24:58] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 14:25:22] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:31) in /home/xzpyjvtr/maze/img/maze.php on line 53
+[17-Apr-2009 15:15:22] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:16) in /home/xzpyjvtr/maze/img/maze.php on line 131
+[17-Apr-2009 15:15:38] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:16) in /home/xzpyjvtr/maze/img/maze.php on line 131
+[17-Apr-2009 15:23:33] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:16) in /home/xzpyjvtr/maze/img/maze.php on line 131
+[17-Apr-2009 15:25:30] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/xzpyjvtr/maze/img/maze.php:16) in /home/xzpyjvtr/maze/img/maze.php on line 131

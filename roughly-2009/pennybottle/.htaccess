@@ -1,0 +1,3 @@
+Options +FollowSymlinks
+RewriteEngine on
+RewriteRule ^tradegraph.png$ tradegraph.php [NC,L]

@@ -1,0 +1,1 @@
+<a href="upload.php">Upload</a>

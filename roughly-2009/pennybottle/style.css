@@ -1,0 +1,179 @@
+body{
+font-family:arial;
+font-size:60%;
+}
+#selltab tr{
+background-color:#DDD;
+}
+#selltab tr:hover{
+background-color:#FFC;
+}
+#selltab tr td{
+margin-left:0px;
+margin-right:0px;
+}
+#comptab tr{
+background-color:#DDD;
+}
+#comptab tr.incme{
+background-color:#F93;
+}
+#comptab tr.incme:hover{
+background-color:#FB5;
+}
+#comptab tr:hover{
+background-color:#FFC;
+}
+#comptab tr td{
+margin-left:0px;
+margin-right:0px;
+}
+#buytab tr{
+background-color:#DDD;
+}
+#buytab tr:hover{
+background-color:#FFC;
+}
+#buytab tr td{
+margin-left:0px;
+margin-right:0px;
+}
+#lendmtab tr{
+background-color:#DDD;
+}
+#lendmtab tr:hover{
+background-color:#FFC;
+}
+#lendmtab tr td{
+margin-left:0px;
+margin-right:0px;
+}
+#usertab tr{
+background-color:#DDD;
+}
+#usertab tr:hover{
+background-color:#FFC;
+}
+#usertab tr td{
+margin-left:0px;
+margin-right:0px;
+}
+#sell{
+border: 2px black solid;
+border-right:0px;
+background-color:#DDD;
+width:200px;
+margin:0px;
+}
+#buy{
+border: 2px black solid;
+border-right:0px;
+background-color:#DDD;
+width:200px;
+margin:0px;
+}
+#lendm{
+border: 2px black solid;
+border-left:0px;
+background-color:#DDD;
+width:200px;
+margin:0px;
+}
+#container{
+width:900px;
+clear:both;
+}
+#sellcon{
+float:left;
+margin:0px;
+padding:0px;
+}
+#buycon{
+float:left;
+margin:0px;
+padding:0px;
+}
+#lendmcon{
+float:left;
+margin:0px;
+padding:0px;
+}
+#comptrades{
+border: 2px black solid;
+width:230px;
+float:left;
+margin:0px;
+}
+#pausedimg{
+visibility:hidden;
+position:absolute;
+width:100%;
+height:100%;
+left:0px;
+top:0px;
+opacity:0.4;
+filter:alpha(opacity=40);
+}
+#pausedicon{
+visibility:hidden;
+position:absolute;
+left:300px;
+top:300px;
+}
+#pausedicon2{
+visibility:hidden;
+position:absolute;
+left:340px;
+top:300px;
+}
+#stat{
+float:left;
+width:300px;
+border: 2px black solid;
+border-bottom:0px;
+}
+#im{
+float:left;
+width:400px;
+height:100px;
+border:2px solid black;
+border-left:0px;
+}
+#imbox{
+width:400px;
+height:75px;
+overflow: auto;
+}
+#imsend{
+width:400px;
+height:25px;
+}
+#metacontainer{
+width:712px;
+}
+#graph{
+visibility:hidden;
+position:absolute;
+left:50px;
+top:50px;
+}
+#graphtext{
+visibility:hidden;
+position:absolute;
+left:50px;
+top:20px;
+width:400px;
+height:30px;
+background-color:#F8F8F8;
+}
+#graphbgimg{
+visibility:hidden;
+position:absolute;
+width:100%;
+height:100%;
+left:0px;
+top:0px;
+opacity:0.4;
+filter:alpha(opacity=40);
+}
+

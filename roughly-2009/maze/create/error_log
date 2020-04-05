@@ -1,0 +1,4 @@
+[19-Apr-2009 20:17:43] PHP Parse error:  syntax error, unexpected '=' in /home/xzpyjvtr/maze/create/newSubmit-go.php on line 17
+[19-Apr-2009 20:47:11] PHP Warning:  mysql_result() [<a href='function.mysql-result'>function.mysql-result</a>]: id not found in MySQL result index 4 in /home/xzpyjvtr/maze/create/newSubmit-go.php on line 52
+[19-Apr-2009 20:48:00] PHP Warning:  mysql_result() [<a href='function.mysql-result'>function.mysql-result</a>]: id not found in MySQL result index 4 in /home/xzpyjvtr/maze/create/newSubmit-go.php on line 52
+[19-Apr-2009 20:48:52] PHP Warning:  mysql_result() [<a href='function.mysql-result'>function.mysql-result</a>]: id not found in MySQL result index 4 in /home/xzpyjvtr/maze/create/newSubmit-go.php on line 52

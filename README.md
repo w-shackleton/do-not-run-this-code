@@ -54,6 +54,15 @@ A program that takes a set of images and stitches them together.
 
 A program that takes an image and splits it into small pieces.
 
+## roughly-2009/maze
+
+An interactive click-to-move maze, written in PHP and SQL injection ;)
+
+## roughly-2009/pennybottle
+
+A fully implemented but never shipped multiplayer trading simulation game,
+written in PHP.
+
 ## roughly-2010/bright-day
 
 [Bright Day](https://www.digitalsquid.co.uk/brightday/)
@@ -98,7 +107,8 @@ up to the home server and collected per-second power usage for 2 years.
 
 ## roughly-2011/pennybottle
 
-A fully implemented but never shipped multiplayer trading simulation game.
+A fully implemented but never shipped multiplayer trading simulation game, this
+time written in Java.
 
 ## roughly-2011/Physics Land
 
