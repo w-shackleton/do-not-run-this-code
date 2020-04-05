@@ -1,0 +1,73 @@
+
+Working out offset when converting back to actual number
+========================================================
+
+For the trivial case (multiplying 1 -> 2), algorithm is as follows:
+
+result.high = (a*b)>>bits & mask
+result.low = (a*b) & mask
+
+    a
+  * b
+=====
+  c d
+This is not shifted correctly - the result BN1 must be halved precision, offset 1
+=====
+    d
+
+For a 2-vec:
+     a b
+   * c d
+========
+ e f g h
+========
+   f g
+
+To work out offset, using example:
+     3 7
+   * 4 8
+========
+ 1 7 7 6
+
+If using 3.7, 4.8, answer is 17.76 - must lose 10s and 0.01s
+Therefore result is f g
+
+3-vec:
+      a b c
+    * d e f
+===========
+g h i j k l
+===========
+  h i j
+
+Offset 1 means this:
+a b c d e f
+===========>
+0 a b c d e
+
+We are here doing:
+a b c d e f
+===========>
+b c d
+
+SO: General rule: save vector of half-width, always offset -1.
+
+
+
+Multipication of higher-order numbers
+=====================================
+
+Size N
+x = a b
+y = c d
+
+z2 = a*c = e f
+z0 = b*d = i j
+z1 = a*d + b*c = g h
+z1 = (a+b)*(c+d)-z2-z0 = g h
+
+  e f 0 0   Offset = 0 * N/2
+  0 g h 0   Offset = 1 * N/2
++ 0 0 i j   Offset = 2 * N/2
+  =======
+  k l m n

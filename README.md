@@ -151,3 +151,12 @@ The fun part about this app is that someone tried to sue me over it; they also
 had an app that showed you a picture of a llama or a duck, and mine was (a)
 better (as measured by Google Play ratings) and (b) didn't have ads.
 Fortunately they never got lawyers involved ;)
+
+## roughly-2013/mandelfly
+
+A mandelbrot renderer written in OpenCL with bignum arithmetic. I wrote a
+sort-of bignum implementation in OpenCL in which the 64-bit implementation just
+used native instructions, and the 128-bit implementation used the 64-bit
+implementation and the Karatsuba algorithm. Use of C macros allowed arbitrary
+recursion using this half-width implementation and the app could recompile the
+kernel when the precision limit was reached.
