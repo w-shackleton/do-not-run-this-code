@@ -91,6 +91,10 @@ An incomplete Sudoku game.
 [Network Spoofer](https://www.digitalsquid.co.uk/brightday/) v1. This version
 started life as a series of shell scripts packed into a Debian chroot ;)
 
+## roughly-2011/pennysms
+
+A webapp that aggregates user-suggested estimations via SMS message for a class
+
 ## roughly-2011/OWLRecorder
 
 An attempt at recording home energy usage data from

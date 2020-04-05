@@ -1,0 +1,77 @@
+body {
+min-width: 500px;
+}
+.tab {
+border: 1px black solid;
+border-collapse: collapse;
+width: 50%;
+min-width: 450px;
+}
+.tab td {
+border-top: 1px grey solid;
+border-left: 1px #BBBBBB solid;
+padding: 3px;
+}
+.alt td {
+background-color: #DDDDDD;
+border-left: 1px #EEEEEE solid;
+}
+.tab th {
+background-color: #BBBBBB;
+border-left: 1px #EEEEEE solid;
+size: 150%;
+}
+.tab th a, .tab th a:link, .tab th a:visited {
+color: black;
+text-decoration: none;
+}
+.tab th a:active, .tab th a:hover {
+color: red;
+text-decoration: underline;
+}
+.tab th img {
+width: 10px;
+height: 10px;
+border: 0px;
+}
+.foot {
+border: 1px black solid;
+margin-top: 50px;
+width: 30%;
+float: left;
+}
+#session {
+border: 1px black solid;
+margin-top: 50px;
+margin-left: 5px;
+width: 300px;
+float: left;
+}
+#cleard {
+display: block;
+margin-top: 200px;
+color: red;
+border: 2px red solid;
+width: 25%;
+clear: both;
+}
+#infotxt {
+background-color: #EEEEEE;
+border: 1px black solid;
+width: 75%;
+margin-bottom: 30px;
+font-size: 16px;
+text-align: center;
+}
+#infotxt h1 {
+font-weight: normal;
+font-size: 20px;
+text-align: left;
+}
+a,a:link,a:visited {
+color: #000088;
+}
+a:active,a:hover {
+color: #0000AA;
+text-decoration: none;
+}
